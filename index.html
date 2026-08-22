@@ -332,7 +332,7 @@ main{max-width:1920px;margin:auto;grid-template-columns:minmax(0,1fr) 374px;min-
 }
 
 
-/* PUBLIC v5.10.12 — wide-chart layout + selection-independent reference charts. */
+/* PUBLIC v5.10.14 — wide-chart layout + selection-independent reference charts. */
 /* FINAL AUDIT: AND-edge filtering + Japanese official metadata corrections. */
 /* v5.10.12: New Mutants stays lineage-only (no direct arrows); graph clicks no longer auto-center; AI-use disclosure added. */
 main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
@@ -402,7 +402,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .overall-watch-card{border-color:#1e3a3a!important;background:linear-gradient(145deg,rgba(6,78,59,.16),rgba(15,23,42,.76))!important}
 @media(max-width:760px){.overall-watch-percent{font-size:16px}.overall-watch-stat{font-size:9px}}
 
-/* PUBLIC v5.10.12 — full-width watch workspace + stable checklist scroll. */
+/* PUBLIC v5.10.14 — full-width watch workspace + stable checklist scroll. */
 #right .side-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
 .watch-workspace{max-width:1600px;margin:0 auto;padding:22px 14px 8px}
 .watch-workspace-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:0 2px 12px}
@@ -446,9 +446,9 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
  .watch-card-plan .prep-progress-tools{display:block}.watch-card-plan .prep-watched-check{width:19px;height:19px}
 }
 
-/* PUBLIC v5.10.12 — scroll-friendly chart interaction.
-   Normal wheel / one-finger vertical gestures belong to the page.
-   Chart zoom is explicit (Ctrl/Cmd + wheel or two-finger gesture). */
+/* PUBLIC v5.10.14 — scroll-friendly chart interaction.
+   On phones, touch gestures belong to the page; the chart never captures two-finger pan/pinch.
+   Desktop Ctrl/Cmd + wheel zoom and mouse/pen drag remain available. */
 .chart-watch-jump{
   position:absolute;top:10px;right:10px;z-index:7;
   display:inline-flex;align-items:center;gap:5px;
@@ -471,6 +471,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 @media(max-width:760px){
   #mobileFocusShell{display:block;margin:6px 8px 10px;padding:9px;border:1px solid #2b3a55;border-radius:13px;background:#0b1220;color:#e5e7eb}
   body.mobile-focus-mode .panel.active .svg-wrap{display:none!important}
+  body.mobile-focus-mode.mobile-focus-empty-state .panel.active .svg-wrap{display:block!important}
   body.mobile-map-mode .panel.active .svg-wrap{display:block!important}
   .mobile-focus-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
   .mobile-mode-toggle{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%}
@@ -521,7 +522,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.10.12</span>
+      <span class="stat-chip public-release">PUBLIC v5.10.14</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -548,7 +549,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   <div class="help-body">
     <div class="help-grid">
       <div class="help-step"><b>1. 作品を選ぶ</b><p>図の作品名をクリックするか、上部の検索欄から探します。複数作品をそのままゴールにできます。</p></div>
-      <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動、図のズームは Ctrl / ⌘ + ホイール（スマホは2本指）です。</p></div>
+      <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動。PCでは Ctrl / ⌘ + ホイールで図をズームできます。スマホでは画面上の操作ボタンを使います。</p></div>
       <div class="help-step"><b>3. 視聴順を決める</b><p>チャート下の大きな「予習・視聴プラン」で、最低限・おすすめ・完全版、視聴済みチェック、残り時間をまとめて管理できます。</p></div>
     </div>
     <div class="help-legend"><span>← 前史</span><span>→ 後続</span><span>中核 / 推奨 / 参照</span><span>OR / AND / PATH</span></div>
@@ -5211,7 +5212,7 @@ function initSvgInteraction(){
     const hint=document.createElement('div');
     hint.className='zoom-hint';
     hint.textContent=window.matchMedia('(max-width:760px)').matches
-      ? '1本指: ページ移動 / 2本指: 図を移動・拡大縮小 / タップ: ゴール追加・解除'
+      ? '1本指: ページ移動 / タップ: ゴール追加・解除'
       : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動';
     wrap.appendChild(hint);
 
@@ -5252,6 +5253,14 @@ function initSvgInteraction(){
     wrap.addEventListener('pointerdown',e=>{
       if(e.target.closest?.('.chart-watch-jump')) return;
       const st=ensureViewState(wrap);
+
+      // v5.10.14: phones never opt into chart-specific touch gestures.
+      // One or multiple fingers stay page-owned; mouse/pen behavior is unchanged.
+      if(e.pointerType==='touch' && window.matchMedia('(max-width:760px)').matches){
+        st.pinching=false; st.drag=false; st.moved=false; st.pointerId=null;
+        return;
+      }
+
       pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,type:e.pointerType});
 
       if(e.pointerType==='touch'){
@@ -5282,6 +5291,7 @@ function initSvgInteraction(){
     },{passive:false});
 
     wrap.addEventListener('pointermove',e=>{
+      if(e.pointerType==='touch' && window.matchMedia('(max-width:760px)').matches) return;
       if(pointers.has(e.pointerId)) pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,type:e.pointerType});
       const st=ensureViewState(wrap);
       if(pointers.size>=2){
@@ -5504,7 +5514,7 @@ select = function(id,multi=false){ toggleSelectionState(id,multi); refreshSelect
 function installMultiSelectPatch(){
   document.querySelectorAll('.svg-wrap').forEach(wrap=>{
     const hint=wrap.querySelector('.zoom-hint');
-    if(hint) hint.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: ページ移動 / 2本指: 図を移動・拡大縮小 / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
+    if(hint) hint.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: ページ移動 / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
   });
 }
 cf.addEventListener('change',e=>{
@@ -6695,9 +6705,12 @@ render();
   function renderMobileFocusView(){
     const shell=ensureMobileFocusShell(); if(!shell) return;
     const view=shell.querySelector('#mobileFocusView');
-    if(!selected || !selectedIds.has(selected)){
-      view.innerHTML='<div class="mobile-focus-empty"><strong>見たい作品を選んでください</strong><div style="margin-top:5px">全体図で作品をタップすると、前史と後続を読みやすく表示します。</div><button type="button" id="mobileOpenMap">全体図から選ぶ</button></div>';
-      view.querySelector('#mobileOpenMap').onclick=()=>setMobileGraphMode('map'); return;
+    if(selectedIds.size && (!selected || !selectedIds.has(selected))) normalizeSelection();
+    const empty=!selected || !selectedIds.has(selected);
+    document.body.classList.toggle('mobile-focus-empty-state',mobileWidth()&&mobileGraphMode==='focus'&&empty);
+    if(empty){
+      view.innerHTML='<div class="mobile-focus-empty"><strong>見たい作品を選んでください</strong><div style="margin-top:5px">下の全体図で作品をタップすると、そのままフォーカス表示に切り替わります。</div></div>';
+      return;
     }
     const p=directedPart(selected), goals=orderedGoalIds(), goalNo=goals.indexOf(selected)+1;
     const back=sortByRelease([...p.backNodes].filter(id=>id!==selected));
@@ -6748,7 +6761,7 @@ render();
   },true);
 
   document.querySelectorAll('.svg-wrap .zoom-hint').forEach(h=>{
-    h.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: ページ移動 / 2本指: 図を移動・拡大縮小 / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
+    h.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: ページ移動 / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
   });
 
   ensureMobileFocusShell();
@@ -6771,7 +6784,7 @@ render();
     const state=selectedIds.size ? (window.__marvelLastSelectionState||computeSelectionState()) : null;
     const svg=document.querySelector('.panel.active .svg-wrap svg');
     return {
-      version:'5.10.12-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
+      version:'5.10.14-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
       dim:!!svg?.classList.contains('dim'),
       litNodes:svg?.querySelectorAll('g.node.hl,g.node.focus').length||0,
       litEdges:svg?.querySelectorAll('g.edge.hl').length||0,
@@ -6910,7 +6923,7 @@ render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.10.12 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.10.14 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{
