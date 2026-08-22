@@ -1,0 +1,455 @@
+{
+  "version": "5.10.11-public",
+  "date": "2026-08-23",
+  "static": {
+    "version": "5.10.11-public",
+    "nodes": {
+      "count": 131,
+      "uniqueIds": 131,
+      "duplicateIds": []
+    },
+    "edges": {
+      "count": 199,
+      "uniquePairs": 199,
+      "duplicates": [],
+      "missingEndpoints": [],
+      "selfLoops": [],
+      "emptyReasons": [],
+      "missingImportance": [],
+      "auditSourceCount": 41,
+      "auditSourceMissingCount": 158
+    },
+    "graph": {
+      "cycles": [],
+      "isolates": [
+        "blade-mcu-tba-tba",
+        "moon-knight-2022",
+        "werewolf-by-night-2022",
+        "the-new-mutants-2020",
+        "madame-web-2024",
+        "kraven-the-hunter-2024"
+      ],
+      "reverseReleaseYearCandidates": [
+        {
+          "source": "marvel-s-agent-carter-series-20152016",
+          "target": "agents-of-s-h-i-e-l-d-20132020",
+          "sourceYear": 2015,
+          "targetYear": 2013,
+          "reason": "『エージェント・カーター』のダニエル・スーザが『エージェント・オブ・シールド』へ登場。",
+          "type": "ダニエル・スーザ再登場"
+        },
+        {
+          "source": "captain-america-the-winter-soldier-2014",
+          "target": "agents-of-s-h-i-e-l-d-20132020",
+          "sourceYear": 2014,
+          "targetYear": 2013,
+          "reason": "HYDRA暴露とS.H.I.E.L.D.崩壊がTVシリーズへ直接波及。",
+          "type": "S.H.I.E.L.D.崩壊の直接連動"
+        },
+        {
+          "source": "avengers-age-of-ultron-2015",
+          "target": "agents-of-s-h-i-e-l-d-20132020",
+          "sourceYear": 2015,
+          "targetYear": 2013,
+          "reason": "Theta Protocol等で映画イベントとTV側が補助的に接続。現行MCU正史断定とは分離。",
+          "type": "エイジ・オブ・ウルトロン期の相互補助"
+        },
+        {
+          "source": "cloak-dagger-20182019",
+          "target": "runaways-20172019",
+          "sourceYear": 2018,
+          "targetYear": 2017,
+          "reason": "クローク＆ダガーが『ランナウェイズ』シーズン3に直接登場する公式クロスオーバー。",
+          "type": "公式クロスオーバー"
+        },
+        {
+          "source": "captain-america-civil-war-2016",
+          "target": "agents-of-s-h-i-e-l-d-20132020",
+          "sourceYear": 2016,
+          "targetYear": 2013,
+          "reason": "Marvel公式のAoS Season 3 recapが、Sokovia Accords発効後にCoulson/TalbotがInhumansへの影響を議論したと明記。映画イベントのTV側反映。",
+          "type": "ソコヴィア協定のTV反映"
+        }
+      ]
+    },
+    "characters": {
+      "count": 155,
+      "missingWorkLinks": []
+    },
+    "status": {
+      "exactDateContradictions": []
+    },
+    "newMutantsPolicy": {
+      "directEdges": [],
+      "isIsolated": true,
+      "note": "Fox X-Men系列には配置するが、具体的な視聴順の矢印は置かない。Essex/Logan映像は作品詳細レベルの参照として扱う。"
+    },
+    "pass": {
+      "nodeIdsUnique": true,
+      "edgeCount199": true,
+      "edgesUnique": true,
+      "allEndpointsExist": true,
+      "noSelfLoops": true,
+      "allEdgesExplained": true,
+      "allImportanceValid": true,
+      "acyclic": true,
+      "characterLinksValid": true,
+      "noExactDateStatusContradictions": true,
+      "newMutantsNoDirectArrows": true
+    },
+    "allPass": true
+  },
+  "functional": {
+    "layout": {
+      "version": "PUBLIC v5.10.11",
+      "jumpCount": 7,
+      "hints": [
+        "通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: 選択（位置は動かしません）",
+        "通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: 選択（位置は動かしません）",
+        "通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: 選択（位置は動かしません）",
+        "通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: 選択（位置は動かしません）",
+        "通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: 選択（位置は動かしません）",
+        "通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: 選択（位置は動かしません）",
+        "通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: 選択（位置は動かしません）"
+      ],
+      "watch": true,
+      "mobileTouch": "none"
+    },
+    "wheel": {
+      "plainBefore": {
+        "x": 534.5,
+        "y": 865.796875,
+        "scale": 0.19504347931548882,
+        "scrollY": 0
+      },
+      "plainAfter": {
+        "scrollY": 520,
+        "scale": 0.19504347931548882
+      },
+      "ctrlBefore": {
+        "x": 534.5,
+        "y": 865.796875,
+        "scale": 0.19504347931548882,
+        "scrollY": 0
+      },
+      "ctrlAfter": {
+        "scrollY": 0,
+        "scale": 0.2514849090686458
+      }
+    },
+    "jump": {
+      "scrollY": 1142,
+      "top": 19.296875
+    },
+    "guardians": {
+      "audit": {
+        "version": "5.10.11-public",
+        "selected": [
+          "guardians-of-the-galaxy-vol-3-2023"
+        ],
+        "scope": "all",
+        "importance": "reference",
+        "combine": "or",
+        "dim": true,
+        "litNodes": 4,
+        "litEdges": 3,
+        "back": [
+          "the-guardians-of-the-galaxy-holiday-special-2022",
+          "guardians-of-the-galaxy-vol-2-2017",
+          "guardians-of-the-galaxy-2014"
+        ],
+        "forward": [],
+        "fullPast": [
+          "guardians-of-the-galaxy-2014",
+          "guardians-of-the-galaxy-vol-2-2017",
+          "the-guardians-of-the-galaxy-holiday-special-2022"
+        ],
+        "staticEdgeKeys": 116
+      },
+      "summary": "⏱未視聴 3本を見ると 残り 約 5時間2分",
+      "count": "✓ 予習の視聴済み 0/3"
+    },
+    "scrollStable": {
+      "dy": 0,
+      "anchorDelta": 0,
+      "checked": true,
+      "summary": "⏱未視聴 2本を見ると 残り 約 3時間"
+    },
+    "master": {
+      "master": 199,
+      "unique": 199,
+      "missing": [],
+      "watchDim": false,
+      "watchNodeOpacity": "1"
+    },
+    "mobileOneFinger": {
+      "before": {
+        "x": 195,
+        "y": 519.3046875,
+        "scale": 0.06855396407650419,
+        "scrollY": 0,
+        "touch": "pan-y"
+      },
+      "after": {
+        "scrollY": 388,
+        "scale": 0.06855396407650419
+      }
+    },
+    "mobileTwoFinger": {
+      "s0": 0.06855396407650419,
+      "s1": 0.12853868264344534
+    },
+    "pass": {
+      "version": true,
+      "jumpButtons": true,
+      "hintCopy": true,
+      "plainWheelScrollsPage": true,
+      "ctrlWheelZoomsChart": true,
+      "jumpWorks": true,
+      "mobileOneFingerScrollsPage": true,
+      "mobileTwoFingerZoomsChart": true,
+      "auditVersion": true,
+      "guardiansThreePast": true,
+      "watchTime": true,
+      "checkScrollStable": true,
+      "master199": true,
+      "watchIndependent": true
+    },
+    "allPass": true
+  },
+  "fullPlans": {
+    "edgeAudit": {
+      "masterRows": 199,
+      "masterUnique": 199,
+      "missingSameTab": [],
+      "crossTabOnly": [
+        "agent-carter-one-shot-2013->marvel-s-agent-carter-series-20152016",
+        "the-avengers-2012->agents-of-s-h-i-e-l-d-20132020",
+        "thor-the-dark-world-2013->agents-of-s-h-i-e-l-d-20132020",
+        "avengers-age-of-ultron-2015->agents-of-s-h-i-e-l-d-20132020",
+        "marvel-s-agent-carter-series-20152016->avengers-doomsday-2026-12-18"
+      ]
+    },
+    "publicUI": {
+      "title": "マーベル作品相関図 日本版 — 作品から前史・後続をたどる",
+      "description": "マーベル映像作品131作・199の有向接続を、日本公式邦題でたどれる非公式ファン制作のインタラクティブ相関図。作品を選ぶと前史・後続・予習ルートを表示し、視聴済みチェックと残り視聴時間も管理できます。",
+      "help": true,
+      "guide": true,
+      "advancedOpen": false,
+      "dataControlsInsideAdvanced": [
+        "muted",
+        "audit-edge-key",
+        "toggleAuditEdges",
+        "fan-edge-key",
+        "toggleFanVerifiedEdges"
+      ],
+      "duplicateIds": [],
+      "canvasBg": "rgba(0, 0, 0, 0)",
+      "versionChip": "PUBLIC v5.10.11"
+    },
+    "helpDialog": {
+      "opened": true,
+      "closed": true
+    },
+    "guardians": {
+      "audit": {
+        "version": "5.10.11-public",
+        "selected": [
+          "guardians-of-the-galaxy-vol-3-2023"
+        ],
+        "scope": "all",
+        "importance": "reference",
+        "combine": "or",
+        "dim": true,
+        "litNodes": 4,
+        "litEdges": 3,
+        "back": [
+          "the-guardians-of-the-galaxy-holiday-special-2022",
+          "guardians-of-the-galaxy-vol-2-2017",
+          "guardians-of-the-galaxy-2014"
+        ],
+        "forward": [],
+        "fullPast": [
+          "guardians-of-the-galaxy-2014",
+          "guardians-of-the-galaxy-vol-2-2017",
+          "the-guardians-of-the-galaxy-holiday-special-2022"
+        ],
+        "staticEdgeKeys": 116
+      },
+      "history": [
+        "guardians-of-the-galaxy-2014",
+        "guardians-of-the-galaxy-vol-2-2017",
+        "the-guardians-of-the-galaxy-holiday-special-2022"
+      ],
+      "unrelatedOpacity": "0.14",
+      "edges": [
+        {
+          "k": "guardians-of-the-galaxy-2014->guardians-of-the-galaxy-vol-2-2017",
+          "exists": true,
+          "hl": true,
+          "back": true,
+          "opacity": "1"
+        },
+        {
+          "k": "guardians-of-the-galaxy-vol-2-2017->the-guardians-of-the-galaxy-holiday-special-2022",
+          "exists": true,
+          "hl": true,
+          "back": true,
+          "opacity": "1"
+        },
+        {
+          "k": "the-guardians-of-the-galaxy-holiday-special-2022->guardians-of-the-galaxy-vol-3-2023",
+          "exists": true,
+          "hl": true,
+          "back": true,
+          "opacity": "1"
+        }
+      ]
+    },
+    "watchTime": {
+      "text": "⏱未視聴 3本を見ると 残り 約 5時間2分",
+      "chips": [
+        "視聴済み 0/3",
+        "予習全体 約5時間2分",
+        "残りを1日2時間なら約3日",
+        "目標作まで残り 約7時間32分"
+      ],
+      "items": [
+        {
+          "id": "guardians-of-the-galaxy-2014",
+          "runtime": "⏱ 2時間2分"
+        },
+        {
+          "id": "guardians-of-the-galaxy-vol-2-2017",
+          "runtime": "⏱ 2時間16分"
+        },
+        {
+          "id": "the-guardians-of-the-galaxy-holiday-special-2022",
+          "runtime": "⏱ 44分"
+        }
+      ],
+      "targetRuntime": "⏱ 2時間30分",
+      "note": "チェック済み作品を除いた残り時間です。上映時間・配信時間は目安で、未公開作や時間未登録作は推測せず集計から外します。"
+    },
+    "prepAllTargets": {
+      "renders": 393,
+      "withTime": 393,
+      "withMissing": 0,
+      "errors": []
+    },
+    "watchIndependent": {
+      "active": true,
+      "selectionScope": "independent",
+      "dim": false,
+      "nodeOpacity": "1",
+      "edgeOpacity": "1"
+    },
+    "mobile": {
+      "before": "none",
+      "after": "block",
+      "opened": true,
+      "closedAgain": "none",
+      "footerVisible": true
+    },
+    "pass": {
+      "master199": true,
+      "noSameTabMissingEdges": true,
+      "knownCrossTabOnlyFive": true,
+      "publicMetadata": true,
+      "noDuplicateIds": true,
+      "advancedCollapsed": true,
+      "dynamicDataControlsOrganized": true,
+      "helpWorks": true,
+      "volume3Immediate": true,
+      "auditVersion51011": true,
+      "threePast": true,
+      "threePastEdges": true,
+      "watchChartIndependent": true,
+      "watchTimeSummary": true,
+      "prepAllTargetsRender": true,
+      "mobileControlsCollapsed": true
+    },
+    "allPass": true
+  },
+  "pairModes": {
+    "or": {
+      "tested": 8515,
+      "bad": [],
+      "disconnected": 0,
+      "nonempty": 8500
+    },
+    "and": {
+      "tested": 8515,
+      "bad": [],
+      "disconnected": 0,
+      "nonempty": 3082
+    },
+    "path": {
+      "tested": 8515,
+      "bad": [],
+      "disconnected": 6986,
+      "nonempty": 1529
+    }
+  },
+  "clickNoAutoCenter": {
+    "result": {
+      "before": {
+        "x": 20.939999999999998,
+        "y": 181.5209125198598,
+        "scale": 0.19504347931548882,
+        "scrollY": 0
+      },
+      "after": {
+        "x": 20.939999999999998,
+        "y": 181.5209125198598,
+        "scale": 0.19504347931548882,
+        "scrollY": 0,
+        "selected": [
+          "guardians-of-the-galaxy-vol-3-2023"
+        ],
+        "audit": {
+          "version": "5.10.11-public",
+          "selected": [
+            "guardians-of-the-galaxy-vol-3-2023"
+          ],
+          "scope": "all",
+          "importance": "reference",
+          "combine": "or",
+          "dim": true,
+          "litNodes": 4,
+          "litEdges": 3,
+          "back": [
+            "the-guardians-of-the-galaxy-holiday-special-2022",
+            "guardians-of-the-galaxy-vol-2-2017",
+            "guardians-of-the-galaxy-2014"
+          ],
+          "forward": [],
+          "fullPast": [
+            "guardians-of-the-galaxy-2014",
+            "guardians-of-the-galaxy-vol-2-2017",
+            "the-guardians-of-the-galaxy-holiday-special-2022"
+          ],
+          "staticEdgeKeys": 116
+        }
+      },
+      "manual": {
+        "x": -2709.7323441683734,
+        "y": -1151.1127215873205,
+        "scale": 0.9,
+        "scrollY": 0
+      },
+      "hint": "通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: 選択（位置は動かしません）",
+      "aiBadge": "生成AIを主に活用",
+      "aiHelp": "このサイトについて：もともと自分用に作った相関図を、そのまま公開している個人制作物です。企画・実装・データ整理・監査の多くに生成AI（主にChatGPT）を利用し、人手で確認・調整しています。生成AIの出力には誤りがあり得るため、完全性・正確性は保証しません。継続的な更新・保守・サポートを行うプロジェクトではなく、Issue / Pull Request への対応も保証しません。日本公式邦題を優先した非公式・非商用のファン制作で、接続の「重要度」は独自の視聴ガイド分類です。Marvel / Disney その他の権利は各権利者に帰属します。"
+    },
+    "pass": {
+      "clickDoesNotMoveChart": true,
+      "clickSelects": true,
+      "manualSelectButtonMoves": true,
+      "hintExplainsNoMove": true,
+      "aiDisclosureVisible": true
+    },
+    "allPass": true
+  },
+  "allPass": true
+}
