@@ -1,33 +1,8 @@
 {
-  "version": "5.10.14-public",
+  "version": "5.10.15-public",
   "date": "2026-08-23",
-  "focusEmptyStateFix": {
-    "initial": {
-      "mode": "focus",
-      "goals": [],
-      "mapDisplay": "block",
-      "emptyText": "見たい作品を選んでください下の全体図で作品をタップすると、そのままフォーカス表示に切り替わります。",
-      "emptyClass": true
-    },
-    "after": {
-      "goals": [
-        "guardians-of-the-galaxy-vol-3-2023"
-      ],
-      "focus": "guardians-of-the-galaxy-vol-3-2023",
-      "mapDisplay": "none",
-      "current": "ガーディアンズ・オブ・ギャラクシー：VOLUME 3",
-      "emptyClass": false
-    },
-    "pass": {
-      "focusModeStillActive": true,
-      "emptyFocusShowsMapForPicking": true,
-      "emptyStateIsExplicit": true,
-      "selectionSwitchesToFocusCards": true
-    },
-    "allPass": true
-  },
-  "data": {
-    "version": "5.10.14-public",
+  "static": {
+    "version": "5.10.15-public",
     "nodes": 131,
     "uniqueNodeIds": 131,
     "duplicateNodeIds": [],
@@ -78,7 +53,7 @@
       "nonempty": 1529
     }
   },
-  "singleGoalPlans": {
+  "fullPlans": {
     "allPlans": {
       "renders": 393,
       "goalRows": 393,
@@ -410,92 +385,13 @@
     },
     "allPass": true
   },
-  "runtime": {
+  "mobileRuntime": {
     "meta": {
-      "version": "PUBLIC v5.10.14",
-      "auditVersion": "5.10.14-public",
+      "version": "PUBLIC v5.10.15",
+      "auditVersion": "5.10.15-public",
       "svgCount": 7
     },
-    "sameTab": {
-      "master": 199,
-      "unique": 199,
-      "missing": [],
-      "cross": [
-        "agent-carter-one-shot-2013->marvel-s-agent-carter-series-20152016",
-        "the-avengers-2012->agents-of-s-h-i-e-l-d-20132020",
-        "thor-the-dark-world-2013->agents-of-s-h-i-e-l-d-20132020",
-        "avengers-age-of-ultron-2015->agents-of-s-h-i-e-l-d-20132020",
-        "marvel-s-agent-carter-series-20152016->avengers-doomsday-2026-12-18"
-      ]
-    },
-    "guardians": {
-      "audit": {
-        "version": "5.10.14-public",
-        "selected": [
-          "guardians-of-the-galaxy-vol-3-2023"
-        ],
-        "scope": "all",
-        "importance": "reference",
-        "combine": "or",
-        "dim": true,
-        "litNodes": 4,
-        "litEdges": 3,
-        "back": [
-          "the-guardians-of-the-galaxy-holiday-special-2022",
-          "guardians-of-the-galaxy-vol-2-2017",
-          "guardians-of-the-galaxy-2014"
-        ],
-        "forward": [],
-        "fullPast": [
-          "guardians-of-the-galaxy-2014",
-          "guardians-of-the-galaxy-vol-2-2017",
-          "the-guardians-of-the-galaxy-holiday-special-2022"
-        ],
-        "staticEdgeKeys": 116
-      },
-      "before": {
-        "x": 20.939999999999998,
-        "y": 181.5209125198598,
-        "scale": 0.19504347931548882,
-        "scrollY": 180
-      },
-      "after": {
-        "x": 20.939999999999998,
-        "y": 181.5209125198598,
-        "scale": 0.19504347931548882,
-        "scrollY": 180
-      },
-      "edges": [
-        {
-          "k": "guardians-of-the-galaxy-2014->guardians-of-the-galaxy-vol-2-2017",
-          "exists": true,
-          "hl": true,
-          "back": true,
-          "opacity": "1"
-        },
-        {
-          "k": "guardians-of-the-galaxy-vol-2-2017->the-guardians-of-the-galaxy-holiday-special-2022",
-          "exists": true,
-          "hl": true,
-          "back": true,
-          "opacity": "1"
-        },
-        {
-          "k": "the-guardians-of-the-galaxy-holiday-special-2022->guardians-of-the-galaxy-vol-3-2023",
-          "exists": true,
-          "hl": true,
-          "back": true,
-          "opacity": "1"
-        }
-      ]
-    },
-    "watchIndependent": {
-      "scope": "independent",
-      "dim": false,
-      "node": "1",
-      "edge": "1"
-    },
-    "wheel": {
+    "desktopWheel": {
       "beforePlain": {
         "x": 534.5,
         "y": 865.796875,
@@ -518,15 +414,22 @@
       }
     },
     "mobileInitial": {
-      "mode": "focus",
+      "shell": true,
       "shellDisplay": "block",
-      "mapDisplay": "block"
+      "mapDisplay": "block",
+      "touchAction": "auto",
+      "svgTouch": "auto",
+      "modeToggle": false,
+      "focusContent": false,
+      "goalBar": true,
+      "hint": "1本指: ページ移動 / ピンチ: ブラウザ標準ズーム / タップ: ゴール追加・解除",
+      "meta": "width=device-width,initial-scale=1"
     },
     "mobileTap": {
       "ids": [
         "guardians-of-the-galaxy-vol-3-2023"
       ],
-      "focus": "guardians-of-the-galaxy-vol-3-2023",
+      "selected": "guardians-of-the-galaxy-vol-3-2023",
       "before": {
         "x": 7.360000000000014,
         "y": 186.80295683601565,
@@ -539,21 +442,57 @@
         "scale": 0.06855396407650419,
         "scrollY": 0
       },
-      "currentClass": "node focus current-goal"
+      "nodeClass": "node focus current-goal",
+      "goalCount": "🎯 1作品をゴール中",
+      "mapDisplay": "block"
+    },
+    "goalBar": {
+      "chips": [
+        {
+          "id": "guardians-of-the-galaxy-vol-3-2023",
+          "current": false
+        },
+        {
+          "id": "guardians-of-the-galaxy-vol-2-2017",
+          "current": false
+        },
+        {
+          "id": "the-guardians-of-the-galaxy-holiday-special-2022",
+          "current": true
+        }
+      ],
+      "clearH": 44,
+      "prepH": 44
+    },
+    "clearUndo": {
+      "before": [
+        "guardians-of-the-galaxy-vol-3-2023",
+        "guardians-of-the-galaxy-vol-2-2017",
+        "the-guardians-of-the-galaxy-holiday-special-2022"
+      ],
+      "focus": "the-guardians-of-the-galaxy-holiday-special-2022",
+      "cleared": [],
+      "shown": true,
+      "after": [
+        "guardians-of-the-galaxy-vol-3-2023",
+        "guardians-of-the-galaxy-vol-2-2017",
+        "the-guardians-of-the-galaxy-holiday-special-2022"
+      ],
+      "afterFocus": "the-guardians-of-the-galaxy-holiday-special-2022"
     },
     "mobileOneFinger": {
       "before": {
         "x": 195,
-        "y": 754,
+        "y": 701.3046875,
         "scale": 0.06855396407650419,
         "scrollY": 0
       },
       "after": {
-        "scrollY": 377,
+        "scrollY": 175,
         "scale": 0.06855396407650419
       }
     },
-    "mobileTwoFinger": {
+    "mobileTwoPointerChartState": {
       "before": {
         "x": 7.360000000000014,
         "y": 186.80295683601565,
@@ -568,28 +507,19 @@
     "pass": {
       "version": true,
       "sevenGraphs": true,
-      "master199": true,
-      "sameTabNoMissing": true,
-      "guardiansThreePast": true,
-      "guardiansThreeEdges": true,
-      "guardiansNoMove": true,
-      "watchIndependent": true,
       "plainWheelPage": true,
       "ctrlWheelZoom": true,
-      "mobileDefaultFocus": true,
+      "mobileFullMapOnly": true,
+      "mobileNativePinchAllowedByCss": true,
+      "mobileHint": true,
       "mobileTapGoalNoMove": true,
+      "goalBarThree": true,
+      "goalBarTouchTargets": true,
+      "clearUndo": true,
       "mobileOneFingerPage": true,
-      "mobileTwoFingerNoChartGesture": true
+      "mobileTwoPointerNoChartGesture": true
     },
     "allPass": true
   },
-  "allPass": true,
-  "mobileGesturePolicy": {
-    "maxWidthPx": 760,
-    "phoneTwoFingerChartPanZoom": false,
-    "phoneTouchOwnership": "page/browser",
-    "desktopCtrlCmdWheelZoom": true,
-    "desktopMousePenDrag": true,
-    "verified": true
-  }
+  "allPass": true
 }
