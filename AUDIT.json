@@ -1,7 +1,7 @@
 {
-  "version": "5.15.0-public",
-  "baseVersion": "5.14.1-public",
-  "date": "2026-08-23",
+  "version": "5.15.1-public",
+  "baseVersion": "5.15.0-public",
+  "date": "2026-08-24",
   "data": {
     "works": 131,
     "directedEdges": 199,
@@ -47,7 +47,10 @@
       "allLit"
     ],
     "featuredGoalButtonUsesGoalApi": true,
-    "blankChartContextMenuPreserved": true
+    "blankChartContextMenuPreserved": true,
+    "mobileTapKeepsChartVisible": true,
+    "mobileCompactInspectBar": true,
+    "mobileDetailsExplicitAction": true
   },
   "regressionAgainstV5141": {
     "or": {
@@ -73,7 +76,6 @@
   },
   "interactionSmoke": {
     "desktopInspect": true,
-    "mobileInspectAndSheet": true,
     "rightClickGoalToggle": true,
     "additiveMultiGoal": true,
     "detailGoalCta": true,
@@ -83,7 +85,10 @@
     "lastGoalRemovalFullRelight": true,
     "mobileCanvasOverviewActive": true,
     "sharedRoomDialog": true,
-    "pageScriptErrors": 0
+    "pageScriptErrors": 0,
+    "mobileTapRelationshipFirst": true,
+    "mobileDetailsManualOpen": true,
+    "desktopSideDetailPreserved": true
   },
   "sourceBuild": {
     "baselineParts": 14,
