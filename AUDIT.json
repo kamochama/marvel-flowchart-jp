@@ -1,63 +1,61 @@
 {
-  "version": "5.14.0-public",
-  "baseVersion": "5.13.0-public",
+  "version": "5.14.1-public",
+  "baseVersion": "5.14.0-public",
   "date": "2026-08-23",
   "data": {
     "works": 131,
     "directedEdges": 199,
     "characterLinks": 155
   },
-  "mobileNavigation": {
-    "persistentSingleSearchInput": true,
-    "horizontalTabStripHidden": true,
-    "areaMenuTargets": ["overview", "mcu", "legacy", "road", "doomsday", "characters"],
-    "watchExcludedFromAreaMenu": true,
-    "watchWorkspaceAction": true,
-    "watchWorkspaceLabelSync": true,
-    "areaSheetWithin390x844Viewport": true,
-    "oldGuideHiddenOnMobile": true,
-    "mobileSearchPlaceholder": "作品を検索…"
+  "featuredRouteFix": {
+    "previewExclusiveFromNormalRendering": true,
+    "clearExitsPreview": true,
+    "scopeChangeExitsPreview": true,
+    "importanceChangeExitsPreview": true,
+    "searchAndFilterExitPreview": true,
+    "combineAndPrepControlsExitPreview": true,
+    "existingGoalsPreserved": true,
+    "existingGoalLightingRestored": true,
+    "featuredTargetClearedOnExit": true,
+    "dynamicHighlightEdgesClearedOnExit": true,
+    "queuedFrameRaceGuard": true,
+    "immediateExitRestoresExistingGoal": true
   },
-  "desktopNavigation": {
-    "sevenTabsPreserved": true,
-    "featuredEntryCompact": true
-  },
-  "searchNavigation": {
-    "doesNotChangeGoals": true,
-    "singleQueryState": true,
-    "panelPriority": ["overview", "mcu", "road", "legacy", "doomsday"],
-    "centersResultNode": true
-  },
-  "featuredRoute": {
-    "enabled": true,
-    "targetId": "avengers-doomsday-2026-12-18",
+  "desktopFeaturedEntry": {
+    "separatedFromSearchControl": true,
     "label": "ドゥームズデイへの道",
-    "previewDoesNotChangeGoals": true,
-    "incomingStrongClosure": true,
-    "directContextOneHop": true,
-    "outgoingTraversal": false,
-    "secretWarsAutoIncluded": false,
-    "existingGoalsRestoredOnExit": true,
-    "normalGoalLogicForAdd": true,
-    "configurationSingleSource": true
+    "fullLabelVisibleAt1280": true,
+    "fullLabelVisibleAt1440": true,
+    "mobileCardStructurePreserved": true
   },
-  "regressionAgainstV5130": {
-    "or": {"pairs": 8515, "hashFnv1a64": "c7b1741074835354", "exact": true},
-    "and": {"pairs": 8515, "hashFnv1a64": "0b2c0975e1dd7845", "exact": true},
-    "path": {"pairs": 8515, "hashFnv1a64": "f614d9a7bcafbfb2", "exact": true},
-    "singleGoalPlans": {"count": 393, "hashFnv1a64": "4d3822b4e5fba9f1", "exact": true}
+  "regressionAgainstV5140": {
+    "or": {
+      "pairs": 8515,
+      "hashFnv1a64": "9c38afad0f8ac3fe",
+      "exact": true
+    },
+    "and": {
+      "pairs": 8515,
+      "hashFnv1a64": "ad48d8c46ae1bd61",
+      "exact": true
+    },
+    "path": {
+      "pairs": 8515,
+      "hashFnv1a64": "8b9847fcda5cdf96",
+      "exact": true
+    },
+    "singleGoalPlans": {
+      "count": 393,
+      "hashFnv1a64": "a3c6f1c12199a903",
+      "exact": true
+    }
   },
-  "interactionRegression": {
-    "desktopPlainWheelZoom": true,
-    "wheelOutsideChartUntouched": true,
-    "mobileOneFingerPan": true,
-    "mobileTwoFingerPinch": true,
-    "lastGoalRemovalFullRelightDesktop": true,
-    "lastGoalRemovalFullRelightMobile": true,
-    "dynamicHighlightEdgesCleared": true,
+  "interactionSmoke": {
+    "featuredGoalAddUsesNormalSelection": true,
+    "lastGoalRemovalFullRelight": true,
+    "mobileCanvasOverviewActive": true,
+    "mobileSearchRetiresFeaturedPreview": true,
     "sharedRoomDialog": true,
-    "watchedCheckbox": true,
-    "goalRemoval": true,
     "pageScriptErrors": 0
   },
   "worker": {
@@ -66,7 +64,14 @@
     "frontendChangeRequiresRedeploy": false
   },
   "package": {
-    "rootFiles": ["index.html", "README.md", "AUDIT.md", "AUDIT.json", "preview.png", ".nojekyll"],
+    "rootFiles": [
+      "index.html",
+      "README.md",
+      "AUDIT.md",
+      "AUDIT.json",
+      "preview.png",
+      ".nojekyll"
+    ],
     "exactSixFiles": true
   },
   "allPass": true

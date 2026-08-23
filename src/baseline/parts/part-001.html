@@ -1,0 +1,668 @@
+strong / very strong の物語方向を前後に辿り、medium は直接隣接だけ表示">関連全体</button><button class="scope-btn" data-scope="one">1段階</button><button class="scope-btn" data-scope="two">2段階</button><span class="direction-key" title="関連全体では途中で向きを切り替えません"><i class="bk"></i>←前史 <i class="fw"></i>→後続 <i class="cx"></i>直接補助</span></div>
+    <div class="control-group control-importance"><span class="muted">接続層</span><span class="importance-key"><button class="importance-btn" data-importance-mode="core" title="中核接続だけ表示">中核</button><button class="importance-btn" data-importance-mode="recommended" title="中核＋推奨を表示">＋推奨</button><button class="importance-btn active" data-importance-mode="reference" title="中核＋推奨＋参照の全199接続を表示（既定）">全線</button></span></div>
+    <div class="control-group control-reset"><button id="clear">全解除</button></div>
+  </div>
+  <div class="controls-featured-row" aria-label="今見るなら"><span id="desktopFeaturedHost" class="desktop-featured-host"></span></div>
+  <details class="advanced-controls">
+    <summary>詳細設定 <span class="muted">人物・複数ゴール・PATH・系列・ズーム</span></summary>
+    <div class="advanced-grid">
+      <div class="control-group control-filter-advanced"><span class="muted">絞り込み</span><select id="character" aria-label="主要キャラクターで絞り込み"><option value="">すべての主要キャラクター</option></select><select id="status" aria-label="公開状況で絞り込み"><option value="">すべて</option><option value="released">公開・配信済み</option><option value="future">今後／未定</option><option value="unannounced">邦題未発表</option><option value="source">日本公式ソース登録済み</option></select></div>
+      <div class="control-group control-multi"><span class="muted">複数ゴール</span><button class="combine-btn active" data-combine="or" title="各ゴールの関連範囲をすべて点灯">OR（どれか）</button><button class="combine-btn" data-combine="and" title="全ゴールに共通する関連範囲だけを点灯">AND（共通）</button><button class="combine-btn" data-combine="path" title="2作品以上をゴールにし、ゴール同士を結ぶ有向経路だけを点灯">PATH（結ぶ）</button><span class="path-key" title="PATHモードの経路"><i></i></span><span class="path-pref-wrap" title="PATHモードの経路選択"><span class="muted">PATH：</span></div>
+      <div class="control-group control-view"><span class="muted">系列</span><select id="familyFocus" class="family-select" title="配置を変えずに物語系列だけを浮かせます"><option value="">すべて</option><option>Avengers / 合流点</option><option>Iron Man / Hulk / Ten Rings</option><option>Captain America / Wakanda</option><option>Thor / Loki</option><option>Guardians / Cosmic</option><option>Magic / Vision</option><option>Spider-Man / Multiverse</option><option>Ant-Man</option><option>Street</option><option>Animation</option><option>Other</option></select><span class="family-key">系列内部の線を強調</span><span class="muted">図</span><button id="zoomIn">＋</button><button id="zoomOut">－</button><button id="zoomReset">全体表示</button><button id="zoomSelected">選択へ</button></div>
+    </div>
+  </details>
+</div>
+</header>
+<dialog id="publicHelpDialog" aria-labelledby="helpTitle">
+  <div class="help-head"><div><h2 id="helpTitle">この相関図の使い方</h2><p>初めてでも、見たい作品を1本選ぶだけで使えます。</p></div><button id="publicHelpClose" class="help-close" type="button" aria-label="閉じる">×</button></div>
+  <div class="help-body">
+    <div class="help-grid">
+      <div class="help-step"><b>1. 作品を選ぶ</b><p>図の作品名をクリックするか、上部の検索欄から探します。複数作品をそのままゴールにできます。</p></div>
+      <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動。PCではチャート上のホイールで図をズームできます。スマホではチャート内を1本指で移動、2本指で拡大・縮小できます。ページを動かすときはチャート外をスワイプしてください。</p></div>
+      <div class="help-step"><b>3. 視聴順を決める</b><p>チャート下の大きな「予習・視聴プラン」で、最低限・おすすめ・完全版、視聴済みチェック、残り時間をまとめて管理できます。</p></div>
+    </div>
+    <div class="help-legend"><span>← 前史</span><span>→ 後続</span><span>中核 / 推奨 / 参照</span><span>OR / AND / PATH</span></div>
+    <div class="help-note"><strong>このサイトについて：</strong>もともと自分用に作った相関図を、そのまま公開している個人制作物です。企画・実装・データ整理・監査の多くに生成AI（主にChatGPT）を利用し、人手で確認・調整しています。生成AIの出力には誤りがあり得るため、完全性・正確性は保証しません。継続的な更新・保守・サポートを行うプロジェクトではなく、Issue / Pull Request への対応も保証しません。日本公式邦題を優先した非公式・非商用のファン制作で、接続の「重要度」は独自の視聴ガイド分類です。Marvel / Disney その他の権利は各権利者に帰属します。</div>
+  </div>
+</dialog>
+
+<main><section id="left"><div id="mobileFeaturedHost" class="mobile-featured-host"></div><div class="public-guide" aria-label="基本操作">
+  <span class="guide-lead">はじめかた</span>
+  <span class="guide-step"><b>1</b> 作品を検索 or クリック</span><span class="guide-arrow">→</span>
+  <span class="guide-step"><b>2</b> <span style="color:#7dd3fc">←前史</span> / <span style="color:#6ee7b7">→後続</span> が点灯</span><span class="guide-arrow">→</span>
+  <span class="guide-step"><b>3</b> もう一度クリックで解除</span>
+  <span class="guide-tip">チャート上のホイール: 図をズーム / チャート外: ページ移動</span>
+</div><div class="tabs">
+<button class="tab active" data-target="overview">① 主要フロー</button><button class="tab" data-target="mcu">② MCU本流</button>
+<button class="tab" data-target="road">③ ストリート／旧TV</button><button class="tab" data-target="legacy">④ マルチバース</button>
+<button class="tab" data-target="doomsday">⑤ イベント合流</button><button class="tab" data-target="watch">⑥ この作品を見るなら</button><button class="tab" data-target="characters">⑦ 人物・組織</button></div>
+<div class="flow-tabs-note" style="padding:7px 10px;color:#94a3b8;font-size:11px;border-bottom:1px solid #263041">公開順ではなく「どこから来て、どこへ続くか」を追うためのタブ構成。①は主要作品、②〜⑤は枝・宇宙・合流点を分解表示します。</div>
+<div id="overview" class="panel active"><div class="svg-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="3865pt" height="1711pt" viewBox="0.00 0.00 3865.32 1711.32">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(20.16 1691.16)">
+<title>overview</title>
+<polygon fill="#0b1020" stroke="transparent" points="-20.16,20.16 -20.16,-1691.16 3845.16,-1691.16 3845.16,20.16 -20.16,20.16" />
+<text text-anchor="middle" x="1912.5" y="-1649.4" font-family="Noto Sans CJK JP" font-size="22.00" fill="white">マーベル作品相関図 日本版 ① 主要フロー — 63作品 / 116接続</text>
+<g id="clust1" class="cluster">
+<title>cluster_overview_0</title>
+<path fill="#0b1020" stroke="#2563eb" stroke-width="1.6" d="M20,-557C20,-557 2786.5,-557 2786.5,-557 2792.5,-557 2798.5,-563 2798.5,-569 2798.5,-569 2798.5,-846 2798.5,-846 2798.5,-852 2792.5,-858 2786.5,-858 2786.5,-858 20,-858 20,-858 14,-858 8,-852 8,-846 8,-846 8,-569 8,-569 8,-563 14,-557 20,-557" />
+<text text-anchor="middle" x="1403.25" y="-844.4" font-family="Noto Sans CJK JP" font-size="12.00" fill="#cbd5e1">Infinity Saga 映画</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster_overview_1</title>
+<path fill="#0b1020" stroke="#7c3aed" stroke-width="1.6" d="M2537.5,-8C2537.5,-8 3805,-8 3805,-8 3811,-8 3817,-14 3817,-20 3817,-20 3817,-537 3817,-537 3817,-543 3811,-549 3805,-549 3805,-549 2537.5,-549 2537.5,-549 2531.5,-549 2525.5,-543 2525.5,-537 2525.5,-537 2525.5,-20 2525.5,-20 2525.5,-14 2531.5,-8 2537.5,-8" />
+<text text-anchor="middle" x="3171.25" y="-535.4" font-family="Noto Sans CJK JP" font-size="12.00" fill="#cbd5e1">Multiverse Saga 映画</text>
+</g>
+<g id="clust3" class="cluster">
+<title>cluster_overview_2</title>
+<path fill="#0b1020" stroke="#059669" stroke-width="1.6" d="M2566,-866C2566,-866 3774,-866 3774,-866 3780,-866 3786,-872 3786,-878 3786,-878 3786,-1343 3786,-1343 3786,-1349 3780,-1355 3774,-1355 3774,-1355 2566,-1355 2566,-1355 2560,-1355 2554,-1349 2554,-1343 2554,-1343 2554,-878 2554,-878 2554,-872 2560,-866 2566,-866" />
+<text text-anchor="middle" x="3170" y="-1341.4" font-family="Noto Sans CJK JP" font-size="12.00" fill="#cbd5e1">Disney+ / TV</text>
+</g>
+<g id="clust4" class="cluster">
+<title>cluster_overview_3</title>
+<path fill="#0b1020" stroke="#d97706" stroke-width="1.6" d="M2517,-1402C2517,-1402 3440,-1402 3440,-1402 3446,-1402 3452,-1408 3452,-1414 3452,-1414 3452,-1619 3452,-1619 3452,-1625 3446,-1631 3440,-1631 3440,-1631 2517,-1631 2517,-1631 2511,-1631 2505,-1625 2505,-1619 2505,-1619 2505,-1414 2505,-1414 2505,-1408 2511,-1402 2517,-1402" />
+<text text-anchor="middle" x="2978.5" y="-1617.4" font-family="Noto Sans CJK JP" font-size="12.00" fill="#cbd5e1">Animation / Special</text>
+</g>
+
+<g id="node1" class="node">
+<title>iron-man-2008</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M116,-740C116,-740 28,-740 28,-740 22,-740 16,-734 16,-728 16,-728 16,-716 16,-716 16,-710 22,-704 28,-704 28,-704 116,-704 116,-704 122,-704 128,-710 128,-716 128,-716 128,-728 128,-728 128,-734 122,-740 116,-740" />
+<text text-anchor="middle" x="72" y="-719.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="72" dy="-0.35em">アイアンマン</tspan><tspan x="72" dy="1.20em">2008年</tspan></text>
+</g>
+
+<g id="node3" class="node">
+<title>iron-man-2-2010</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M273,-740C273,-740 180,-740 180,-740 174,-740 168,-734 168,-728 168,-728 168,-716 168,-716 168,-710 174,-704 180,-704 180,-704 273,-704 273,-704 279,-704 285,-710 285,-716 285,-716 285,-728 285,-728 285,-734 279,-740 273,-740" />
+<text text-anchor="middle" x="226.5" y="-719.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="226.5" dy="-0.35em">アイアンマン2</tspan><tspan x="226.5" dy="1.20em">2010年</tspan></text>
+</g>
+
+<g id="edge1" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>iron-man-2008-&gt;iron-man-2-2010</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M128.06,-722C138.8,-722 150.14,-722 161.15,-722" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="161.45,-724.28 167.95,-722 161.45,-719.73 161.45,-724.28" />
+</g>
+
+<g id="node2" class="node">
+<title>the-incredible-hulk-2008</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M546,-610C546,-610 401,-610 401,-610 395,-610 389,-604 389,-598 389,-598 389,-586 389,-586 389,-580 395,-574 401,-574 401,-574 546,-574 546,-574 552,-574 558,-580 558,-586 558,-586 558,-598 558,-598 558,-604 552,-610 546,-610" />
+<text text-anchor="middle" x="473.5" y="-589.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="473.5" dy="-0.35em">インクレディブル・ハルク</tspan><tspan x="473.5" dy="1.20em">2008年</tspan></text>
+</g>
+
+<g id="node6" class="node">
+<title>the-avengers-2012</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M771,-705C771,-705 674,-705 674,-705 668,-705 662,-699 662,-693 662,-693 662,-681 662,-681 662,-675 668,-669 674,-669 674,-669 771,-669 771,-669 777,-669 783,-675 783,-681 783,-681 783,-693 783,-693 783,-699 777,-705 771,-705" />
+<text text-anchor="middle" x="722.5" y="-684.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="722.5" dy="-0.35em">アベンジャーズ</tspan><tspan x="722.5" dy="1.20em">2012年</tspan></text>
+</g>
+
+<g id="edge68" class="edge audit-added" data-layer="character" data-strength="strong" data-render="solid">
+<title>the-incredible-hulk-2008-&gt;the-avengers-2012</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M558.27,-606.37C579.48,-611.34 601.93,-617.79 622,-626 646.64,-636.08 672.2,-651.88 691.25,-664.88" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="690.3,-666.99 696.94,-668.81 692.89,-663.25 690.3,-666.99" />
+</g>
+
+<g id="node25" class="node">
+<title>shang-chi-and-the-legend-of-the-ten-rings-2021</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M3111,-312C3111,-312 2916,-312 2916,-312 2910,-312 2904,-306 2904,-300 2904,-300 2904,-288 2904,-288 2904,-282 2910,-276 2916,-276 2916,-276 3111,-276 3111,-276 3117,-276 3123,-282 3123,-288 3123,-288 3123,-300 3123,-300 3123,-306 3117,-312 3111,-312" />
+<text text-anchor="middle" x="3013.5" y="-291.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="3013.5" dy="-0.35em">シャン・チー／テン・リングスの伝説</tspan><tspan x="3013.5" dy="1.20em">2021年</tspan></text>
+</g>
+
+<g id="edge92" class="edge audit-added" data-layer="character" data-strength="medium" data-render="dashed">
+<title>the-incredible-hulk-2008-&gt;shang-chi-and-the-legend-of-the-ten-rings-2021</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M482.88,-573.89C522.68,-490.91 701.23,-151 956,-151 956,-151 956,-151 2379,-151 2603.33,-151 2650.47,-221.85 2870,-268 2880.8,-270.27 2892.09,-272.53 2903.37,-274.71" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="2903.2,-276.99 2910.01,-275.98 2904.06,-272.52 2903.2,-276.99" />
+</g>
+
+<g id="node35" class="node">
+<title>captain-america-brave-new-world-2025</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M3145,-260C3145,-260 2882,-260 2882,-260 2876,-260 2870,-254 2870,-248 2870,-248 2870,-236 2870,-236 2870,-230 2876,-224 2882,-224 2882,-224 3145,-224 3145,-224 3151,-224 3157,-230 3157,-236 3157,-236 3157,-248 3157,-248 3157,-254 3151,-260 3145,-260" />
+<text text-anchor="middle" x="3013.5" y="-239.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="3013.5" dy="-0.35em">キャプテン・アメリカ：ブレイブ・ニュー・ワールド</tspan><tspan x="3013.5" dy="1.20em">2025年</tspan></text>
+</g>
+
+<g id="edge94" class="edge audit-added" data-layer="character" data-strength="very strong" data-render="solid_thick">
+<title>the-incredible-hulk-2008-&gt;captain-america-brave-new-world-2025</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M478,-573.87C490.82,-512.37 540.92,-309.47 662,-202 763.73,-111.71 819.98,-117 956,-117 956,-117 956,-117 2379,-117 2580.23,-117 2656.55,-54.97 2830,-157 2857.31,-173.06 2843.46,-198.7 2870,-216 2872.69,-217.75 2875.46,-219.4 2878.31,-220.94" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="2877.42,-223.04 2884.25,-223.95 2879.48,-218.98 2877.42,-223.04" />
+</g>
+
+<g id="node45" class="node">
+<title>she-hulk-attorney-at-law-2022</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M3096.5,-962C3096.5,-962 2930.5,-962 2930.5,-962 2924.5,-962 2918.5,-956 2918.5,-950 2918.5,-950 2918.5,-938 2918.5,-938 2918.5,-932 2924.5,-926 2930.5,-926 2930.5,-926 3096.5,-926 3096.5,-926 3102.5,-926 3108.5,-932 3108.5,-938 3108.5,-938 3108.5,-950 3108.5,-950 3108.5,-956 3102.5,-962 3096.5,-962" />
+<text text-anchor="middle" x="3013.5" y="-941.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="3013.5" dy="-0.35em">シー・ハルク：ザ・アトーニー</tspan><tspan x="3013.5" dy="1.20em">2022年</tspan></text>
+</g>
+
+<g id="edge91" class="edge audit-added" data-layer="character" data-strength="strong" data-render="solid">
+<title>the-incredible-hulk-2008-&gt;she-hulk-attorney-at-law-2022</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M558.14,-597.76C580.77,-602.72 603.96,-611.32 622,-626 655.01,-652.87 644.21,-674.34 662,-713 792.54,-996.61 643.79,-1351 956,-1351 956,-1351 956,-1351 2379,-1351 2579.59,-1351 2669.81,-1454.72 2830,-1334 2875.57,-1299.66 2847.63,-1264.5 2870,-1212 2909.81,-1118.55 2970.46,-1013.89 2998,-967.88" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2999.95,-969.05 3001.34,-962.3 2996.05,-966.7 2999.95,-969.05" />
+</g>
+
+<g id="node5" class="node">
+<title>thor-2011</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M522,-740C522,-740 425,-740 425,-740 419,-740 413,-734 413,-728 413,-728 413,-716 413,-716 413,-710 419,-704 425,-704 425,-704 522,-704 522,-704 528,-704 534,-710 534,-716 534,-716 534,-728 534,-728 534,-734 528,-740 522,-740" />
+<text text-anchor="middle" x="473.5" y="-719.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="473.5" dy="-0.35em">マイティ・ソー</tspan><tspan x="473.5" dy="1.20em">2011年</tspan></text>
+</g>
+
+<g id="edge69" class="edge audit-added" data-layer="story" data-strength="strong" data-render="solid">
+<title>iron-man-2-2010-&gt;thor-2011</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M285.25,-722C321.34,-722 367.96,-722 405.65,-722" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="406.08,-724.28 412.58,-722 406.08,-719.73 406.08,-724.28" />
+</g>
+
+<g id="edge2" class="edge" data-strength="strong" data-render="solid">
+<title>iron-man-2-2010-&gt;the-avengers-2012</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M285.03,-704.24C298.05,-700.89 311.91,-697.87 325,-696 440.2,-679.57 576.09,-680.91 655.16,-683.72" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="655.11,-685.99 661.69,-683.96 655.28,-681.45 655.11,-685.99" />
+</g>
+
+<g id="node7" class="node">
+<title>iron-man-3-2013</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1003.5,-741C1003.5,-741 910.5,-741 910.5,-741 904.5,-741 898.5,-735 898.5,-729 898.5,-729 898.5,-717 898.5,-717 898.5,-711 904.5,-705 910.5,-705 910.5,-705 1003.5,-705 1003.5,-705 1009.5,-705 1015.5,-711 1015.5,-717 1015.5,-717 1015.5,-729 1015.5,-729 1015.5,-735 1009.5,-741 1003.5,-741" />
+<text text-anchor="middle" x="957" y="-720.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="957" dy="-0.35em">アイアンマン3</tspan><tspan x="957" dy="1.20em">2013年</tspan></text>
+</g>
+
+<g id="edge57" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>iron-man-2-2010-&gt;iron-man-3-2013</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M285,-739.99C298.03,-743.32 311.89,-746.28 325,-748 530.7,-774.96 777.07,-748.4 891.6,-732.72" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="892.16,-734.94 898.28,-731.79 891.53,-730.43 892.16,-734.94" />
+</g>
+
+<g id="node4" class="node">
+<title>captain-america-the-first-avenger-2011</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M610,-670C610,-670 337,-670 337,-670 331,-670 325,-664 325,-658 325,-658 325,-646 325,-646 325,-640 331,-634 337,-634 337,-634 610,-634 610,-634 616,-634 622,-640 622,-646 622,-646 622,-658 622,-658 622,-664 616,-670 610,-670" />
+<text text-anchor="middle" x="473.5" y="-649.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="473.5" dy="-0.35em">キャプテン・アメリカ／ザ・ファースト・アベンジャー</tspan><tspan x="473.5" dy="1.20em">2011年</tspan></text>
+</g>
+
+<g id="edge7" class="edge" data-strength="strong" data-render="solid">
+<title>captain-america-the-first-avenger-2011-&gt;the-avengers-2012</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M601.62,-670.01C620.19,-672.64 638.66,-675.26 655.33,-677.62" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="655.12,-679.89 661.87,-678.55 655.76,-675.39 655.12,-679.89" />
+</g>
+
+<g id="node10" class="node">
+<title>captain-america-the-winter-soldier-2014</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1079,-671C1079,-671 835,-671 835,-671 829,-671 823,-665 823,-659 823,-659 823,-647 823,-647 823,-641 829,-635 835,-635 835,-635 1079,-635 1079,-635 1085,-635 1091,-641 1091,-647 1091,-647 1091,-659 1091,-659 1091,-665 1085,-671 1079,-671" />
+<text text-anchor="middle" x="957" y="-650.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="957" dy="-0.35em">キャプテン・アメリカ／ウィンター・ソルジャー</tspan><tspan x="957" dy="1.20em">2014年</tspan></text>
+</g>
+
+<g id="edge58" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>captain-america-the-first-avenger-2011-&gt;captain-america-the-winter-soldier-2014</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M622.24,-652.31C683.98,-652.44 755.38,-652.58 816.25,-652.71" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="816.36,-654.98 822.86,-652.72 816.36,-650.43 816.36,-654.98" />
+</g>
+
+<g id="edge10" class="edge" data-strength="strong" data-render="solid">
+<title>thor-2011-&gt;the-avengers-2012</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M534.29,-713.53C570.87,-708.34 617.71,-701.71 655.39,-696.37" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="655.71,-698.62 661.83,-695.46 655.08,-694.11 655.71,-698.62" />
+</g>
+
+<g id="node8" class="node">
+<title>thor-the-dark-world-2013</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1049.5,-793C1049.5,-793 864.5,-793 864.5,-793 858.5,-793 852.5,-787 852.5,-781 852.5,-781 852.5,-769 852.5,-769 852.5,-763 858.5,-757 864.5,-757 864.5,-757 1049.5,-757 1049.5,-757 1055.5,-757 1061.5,-763 1061.5,-769 1061.5,-769 1061.5,-781 1061.5,-781 1061.5,-787 1055.5,-793 1049.5,-793" />
+<text text-anchor="middle" x="957" y="-772.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="957" dy="-0.35em">マイティ・ソー／ダーク・ワールド</tspan><tspan x="957" dy="1.20em">2013年</tspan></text>
+</g>
+
+<g id="edge108" class="edge fan-verified" data-layer="story" data-strength="very strong" data-render="solid_thick">
+<title>thor-2011-&gt;thor-the-dark-world-2013</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M534.02,-728.55C611.63,-737.09 748.85,-752.2 845.71,-762.86" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="845.61,-765.14 852.32,-763.59 846.11,-760.62 845.61,-765.14" />
+</g>
+
+<g id="edge109" class="edge fan-verified" data-layer="story" data-strength="strong" data-render="solid">
+<title>the-avengers-2012-&gt;iron-man-3-2013</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M783.07,-696.22C816.25,-701.36 857.57,-707.76 891.51,-713.01" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="891.42,-715.3 898.19,-714.05 892.11,-710.81 891.42,-715.3" />
+</g>
+
+<g id="edge11" class="edge" data-strength="medium" data-render="dashed">
+<title>the-avengers-2012-&gt;thor-the-dark-world-2013</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M747.11,-705.19C766.49,-719.22 795.16,-738.04 823,-749 830.27,-751.86 837.89,-754.42 845.65,-756.7" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="845.32,-758.97 852.19,-758.56 846.56,-754.6 845.32,-758.97" />
+</g>
+
+<g id="edge8" class="edge" data-strength="strong" data-render="solid">
+<title>the-avengers-2012-&gt;captain-america-the-winter-soldier-2014</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M783.07,-678.29C796.49,-676.33 811.25,-674.17 826.31,-671.97" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="826.68,-674.21 832.78,-671.02 826.02,-669.71 826.68,-674.21" />
+</g>
+
+<g id="node11" class="node">
+<title>avengers-age-of-ultron-2015</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1367,-706C1367,-706 1143,-706 1143,-706 1137,-706 1131,-700 1131,-694 1131,-694 1131,-682 1131,-682 1131,-676 1137,-670 1143,-670 1143,-670 1367,-670 1367,-670 1373,-670 1379,-676 1379,-682 1379,-682 1379,-694 1379,-694 1379,-700 1373,-706 1367,-706" />
+<text text-anchor="middle" x="1255" y="-685.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="1255" dy="-0.35em">アベンジャーズ／エイジ・オブ・ウルトロン</tspan><tspan x="1255" dy="1.20em">2015年</tspan></text>
+</g>
+
+<g id="edge3" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>the-avengers-2012-&gt;avengers-age-of-ultron-2015</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M783.07,-687.11C865.19,-687.27 1015.35,-687.55 1124.08,-687.76" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="1124.35,-690.03 1130.85,-687.77 1124.35,-685.48 1124.35,-690.03" />
+</g>
+
+<g id="edge110" class="edge fan-verified" data-layer="character" data-strength="medium" data-render="dashed">
+<title>iron-man-3-2013-&gt;avengers-age-of-ultron-2015</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M1015.77,-716.17C1046.79,-712.5 1086.35,-707.82 1124.28,-703.34" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1124.66,-705.58 1130.85,-702.56 1124.13,-701.07 1124.66,-705.58" />
+</g>
+
+<g id="node56" class="node">
+<title>wonder-man-s1-2026</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M2722,-962C2722,-962 2621,-962 2621,-962 2615,-962 2609,-956 2609,-950 2609,-950 2609,-938 2609,-938 2609,-932 2615,-926 2621,-926 2621,-926 2722,-926 2722,-926 2728,-926 2734,-932 2734,-938 2734,-938 2734,-950 2734,-950 2734,-956 2728,-962 2722,-962" />
+<text text-anchor="middle" x="2671.5" y="-941.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="2671.5" dy="-0.35em">ワンダーマン S1</tspan><tspan x="2671.5" dy="1.20em">2026年</tspan></text>
+</g>
+
+<g id="edge116" class="edge fan-verified" data-layer="character" data-strength="strong" data-render="solid">
+<title>iron-man-3-2013-&gt;wonder-man-s1-2026</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1015.5,-724.36C1040.46,-727.32 1068.96,-734.13 1091,-749 1201.78,-823.73 1307.84,-1178.83 1419,-1253 1461.67,-1281.47 1481.2,-1274 1532.5,-1274 1532.5,-1274 1532.5,-1274 2125,-1274 2341.28,-1274 2307.1,-1057.26 2505,-970 2535.31,-956.63 2571.41,-950.02 2602.15,-946.79" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2602.38,-949.05 2608.62,-946.15 2601.93,-944.52 2602.38,-949.05" />
+</g>
+
+<g id="node9" class="node">
+<title>guardians-of-the-galaxy-2014</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1630.5,-811C1630.5,-811 1436.5,-811 1436.5,-811 1430.5,-811 1424.5,-805 1424.5,-799 1424.5,-799 1424.5,-787 1424.5,-787 1424.5,-781 1430.5,-775 1436.5,-775 1436.5,-775 1630.5,-775 1630.5,-775 1636.5,-775 1642.5,-781 1642.5,-787 1642.5,-787 1642.5,-799 1642.5,-799 1642.5,-805 1636.5,-811 1630.5,-811" />
+<text text-anchor="middle" x="1533.5" y="-790.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="1533.5" dy="-0.35em">ガーディアンズ・オブ・ギャラクシー</tspan><tspan x="1533.5" dy="1.20em">2014年</tspan></text>
+</g>
+
+<g id="edge70" class="edge audit-added" data-layer="story" data-strength="medium" data-render="dashed">
+<title>thor-the-dark-world-2013-&gt;guardians-of-the-galaxy-2014</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M1061.81,-780.9C1084.6,-782.06 1108.61,-783.17 1131,-784 1227.57,-787.59 1337.26,-789.93 1417.56,-791.33" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1417.73,-793.6 1424.26,-791.44 1417.8,-789.05 1417.73,-793.6" />
+</g>
+
+<g id="edge12" class="edge" data-strength="medium" data-render="dashed">
+<title>thor-the-dark-world-2013-&gt;avengers-age-of-ultron-2015</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M1061.52,-759.74C1071.69,-756.77 1081.68,-753.23 1091,-749 1111.48,-739.7 1110.74,-727.77 1131,-718 1138.65,-714.31 1146.8,-711.05 1155.11,-708.18" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1156.05,-710.26 1161.5,-706.05 1154.61,-705.95 1156.05,-710.26" />
+</g>
+
+<g id="node17" class="node">
+<title>thor-ragnarok-2017</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1618,-741C1618,-741 1449,-741 1449,-741 1443,-741 1437,-735 1437,-729 1437,-729 1437,-717 1437,-717 1437,-711 1443,-705 1449,-705 1449,-705 1618,-705 1618,-705 1624,-705 1630,-711 1630,-717 1630,-717 1630,-729 1630,-729 1630,-735 1624,-741 1618,-741" />
+<text text-anchor="middle" x="1533.5" y="-720.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="1533.5" dy="-0.35em">マイティ・ソー バトルロイヤル</tspan><tspan x="1533.5" dy="1.20em">2017年</tspan></text>
+</g>
+
+<g id="edge60" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>thor-the-dark-world-2013-&gt;thor-ragnarok-2017</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1061.63,-756.94C1071.63,-754.54 1081.55,-751.9 1091,-749 1109.47,-743.34 1112.12,-736.07 1131,-732 1185.86,-720.18 1330.46,-719.67 1430.27,-720.92" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="1430.25,-723.19 1436.78,-721 1430.31,-718.64 1430.25,-723.19" />
+</g>
+
+<g id="node44" class="node">
+<title>wandavision-2021</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M2725,-1326C2725,-1326 2618,-1326 2618,-1326 2612,-1326 2606,-1320 2606,-1314 2606,-1314 2606,-1302 2606,-1302 2606,-1296 2612,-1290 2618,-1290 2618,-1290 2725,-1290 2725,-1290 2731,-1290 2737,-1296 2737,-1302 2737,-1302 2737,-1314 2737,-1314 2737,-1320 2731,-1326 2725,-1326" />
+<text text-anchor="middle" x="2671.5" y="-1305.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="2671.5" dy="-0.35em">ワンダヴィジョン</tspan><tspan x="2671.5" dy="1.20em">2021年</tspan></text>
+</g>
+
+<g id="edge83" class="edge audit-added" data-layer="character" data-strength="medium" data-render="dashed">
+<title>thor-the-dark-world-2013-&gt;wandavision-2021</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M966.12,-793.04C1009.41,-886.14 1222.64,-1308 1532.5,-1308 1532.5,-1308 1532.5,-1308 2125,-1308 2295.05,-1308 2494.92,-1308 2599.12,-1308" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="2599.34,-1310.28 2605.84,-1308 2599.34,-1305.73 2599.34,-1310.28" />
+</g>
+
+<g id="node15" class="node">
+<title>guardians-of-the-galaxy-vol-2-2017</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1953,-829C1953,-829 1700,-829 1700,-829 1694,-829 1688,-823 1688,-817 1688,-817 1688,-805 1688,-805 1688,-799 1694,-793 1700,-793 1700,-793 1953,-793 1953,-793 1959,-793 1965,-799 1965,-805 1965,-805 1965,-817 1965,-817 1965,-823 1959,-829 1953,-829" />
+<text text-anchor="middle" x="1826.5" y="-808.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="1826.5" dy="-0.35em">ガーディアンズ・オブ・ギャラクシー：リミックス</tspan><tspan x="1826.5" dy="1.20em">2017年</tspan></text>
+</g>
+
+<g id="edge16" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>guardians-of-the-galaxy-2014-&gt;guardians-of-the-galaxy-vol-2-2017</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1642.86,-799.7C1655.38,-800.48 1668.3,-801.28 1681.2,-802.07" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="1681.31,-804.36 1687.94,-802.49 1681.6,-799.82 1681.31,-804.36" />
+</g>
+
+<g id="node22" class="node">
+<title>captain-marvel-2019</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M2187.5,-792C2187.5,-792 2060.5,-792 2060.5,-792 2054.5,-792 2048.5,-786 2048.5,-780 2048.5,-780 2048.5,-768 2048.5,-768 2048.5,-762 2054.5,-756 2060.5,-756 2060.5,-756 2187.5,-756 2187.5,-756 2193.5,-756 2199.5,-762 2199.5,-768 2199.5,-768 2199.5,-780 2199.5,-780 2199.5,-786 2193.5,-792 2187.5,-792" />
+<text text-anchor="middle" x="2124" y="-771.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="2124" dy="-0.35em">キャプテン・マーベル</tspan><tspan x="2124" dy="1.20em">2019年</tspan></text>
+</g>
+
+<g id="edge112" class="edge fan-verified" data-layer="character" data-strength="medium" data-render="dashed">
+<title>guardians-of-the-galaxy-2014-&gt;captain-marvel-2019</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M1642.67,-787C1657.88,-786.26 1673.33,-785.57 1688,-785 1811.23,-780.23 1954.19,-777.07 2041.6,-775.41" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="2041.86,-777.68 2048.32,-775.28 2041.77,-773.13 2041.86,-777.68" />
+</g>
+
+<g id="edge9" class="edge" data-strength="strong" data-render="solid">
+<title>captain-america-the-winter-soldier-2014-&gt;avengers-age-of-ultron-2015</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1091.28,-668.76C1102.31,-670.06 1113.45,-671.38 1124.46,-672.68" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="1124.19,-674.94 1130.92,-673.45 1124.73,-670.42 1124.19,-674.94" />
+</g>
+
+<g id="node13" class="node">
+<title>captain-america-civil-war-2016</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1636,-671C1636,-671 1431,-671 1431,-671 1425,-671 1419,-665 1419,-659 1419,-659 1419,-647 1419,-647 1419,-641 1425,-635 1431,-635 1431,-635 1636,-635 1636,-635 1642,-635 1648,-641 1648,-647 1648,-647 1648,-659 1648,-659 1648,-665 1642,-671 1636,-671" />
+<text text-anchor="middle" x="1533.5" y="-650.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="1533.5" dy="-0.35em">シビル・ウォー／キャプテン・アメリカ</tspan><tspan x="1533.5" dy="1.20em">2016年</tspan></text>
+</g>
+
+<g id="edge59" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>captain-america-the-winter-soldier-2014-&gt;captain-america-civil-war-2016</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1091.25,-653C1188.19,-653 1318.37,-653 1412.18,-653" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="1412.37,-655.28 1418.87,-653 1412.37,-650.73 1412.37,-655.28" />
+</g>
+
+<g id="edge4" class="edge" data-strength="strong" data-render="solid">
+<title>avengers-age-of-ultron-2015-&gt;captain-america-civil-war-2016</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1379.29,-672.39C1390.14,-671.02 1401.12,-669.63 1411.95,-668.26" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="1412.51,-670.48 1418.67,-667.41 1411.94,-665.97 1412.51,-670.48" />
+</g>
+
+<g id="edge13" class="edge" data-strength="medium" data-render="dashed">
+<title>avengers-age-of-ultron-2015-&gt;thor-ragnarok-2017</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M1379.29,-703.61C1396.33,-705.76 1413.67,-707.96 1430.27,-710.06" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1430.1,-712.33 1436.83,-710.89 1430.67,-707.82 1430.1,-712.33" />
+</g>
+
+<g id="node20" class="node">
+<title>black-panther-2018</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1880.5,-653C1880.5,-653 1772.5,-653 1772.5,-653 1766.5,-653 1760.5,-647 1760.5,-641 1760.5,-641 1760.5,-629 1760.5,-629 1760.5,-623 1766.5,-617 1772.5,-617 1772.5,-617 1880.5,-617 1880.5,-617 1886.5,-617 1892.5,-623 1892.5,-629 1892.5,-629 1892.5,-641 1892.5,-641 1892.5,-647 1886.5,-653 1880.5,-653" />
+<text text-anchor="middle" x="1826.5" y="-632.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="1826.5" dy="-0.35em">ブラックパンサー</tspan><tspan x="1826.5" dy="1.20em">2018年</tspan></text>
+</g>
+
+<g id="edge72" class="edge audit-added" data-layer="story" data-strength="medium" data-render="dashed">
+<title>avengers-age-of-ultron-2015-&gt;black-panther-2018</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M1379.24,-690.48C1474.7,-691.41 1598.71,-690.17 1648,-679 1667.01,-674.69 1669.4,-666.85 1688,-661 1709,-654.39 1732.37,-649.2 1753.79,-645.26" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1754.37,-647.46 1760.37,-644.07 1753.57,-642.99 1754.37,-647.46" />
+</g>
+
+<g id="edge81" class="edge audit-added" data-layer="character" data-strength="very strong" data-render="solid_thick">
+<title>avengers-age-of-ultron-2015-&gt;wandavision-2021</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1335.67,-706.03C1351.34,-712.32 1366.71,-720.74 1379,-732 1410.38,-760.75 1393.73,-784.76 1419,-819 1562.99,-1014.14 1582.99,-1183 1825.5,-1183 1825.5,-1183 1825.5,-1183 2125,-1183 2299.53,-1183 2334.14,-1246.41 2505,-1282 2535.71,-1288.4 2569.91,-1294.02 2599.22,-1298.38" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="2599.02,-1300.65 2605.78,-1299.35 2599.68,-1296.15 2599.02,-1300.65" />
+</g>
+
+<g id="node54" class="node">
+<title>visionquest-2026-10-14</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M3448.5,-1326C3448.5,-1326 3252.5,-1326 3252.5,-1326 3246.5,-1326 3240.5,-1320 3240.5,-1314 3240.5,-1314 3240.5,-1302 3240.5,-1302 3240.5,-1296 3246.5,-1290 3252.5,-1290 3252.5,-1290 3448.5,-1290 3448.5,-1290 3454.5,-1290 3460.5,-1296 3460.5,-1302 3460.5,-1302 3460.5,-1314 3460.5,-1314 3460.5,-1320 3454.5,-1326 3448.5,-1326" />
+<text text-anchor="middle" x="3350.5" y="-1305.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="3350.5" dy="-0.35em">VisionQuest （邦題未発表）</tspan><tspan x="3350.5" dy="1.20em">2026年10月14日</tspan></text>
+</g>
+
+<g id="edge99" class="edge audit-added" data-layer="character" data-strength="strong" data-render="solid">
+<title>avengers-age-of-ultron-2015-&gt;visionquest-2026-10-14</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1343.85,-706.11C1357.24,-712.35 1369.67,-720.73 1379,-732 1452.15,-820.37 1359.32,-889.03 1419,-987 1496.09,-1113.55 1551.91,-1125.36 1688,-1184 2226.67,-1416.1 2954.45,-1358.31 3233.77,-1324.25" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="3234.11,-1326.5 3240.28,-1323.45 3233.55,-1321.98 3234.11,-1326.5" />
+</g>
+
+<g id="node12" class="node">
+<title>ant-man-2015</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1294,-619C1294,-619 1216,-619 1216,-619 1210,-619 1204,-613 1204,-607 1204,-607 1204,-595 1204,-595 1204,-589 1210,-583 1216,-583 1216,-583 1294,-583 1294,-583 1300,-583 1306,-589 1306,-595 1306,-595 1306,-607 1306,-607 1306,-613 1300,-619 1294,-619" />
+<text text-anchor="middle" x="1255" y="-598.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="1255" dy="-0.35em">アントマン</tspan><tspan x="1255" dy="1.20em">2015年</tspan></text>
+</g>
+
+<g id="edge20" class="edge" data-strength="strong" data-render="solid">
+<title>ant-man-2015-&gt;captain-america-civil-war-2016</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1306.07,-610.42C1340.64,-616.92 1387.82,-625.79 1430.17,-633.76" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="1429.85,-636.01 1436.65,-634.97 1430.69,-631.54 1429.85,-636.01" />
+</g>
+
+<g id="node19" class="node">
+<title>ant-man-and-the-wasp-2018</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1885,-601C1885,-601 1768,-601 1768,-601 1762,-601 1756,-595 1756,-589 1756,-589 1756,-577 1756,-577 1756,-571 1762,-565 1768,-565 1768,-565 1885,-565 1885,-565 1891,-565 1897,-571 1897,-577 1897,-577 1897,-589 1897,-589 1897,-595 1891,-601 1885,-601" />
+<text text-anchor="middle" x="1826.5" y="-580.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="1826.5" dy="-0.35em">アントマン＆ワスプ</tspan><tspan x="1826.5" dy="1.20em">2018年</tspan></text>
+</g>
+
+<g id="edge63" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>ant-man-2015-&gt;ant-man-and-the-wasp-2018</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1306.04,-599.42C1405.94,-596.26 1630.63,-589.16 1749.09,-585.42" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="1749.26,-587.69 1755.69,-585.21 1749.12,-583.14 1749.26,-587.69" />
+</g>
+
+<g id="node16" class="node">
+<title>spider-man-homecoming-2017</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1914,-705C1914,-705 1739,-705 1739,-705 1733,-705 1727,-699 1727,-693 1727,-693 1727,-681 1727,-681 1727,-675 1733,-669 1739,-669 1739,-669 1914,-669 1914,-669 1920,-669 1926,-675 1926,-681 1926,-681 1926,-693 1926,-693 1926,-699 1920,-705 1914,-705" />
+<text text-anchor="middle" x="1826.5" y="-684.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="1826.5" dy="-0.35em">スパイダーマン：ホームカミング</tspan><tspan x="1826.5" dy="1.20em">2017年</tspan></text>
+</g>
+
+<g id="edge74" class="edge audit-added" data-layer="character" data-strength="very strong" data-render="solid_thick">
+<title>captain-america-civil-war-2016-&gt;spider-man-homecoming-2017</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1648.26,-666.29C1672.01,-669.07 1696.95,-671.98 1720.37,-674.72" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="1720.21,-676.99 1726.93,-675.48 1720.74,-672.47 1720.21,-676.99" />
+</g>
+
+<g id="node18" class="node">
+<title>avengers-infinity-war-2018</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M2231,-740C2231,-740 2017,-740 2017,-740 2011,-740 2005,-734 2005,-728 2005,-728 2005,-716 2005,-716 2005,-710 2011,-704 2017,-704 2017,-704 2231,-704 2231,-704 2237,-704 2243,-710 2243,-716 2243,-716 2243,-728 2243,-728 2243,-734 2237,-740 2231,-740" />
+<text text-anchor="middle" x="2124" y="-719.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="2124" dy="-0.35em">アベンジャーズ／インフィニティ・ウォー</tspan><tspan x="2124" dy="1.20em">2018年</tspan></text>
+</g>
+
+<g id="edge5" class="edge" data-strength="strong" data-render="solid">
+<title>captain-america-civil-war-2016-&gt;avengers-infinity-war-2018</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1581.48,-671.08C1601.94,-678.99 1626.17,-688.4 1648,-697 1665.82,-704.02 1669.24,-709.18 1688,-713 1745.05,-724.6 1891.12,-725.49 1998.31,-724.37" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="1998.52,-726.64 2004.99,-724.3 1998.47,-722.09 1998.52,-726.64" />
+</g>
+
+<g id="edge21" class="edge" data-strength="strong" data-render="solid">
+<title>captain-america-civil-war-2016-&gt;ant-man-and-the-wasp-2018</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1592.84,-634.9C1621.37,-626.41 1656.31,-616.52 1688,-609 1707.84,-604.29 1729.44,-599.88 1749.53,-596.07" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="1750.02,-598.29 1755.99,-594.85 1749.18,-593.82 1750.02,-598.29" />
+</g>
+
+<g id="edge73" class="edge audit-added" data-layer="character" data-strength="very strong" data-render="solid_thick">
+<title>captain-america-civil-war-2016-&gt;black-panther-2018</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1648.26,-645.96C1683.68,-643.77 1721.74,-641.42 1753.47,-639.46" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="1753.8,-641.71 1760.14,-639.04 1753.52,-637.17 1753.8,-641.71" />
+</g>
+
+<g id="node27" class="node">
+<title>black-widow-2021</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M2730,-468C2730,-468 2613,-468 2613,-468 2607,-468 2601,-462 2601,-456 2601,-456 2601,-444 2601,-444 2601,-438 2607,-432 2613,-432 2613,-432 2730,-432 2730,-432 2736,-432 2742,-438 2742,-444 2742,-444 2742,-456 2742,-456 2742,-462 2736,-468 2730,-468" />
+<text text-anchor="middle" x="2671.5" y="-447.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="2671.5" dy="-0.35em">ブラック・ウィドウ</tspan><tspan x="2671.5" dy="1.20em">2021年</tspan></text>
+</g>
+
+<g id="edge75" class="edge audit-added" data-layer="story" data-strength="very strong" data-render="solid_thick">
+<title>captain-america-civil-war-2016-&gt;black-widow-2021</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1556.24,-634.89C1584.58,-612.39 1636.62,-574.81 1688,-557 2010.76,-445.12 2425.73,-442.54 2594.28,-446.92" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="2594.34,-449.2 2600.9,-447.1 2594.46,-444.65 2594.34,-449.2" />
+</g>
+
+<g id="node41" class="node">
+<title>the-falcon-and-the-winter-soldier-2021</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M2769,-910C2769,-910 2574,-910 2574,-910 2568,-910 2562,-904 2562,-898 2562,-898 2562,-886 2562,-886 2562,-880 2568,-874 2574,-874 2574,-874 2769,-874 2769,-874 2775,-874 2781,-880 2781,-886 2781,-886 2781,-898 2781,-898 2781,-904 2775,-910 2769,-910" />
+<text text-anchor="middle" x="2671.5" y="-889.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="2671.5" dy="-0.35em">ファルコン＆ウィンター・ソルジャー</tspan><tspan x="2671.5" dy="1.20em">2021年</tspan></text>
+</g>
+
+<g id="edge76" class="edge audit-added" data-layer="character" data-strength="strong" data-render="solid">
+<title>captain-america-civil-war-2016-&gt;the-falcon-and-the-winter-soldier-2021</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1610.22,-671.1C1624.28,-677.36 1637.74,-685.76 1648,-697 1691.62,-744.8 1637.45,-796.6 1688,-837 1818.75,-941.49 2324.94,-918.25 2555.24,-901.59" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2555.65,-903.84 2561.97,-901.1 2555.32,-899.3 2555.65,-903.84" />
+</g>
+
+<g id="edge82" class="edge audit-added" data-layer="character" data-strength="strong" data-render="solid">
+<title>captain-america-civil-war-2016-&gt;wandavision-2021</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1611.99,-671.09C1625.58,-677.34 1638.41,-685.74 1648,-697 1703.38,-762.04 1631.92,-820.56 1688,-885 1931.65,-1165 2219.88,-898.52 2473,-1170 2508.3,-1207.86 2466.22,-1247.7 2505,-1282 2530.32,-1304.4 2566.77,-1311.82 2599.02,-1313.24" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2599.26,-1315.52 2605.83,-1313.46 2599.4,-1310.98 2599.26,-1315.52" />
+</g>
+
+<g id="node14" class="node">
+<title>doctor-strange-2016</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M1318.5,-776C1318.5,-776 1191.5,-776 1191.5,-776 1185.5,-776 1179.5,-770 1179.5,-764 1179.5,-764 1179.5,-752 1179.5,-752 1179.5,-746 1185.5,-740 1191.5,-740 1191.5,-740 1318.5,-740 1318.5,-740 1324.5,-740 1330.5,-746 1330.5,-752 1330.5,-752 1330.5,-764 1330.5,-764 1330.5,-770 1324.5,-776 1318.5,-776" />
+<text text-anchor="middle" x="1255" y="-755.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="1255" dy="-0.35em">ドクター・ストレンジ</tspan><tspan x="1255" dy="1.20em">2016年</tspan></text>
+</g>
+
+<g id="edge71" class="edge audit-added" data-layer="character" data-strength="strong" data-render="solid">
+<title>doctor-strange-2016-&gt;thor-ragnarok-2017</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1330.82,-748.53C1361.41,-744.66 1397.29,-740.12 1430.23,-735.95" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="1430.62,-738.19 1436.78,-735.12 1430.05,-733.68 1430.62,-738.19" />
+</g>
+
+<g id="edge28" class="edge" data-strength="strong" data-render="solid">
+<title>doctor-strange-2016-&gt;avengers-infinity-war-2018</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1330.8,-756.96C1409.7,-755.71 1537.63,-753.23 1648,-749 1788.99,-743.6 1824.15,-740.23 1965,-732 1975.78,-731.37 1986.97,-730.7 1998.2,-730.01" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="1998.46,-732.27 2004.81,-729.61 1998.18,-727.73 1998.46,-732.27" />
+</g>
+
+<g id="node29" class="node">
+<title>doctor-strange-in-the-multiverse-of-madness-2022</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M3492,-468C3492,-468 3209,-468 3209,-468 3203,-468 3197,-462 3197,-456 3197,-456 3197,-444 3197,-444 3197,-438 3203,-432 3209,-432 3209,-432 3492,-432 3492,-432 3498,-432 3504,-438 3504,-444 3504,-444 3504,-456 3504,-456 3504,-462 3498,-468 3492,-468" />
+<text text-anchor="middle" x="3350.5" y="-447.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="3350.5" dy="-0.35em">ドクター・ストレンジ／マルチバース・オブ・マッドネス</tspan><tspan x="3350.5" dy="1.20em">2022年</tspan></text>
+</g>
+
+<g id="edge66" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>doctor-strange-2016-&gt;doctor-strange-in-the-multiverse-of-madness-2022</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1330.65,-773.56C1346.97,-778.18 1363.87,-783.94 1379,-791 1398.67,-800.17 1398.53,-811.79 1419,-819 1648,-899.69 1722.73,-853.05 1965,-837 2502.47,-801.39 2781.45,-1004.13 3157,-618 3202.71,-571 3148.25,-519.85 3197,-476 3198.5,-474.65 3200.04,-473.36 3201.62,-472.13" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="3203.21,-473.79 3207.14,-468.13 3200.54,-470.1 3203.21,-473.79" />
+</g>
+
+<g id="edge17" class="edge" data-strength="strong" data-render="solid">
+<title>guardians-of-the-galaxy-vol-2-2017-&gt;avengers-infinity-war-2018</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1880.16,-792.93C1905.81,-784.05 1937.06,-773.11 1965,-763 1982.85,-756.54 1986.79,-753.39 2005,-748 2012.46,-745.79 2020.24,-743.67 2028.09,-741.67" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2028.94,-743.81 2034.69,-740.02 2027.84,-739.39 2028.94,-743.81" />
+</g>
+
+<g id="node59" class="node">
+<title>the-guardians-of-the-galaxy-holiday-special-2022</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M2818,-1498C2818,-1498 2525,-1498 2525,-1498 2519,-1498 2513,-1492 2513,-1486 2513,-1486 2513,-1474 2513,-1474 2513,-1468 2519,-1462 2525,-1462 2525,-1462 2818,-1462 2818,-1462 2824,-1462 2830,-1468 2830,-1474 2830,-1474 2830,-1486 2830,-1486 2830,-1492 2824,-1498 2818,-1498" />
+<text text-anchor="middle" x="2671.5" y="-1477.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="2671.5" dy="-0.35em">ガーディアンズ・オブ・ギャラクシー ホリデー・スペシャル</tspan><tspan x="2671.5" dy="1.20em">2022年</tspan></text>
+</g>
+
+<g id="edge62" class="edge" data-strength="strong" data-render="solid">
+<title>guardians-of-the-galaxy-vol-2-2017-&gt;the-guardians-of-the-galaxy-holiday-special-2022</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1839.89,-829.04C1900.54,-915.76 2176.58,-1292.28 2505,-1454 2509.03,-1455.99 2513.18,-1457.83 2517.42,-1459.53" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2516.8,-1461.73 2523.68,-1461.94 2518.43,-1457.48 2516.8,-1461.73" />
+</g>
+
+<g id="edge24" class="edge" data-strength="strong" data-render="solid">
+<title>spider-man-homecoming-2017-&gt;avengers-infinity-war-2018</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1926.31,-698.7C1949.31,-701.43 1974.1,-704.36 1998.07,-707.2" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="1998.08,-709.5 2004.81,-708 1998.62,-704.98 1998.08,-709.5" />
+</g>
+
+<g id="node23" class="node">
+<title>spider-man-far-from-home-2019</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M2778.5,-686C2778.5,-686 2564.5,-686 2564.5,-686 2558.5,-686 2552.5,-680 2552.5,-674 2552.5,-674 2552.5,-662 2552.5,-662 2552.5,-656 2558.5,-650 2564.5,-650 2564.5,-650 2778.5,-650 2778.5,-650 2784.5,-650 2790.5,-656 2790.5,-662 2790.5,-662 2790.5,-674 2790.5,-674 2790.5,-680 2784.5,-686 2778.5,-686" />
+<text text-anchor="middle" x="2671.5" y="-665.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="2671.5" dy="-0.35em">スパイダーマン：ファー・フロム・ホーム</tspan><tspan x="2671.5" dy="1.20em">2019年</tspan></text>
+</g>
+
+<g id="edge65" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>spider-man-homecoming-2017-&gt;spider-man-far-from-home-2019</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1926.27,-684.77C2080.19,-681.3 2377.07,-674.61 2545.62,-670.81" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="2545.86,-673.08 2552.31,-670.66 2545.76,-668.54 2545.86,-673.08" />
+</g>
+
+<g id="edge14" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>thor-ragnarok-2017-&gt;avengers-infinity-war-2018</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1630.3,-725.88C1649.41,-726.35 1669.34,-726.76 1688,-727 1811.1,-728.6 1841.9,-728.95 1965,-727 1975.78,-726.83 1986.97,-726.59 1998.2,-726.32" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="1998.37,-728.59 2004.81,-726.15 1998.25,-724.04 1998.37,-728.59" />
+</g>
+
+<g id="node28" class="node">
+<title>thor-love-and-thunder-2022</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M3077,-52C3077,-52 2950,-52 2950,-52 2944,-52 2938,-46 2938,-40 2938,-40 2938,-28 2938,-28 2938,-22 2944,-16 2950,-16 2950,-16 3077,-16 3077,-16 3083,-16 3089,-22 3089,-28 3089,-28 3089,-40 3089,-40 3089,-46 3083,-52 3077,-52" />
+<text text-anchor="middle" x="3013.5" y="-31.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="3013.5" dy="-0.35em">ソー：ラブ＆サンダー</tspan><tspan x="3013.5" dy="1.20em">2022年</tspan></text>
+</g>
+
+<g id="edge61" class="edge" data-strength="strong" data-render="solid">
+<title>thor-ragnarok-2017-&gt;thor-love-and-thunder-2022</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1609.01,-704.98C1623.4,-698.7 1637.31,-690.27 1648,-679 1687.27,-637.6 1657.69,-605.35 1688,-557 1823.11,-341.46 1868.61,-185 2123,-185 2123,-185 2123,-185 2379,-185 2604.18,-185 2650,-108.02 2870,-60 2889.84,-55.67 2911.35,-51.48 2931.49,-47.78" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2931.99,-50 2937.98,-46.6 2931.18,-45.53 2931.99,-50" />
+</g>
+
+<g id="node21" class="node">
+<title>avengers-endgame-2019</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M2461,-727C2461,-727 2295,-727 2295,-727 2289,-727 2283,-721 2283,-715 2283,-715 2283,-703 2283,-703 2283,-697 2289,-691 2295,-691 2295,-691 2461,-691 2461,-691 2467,-691 2473,-697 2473,-703 2473,-703 2473,-715 2473,-715 2473,-721 2467,-727 2461,-727" />
+<text text-anchor="middle" x="2378" y="-706.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="2378" dy="-0.35em">アベンジャーズ／エンドゲーム</tspan><tspan x="2378" dy="1.20em">2019年</tspan></text>
+</g>
+
+<g id="edge6" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>avengers-infinity-war-2018-&gt;avengers-endgame-2019</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M2243.25,-715.9C2254.27,-715.33 2265.36,-714.76 2276.19,-714.2" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="2276.53,-716.46 2282.9,-713.85 2276.29,-711.92 2276.53,-716.46" />
+</g>
+
+<g id="edge80" class="edge audit-added" data-layer="story" data-strength="very strong" data-render="solid_thick">
+<title>avengers-infinity-war-2018-&gt;wandavision-2021</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M2243.08,-733.05C2331.9,-744.02 2443.22,-764.31 2473,-799 2543.07,-880.62 2432.42,-1202.6 2505,-1282 2528.36,-1307.56 2565.79,-1314.97 2599.15,-1315.58" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="2599.25,-1317.86 2605.77,-1315.62 2599.28,-1313.31 2599.25,-1317.86" />
+</g>
+
+<g id="edge22" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>ant-man-and-the-wasp-2018-&gt;avengers-endgame-2019</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M1897.24,-595.47C1918.99,-599.55 1943.03,-604.26 1965,-609 2082.81,-634.42 2218.45,-668.23 2300.93,-689.3" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="2300.41,-691.51 2307.27,-690.92 2301.53,-687.1 2300.41,-691.51" />
+</g>
+
+<g id="node31" class="node">
+<title>ant-man-and-the-wasp-quantumania-2023</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M3111,-156C3111,-156 2916,-156 2916,-156 2910,-156 2904,-150 2904,-144 2904,-144 2904,-132 2904,-132 2904,-126 2910,-120 2916,-120 2916,-120 3111,-120 3111,-120 3117,-120 3123,-126 3123,-132 3123,-132 3123,-144 3123,-144 3123,-150 3117,-156 3111,-156" />
+<text text-anchor="middle" x="3013.5" y="-135.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="3013.5" dy="-0.35em">アントマン＆ワスプ：クアントマニア</tspan><tspan x="3013.5" dy="1.20em">2023年</tspan></text>
+</g>
+
+<g id="edge64" class="edge" data-strength="strong" data-render="solid">
+<title>ant-man-and-the-wasp-2018-&gt;ant-man-and-the-wasp-quantumania-2023</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1897.15,-572.08C1921.42,-565.1 1947.04,-553.68 1965,-535 2007.19,-491.11 1960.86,-445.92 2005,-404 2279.05,-143.76 2493.84,-370.7 2830,-198 2850.75,-187.34 2848.91,-173.99 2870,-164 2878.67,-159.89 2887.92,-156.43 2897.38,-153.52" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2898.04,-155.7 2903.63,-151.68 2896.75,-151.33 2898.04,-155.7" />
+</g>
+
+<g id="node36" class="node">
+<title>thunderbolts-new-avengers-2025</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M3128,-364C3128,-364 2899,-364 2899,-364 2893,-364 2887,-358 2887,-352 2887,-352 2887,-340 2887,-340 2887,-334 2893,-328 2899,-328 2899,-328 3128,-328 3128,-328 3134,-328 3140,-334 3140,-340 3140,-340 3140,-352 3140,-352 3140,-358 3134,-364 3128,-364" />
+<text text-anchor="middle" x="3013.5" y="-343.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="3013.5" dy="-0.35em">サンダーボルツ*（ニュー・アベンジャーズ）</tspan><tspan x="3013.5" dy="1.20em">2025年</tspan></text>
+</g>
+
+<g id="edge47" class="edge" data-strength="strong" data-render="solid">
+<title>ant-man-and-the-wasp-2018-&gt;thunderbolts-new-avengers-2025</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1831.28,-564.97C1844.03,-509.29 1891.22,-339.86 2005,-274 2078.53,-231.44 2468.81,-271.82 2830,-315 2856.18,-318.13 2884.33,-322.44 2910.49,-326.85" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2910.3,-329.12 2917.09,-327.97 2911.07,-324.64 2910.3,-329.12" />
+</g>
+
+<g id="edge84" class="edge audit-added" data-layer="character" data-strength="medium" data-render="dashed">
+<title>ant-man-and-the-wasp-2018-&gt;wandavision-2021</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M1897.35,-581.03C1921.64,-583.92 1947.22,-591.56 1965,-609 2026.92,-669.73 1963.03,-724.1 2005,-800 2014.33,-816.88 2487.73,-1273.41 2505,-1282 2533.81,-1296.33 2568.63,-1303.13 2598.88,-1306.23" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="2598.98,-1308.52 2605.66,-1306.87 2599.41,-1303.99 2598.98,-1308.52" />
+</g>
+
+<g id="edge77" class="edge audit-added" data-layer="story" data-strength="strong" data-render="solid">
+<title>black-panther-2018-&gt;avengers-infinity-war-2018</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1892.77,-644.84C1915.81,-648.97 1941.75,-654.37 1965,-661 2003.31,-671.92 2045.32,-688.36 2076.38,-701.43" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2075.57,-703.56 2082.45,-703.99 2077.35,-699.36 2075.57,-703.56" />
+</g>
+
+<g id="node30" class="node">
+<title>black-panther-wakanda-forever-2022</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M3126,-416C3126,-416 2901,-416 2901,-416 2895,-416 2889,-410 2889,-404 2889,-404 2889,-392 2889,-392 2889,-386 2895,-380 2901,-380 2901,-380 3126,-380 3126,-380 3132,-380 3138,-386 3138,-392 3138,-392 3138,-404 3138,-404 3138,-410 3132,-416 3126,-416" />
+<text text-anchor="middle" x="3013.5" y="-395.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="3013.5" dy="-0.35em">ブラックパンサー／ワカンダ・フォーエバー</tspan><tspan x="3013.5" dy="1.20em">2022年</tspan></text>
+</g>
+
+<g id="edge42" class="edge" data-strength="strong" data-render="solid">
+<title>black-panther-2018-&gt;black-panther-wakanda-forever-2022</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M1892.79,-628.38C1916.2,-624.54 1942.37,-618.49 1965,-609 2123.72,-542.43 2124.72,-455.6 2283,-388 2375.58,-348.46 2404.83,-353.05 2505,-343 2648.72,-328.58 2692.6,-298.43 2830,-343 2850.89,-349.77 2849.81,-363.37 2870,-372 2874.99,-374.13 2880.14,-376.09 2885.41,-377.88" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2884.75,-380.06 2891.63,-379.92 2886.16,-375.74 2884.75,-380.06" />
+</g>
+
+<g id="edge25" class="edge" data-strength="very strong" data-render="solid_thick">
+<title>avengers-endgame-2019-&gt;spider-man-far-from-home-2019</title>
+<path fill="none" stroke="#94a3b8" stroke-width="2.5" d="M2473.24,-695.75C2496.37,-692.49 2521.49,-688.96 2545.81,-685.54" />
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="2.5" points="2546.19,-687.78 2552.31,-684.62 2545.56,-683.28 2546.19,-687.78" />
+</g>
+
+<g id="node24" class="node">
+<title>eternals-2021</title>
+<path fill="#111827" stroke="#475569" stroke-width="1.3" d="M2715.5,-520C2715.5,-520 2627.5,-520 2627.5,-520 2621.5,-520 2615.5,-514 2615.5,-508 2615.5,-508 2615.5,-496 2615.5,-496 2615.5,-490 2621.5,-484 2627.5,-484 2627.5,-484 2715.5,-484 2715.5,-484 2721.5,-484 2727.5,-490 2727.5,-496 2727.5,-496 2727.5,-508 2727.5,-508 2727.5,-514 2721.5,-520 2715.5,-520" />
+<text text-anchor="middle" x="2671.5" y="-499.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="2671.5" dy="-0.35em">エターナルズ</tspan><tspan x="2671.5" dy="1.20em">2021年</tspan></text>
+</g>
+
+<g id="edge89" class="edge audit-added" data-layer="story" data-strength="strong" data-render="solid">
+<title>avengers-endgame-2019-&gt;eternals-2021</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M2388.74,-690.89C2407.13,-658.41 2450.08,-590.18 2505,-553 2535.93,-532.06 2575.81,-519.44 2608.67,-511.98" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2609.28,-514.18 2615.14,-510.56 2608.31,-509.73 2609.28,-514.18" />
+</g>
+
+<g id="edge15" class="edge" data-strength="strong" data-render="solid">
+<title>avengers-endgame-2019-&gt;thor-love-and-thunder-2022</title>
+<path fill="none" stroke="#64748b" stroke-width="1.65" d="M2391.2,-690.58C2411.24,-661.96 2454.04,-607.37 2505,-581 2634.98,-513.75 2730.54,-635.36 2830,-528 2900.93,-451.43 2799.79,-137.24 2870,-60 2885.62,-42.82 2908.5,-34.65 2931.38,-31.23" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.65" points="2931.68,-33.48 2937.83,-30.38 2931.09,-28.97 2931.68,-33.48" />
+</g>
+
+<g id="edge23" class="edge" data-strength="medium" data-render="dashed">
+<title>avengers-endgame-2019-&gt;ant-man-and-the-wasp-quantumania-2023</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M2406.89,-690.98C2431.7,-675.74 2469.46,-654.46 2505,-642 2643.69,-593.39 2730.85,-689.49 2830,-581 2892.8,-512.28 2807.02,-232.56 2870,-164 2877.75,-155.56 2887.26,-149.3 2897.65,-144.72" />
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="2898.68,-146.75 2903.86,-142.21 2896.98,-142.53 2898.68,-146.75" />
+</g>
+
+<g id="node38" class="node">
+<title>avengers-doomsday-2026-12-18</title>
+<path fill="#30151d" stroke="#ef4444" stroke-width="1.3" d="M3458.5,-286C3458.5,-286 3242.5,-286 3242.5,-286 3236.5,-286 3230.5,-280 3230.5,-274 3230.5,-274 3230.5,-262 3230.5,-262 3230.5,-256 3236.5,-250 3242.5,-250 3242.5,-250 3458.5,-250 3458.5,-250 3464.5,-250 3470.5,-256 3470.5,-262 3470.5,-262 3470.5,-274 3470.5,-274 3470.5,-280 3464.5,-286 3458.5,-286" />
+<text text-anchor="middle" x="3350.5" y="-265.5" font-family="Noto Sans CJK JP" font-size="10.00" fill="#e5e7eb"><tspan x="3350.5" dy="-0.35em">アベンジャーズ／ドゥームズデイ</tspan><tspan x="3350.5" dy="1.20em">2026年12月18日</tspan></text>
+</g>
+
+<g id="edge100" class="edge audit-added" data-layer="official_return" data-strength="medium" data-render="dashed">
+<title>avengers-endgame-2019-&gt;avengers-doomsday-2026-12-18</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5,2" d="M2473.09,-717.58C2565.51,-723.29 2709.73,-724.9 2830,-694 2987.86,-653.44 3047.81,-649.01 3157,-528 3190.18,-4

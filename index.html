@@ -598,12 +598,17 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 
 
 /* PUBLIC v5.14.0 — configurable featured route entry. */
-.desktop-featured-host{display:inline-flex;min-width:0}
+.controls-featured-row{display:flex;max-width:1920px;margin:7px auto 0;min-width:0}
+.desktop-featured-host{display:inline-flex;min-width:420px;max-width:100%;padding:6px 8px;border:1px solid #38263b;border-radius:11px;background:linear-gradient(180deg,rgba(39,18,34,.88),rgba(18,22,36,.9))}
+.desktop-featured-host:empty{display:none}
 .mobile-featured-host{display:none}
 .featured-route-control{display:flex;align-items:center;gap:6px;min-width:0}
+.desktop-featured-host .featured-route-control{width:100%}
 .featured-route-copy{display:flex;align-items:center;gap:5px;min-width:0;white-space:nowrap}
+.desktop-featured-host .featured-route-copy{flex:1 1 auto}
 .featured-route-copy .featured-eyebrow{font-size:9px;font-weight:900;color:#fda4af}
 .featured-route-copy strong{font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.desktop-featured-host .featured-route-copy .featured-eyebrow,.desktop-featured-host .featured-route-copy strong{flex:0 0 auto;overflow:visible;text-overflow:clip}
 .featured-route-copy small{display:none;color:#94a3b8;font-size:9px}
 .featured-route-control button{min-height:32px;padding:5px 8px;font-size:10px;white-space:nowrap}
 .featured-route-preview{border-color:#be123c!important;background:#3a101d!important;color:#fecdd3!important}
@@ -618,6 +623,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .featured-route-copy{display:block;min-width:0}.featured-route-copy .featured-eyebrow{display:block;margin-bottom:1px}.featured-route-copy strong{display:block;font-size:11px}.featured-route-copy small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .featured-route-control button{min-height:38px;padding:6px 7px;font-size:10px}
   .desktop-featured-host{display:none}
+  .controls-featured-row{display:none}
 }
 
 </style>
@@ -632,7 +638,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.14.0</span>
+      <span class="stat-chip public-release">PUBLIC v5.14.1</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -651,11 +657,12 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   </div>
   <div class="controls" aria-label="作品相関図の操作">
   <div class="controls-primary">
-    <div class="control-group control-search" aria-label="作品を探す"><input id="q" aria-label="作品を検索" placeholder="邦題・英題・シリーズ名で検索"><select id="branch" aria-label="系統で絞り込み"><option value="">すべての系統</option></select><span id="desktopFeaturedHost" class="desktop-featured-host"></span></div>
+    <div class="control-group control-search" aria-label="作品を探す"><input id="q" aria-label="作品を検索" placeholder="邦題・英題・シリーズ名で検索"><select id="branch" aria-label="系統で絞り込み"><option value="">すべての系統</option></select></div>
     <div class="control-group control-scope"><span class="muted">点灯範囲</span><button class="scope-btn active" data-scope="all" title="strong / very strong の物語方向を前後に辿り、medium は直接隣接だけ表示">関連全体</button><button class="scope-btn" data-scope="one">1段階</button><button class="scope-btn" data-scope="two">2段階</button><span class="direction-key" title="関連全体では途中で向きを切り替えません"><i class="bk"></i>←前史 <i class="fw"></i>→後続 <i class="cx"></i>直接補助</span></div>
     <div class="control-group control-importance"><span class="muted">接続層</span><span class="importance-key"><button class="importance-btn" data-importance-mode="core" title="中核接続だけ表示">中核</button><button class="importance-btn" data-importance-mode="recommended" title="中核＋推奨を表示">＋推奨</button><button class="importance-btn active" data-importance-mode="reference" title="中核＋推奨＋参照の全199接続を表示（既定）">全線</button></span></div>
     <div class="control-group control-reset"><button id="clear">全解除</button></div>
   </div>
+  <div class="controls-featured-row" aria-label="今見るなら"><span id="desktopFeaturedHost" class="desktop-featured-host"></span></div>
   <details class="advanced-controls">
     <summary>詳細設定 <span class="muted">人物・複数ゴール・PATH・系列・ズーム</span></summary>
     <div class="advanced-grid">
@@ -7489,7 +7496,7 @@ render();
     const state=selectedIds.size ? (window.__marvelLastSelectionState||computeSelectionState()) : null;
     const svg=document.querySelector('.panel.active .svg-wrap svg');
     return {
-      version:'5.14.0-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
+      version:'5.14.1-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
       dim:!!svg?.classList.contains('dim'),
       litNodes:svg?.querySelectorAll('g.node.hl,g.node.focus').length||0,
       litEdges:svg?.querySelectorAll('g.edge.hl').length||0,
@@ -7827,7 +7834,7 @@ render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.14.0 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.14.1 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{
@@ -8080,7 +8087,17 @@ window.FEATURED_ROUTE=Object.freeze({
     if(!cfg.enabled||!nm[cfg.targetId])return false;
     featuredRouteState={targetId:cfg.targetId,state:buildFeaturedRouteState(cfg.targetId)};
     activatePanel('overview',{fit:false,restoreSelection:false,exitFeatured:false});
-    requestAnimationFrame(()=>{renderFeaturedRoutePreview();_origCenterNodeInView(cfg.targetId);});
+    requestAnimationFrame(()=>{
+      // v5.14.1: activatePanel also queues a paint. If the user exits the
+      // preview before this frame, that older paint must not erase the
+      // selection we just restored.
+      if(!featuredRouteState){
+        if(selectedIds.size)refreshSelection(false);
+        else{clearSvg();render();}
+        return;
+      }
+      if(renderFeaturedRoutePreview())_origCenterNodeInView(cfg.targetId);
+    });
     return true;
   };
   window.exitFeaturedRoutePreview=function({restore=true}={}){
@@ -8102,6 +8119,33 @@ window.FEATURED_ROUTE=Object.freeze({
     nodes:[...(featuredRouteState?.state?.ctx||[])],
     forward:[...(featuredRouteState?.state?.forward||[])]
   });
+
+  // v5.14.1: featured preview is exclusive. Any normal render path first
+  // retires the temporary preview state, then performs the requested repaint.
+  const renderBeforeFeaturedRoute=render;
+  render=function(...args){
+    if(featuredRouteState)exitFeaturedRoutePreview({restore:true});
+    return renderBeforeFeaturedRoute(...args);
+  };
+  const refreshSelectionBeforeFeaturedRoute=refreshSelection;
+  refreshSelection=function(...args){
+    if(featuredRouteState)exitFeaturedRoutePreview({restore:false});
+    return refreshSelectionBeforeFeaturedRoute(...args);
+  };
+
+  const retireFeaturedBeforeNormalAction=()=>{
+    if(featuredRouteState)exitFeaturedRoutePreview({restore:true});
+  };
+  const featuredExitFieldSelector='#q,#branch,#status,#character,#familyFocus';
+  document.addEventListener('input',e=>{
+    if(e.target?.matches?.(featuredExitFieldSelector))retireFeaturedBeforeNormalAction();
+  },true);
+  document.addEventListener('change',e=>{
+    if(e.target?.matches?.(featuredExitFieldSelector))retireFeaturedBeforeNormalAction();
+  },true);
+  document.addEventListener('pointerdown',e=>{
+    if(e.target?.closest?.('#clear,.scope-btn,.importance-btn,.combine-btn,.path-pref-btn,.prep-tier'))retireFeaturedBeforeNormalAction();
+  },true);
 
   const selectBeforeFeaturedRoute=select;
   select=function(id,multi=false){

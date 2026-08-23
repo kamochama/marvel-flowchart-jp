@@ -1,0 +1,80 @@
+{
+  "format": 1,
+  "encoding": "utf-8",
+  "source": "index.html",
+  "max_part_bytes": 65536,
+  "bytes": 911816,
+  "sha256": "1d3d57aaba730740f8aad78351806fc3cdbbd8d07cc91a5f82bed6ab10a2fdad",
+  "parts": [
+    {
+      "path": "parts/part-000.html",
+      "bytes": 65536,
+      "sha256": "3f336d5cbcfc1d38fd2ba3886b21f5539b1b842c6f2e0659059a73d2df287336"
+    },
+    {
+      "path": "parts/part-001.html",
+      "bytes": 65536,
+      "sha256": "960ab1c0738be80da9b73cc9ebf6c04dab1e660e5b9a6b8d1c494d165f856a1a"
+    },
+    {
+      "path": "parts/part-002.html",
+      "bytes": 65536,
+      "sha256": "e7d6004b84bc3cd8656a95829dafc547ec08b31bb748b0dccafc9529d5d3f773"
+    },
+    {
+      "path": "parts/part-003.html",
+      "bytes": 65536,
+      "sha256": "516bebd5caa75496be3615a9e5b5a3fd057dd2cd9c3a0d16cf649b89fd53b68c"
+    },
+    {
+      "path": "parts/part-004.html",
+      "bytes": 65536,
+      "sha256": "6a27464ccb05682f1a690618509963c3acc446ed4acba9f9e07790f77d2fdf42"
+    },
+    {
+      "path": "parts/part-005.html",
+      "bytes": 65536,
+      "sha256": "55ec5dc29c68801828f33d5635bbeb38bf4f46d7d75c41ee12d3361987c89d5a"
+    },
+    {
+      "path": "parts/part-006.html",
+      "bytes": 65536,
+      "sha256": "81282e46d018b1aec43a23212534c53d739e52dc7722c633e3cd8bc402010b07"
+    },
+    {
+      "path": "parts/part-007.html",
+      "bytes": 65534,
+      "sha256": "55b5029b380889d83f2ef7f9066b15ba79512f0459354d66d9178efbacf5e483"
+    },
+    {
+      "path": "parts/part-008.html",
+      "bytes": 65534,
+      "sha256": "b74a7bb4e368da3fb8cba6b8fea938751c8f3cfd40de696f5ff285b6173f9d2a"
+    },
+    {
+      "path": "parts/part-009.html",
+      "bytes": 65536,
+      "sha256": "119277d3d643162d4fe193d16fee552c3e9441fa856b2dfc88e5ba940612670a"
+    },
+    {
+      "path": "parts/part-010.html",
+      "bytes": 65535,
+      "sha256": "4738cf85fd9494d7d3569248158f419d5ce5c4d8932793bd0aef9576e80ace6f"
+    },
+    {
+      "path": "parts/part-011.html",
+      "bytes": 65536,
+      "sha256": "1c9750739e272b13d22b7698909242ff8a70a84ece1b2e961003b24ee9314d3b"
+    },
+    {
+      "path": "parts/part-012.html",
+      "bytes": 65536,
+      "sha256": "cd3af2d97af235fad1a34139a2f54fa2a581de67c0203a22eb2c3a7f968736f0"
+    },
+    {
+      "path": "parts/part-013.html",
+      "bytes": 59853,
+      "sha256": "ac30eb068e52fe50cd4326e88f276f80026ce0ff6a62ef8b0a8321b265e028ba"
+    }
+  ]
+}
