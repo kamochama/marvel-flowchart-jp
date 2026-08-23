@@ -14,8 +14,7 @@ def main() -> None:
     for required in [
         'scripts/build_public.py',
         'tests/test_build_roundtrip.py',
-        'build: refresh generated public index [skip ci]',
-        'contents: write',
+        'tests/test_pages_workflow.py',
         'src/**',
         'scripts/**',
     ]:
