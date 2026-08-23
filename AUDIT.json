@@ -1,6 +1,6 @@
 {
-  "version": "5.15.6-public",
-  "baseVersion": "5.15.5-public",
+  "version": "5.15.7-public",
+  "baseVersion": "5.15.6-public",
   "date": "2026-08-24",
   "data": {
     "works": 131,
@@ -97,8 +97,14 @@
     "overviewHomeMapLayout": true,
     "overviewHomeAreas": 7,
     "overviewHomeAreaDuplicateWorks": 0,
-    "overviewMapWorks": 76,
-    "overviewMapEdges": 77
+    "overviewMapWorks": 131,
+    "overviewMapEdges": 144,
+    "overviewMainLandmarks": 76,
+    "overviewSupportWorks": 55,
+    "overviewMainEdges": 77,
+    "overviewSupportEdges": 67,
+    "overviewMainNodeMarkupByteStable": true,
+    "overviewSupportDuplicateWorks": 0
   },
   "sourceBuild": {
     "baselineParts": 14,
