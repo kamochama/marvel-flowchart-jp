@@ -1,0 +1,40 @@
+name: Apply v5.14.1 sync
+
+on:
+  push:
+    branches:
+      - sync/v5.14.1
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply release patch once
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -q 'PUBLIC v5.14.1' index.html; then
+            echo 'v5.14.1 already applied'
+            exit 0
+          fi
+          git apply --check .github/v5141.patch
+          git apply .github/v5141.patch
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          assert 'PUBLIC v5.14.1' in s
+          assert 'queued paint' in s
+          assert 'controls-featured-row' in s
+          print('index assertions: PASS')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html AUDIT.md AUDIT.json
+          git commit -m 'fix: sync public v5.14.1'
+          git push
