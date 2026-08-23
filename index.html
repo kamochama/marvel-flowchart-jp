@@ -332,7 +332,7 @@ main{max-width:1920px;margin:auto;grid-template-columns:minmax(0,1fr) 374px;min-
 }
 
 
-/* PUBLIC v5.10.19 — wide-chart layout + selection-independent reference charts. */
+/* PUBLIC v5.11.2 — wide-chart layout + selection-independent reference charts. */
 /* FINAL AUDIT: AND-edge filtering + Japanese official metadata corrections. */
 /* v5.10.12: New Mutants stays lineage-only (no direct arrows); graph clicks no longer auto-center; AI-use disclosure added. */
 main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
@@ -402,7 +402,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .overall-watch-card{border-color:#1e3a3a!important;background:linear-gradient(145deg,rgba(6,78,59,.16),rgba(15,23,42,.76))!important}
 @media(max-width:760px){.overall-watch-percent{font-size:16px}.overall-watch-stat{font-size:9px}}
 
-/* PUBLIC v5.10.19 — full-width watch workspace + stable checklist scroll. */
+/* PUBLIC v5.11.2 — full-width watch workspace + stable checklist scroll. */
 #right .side-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
 .watch-workspace{max-width:1600px;margin:0 auto;padding:22px 14px 8px}
 .watch-workspace-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:0 2px 12px}
@@ -446,7 +446,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
  .watch-card-plan .prep-progress-tools{display:block}.watch-card-plan .prep-watched-check{width:19px;height:19px}
 }
 
-/* PUBLIC v5.10.19 — scroll-friendly chart interaction.
+/* PUBLIC v5.11.2 — scroll-friendly chart interaction.
    Performance: pinch rect is cached per gesture; highlight scans stay on the active SVG.
    On phones, touch gestures belong to the browser/page; native pinch zoom is allowed and the chart never captures two-finger pan/pinch.
    Desktop Ctrl/Cmd + wheel zoom and mouse/pen drag remain available. */
@@ -462,12 +462,17 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .svg-wrap.scroll-friendly .zoom-hint{right:10px;left:auto;bottom:8px;max-width:min(520px,72%)}
 @media(max-width:760px){
   .svg-wrap{touch-action:none!important;overscroll-behavior:auto!important;contain:layout paint}
+  /* v5.10.20: keep the SVG viewport phone-sized; pan/zoom changes only its viewBox. */
+  .svg-wrap svg{width:100%!important;height:100%!important;transform:none!important}
   .svg-wrap svg,.svg-wrap svg g.node{touch-action:none!important}
+  .svg-wrap.mobile-canvas-active>svg{visibility:hidden!important;pointer-events:none!important}
+  .svg-wrap canvas[data-marvel-mobile-canvas]{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;z-index:1}
+  .svg-wrap.mobile-canvas-active .zoom-hint{z-index:6}
   .chart-watch-jump{top:8px;right:8px;padding:6px 8px;font-size:10px}
   .svg-wrap.scroll-friendly .zoom-hint{left:8px;right:auto;bottom:8px;max-width:70%}
 }
 
-/* PUBLIC v5.10.19 — mobile goal bar. The full chart is always visible on phones. */
+/* PUBLIC v5.11.2 — mobile goal bar. The full chart is always visible on phones. */
 #mobileFocusShell{display:none}
 @media(max-width:760px){
   #mobileFocusShell{display:block;margin:6px 8px 10px;padding:9px;border:1px solid #2b3a55;border-radius:13px;background:#0b1220;color:#e5e7eb}
@@ -486,7 +491,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   #mobilePrepJump{border-color:#1d4ed8;background:#172554;color:#dbeafe}
   .svg-wrap svg.dim g.node.goal-node{opacity:1!important;filter:saturate(1.2) brightness(1.08) drop-shadow(0 0 10px #f59e0b)!important}
   .svg-wrap svg.dim g.node.current-goal{opacity:1!important;filter:saturate(1.45) brightness(1.25) drop-shadow(0 0 24px #ef4444)!important}
-  /* v5.10.19 mobile paint-light mode: dimming uses opacity only.
+  /* v5.10.20 mobile paint-light mode: dimming uses opacity only.
      Avoid running CSS filter programs across hundreds of SVG groups. */
   .svg-wrap svg.dim g.node:not(.hl):not(.focus):not(.goal-node):not(.current-goal){opacity:.46!important;filter:none!important}
   .svg-wrap svg.dim g.edge:not(.hl){opacity:.12!important;filter:none!important}
@@ -515,7 +520,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.10.19</span>
+      <span class="stat-chip public-release">PUBLIC v5.11.2</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -5148,15 +5153,243 @@ function ensureViewState(wrap){
   if(!st){st={scale:1,x:0,y:0,drag:false,lastX:0,lastY:0,raf:0};viewStates.set(wrap,st)}
   return st;
 }
+function ensureMobileViewBoxState(wrap){
+  if(!wrap) return null;
+  const svg=wrap.querySelector('svg'); if(!svg) return null;
+  const st=ensureViewState(wrap);
+  if(!st.baseViewBox){
+    const v=svg.viewBox.baseVal;
+    st.baseViewBox={x:v.x,y:v.y,w:Math.max(1,v.width),h:Math.max(1,v.height)};
+    st.vbX=st.baseViewBox.x; st.vbY=st.baseViewBox.y;
+    st.vbW=st.baseViewBox.w; st.vbH=st.baseViewBox.h;
+    st.viewportW=Math.max(1,wrap.clientWidth); st.viewportH=Math.max(1,wrap.clientHeight);
+    st.scale=1; st.x=st.vbX; st.y=st.vbY;
+  }
+  return st;
+}
+function mobileViewportAspect(wrap,st){
+  const cw=st.viewportW||Math.max(1,wrap.clientWidth),ch=st.viewportH||Math.max(1,wrap.clientHeight);
+  return Math.max(.000001,cw/Math.max(1,ch));
+}
+function mobileCameraZoom(wrap,st){
+  const a=mobileViewportAspect(wrap,st),b=st.baseViewBox;
+  return (b.w/b.h>=a)?b.w/Math.max(.001,st.vbW):b.h/Math.max(.001,st.vbH);
+}
+function mobileCameraSizeForZoom(wrap,st,zoom){
+  const a=mobileViewportAspect(wrap,st),b=st.baseViewBox,z=Math.max(.000001,zoom);
+  if(b.w/b.h>=a){const w=b.w/z;return {w,h:w/a}}
+  const h=b.h/z;return {w:h*a,h};
+}
+function mobileViewBoxMetrics(wrap,st,w=st.vbW,h=st.vbH){
+  const cw=st.viewportW||Math.max(1,wrap.clientWidth), ch=st.viewportH||Math.max(1,wrap.clientHeight);
+  const pxPerWorld=Math.max(.000001,Math.min(cw/Math.max(1,w),ch/Math.max(1,h)));
+  const drawnW=w*pxPerWorld, drawnH=h*pxPerWorld;
+  return {cw,ch,pxPerWorld,offsetX:(cw-drawnW)/2,offsetY:(ch-drawnH)/2};
+}
+function mobileClientToWorld(wrap,st,clientX,clientY,rectOverride){
+  const rect=rectOverride||wrap.getBoundingClientRect();
+  const m=mobileViewBoxMetrics(wrap,st);
+  const px=clientX-rect.left, py=clientY-rect.top;
+  return {x:st.vbX+(px-m.offsetX)/m.pxPerWorld,y:st.vbY+(py-m.offsetY)/m.pxPerWorld,px,py};
+}
+function setMobileViewBox(wrap,st,x,y,w,h){
+  st.vbX=x; st.vbY=y; st.vbW=Math.max(.001,w); st.vbH=Math.max(.001,h);
+  st.scale=st.baseViewBox.w/st.vbW;
+  st.x=st.vbX; st.y=st.vbY;
+}
+
+// v5.11.1 Canvas renderer: mobile Graphviz tabs. The source SVG remains as the
+// semantic/selection model; panning and zooming redraw a clipped Canvas view.
+// The mobile camera uses the viewport aspect ratio so zoom fills the portrait chart area,
+// while pinch/zoom keeps the touched world point anchored under the fingers.
+const mobileCanvasStates=new WeakMap();
+function mobileCanvasKey(wrap){const p=wrap?.closest('.panel');return (mobileChartMotion.matches&&p&&wrap.querySelector('svg g.node'))?p.id:null;}
+function isMobileCanvasWrap(wrap){return !!mobileCanvasKey(wrap);}
+
+function canvasRootMatrix(svg,el){
+  try{
+    const a=svg.getCTM(), b=el.getCTM();
+    if(!a||!b) return {a:1,b:0,c:0,d:1,e:0,f:0};
+    const m=a.inverse().multiply(b);
+    return {a:m.a,b:m.b,c:m.c,d:m.d,e:m.e,f:m.f};
+  }catch(_){return {a:1,b:0,c:0,d:1,e:0,f:0}}
+}
+function canvasPoint(m,x,y){return {x:m.a*x+m.c*y+m.e,y:m.b*x+m.d*y+m.f}}
+function canvasRootBBox(svg,el){
+  try{
+    const b=el.getBBox(),m=canvasRootMatrix(svg,el);
+    const p=[canvasPoint(m,b.x,b.y),canvasPoint(m,b.x+b.width,b.y),canvasPoint(m,b.x,b.y+b.height),canvasPoint(m,b.x+b.width,b.y+b.height)];
+    const xs=p.map(q=>q.x),ys=p.map(q=>q.y),x=Math.min(...xs),y=Math.min(...ys),x2=Math.max(...xs),y2=Math.max(...ys);
+    return {x,y,w:Math.max(.001,x2-x),h:Math.max(.001,y2-y),x2,y2};
+  }catch(_){return null}
+}
+function canvasColor(v){return (!v||v==='none'||v==='transparent'||v==='rgba(0, 0, 0, 0)')?null:v}
+function canvasDash(v){
+  if(!v||v==='none') return [];
+  return v.split(/[ ,]+/).map(Number).filter(Number.isFinite);
+}
+function canvasGroupState(el){
+  const g=el.closest('g.node,g.edge,g.dynamic-edge-overlay');
+  if(!g) return {alpha:1,display:true,classes:''};
+  const cs=getComputedStyle(g);
+  return {alpha:Math.max(0,Math.min(1,parseFloat(cs.opacity)||0)),display:cs.display!=='none',classes:g.getAttribute('class')||''};
+}
+function canvasTextLines(el){
+  const size=parseFloat(el.getAttribute('font-size')||getComputedStyle(el).fontSize)||10;
+  const x0=parseFloat(el.getAttribute('x')||0),y0=parseFloat(el.getAttribute('y')||0);
+  const ts=[...el.querySelectorAll(':scope > tspan')];
+  if(!ts.length) return [{text:el.textContent||'',x:x0,y:y0}];
+  let y=y0;
+  return ts.map(t=>{
+    const dy=t.getAttribute('dy');
+    if(dy){const m=dy.match(/^([+-]?[0-9.]+)em$/);y+=m?parseFloat(m[1])*size:(parseFloat(dy)||0)}
+    return {text:t.textContent||'',x:parseFloat(t.getAttribute('x')||x0),y};
+  });
+}
+function canvasPrimitive(svg,el){
+  const tag=el.tagName.toLowerCase(),m=canvasRootMatrix(svg,el),bbox=canvasRootBBox(svg,el); if(!bbox) return null;
+  let geom=null;
+  if(tag==='path'){
+    const d=el.getAttribute('d'); if(!d) return null;
+    try{geom=new Path2D(d)}catch(_){return null}
+  }else if(tag==='polygon'||tag==='polyline'){
+    const nums=(el.getAttribute('points')||'').trim().split(/[ ,]+/).map(Number).filter(Number.isFinite); if(nums.length<4)return null;
+    const p=new Path2D();p.moveTo(nums[0],nums[1]);for(let i=2;i+1<nums.length;i+=2)p.lineTo(nums[i],nums[i+1]);if(tag==='polygon')p.closePath();geom=p;
+  }else if(tag==='text') geom=canvasTextLines(el); else return null;
+  return {el,tag,m,bbox,geom,style:null};
+}
+function canvasStylePrimitive(p){
+  const cs=getComputedStyle(p.el),gs=canvasGroupState(p.el);
+  p.style={
+    display:gs.display&&cs.display!=='none',alpha:gs.alpha*Math.max(0,Math.min(1,parseFloat(cs.opacity)||1)),classes:gs.classes,
+    fill:canvasColor(cs.fill),stroke:canvasColor(cs.stroke),lineWidth:parseFloat(cs.strokeWidth)||1,
+    dash:canvasDash(cs.strokeDasharray),lineCap:cs.strokeLinecap||'butt',lineJoin:cs.strokeLinejoin||'miter',
+    vectorEffect:cs.vectorEffect||'',fontSize:parseFloat(p.el.getAttribute('font-size')||cs.fontSize)||10,
+    fontFamily:p.el.getAttribute('font-family')||cs.fontFamily||'sans-serif',textAnchor:p.el.getAttribute('text-anchor')||'start'
+  };
+}
+function canvasShadowFor(classes){
+  if(classes.includes('current-goal')||(/\bfocus\b/.test(classes)&&!classes.includes('goal-node'))) return ['#ef4444',15];
+  if(classes.includes('goal-node')) return ['#f59e0b',9];
+  if(classes.includes('backhl')) return ['#38bdf8',8];
+  if(classes.includes('forwardhl')) return ['#34d399',8];
+  if(classes.includes('bothhl')||classes.includes('pathhl')) return ['#a78bfa',8];
+  if(classes.includes('contexthl')) return ['#f59e0b',6];
+  if(/\bhl\b/.test(classes)) return ['#60a5fa',7];
+  return null;
+}
+function rebuildMobileCanvas(wrap,geometry=true){
+  const st=mobileCanvasStates.get(wrap); if(!st) return;
+  const svg=st.svg;
+  if(geometry){
+    st.primitives=[...svg.querySelectorAll('path,polygon,polyline,text')].filter(el=>!el.closest('defs')).map(el=>canvasPrimitive(svg,el)).filter(Boolean);
+    st.nodeBoxes=[...svg.querySelectorAll('g.node')].map(g=>({id:gt(g),box:canvasRootBBox(svg,g)})).filter(x=>x.id&&x.box);
+  }
+  for(const p of st.primitives) canvasStylePrimitive(p);
+  renderMobileCanvasCache(wrap);
+  drawMobileCanvas(wrap);
+}
+function resizeMobileCanvas(wrap){
+  const cs=mobileCanvasStates.get(wrap); if(!cs) return;
+  const st=ensureMobileViewBoxState(wrap),w=Math.max(1,wrap.clientWidth),h=Math.max(1,wrap.clientHeight),dpr=Math.min(3,window.devicePixelRatio||1);
+  st.viewportW=w;st.viewportH=h;
+  const rw=Math.max(1,Math.round(w*dpr)),rh=Math.max(1,Math.round(h*dpr));
+  if(cs.canvas.width!==rw||cs.canvas.height!==rh){cs.canvas.width=rw;cs.canvas.height=rh;cs.dpr=dpr}
+  cs.cssW=w;cs.cssH=h;drawMobileCanvas(wrap);
+}
+function trimMobileCanvasCaches(active){document.querySelectorAll('.svg-wrap').forEach(w=>{if(w===active)return;const x=mobileCanvasStates.get(w);if(x){x.caches=null;x.cachePixels=0;}});}
+function initMobileCanvas(wrap){
+  const key=mobileCanvasKey(wrap);if(!key)return null;
+  trimMobileCanvasCaches(wrap);
+  let cs=mobileCanvasStates.get(wrap); if(cs){resizeMobileCanvas(wrap);if(!cs.caches)rebuildMobileCanvas(wrap,false);return cs;}
+  const svg=wrap.querySelector('svg');if(!svg)return null;
+  const st=ensureMobileViewBoxState(wrap); if(!st)return null;
+  // Keep the semantic SVG on its original coordinate window. Canvas owns camera motion.
+  svg.setAttribute('viewBox',`${st.baseViewBox.x} ${st.baseViewBox.y} ${st.baseViewBox.w} ${st.baseViewBox.h}`);
+  st.lastAppliedViewBox=null;
+  const canvas=document.createElement('canvas');canvas.dataset.marvelMobileCanvas=key;canvas.setAttribute('aria-hidden','true');
+  wrap.insertBefore(canvas,svg.nextSibling);wrap.classList.add('mobile-canvas-active');
+  cs={wrap,svg,canvas,ctx:canvas.getContext('2d',{alpha:true,desynchronized:true}),primitives:[],nodeBoxes:[],syncRaf:0,dpr:1,frames:0,cullDraws:0};
+  mobileCanvasStates.set(wrap,cs);
+  const observer=new MutationObserver(records=>{
+    let geometry=false,style=false;
+    for(const r of records){if(r.type==='childList') geometry=true;else if(r.type==='attributes') style=true}
+    if(!geometry&&!style||cs.syncRaf)return;
+    cs.syncRaf=requestAnimationFrame(()=>{cs.syncRaf=0;rebuildMobileCanvas(wrap,geometry)});
+  });
+  observer.observe(svg,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','d','points']});cs.observer=observer;
+  cs.ro=new ResizeObserver(()=>resizeMobileCanvas(wrap));cs.ro.observe(wrap);
+  resizeMobileCanvas(wrap);rebuildMobileCanvas(wrap,true);
+  return cs;
+}
+function drawCanvasPrimitive(ctx,p,scale,gesture=false){
+  const ps=p.style;if(!ps||!ps.display||ps.alpha<=0)return false;
+  ctx.save();ctx.transform(scale*p.m.a,scale*p.m.b,scale*p.m.c,scale*p.m.d,scale*p.m.e,scale*p.m.f);ctx.globalAlpha=ps.alpha;
+  const shadow=!gesture&&canvasShadowFor(ps.classes);if(shadow){ctx.shadowColor=shadow[0];ctx.shadowBlur=shadow[1]/Math.max(.001,scale);}
+  if(p.tag==='text'){
+    ctx.fillStyle=ps.fill||'#111827';ctx.textAlign=ps.textAnchor==='middle'?'center':(ps.textAnchor==='end'?'right':'left');ctx.textBaseline='alphabetic';
+    ctx.font=`${ps.fontSize}px ${ps.fontFamily}`;for(const line of p.geom)ctx.fillText(line.text,line.x,line.y);
+  }else{
+    if(ps.fill){ctx.fillStyle=ps.fill;ctx.fill(p.geom)}
+    if(ps.stroke&&ps.lineWidth>0){ctx.strokeStyle=ps.stroke;ctx.lineCap=ps.lineCap;ctx.lineJoin=ps.lineJoin;ctx.setLineDash(ps.dash);
+      ctx.lineWidth=ps.vectorEffect==='non-scaling-stroke'?ps.lineWidth/Math.max(.001,scale):ps.lineWidth;ctx.stroke(p.geom)}
+  }
+  ctx.restore();return true;
+}
+function renderMobileCanvasCache(wrap){
+  const cs=mobileCanvasStates.get(wrap);if(!cs)return false;
+  const st=ensureMobileViewBoxState(wrap);if(!st)return false;
+  const b=st.baseViewBox,lods=[.25,.5,1];cs.caches=new Map();let total=0;
+  for(const lod of lods){
+    const w=Math.max(1,Math.ceil(b.w*lod)),h=Math.max(1,Math.ceil(b.h*lod)),cache=document.createElement('canvas');cache.width=w;cache.height=h;
+    const ctx=cache.getContext('2d',{alpha:true});ctx.clearRect(0,0,w,h);ctx.save();ctx.translate(-b.x*lod,-b.y*lod);
+    let n=0;for(const p of cs.primitives){if(drawCanvasPrimitive(ctx,p,lod,false))n++;}ctx.restore();cs.caches.set(lod,cache);total+=w*h;
+  }
+  cs.cachePixels=total;cs.cacheVersion=(cs.cacheVersion||0)+1;return true;
+}
+function chooseMobileCanvasCache(cs,targetDensity){
+  const lods=[.25,.5,1];let lod=lods[lods.length-1];for(const x of lods){if(x>=targetDensity*.92){lod=x;break}}
+  return {lod,cache:cs.caches?.get(lod)};
+}
+// v5.11.2: adaptive pan LOD (.25 at overview, up to .5 when zoomed); pinch stays at .25.
+function drawMobileCanvas(wrap){
+  const cs=mobileCanvasStates.get(wrap);if(!cs||!mobileChartMotion.matches)return false;
+  const st=ensureMobileViewBoxState(wrap),ctx=cs.ctx;if(!st||!ctx||!cs.caches)return false;
+  const dpr=cs.dpr||1,m=mobileViewBoxMetrics(wrap,st),b=st.baseViewBox,gesture=wrap.classList.contains('gesture-active'),panPick=chooseMobileCanvasCache(cs,Math.min(.5,m.pxPerWorld*dpr)),pick=gesture?(st.pinching?{lod:.25,cache:cs.caches?.get(.25)}:panPick):chooseMobileCanvasCache(cs,m.pxPerWorld*dpr),cache=pick.cache,lod=pick.lod;if(!cache)return false;
+  ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.shadowBlur=0;ctx.clearRect(0,0,cs.canvas.width,cs.canvas.height);
+  const ix=Math.max(st.vbX,b.x),iy=Math.max(st.vbY,b.y),ix2=Math.min(st.vbX+st.vbW,b.x+b.w),iy2=Math.min(st.vbY+st.vbH,b.y+b.h);
+  if(ix2>ix&&iy2>iy){
+    const sx=(ix-b.x)*lod,sy=(iy-b.y)*lod,sw=(ix2-ix)*lod,sh=(iy2-iy)*lod;
+    const dx=m.offsetX+(ix-st.vbX)*m.pxPerWorld,dy=m.offsetY+(iy-st.vbY)*m.pxPerWorld,dw=(ix2-ix)*m.pxPerWorld,dh=(iy2-iy)*m.pxPerWorld;
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='medium';ctx.drawImage(cache,sx,sy,sw,sh,dx,dy,dw,dh);
+  }
+  cs.frames++;cs.cullDraws=1;cs.lastLod=lod;return true;
+}
+function mobileCanvasNodeBox(wrap,id){return mobileCanvasStates.get(wrap)?.nodeBoxes.find(x=>x.id===id)?.box||null}
+function mobileCanvasHitTest(wrap,clientX,clientY){
+  const cs=mobileCanvasStates.get(wrap),st=ensureMobileViewBoxState(wrap);if(!cs||!st)return null;
+  const rect=wrap.getBoundingClientRect(),w=mobileClientToWorld(wrap,st,clientX,clientY,rect),m=mobileViewBoxMetrics(wrap,st),pad=8/Math.max(.001,m.pxPerWorld);
+  for(let i=cs.nodeBoxes.length-1;i>=0;i--){const n=cs.nodeBoxes[i],b=n.box;if(w.x>=b.x-pad&&w.x<=b.x2+pad&&w.y>=b.y-pad&&w.y<=b.y2+pad)return n.id}
+  return null;
+}
+window.marvelCanvasAudit=()=>{
+  const wrap=activeWrap(),cs=wrap&&mobileCanvasStates.get(wrap),st=wrap&&ensureViewState(wrap);
+  return {panel:wrap?.closest('.panel')?.id||null,active:!!cs,sourceViewBox:cs?.svg.getAttribute('viewBox')||null,canvas:[cs?.canvas.width||0,cs?.canvas.height||0],primitives:cs?.primitives.length||0,nodeBoxes:cs?.nodeBoxes.length||0,frames:cs?.frames||0,lastDrawn:cs?.cullDraws||0,cacheLod:cs?.lastLod||0,cachePixels:cs?.cachePixels||0,cacheVersion:cs?.cacheVersion||0,camera:st&&st.baseViewBox?{x:st.vbX,y:st.vbY,w:st.vbW,h:st.vbH}:null};
+};
+
 function applyView(wrap){
   if(!wrap) return;
   const svg=wrap.querySelector('svg'); if(!svg) return;
   const st=ensureViewState(wrap);
-  // On phones prefer a 2D transform without persistent GPU-layer hints.
-  // Desktop keeps translate3d because its larger GPU budget benefits from compositor motion.
-  svg.style.transform=mobileChartMotion.matches
-    ? `translate(${st.x}px,${st.y}px) scale(${st.scale})`
-    : `translate3d(${st.x}px,${st.y}px,0) scale(${st.scale})`;
+  if(mobileChartMotion.matches){
+    const ms=ensureMobileViewBoxState(wrap); if(!ms) return;
+    if(svg.style.transform!=='none') svg.style.transform='none';
+    if(isMobileCanvasWrap(wrap)){initMobileCanvas(wrap);drawMobileCanvas(wrap);return;}
+    const value=`${ms.vbX} ${ms.vbY} ${ms.vbW} ${ms.vbH}`;
+    if(ms.lastAppliedViewBox!==value){svg.setAttribute('viewBox',value);ms.lastAppliedViewBox=value}
+    return;
+  }
+  svg.style.transform=`translate3d(${st.x}px,${st.y}px,0) scale(${st.scale})`;
 }
 function scheduleView(wrap){
   if(!wrap) return;
@@ -5173,6 +5406,15 @@ function flushView(wrap){
 function fitView(wrap){
   if(!wrap) return;
   const svg=wrap.querySelector('svg'); if(!svg) return;
+  if(mobileChartMotion.matches){
+    const st=ensureMobileViewBoxState(wrap); if(!st) return;
+    st.viewportW=Math.max(1,wrap.clientWidth); st.viewportH=Math.max(1,wrap.clientHeight);
+    const fitZoom=.96,size=mobileCameraSizeForZoom(wrap,st,fitZoom),nw=size.w,nh=size.h;
+    const cx=st.baseViewBox.x+st.baseViewBox.w/2,cy=st.baseViewBox.y+st.baseViewBox.h/2;
+    setMobileViewBox(wrap,st,cx-nw/2,cy-nh/2,nw,nh);
+    applyView(wrap);
+    return;
+  }
   // SVGのwidth/heightはptの場合があるため、viewBox値ではなく
   // ブラウザが実際にレイアウトしたCSSピクセル寸法を使ってfitする。
   svg.style.transform='none';
@@ -5187,6 +5429,19 @@ function fitView(wrap){
 }
 function zoomAt(wrap, factor, clientX, clientY){
   if(!wrap) return;
+  if(mobileChartMotion.matches){
+    const st=ensureMobileViewBoxState(wrap); if(!st) return;
+    const rect=wrap.getBoundingClientRect();
+    const cx=clientX??(rect.left+rect.width/2), cy=clientY??(rect.top+rect.height/2);
+    const anchor=mobileClientToWorld(wrap,st,cx,cy,rect);
+    const oldZoom=mobileCameraZoom(wrap,st);
+    const nextZoom=Math.max(.85,Math.min(65,oldZoom*factor));
+    const size=mobileCameraSizeForZoom(wrap,st,nextZoom),nw=size.w,nh=size.h;
+    const nm=mobileViewBoxMetrics(wrap,st,nw,nh);
+    const nx=anchor.x-(anchor.px-nm.offsetX)/nm.pxPerWorld;
+    const ny=anchor.y-(anchor.py-nm.offsetY)/nm.pxPerWorld;
+    setMobileViewBox(wrap,st,nx,ny,nw,nh); applyView(wrap); return;
+  }
   const st=ensureViewState(wrap);
   const rect=wrap.getBoundingClientRect();
   const px=(clientX??(rect.left+rect.width/2))-rect.left;
@@ -5199,6 +5454,27 @@ function zoomAt(wrap, factor, clientX, clientY){
 function centerNodeInView(id){
   const wrap=activeWrap(), svg=activeSvg(); if(!wrap||!svg) return false;
   const g=[...svg.querySelectorAll('g.node')].find(n=>gt(n)===id); if(!g) return false;
+  if(mobileChartMotion.matches){
+    const st=ensureMobileViewBoxState(wrap); if(!st) return false;
+    if(isMobileCanvasWrap(wrap)){
+      const b=mobileCanvasNodeBox(wrap,id);if(!b)return false;
+      const center={x:b.x+b.w/2,y:b.y+b.h/2},localW=b.w,localH=b.h,aspect=mobileViewportAspect(wrap,st);
+      const desiredW=Math.max(localW*5,localH*5*aspect),minSize=mobileCameraSizeForZoom(wrap,st,65);
+      const nw=Math.min(st.vbW,Math.max(minSize.w,desiredW)),nh=nw/aspect;
+      setMobileViewBox(wrap,st,center.x-nw/2,center.y-nh/2,nw,nh);applyView(wrap);return true;
+    }
+    applyView(wrap);
+    const wr=wrap.getBoundingClientRect(), gr=g.getBoundingClientRect();
+    const m=mobileViewBoxMetrics(wrap,st);
+    const center=mobileClientToWorld(wrap,st,gr.left+gr.width/2,gr.top+gr.height/2,wr);
+    const localW=Math.max(1,gr.width/m.pxPerWorld), localH=Math.max(1,gr.height/m.pxPerWorld);
+    const aspect=mobileViewportAspect(wrap,st);
+    const desiredW=Math.max(localW*5,localH*5*aspect),minSize=mobileCameraSizeForZoom(wrap,st,65);
+    const nw=Math.min(st.vbW,Math.max(minSize.w,desiredW));
+    const nh=nw/aspect;
+    setMobileViewBox(wrap,st,center.x-nw/2,center.y-nh/2,nw,nh);
+    applyView(wrap); return true;
+  }
   const st=ensureViewState(wrap), wr=wrap.getBoundingClientRect(), gr=g.getBoundingClientRect();
   const oldScale=Math.max(.0001,st.scale);
   // 現在の描画結果から「SVGの未変換CSS座標」を逆算する。
@@ -5299,15 +5575,26 @@ function initSvgInteraction(){
         const p=midpoint(); if(!p) return;
         st.moved=true; st.pinching=true; st.drag=false;
         const rect=st.gestureRect||wrap.getBoundingClientRect();
-        const oldScale=Math.max(.0001,st.scale);
         const factor=Math.max(.7,Math.min(1.45,p.d/Math.max(1,st.pinchDist||p.d)));
-        const nextScale=Math.max(.08,Math.min(4.5,oldScale*factor));
-        const oldPx=(st.pinchX??p.x)-rect.left, oldPy=(st.pinchY??p.y)-rect.top;
-        const newPx=p.x-rect.left, newPy=p.y-rect.top;
-        const wx=(oldPx-st.x)/oldScale, wy=(oldPy-st.y)/oldScale;
-        st.scale=nextScale;
-        st.x=newPx-wx*nextScale;
-        st.y=newPy-wy*nextScale;
+        if(mobileChartMotion.matches){
+          const ms=ensureMobileViewBoxState(wrap);
+          const anchor=mobileClientToWorld(wrap,ms,st.pinchX??p.x,st.pinchY??p.y,rect);
+          const oldZoom=mobileCameraZoom(wrap,ms);
+          const nextZoom=Math.max(.85,Math.min(65,oldZoom*factor));
+          const size=mobileCameraSizeForZoom(wrap,ms,nextZoom),nw=size.w,nh=size.h;
+          const nm=mobileViewBoxMetrics(wrap,ms,nw,nh);
+          const newPx=p.x-rect.left, newPy=p.y-rect.top;
+          const nx=anchor.x-(newPx-nm.offsetX)/nm.pxPerWorld;
+          const ny=anchor.y-(newPy-nm.offsetY)/nm.pxPerWorld;
+          setMobileViewBox(wrap,ms,nx,ny,nw,nh);
+        }else{
+          const oldScale=Math.max(.0001,st.scale);
+          const nextScale=Math.max(.08,Math.min(4.5,oldScale*factor));
+          const oldPx=(st.pinchX??p.x)-rect.left, oldPy=(st.pinchY??p.y)-rect.top;
+          const newPx=p.x-rect.left, newPy=p.y-rect.top;
+          const wx=(oldPx-st.x)/oldScale, wy=(oldPy-st.y)/oldScale;
+          st.scale=nextScale; st.x=newPx-wx*nextScale; st.y=newPy-wy*nextScale;
+        }
         st.pinchX=p.x; st.pinchY=p.y; st.pinchDist=Math.max(1,p.d);
         scheduleView(wrap);
         wrap.classList.add('dragging','gesture-active');
@@ -5321,7 +5608,11 @@ function initSvgInteraction(){
         if(!st.moved && total>5) st.moved=true;
         if(!st.moved) return;
         const dx=e.clientX-st.lastX, dy=e.clientY-st.lastY;
-        st.x+=dx; st.y+=dy; st.lastX=e.clientX; st.lastY=e.clientY;
+        if(mobileChartMotion.matches){
+          const ms=ensureMobileViewBoxState(wrap), m=mobileViewBoxMetrics(wrap,ms);
+          setMobileViewBox(wrap,ms,ms.vbX-dx/m.pxPerWorld,ms.vbY-dy/m.pxPerWorld,ms.vbW,ms.vbH);
+        }else{ st.x+=dx; st.y+=dy; }
+        st.lastX=e.clientX; st.lastY=e.clientY;
         scheduleView(wrap);
         wrap.classList.add('dragging','gesture-active');
         return;
@@ -5353,6 +5644,7 @@ function initSvgInteraction(){
         flushView(wrap);
         st.gestureRect=null;
         wrap.classList.remove('dragging','gesture-active');
+        if(isMobileCanvasWrap(wrap)) drawMobileCanvas(wrap);
       }
     };
     wrap.addEventListener('pointerup',endPointer);
@@ -6735,6 +7027,13 @@ render();
 
   // Exactly one graph click path: click -> select state -> compute -> render.
   document.addEventListener('click',e=>{
+    const canvas=e.target?.closest?.('canvas[data-marvel-mobile-canvas]');
+    if(canvas){
+      const wrap=canvas.closest('.svg-wrap'),st=typeof ensureViewState==='function'?ensureViewState(wrap):null;
+      if(st?.moved){st.moved=false;e.preventDefault();e.stopImmediatePropagation();return;}
+      const id=mobileCanvasHitTest(wrap,e.clientX,e.clientY);if(!id||!nm[id])return;
+      e.preventDefault();e.stopImmediatePropagation();select(id,!!(e.ctrlKey||e.metaKey||e.shiftKey));return;
+    }
     const node=e.target?.closest?.('.svg-wrap svg g.node');
     if(!node) return;
     const wrap=node.closest('.svg-wrap');
@@ -6764,7 +7063,7 @@ render();
     const state=selectedIds.size ? (window.__marvelLastSelectionState||computeSelectionState()) : null;
     const svg=document.querySelector('.panel.active .svg-wrap svg');
     return {
-      version:'5.10.19-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
+      version:'5.11.2-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
       dim:!!svg?.classList.contains('dim'),
       litNodes:svg?.querySelectorAll('g.node.hl,g.node.focus').length||0,
       litEdges:svg?.querySelectorAll('g.edge.hl').length||0,
@@ -6901,7 +7200,7 @@ render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.10.19 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.11.2 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{
