@@ -16,6 +16,7 @@ v5.16.0 は機能追加版ではなく、**現在のアプリそのものを編�
 4. **新しいフロントエンド基盤を導入しない。** npm、SPA フレームワーク、常時必要な外部ビルドサービスは追加しない。GitHub Pages で単一 HTML を配布する現在の性質を維持する。
 5. **履歴を捨てない。** `src/baseline/` と `src/v515/` は v5.14.1 / v5.15.0 の再現・回帰用資料として残し、v5.16.0 の通常ビルド入力から外す。
 6. **移行は parity gate を通してから切り替える。** 新旧ビルドの意味的一致を機械検証できるまで本番生成経路を変更しない。
+7. **正本を二重化しない。** v5.16.0 切替後、作品・接続・人物リンク・詳細・特集設定の値は新しい `src/data/` / `src/config/` にだけ保持し、`shell.html` や runtime へ同じ値を手作業で複製しない。
 
 ## 目標ソース構造
 
@@ -24,24 +25,31 @@ v5.16.0 の正本は次の責務に分離する。
 ```text
 src/
   app/
-    shell.html              # ページ骨格と公開パネル構造
-    styles/                 # UI / chart / mobile 等のスタイル
-    runtime/                # UI・探索・描画・予習・共有の実行コード
+    shell.html
+    styles/
+      manifest.json
+      *.css
+    runtime/
+      manifest.json
+      *.js
   data/
-    works.*                 # 作品メタデータ
-    edges.*                 # 有向接続
-    people-links.*          # 人物リンク
-    work-details/           # あらすじ・「相関図では」
+    works.json
+    edges.json
+    people-links.json
+    work-details/
+      manifest.json
+      part-*.json
   config/
-    overview-groups.*       # 主要フローのグループ定義
-    featured-route.*        # 現在の特集ルート設定
-  baseline/                 # v5.14.1 再現専用。通常ビルドでは読まない
-  v515/                     # v5.15.0 回帰資料。通常ビルドでは読まない
+    overview-groups.json
+    group-labels.json
+    featured-route.json
+  baseline/                 # v5.14.1 再現専用
+  v515/                     # v5.15.0 回帰専用
 scripts/
-  build_public.py           # 正本ソース -> index.html の決定的ビルド
+  build_public.py
 ```
 
-拡張子や runtime 内の最終分割単位は、現行コードから安全に抽出できる境界に合わせる。ただし責務境界は上記を満たすこと。
+`styles/manifest.json` と `runtime/manifest.json` が組み込み順を唯一決定する。JavaScript の既存グローバル依存を無理に ES modules 化せず、現行の実行順を保持したまま責務単位へ抽出する。
 
 ### `src/app`
 
@@ -58,33 +66,44 @@ scripts/
 - 特集プレビュー
 - Shared Room クライアント
 
+`src/app/shell.html` は静的なページ骨格だけを持ち、作品131件等の可変データ配列を正本として保持しない。
+
 ### `src/data`
 
-相関図の意味を担当する。少なくとも現在監査対象になっている 131作品、199有向接続、155人物リンク、131作品分の詳細情報を、表示コードから独立して読み取れること。
+相関図の意味を担当する。
 
-v5.16.0 ではデータ内容を変更しない。
+- `works.json`: 作品メタデータ 131件
+- `edges.json`: 有向接続 199件
+- `people-links.json`: 人物リンク 155件
+- `work-details/`: 131作品分の `synopsis_ja` と `map_role_ja`
+
+v5.16.0 ではこれらの内容を変更しない。ID、接続向き、importance、strength、表示文言等に移行都合の修正を混ぜない。
 
 ### `src/config`
 
-内容更新の頻度が高いが、相関関係そのものではない設定を置く。
+相関関係そのものではなく、公開表示の編成を担当する。
 
-- 主要フローの5グループと所属
-- `FEATURED_ROUTE` 相当の特集定義
-- 将来、安全に差し替えたい公開表示設定
+- `overview-groups.json`: 主要フローのグループと所属
+- `group-labels.json`: グループの見出し・説明
+- `featured-route.json`: 現在の `FEATURED_ROUTE` 相当
 
-これにより v5.17 以降で「話題作」を変更するとき、ランタイム本体へ直接パッチを重ねずに済むようにする。
+これにより v5.17 以降の UI 改善や、その時点の注目作への特集差し替えをランタイム本体から分離する。
 
 ## ビルド方式
 
 `scripts/build_public.py` は v5.16.0 では次の一方向処理にする。
 
 1. `src/app/shell.html` を読む。
-2. `src/data/` と `src/config/` を検証して決定的な公開 payload を生成する。
-3. `src/app/styles/` と `src/app/runtime/` を決められた順序で組み込む。
-4. overview SVG 等、生成が必要な部分を既存 Python 生成器で生成する。
-5. `PUBLIC v5.16.0` の単一 `index.html` を出力する。
+2. `src/data/` と `src/config/` を schema / 参照整合性検証する。
+3. JSON から決定的な公開 payload を生成する。
+4. `styles/manifest.json` の順で CSS を組み込む。
+5. overview SVG 等、生成が必要な部分を既存 Python 生成器で生成する。
+6. `runtime/manifest.json` の順で JavaScript を組み込む。
+7. `PUBLIC v5.16.0` の単一 `index.html` を出力する。
 
-ビルドはネットワークアクセス不要・入力固定・決定的であること。同一コミットから同一バイト列を生成できることを要求する。
+ビルドはネットワークアクセス不要・入力固定・決定的とする。同一コミットから同一バイト列を生成できることを要求する。
+
+通常ビルド経路で `src/baseline/` または `src/v515/` を参照した場合はテスト失敗とする。これらを読むことが許されるのは、明示的な legacy / compatibility 回帰テストだけである。
 
 ## 移行戦略
 
@@ -92,21 +111,25 @@ v5.16.0 ではデータ内容を変更しない。
 
 現在 GitHub Actions が生成している PUBLIC v5.15.0 を基準に、ページ骨格、スタイル、ランタイム、データ、設定を新しい責務境界へ抽出する。
 
+回帰 oracle は main commit `d88bfecd4df7d2ccc70a4efd5b2f90614398722e` の成功した公開 run `32651303970` と、既存 v5.15.0 監査ハッシュとする。
+
 この時点では現行 `build_public.py` を本番経路として残す。
 
 ### Phase 2 — 独立した互換ビルド
 
-新しい正本から v5.15.0 相当を生成できる互換ビルドを作る。
+新しい正本から PUBLIC v5.15.0 相当を生成する compatibility build を用意する。
 
-可能な部分はバイト単位で比較し、生成順や無意味な空白差が避けられない部分は DOM/データ/公開 API の意味比較を行う。
+静的出力は可能な限りバイト単位で比較する。生成順・整形による差が残る箇所は、DOM構造、埋め込みデータ、公開関数、イベント配線、意味ハッシュを比較する。
+
+compatibility build は移行確認専用であり、v5.16.0 切替後の通常 Pages 配布には使わない。
 
 ### Phase 3 — parity gate
 
-新旧ビルドの両方に対して既存回帰試験を実行し、下記の不変条件が一致することを確認する。差分が1つでもある間は通常ビルドを切り替えない。
+新旧ビルドの両方に既存回帰試験を実行し、下記の不変条件が一致することを確認する。差分が1つでもある間は通常ビルドを切り替えない。
 
 ### Phase 4 — v5.16.0 へ切り替え
 
-新正本ビルドを通常の `scripts/build_public.py` にし、公開版表記だけを v5.16.0 へ更新する。
+新正本ビルドを通常の `scripts/build_public.py` にし、公開版表記を v5.16.0 へ更新する。
 
 旧 `src/baseline/` / `src/v515/` は回帰・復旧用として保持するが、新通常ビルドの依存関係には含めない。
 
@@ -120,12 +143,13 @@ v5.16.0 は少なくとも以下を PUBLIC v5.15.0 と一致させる。
 - 主要フロー: **76作品**
 - 主要フローグループ: **5区分**
 - 作品詳細: **131 / 131**
-- OR: **8,515組** — 意味ハッシュ一致
-- AND: **8,515組** — 意味ハッシュ一致
-- PATH: **8,515組** — 意味ハッシュ一致
-- 単一ゴール予習: **393パターン** — 意味ハッシュ一致
+- OR: **8,515組** — FNV-1a 64 `9c38afad0f8ac3fe`
+- AND: **8,515組** — FNV-1a 64 `ad48d8c46ae1bd61`
+- PATH: **8,515組** — FNV-1a 64 `8b9847fcda5cdf96`
+- 単一ゴール予習: **393パターン** — FNV-1a 64 `a3c6f1c12199a903`
 - `ニュー・ミュータント`: 表示上の架空直接接続を追加しない
 - 左クリック / タップ: 詳細フォーカスであり、ゴール集合を変更しない
+- 検索結果選択: 詳細フォーカスであり、ゴール集合を変更しない
 - PC右クリック: ゴール追加 / 解除
 - 詳細 CTA: ゴール追加 / 解除
 - 複数ゴール OR / AND / PATH
@@ -136,7 +160,7 @@ v5.16.0 は少なくとも以下を PUBLIC v5.15.0 と一致させる。
 - スマホ: 1本指パン / 2本指ズーム / タップ詳細
 - PC / スマホ: page script errors 0
 
-既存 v5.15.0 の意味ハッシュを回帰 oracle として再利用し、v5.16.0 で新しい値へ取り直して基準を緩めない。
+既存 v5.15.0 の意味ハッシュを回帰 oracle としてそのまま固定し、v5.16.0 で値を取り直して基準を緩めない。
 
 ## テスト設計
 
@@ -145,17 +169,23 @@ v5.16.0 は少なくとも以下を PUBLIC v5.15.0 と一致させる。
 - 通常ビルドが `src/baseline/` を入力として読まない。
 - 通常ビルドが `src/v515/` を入力として読まない。
 - version-specific な巨大文字列置換で機能を注入しない。
+- CSS / JavaScript の読み込み順は manifest だけで決まる。
 - `src/data` / `src/config` の重複 ID、欠落 ID、壊れた参照を検出する。
+- `shell.html` / runtime に作品・接続・特集設定の第二正本を作らない。
 
 ### 2. v5.15 compatibility tests
 
-移行中だけ、新正本から生成した互換版と現 v5.15.0 を比較する。抽出漏れ・注入順違い・イベント配線漏れを検出するための橋渡しテストとする。
+移行中、新正本から生成した互換版と現 v5.15.0 を比較する。抽出漏れ・注入順違い・イベント配線漏れを検出する橋渡しテストとする。
 
 ### 3. Semantic regression tests
 
 既存の OR / AND / PATH / 予習 / overview / 詳細 / interaction smoke を、新ビルド出力に対してそのまま通す。
 
-### 4. Release contract tests
+### 4. Deterministic build test
+
+同一 checkout で公開ビルドを2回行い、生成 `index.html` の SHA-256 が一致することを検査する。
+
+### 5. Release contract tests
 
 公開 ZIP / Pages artifact は従来どおりルート直下6ファイル固定とする。
 
@@ -201,17 +231,19 @@ v5.16.0 完了後は、新正本構造の上で次の順序を想定する。
 1. **v5.17.0 — スマホ主要フロー2.0**: 5大エリアへの軽量ジャンプ / 現在地把握を改善。
 2. **v5.18.0 — 接続根拠の完全監査**: 199有向接続の根拠・出典・種別を説明可能なデータへ整理。
 3. **v5.19.0 — Shared Room安定版**: 再接続、参加・退出、共有リンク、複数人同期を本格監査。
-4. **以降 — 公開情報更新**: `featured-route` 設定を中心に、Doomsday / Secret Wars などその時点の注目作へ安全に更新。
+4. **以降 — 公開情報更新**: `featured-route.json` を中心に、Doomsday / Secret Wars などその時点の注目作へ安全に更新。
 
 ## 完了条件
 
 v5.16.0 は以下をすべて満たした時だけリリース可能とする。
 
-1. 通常ビルドが新しい正本ソースだけから `index.html` を生成する。
+1. 通常ビルドが `src/app` / `src/data` / `src/config` だけを正本として `index.html` を生成する。
 2. `src/baseline/` と `src/v515/` が通常ビルド依存から外れている。
-3. v5.15.0 の全意味回帰条件が一致する。
-4. PC / スマホ interaction smoke が全て PASS する。
-5. GitHub Actions の build / verify / Pages deploy が成功する。
-6. 配布 artifact が固定6ファイルだけを含む。
-7. AUDIT.md / AUDIT.json が v5.16.0 の構造移行と回帰結果を記録する。
-8. v5.16.0 に機能・データ変更が混入していないことを PR diff で確認する。
+3. v5.15.0 の全意味回帰条件と固定ハッシュが一致する。
+4. deterministic build test が PASS する。
+5. PC / スマホ interaction smoke が全て PASS する。
+6. GitHub Actions の build / verify / Pages deploy が成功する。
+7. 配布 artifact が固定6ファイルだけを含む。
+8. `AUDIT.md` / `AUDIT.json` が v5.16.0 の構造移行と回帰結果を記録する。
+9. v5.16.0 に機能・データ変更が混入していないことを PR diff で確認する。
+10. main へ統合後、commit status `marvel-pages` が success であることを確認する。
