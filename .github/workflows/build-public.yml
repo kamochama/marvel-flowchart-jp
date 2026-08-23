@@ -66,6 +66,7 @@ jobs:
           python tests/test_pages_workflow.py
           python tests/test_v516_legacy_oracle.py
           python tests/test_v516_source_data.py
+          python tests/test_v516_app_source.py
           grep -q 'PUBLIC v5.15.0' index.html
       - name: Stage exact public site
         run: |
