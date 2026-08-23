@@ -1,0 +1,27 @@
+{
+  "infinity": {
+    "title": "MCU / INFINITY SAGA",
+    "description": "アベンジャーズ結成からサノスとの決戦まで",
+    "color": "#2563eb"
+  },
+  "multiverse": {
+    "title": "MCU / MULTIVERSE SAGA",
+    "description": "エンドゲーム後からマルチバースと次の大型合流へ",
+    "color": "#7c3aed"
+  },
+  "tv": {
+    "title": "DISNEY+ / TV",
+    "description": "映画本流と交差するドラマ・配信シリーズ",
+    "color": "#059669"
+  },
+  "fox": {
+    "title": "FOX X-MEN UNIVERSE",
+    "description": "旧X-MEN映画・ウルヴァリン・デッドプールをたどる系統",
+    "color": "#c2410c"
+  },
+  "animation": {
+    "title": "ANIMATION / SPECIAL",
+    "description": "アニメーション・スペシャル作品",
+    "color": "#d97706"
+  }
+}
