@@ -1,0 +1,166 @@
+name: Bootstrap v5.16 canonical data once
+
+on:
+  push:
+    branches:
+      - feature/v5.16-source-foundation
+    paths:
+      - '.github/workflows/bootstrap-v516.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+      - name: Generate canonical data from frozen v5.15 oracle
+        run: |
+          python scripts/build_v515_legacy.py --output /tmp/v515.html
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import shutil
+
+          root = Path('.')
+          text = Path('/tmp/v515.html').read_text(encoding='utf-8')
+          decoder = json.JSONDecoder()
+
+          def decode(marker: str):
+              start = text.index(marker) + len(marker)
+              value, _ = decoder.raw_decode(text[start:].lstrip())
+              return value
+
+          data = root / 'src' / 'data'
+          config = root / 'src' / 'config'
+          data.mkdir(parents=True, exist_ok=True)
+          config.mkdir(parents=True, exist_ok=True)
+
+          for name, value in [
+              ('works.json', decode('const NODES=')),
+              ('edges.json', decode('const EDGES=')),
+              ('people-links.json', decode('const CHAR_LINKS=')),
+          ]:
+              (data / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          detail_dst = data / 'work-details'
+          if detail_dst.exists():
+              shutil.rmtree(detail_dst)
+          shutil.copytree(root / 'src' / 'v515' / 'work-details', detail_dst)
+          shutil.copy2(root / 'src' / 'v515' / 'overview-groups.json', config / 'overview-groups.json')
+          shutil.copy2(root / 'src' / 'v515' / 'group-labels.json', config / 'group-labels.json')
+          featured = {
+              'enabled': True,
+              'targetId': 'avengers-doomsday-2026-12-18',
+              'label': 'ドゥームズデイへの道',
+              'eyebrow': '今見るなら',
+              'description': '主要フローを長くたどって表示',
+          }
+          (config / 'featured-route.json').write_text(json.dumps(featured, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+          cat > scripts/source_model.py <<'PY'
+          from __future__ import annotations
+
+          import json
+          from pathlib import Path
+
+          ROOT = Path(__file__).resolve().parents[1]
+          DATA = ROOT / 'src' / 'data'
+          CONFIG = ROOT / 'src' / 'config'
+          OVERVIEW_KEYS = ('infinity', 'multiverse', 'tv', 'fox', 'animation')
+          FEATURED_KEYS = {'enabled', 'targetId', 'label', 'eyebrow', 'description'}
+
+
+          def _load_json(path: Path):
+              return json.loads(path.read_text(encoding='utf-8'))
+
+
+          def _load_work_details() -> dict[str, dict]:
+              root = DATA / 'work-details'
+              manifest = _load_json(root / 'manifest.json')
+              parts = manifest.get('parts', [])
+              if not parts:
+                  raise ValueError('work detail parts missing')
+              details: dict[str, dict] = {}
+              for name in parts:
+                  part = _load_json(root / name)
+                  overlap = set(details) & set(part)
+                  if overlap:
+                      raise ValueError(f'duplicate work detail ids: {sorted(overlap)}')
+                  details.update(part)
+              if len(details) != manifest.get('count'):
+                  raise ValueError('work detail manifest count mismatch')
+              return details
+
+
+          def load_model() -> dict:
+              works = _load_json(DATA / 'works.json')
+              edges = _load_json(DATA / 'edges.json')
+              people_links = _load_json(DATA / 'people-links.json')
+              work_details = _load_work_details()
+              overview_groups = _load_json(CONFIG / 'overview-groups.json')
+              group_labels = _load_json(CONFIG / 'group-labels.json')
+              featured_route = _load_json(CONFIG / 'featured-route.json')
+
+              ids = [work.get('id') for work in works]
+              if any(not wid for wid in ids) or len(ids) != len(set(ids)):
+                  raise ValueError('duplicate or missing work ids')
+              idset = set(ids)
+
+              for edge in edges:
+                  if edge.get('source') not in idset or edge.get('target') not in idset:
+                      raise ValueError(f'unknown edge endpoint: {edge}')
+              for link in people_links:
+                  if link.get('work_id') not in idset:
+                      raise ValueError(f'unknown people-link work id: {link}')
+              if set(work_details) != idset:
+                  missing = sorted(idset - set(work_details))
+                  extra = sorted(set(work_details) - idset)
+                  raise ValueError(f'work detail id mismatch: missing={missing} extra={extra}')
+
+              if set(overview_groups) != set(OVERVIEW_KEYS):
+                  raise ValueError('overview group keys mismatch')
+              if set(group_labels) != set(OVERVIEW_KEYS):
+                  raise ValueError('group label keys mismatch')
+              overview_ids = [wid for key in OVERVIEW_KEYS for wid in overview_groups[key]]
+              if len(overview_ids) != 76 or len(overview_ids) != len(set(overview_ids)):
+                  raise ValueError('overview membership must contain 76 unique work ids')
+              unknown_overview = sorted(set(overview_ids) - idset)
+              if unknown_overview:
+                  raise ValueError(f'unknown overview ids: {unknown_overview}')
+
+              if set(featured_route) != FEATURED_KEYS:
+                  raise ValueError('featured-route keys mismatch')
+              if featured_route['targetId'] not in idset:
+                  raise ValueError('featured-route target is not a known work')
+
+              return {
+                  'works': works,
+                  'edges': edges,
+                  'people_links': people_links,
+                  'work_details': work_details,
+                  'overview_groups': overview_groups,
+                  'group_labels': group_labels,
+                  'featured_route': featured_route,
+              }
+          PY
+          python tests/test_v516_source_data.py
+      - name: Commit canonical source and remove bootstrap workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/bootstrap-v516.yml
+          git add src/data src/config scripts/source_model.py
+          git commit -m 'refactor: extract canonical marvel data'
+          git push origin HEAD:"${GITHUB_REF_NAME}"
