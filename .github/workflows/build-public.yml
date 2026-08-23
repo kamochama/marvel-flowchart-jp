@@ -32,10 +32,13 @@ jobs:
           sudo apt-get install -y graphviz
       - name: Build generated public index
         run: python scripts/build_public.py --output index.html
-      - name: Verify source layout and roundtrip
+      - name: Verify source layout and release contract
         run: |
           python tests/test_source_layout.py
           python tests/test_build_roundtrip.py
+          python tests/test_work_details.py
+          python tests/test_overview_v515.py
+          python tests/test_release_contract_v515.py
           grep -q 'PUBLIC v5.14.1\|PUBLIC v5.15.0' index.html
       - name: Commit generated index when changed
         shell: bash

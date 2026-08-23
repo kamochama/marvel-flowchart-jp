@@ -1,34 +1,55 @@
 {
-  "version": "5.14.1-public",
-  "baseVersion": "5.14.0-public",
+  "version": "5.15.0-public",
+  "baseVersion": "5.14.1-public",
   "date": "2026-08-23",
   "data": {
     "works": 131,
     "directedEdges": 199,
     "characterLinks": 155
   },
-  "featuredRouteFix": {
-    "previewExclusiveFromNormalRendering": true,
-    "clearExitsPreview": true,
-    "scopeChangeExitsPreview": true,
-    "importanceChangeExitsPreview": true,
-    "searchAndFilterExitPreview": true,
-    "combineAndPrepControlsExitPreview": true,
-    "existingGoalsPreserved": true,
-    "existingGoalLightingRestored": true,
-    "featuredTargetClearedOnExit": true,
-    "dynamicHighlightEdgesClearedOnExit": true,
-    "queuedFrameRaceGuard": true,
-    "immediateExitRestoresExistingGoal": true
+  "overview": {
+    "previousWorks": 63,
+    "works": 76,
+    "foxXmenWorksAdded": 13,
+    "newMutantsDirectEdges": 0,
+    "usesMasterEdgesOnly": true,
+    "groups": [
+      "MCU / INFINITY SAGA",
+      "MCU / MULTIVERSE SAGA",
+      "DISNEY+ / TV",
+      "FOX X-MEN UNIVERSE",
+      "ANIMATION / SPECIAL"
+    ],
+    "groupHeadingAndDescription": true,
+    "mobileCanvasWorks": 76
   },
-  "desktopFeaturedEntry": {
-    "separatedFromSearchControl": true,
-    "label": "ドゥームズデイへの道",
-    "fullLabelVisibleAt1280": true,
-    "fullLabelVisibleAt1440": true,
-    "mobileCardStructurePreserved": true
+  "workDetails": {
+    "total": 131,
+    "withSynopsisJa": 131,
+    "withMapRoleJa": 131,
+    "unreleasedWorks": 8,
+    "unreleasedOfficialScopeOnly": true,
+    "spoilerLight": true,
+    "unsafeHtmlRejected": true,
+    "duplicateAudit": true
   },
-  "regressionAgainstV5140": {
+  "interaction": {
+    "leftClickOrTapInspectsOnly": true,
+    "searchInspectsOnly": true,
+    "pcRightClickTogglesGoal": true,
+    "detailGoalButton": true,
+    "existingGoalsPreservedDuringFocus": true,
+    "returnToGoalView": true,
+    "displayPriority": [
+      "featuredRoute",
+      "detailFocus",
+      "goals",
+      "allLit"
+    ],
+    "featuredGoalButtonUsesGoalApi": true,
+    "blankChartContextMenuPreserved": true
+  },
+  "regressionAgainstV5141": {
     "or": {
       "pairs": 8515,
       "hashFnv1a64": "9c38afad0f8ac3fe",
@@ -51,12 +72,25 @@
     }
   },
   "interactionSmoke": {
-    "featuredGoalAddUsesNormalSelection": true,
+    "desktopInspect": true,
+    "mobileInspectAndSheet": true,
+    "rightClickGoalToggle": true,
+    "additiveMultiGoal": true,
+    "detailGoalCta": true,
+    "returnToGoalView": true,
+    "featuredRestoresDetailFocus": true,
+    "featuredGoalAdd": true,
     "lastGoalRemovalFullRelight": true,
     "mobileCanvasOverviewActive": true,
-    "mobileSearchRetiresFeaturedPreview": true,
     "sharedRoomDialog": true,
     "pageScriptErrors": 0
+  },
+  "sourceBuild": {
+    "baselineParts": 14,
+    "baselineRoundtripExact": true,
+    "baselineSha256": "1d3d57aaba730740f8aad78351806fc3cdbbd8d07cc91a5f82bed6ab10a2fdad",
+    "generatedStandaloneIndex": true,
+    "githubActionsBuild": true
   },
   "worker": {
     "url": "https://marvel-room-worker.kamochama.workers.dev",
