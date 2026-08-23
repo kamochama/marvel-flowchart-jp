@@ -1,6 +1,6 @@
 {
-  "version": "5.15.1-public",
-  "baseVersion": "5.15.0-public",
+  "version": "5.15.3-public",
+  "baseVersion": "5.15.2-public",
   "date": "2026-08-24",
   "data": {
     "works": 131,
@@ -34,23 +34,21 @@
     "duplicateAudit": true
   },
   "interaction": {
-    "leftClickOrTapInspectsOnly": true,
-    "searchInspectsOnly": true,
-    "pcRightClickTogglesGoal": true,
-    "detailGoalButton": true,
-    "existingGoalsPreservedDuringFocus": true,
-    "returnToGoalView": true,
-    "displayPriority": [
-      "featuredRoute",
-      "detailFocus",
-      "goals",
-      "allLit"
+    "desktopLeftClickInspectsOnly": true,
+    "desktopSideDetailPreserved": true,
+    "mobileTapSelectsSingleGoal": true,
+    "mobileRetapClearsGoal": true,
+    "mobileDifferentTapReplacesGoal": true,
+    "mobileSearchSelectsGoal": true,
+    "mobileChartDetailControlsHidden": true,
+    "prepPlanInlineDetails": true,
+    "prepPlanInlineDetailFields": [
+      "synopsis_ja",
+      "map_role_ja"
     ],
+    "pcRightClickTogglesGoal": true,
     "featuredGoalButtonUsesGoalApi": true,
-    "blankChartContextMenuPreserved": true,
-    "mobileTapKeepsChartVisible": true,
-    "mobileCompactInspectBar": true,
-    "mobileDetailsExplicitAction": true
+    "blankChartContextMenuPreserved": true
   },
   "regressionAgainstV5141": {
     "or": {
@@ -75,27 +73,24 @@
     }
   },
   "interactionSmoke": {
-    "desktopInspect": true,
-    "rightClickGoalToggle": true,
-    "additiveMultiGoal": true,
-    "detailGoalCta": true,
-    "returnToGoalView": true,
-    "featuredRestoresDetailFocus": true,
-    "featuredGoalAdd": true,
-    "lastGoalRemovalFullRelight": true,
-    "mobileCanvasOverviewActive": true,
-    "sharedRoomDialog": true,
-    "pageScriptErrors": 0,
-    "mobileTapRelationshipFirst": true,
-    "mobileDetailsManualOpen": true,
-    "desktopSideDetailPreserved": true
+    "contractChecks": true,
+    "inlineJavaScriptSyntax": true,
+    "dataPayloadExactAgainstV5151": true,
+    "desktopSideDetailCodePathPreserved": true,
+    "mobileLegacyGoalCodePathRestored": true,
+    "prepInlineDetailsCodePathPresent": true,
+    "realDevicePixel6Pending": true,
+    "connectionTierBidirectionalSync": true,
+    "connectionTierDefaultRecommended": true,
+    "svgLiteralNewlineLabelsFixed": 76
   },
   "sourceBuild": {
     "baselineParts": 14,
     "baselineRoundtripExact": true,
     "baselineSha256": "1d3d57aaba730740f8aad78351806fc3cdbbd8d07cc91a5f82bed6ab10a2fdad",
     "generatedStandaloneIndex": true,
-    "githubActionsBuild": true
+    "githubActionsBuild": false,
+    "deploymentMode": "main-root-direct"
   },
   "worker": {
     "url": "https://marvel-room-worker.kamochama.workers.dev",
@@ -113,5 +108,6 @@
     ],
     "exactSixFiles": true
   },
-  "allPass": true
+  "allPass": false,
+  "candidateStatus": "static verification passed; real-device interaction confirmation pending"
 }
