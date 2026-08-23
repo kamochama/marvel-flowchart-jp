@@ -1,6 +1,6 @@
 {
-  "version": "5.15.3-public",
-  "baseVersion": "5.15.2-public",
+  "version": "5.15.5-public",
+  "baseVersion": "5.15.4-public",
   "date": "2026-08-24",
   "data": {
     "works": 131,
@@ -82,7 +82,18 @@
     "realDevicePixel6Pending": true,
     "connectionTierBidirectionalSync": true,
     "connectionTierDefaultRecommended": true,
-    "svgLiteralNewlineLabelsFixed": 76
+    "svgLiteralNewlineLabelsFixed": 76,
+    "mobileTopOperationRemoved": true,
+    "chartConnectionTierSelect": true,
+    "watchConnectionTierSelect": true,
+    "connectionTierSharedSetter": true,
+    "connectionTierAffectsRecursiveTraversal": true,
+    "completeTraversalPreservedFromV5154": true,
+    "tierRegressionExampleEndgame": {
+      "minimum": 8,
+      "recommended": 46,
+      "complete": 48
+    }
   },
   "sourceBuild": {
     "baselineParts": 14,
