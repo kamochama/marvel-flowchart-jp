@@ -1,67 +1,30 @@
 {
-  "version": "5.10.19-public",
-  "basis": "5.10.18-public",
-  "purpose": "mobile SVG paint/compositing experiment",
+  "version": "5.12.0-public",
+  "baseVersion": "5.11.4-public",
+  "date": "2026-08-23",
+  "worker": {
+    "url": "https://marvel-room-worker.kamochama.workers.dev",
+    "expectedVersion": "0.1.0",
+    "healthConfirmedInDeploymentEnvironment": true
+  },
   "data": {
     "works": 131,
-    "edges": 199,
-    "charLinks": 155
+    "directedEdges": 199,
+    "characterLinks": 155
   },
-  "mobileRendering": {
-    "strategy": {
-      "mobileTransform": "2D translate + scale",
-      "persistentWillChange": false,
-      "persistentBackfaceVisibilityHidden": false,
-      "dimmedNodeFilter": "none (opacity-only)",
-      "dimmedEdgeFilter": "none (opacity-only)",
-      "goalHighlightFilterPreserved": true,
-      "desktopTransform": "translate3d + scale (unchanged)",
-      "desktopDimFilters": "unchanged"
+  "algorithmRegression": {
+    "or": {
+      "pairs": 8515,
+      "hash": "2f3a9ceda3d87b75"
     },
-    "syntheticAB60FramePanMedian5Runs": {
-      "v5.10.18": {
-        "maxRepaintArea": 11753993,
-        "LayoutDuration": 0.091837,
-        "RecalcStyleDuration": 0.0059559999999999995,
-        "ScriptDuration": 0.004803000000000002,
-        "TaskDuration": 0.241683
-      },
-      "v5.10.19": {
-        "maxRepaintArea": 1129440,
-        "LayoutDuration": 0.09054500000000001,
-        "RecalcStyleDuration": 0.006297,
-        "ScriptDuration": 0.005071999999999997,
-        "TaskDuration": 0.23781899999999997
-      },
-      "maxRepaintAreaRatio": 0.09608989898156312,
-      "maxRepaintAreaReductionPct": 90.39101010184369,
-      "taskDurationRatio": 0.984012115043259,
-      "taskDurationReductionPct": 1.5987884956740972,
-      "note": "Headless Chromium synthetic benchmark; not a real-device FPS measurement.",
-      "taskDurationConclusion": "No stable CPU-side speedup claimed; run-to-run variance was material. Acceptance is based on the reproducible repaint-area reduction plus functional regression."
+    "and": {
+      "pairs": 8515,
+      "hash": "c18dcecee8aea52c"
     },
-    "interactionRegression": {
-      "pinchRectReads": 1,
-      "selectionGlobalSvgSweeps": 0
-    }
-  },
-  "regression": {
-    "allPairsIdenticalToV5_10_18": true,
-    "pairModes": {
-      "or": {
-        "count": 8515,
-        "hash": "2f3a9ceda3d87b75"
-      },
-      "and": {
-        "count": 8515,
-        "hash": "c18dcecee8aea52c"
-      },
-      "path": {
-        "count": 8515,
-        "hash": "1a0f6c9489612a46"
-      }
+    "path": {
+      "pairs": 8515,
+      "hash": "1a0f6c9489612a46"
     },
-    "singleGoalPlansIdenticalToV5_10_18": true,
     "plans": {
       "minimum": {
         "count": 131,
@@ -75,295 +38,46 @@
         "count": 131,
         "hash": "b36ed15a31e724ec"
       }
+    }
+  },
+  "sharedRooms": {
+    "clientCreateJoinConnect": true,
+    "perMemberWatchedUI": true,
+    "ownWatchedWebSocketUpdate": true,
+    "remotePlanSyncNoEcho": true,
+    "leaveRestoresLocalWatched": true,
+    "inviteHashJoinDialog": true,
+    "savedCredentialAutoRejoin": true,
+    "roomFullErrorUI": true,
+    "tokenAbsentFromInviteUrlAndDOM": true,
+    "createPreservesCurrentPlan": true,
+    "bulkSharedCheckDisabledForWorkerV010": true
+  },
+  "planImage": {
+    "pass": true,
+    "format": "image/png",
+    "testWidth": 1080,
+    "testHeight": 778,
+    "testBytes": 117110
+  },
+  "canvasRegression": {
+    "adaptiveLod": {
+      "fitPan": 0.25,
+      "readingZoomPan": 0.5,
+      "pinch": 0.25
     },
-    "assertions": [
-      {
-        "name": "data counts preserved",
-        "pass": true,
-        "details": {
-          "base": {
-            "works": 131,
-            "edges": 199,
-            "charLinks": 155
-          },
-          "cand": {
-            "works": 131,
-            "edges": 199,
-            "charLinks": 155
-          }
-        }
-      },
-      {
-        "name": "OR/AND/PATH all-pairs identical",
-        "pass": true,
-        "details": {
-          "base": {
-            "or": {
-              "count": 8515,
-              "hash": "2f3a9ceda3d87b75"
-            },
-            "and": {
-              "count": 8515,
-              "hash": "c18dcecee8aea52c"
-            },
-            "path": {
-              "count": 8515,
-              "hash": "1a0f6c9489612a46"
-            }
-          },
-          "cand": {
-            "or": {
-              "count": 8515,
-              "hash": "2f3a9ceda3d87b75"
-            },
-            "and": {
-              "count": 8515,
-              "hash": "c18dcecee8aea52c"
-            },
-            "path": {
-              "count": 8515,
-              "hash": "1a0f6c9489612a46"
-            }
-          }
-        }
-      },
-      {
-        "name": "393 single-goal plan outputs identical",
-        "pass": true,
-        "details": {
-          "base": {
-            "minimum": {
-              "count": 131,
-              "hash": "04717bff1636c18f"
-            },
-            "recommended": {
-              "count": 131,
-              "hash": "b3a190a0e996d8c7"
-            },
-            "complete": {
-              "count": 131,
-              "hash": "b36ed15a31e724ec"
-            }
-          },
-          "cand": {
-            "minimum": {
-              "count": 131,
-              "hash": "04717bff1636c18f"
-            },
-            "recommended": {
-              "count": 131,
-              "hash": "b3a190a0e996d8c7"
-            },
-            "complete": {
-              "count": 131,
-              "hash": "b36ed15a31e724ec"
-            }
-          }
-        }
-      },
-      {
-        "name": "Guardians Vol.3 back history exact 3",
-        "pass": true,
-        "details": {
-          "back": [
-            "guardians-of-the-galaxy-2014",
-            "guardians-of-the-galaxy-vol-2-2017",
-            "the-guardians-of-the-galaxy-holiday-special-2022"
-          ],
-          "fullPast": [
-            "guardians-of-the-galaxy-2014",
-            "guardians-of-the-galaxy-vol-2-2017",
-            "the-guardians-of-the-galaxy-holiday-special-2022"
-          ],
-          "litNodes": 4,
-          "litEdges": 3,
-          "recommended": [
-            "guardians-of-the-galaxy-2014",
-            "guardians-of-the-galaxy-vol-2-2017",
-            "the-guardians-of-the-galaxy-holiday-special-2022"
-          ]
-        }
-      },
-      {
-        "name": "Guardians recommended plan exact 3",
-        "pass": true,
-        "details": [
-          "guardians-of-the-galaxy-2014",
-          "guardians-of-the-galaxy-vol-2-2017",
-          "the-guardians-of-the-galaxy-holiday-special-2022"
-        ]
-      },
-      {
-        "name": "simple tap adds second goal",
-        "pass": true,
-        "details": {
-          "afterAdd": [
-            "guardians-of-the-galaxy-vol-3-2023",
-            "the-marvels-2023"
-          ],
-          "afterRemove": [
-            "the-marvels-2023"
-          ],
-          "selected": "the-marvels-2023"
-        }
-      },
-      {
-        "name": "re-tap removes only that goal",
-        "pass": true,
-        "details": {
-          "afterAdd": [
-            "guardians-of-the-galaxy-vol-3-2023",
-            "the-marvels-2023"
-          ],
-          "afterRemove": [
-            "the-marvels-2023"
-          ],
-          "selected": "the-marvels-2023"
-        }
-      },
-      {
-        "name": "New Mutants direct arrows remain zero",
-        "pass": true,
-        "details": 0
-      },
-      {
-        "name": "watch tab remains selection-independent",
-        "pass": true,
-        "details": {
-          "active": "watch",
-          "dim": false
-        }
-      },
-      {
-        "name": "mobile dim remains readable",
-        "pass": true,
-        "details": {
-          "opacity": "0.46",
-          "filter": "none"
-        }
-      },
-      {
-        "name": "one-finger pans chart",
-        "pass": true,
-        "details": {
-          "before": {
-            "x": 7.360000000000014,
-            "y": 186.80295683601565,
-            "scale": 0.06855396407650419
-          },
-          "afterOne": {
-            "x": 67.36000000000001,
-            "y": 231.80295683601565,
-            "scale": 0.06855396407650419
-          },
-          "afterTwo": {
-            "x": 27.97818181818181,
-            "y": 339.75316448875003,
-            "scale": 0.09971485683855155
-          },
-          "gesture": false
-        }
-      },
-      {
-        "name": "two-finger zooms chart",
-        "pass": true,
-        "details": {
-          "before": {
-            "x": 7.360000000000014,
-            "y": 186.80295683601565,
-            "scale": 0.06855396407650419
-          },
-          "afterOne": {
-            "x": 67.36000000000001,
-            "y": 231.80295683601565,
-            "scale": 0.06855396407650419
-          },
-          "afterTwo": {
-            "x": 27.97818181818181,
-            "y": 339.75316448875003,
-            "scale": 0.09971485683855155
-          },
-          "gesture": false
-        }
-      },
-      {
-        "name": "gesture class cleans up",
-        "pass": true,
-        "details": {
-          "before": {
-            "x": 7.360000000000014,
-            "y": 186.80295683601565,
-            "scale": 0.06855396407650419
-          },
-          "afterOne": {
-            "x": 67.36000000000001,
-            "y": 231.80295683601565,
-            "scale": 0.06855396407650419
-          },
-          "afterTwo": {
-            "x": 27.97818181818181,
-            "y": 339.75316448875003,
-            "scale": 0.09971485683855155
-          },
-          "gesture": false
-        }
-      },
-      {
-        "name": "PC plain wheel not captured",
-        "pass": true,
-        "details": {
-          "before": {
-            "x": 21.139999999999986,
-            "y": 179.39599286866456,
-            "scale": 0.1969063587740895
-          },
-          "afterPlain": {
-            "x": 21.139999999999986,
-            "y": 179.39599286866456,
-            "scale": 0.1969063587740895,
-            "prevented": false
-          },
-          "afterCtrl": {
-            "x": -15.29271502575881,
-            "y": 195.47984108204363,
-            "scale": 0.22358877064635096,
-            "prevented": true
-          }
-        }
-      },
-      {
-        "name": "PC Ctrl-wheel zoom captured",
-        "pass": true,
-        "details": {
-          "before": {
-            "x": 21.139999999999986,
-            "y": 179.39599286866456,
-            "scale": 0.1969063587740895
-          },
-          "afterPlain": {
-            "x": 21.139999999999986,
-            "y": 179.39599286866456,
-            "scale": 0.1969063587740895,
-            "prevented": false
-          },
-          "afterCtrl": {
-            "x": -15.29271502575881,
-            "y": 195.47984108204363,
-            "scale": 0.22358877064635096,
-            "prevented": true
-          }
-        }
-      },
-      {
-        "name": "no page script errors",
-        "pass": true,
-        "details": {
-          "base": [],
-          "cand": [],
-          "ui": []
-        }
-      }
-    ],
-    "allPass": true
-  }
+    "staticImmediateEdges": true,
+    "syntheticImmediateEdges": true
+  },
+  "keyRegressions": {
+    "guardiansVol3ExactPast3": true,
+    "multiGoal": true,
+    "watchTabIndependent": true,
+    "newMutantsDirectEdges": 0,
+    "mobileGestures": true,
+    "pcWheelBehavior": true,
+    "pageScriptErrors": 0
+  },
+  "sha256Index": "79eb00b7f994f4882c6f67e4735b0f58c283c26ac380fcd380ded95e976ebf4f",
+  "allPass": true
 }

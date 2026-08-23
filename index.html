@@ -332,7 +332,7 @@ main{max-width:1920px;margin:auto;grid-template-columns:minmax(0,1fr) 374px;min-
 }
 
 
-/* PUBLIC v5.11.2 — wide-chart layout + selection-independent reference charts. */
+/* PUBLIC v5.11.4 — wide-chart layout + selection-independent reference charts. */
 /* FINAL AUDIT: AND-edge filtering + Japanese official metadata corrections. */
 /* v5.10.12: New Mutants stays lineage-only (no direct arrows); graph clicks no longer auto-center; AI-use disclosure added. */
 main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
@@ -402,7 +402,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .overall-watch-card{border-color:#1e3a3a!important;background:linear-gradient(145deg,rgba(6,78,59,.16),rgba(15,23,42,.76))!important}
 @media(max-width:760px){.overall-watch-percent{font-size:16px}.overall-watch-stat{font-size:9px}}
 
-/* PUBLIC v5.11.2 — full-width watch workspace + stable checklist scroll. */
+/* PUBLIC v5.11.4 — full-width watch workspace + stable checklist scroll. */
 #right .side-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
 .watch-workspace{max-width:1600px;margin:0 auto;padding:22px 14px 8px}
 .watch-workspace-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:0 2px 12px}
@@ -446,7 +446,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
  .watch-card-plan .prep-progress-tools{display:block}.watch-card-plan .prep-watched-check{width:19px;height:19px}
 }
 
-/* PUBLIC v5.11.2 — scroll-friendly chart interaction.
+/* PUBLIC v5.11.4 — scroll-friendly chart interaction.
    Performance: pinch rect is cached per gesture; highlight scans stay on the active SVG.
    On phones, touch gestures belong to the browser/page; native pinch zoom is allowed and the chart never captures two-finger pan/pinch.
    Desktop Ctrl/Cmd + wheel zoom and mouse/pen drag remain available. */
@@ -467,12 +467,13 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .svg-wrap svg,.svg-wrap svg g.node{touch-action:none!important}
   .svg-wrap.mobile-canvas-active>svg{visibility:hidden!important;pointer-events:none!important}
   .svg-wrap canvas[data-marvel-mobile-canvas]{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;z-index:1}
+  .svg-wrap canvas[data-marvel-mobile-highlight]{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;touch-action:none;z-index:2}
   .svg-wrap.mobile-canvas-active .zoom-hint{z-index:6}
   .chart-watch-jump{top:8px;right:8px;padding:6px 8px;font-size:10px}
   .svg-wrap.scroll-friendly .zoom-hint{left:8px;right:auto;bottom:8px;max-width:70%}
 }
 
-/* PUBLIC v5.11.2 — mobile goal bar. The full chart is always visible on phones. */
+/* PUBLIC v5.11.4 — mobile goal bar. The full chart is always visible on phones. */
 #mobileFocusShell{display:none}
 @media(max-width:760px){
   #mobileFocusShell{display:block;margin:6px 8px 10px;padding:9px;border:1px solid #2b3a55;border-radius:13px;background:#0b1220;color:#e5e7eb}
@@ -510,7 +511,17 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 
 /* v5.10.12 integrated multi-goal planner */
 .multi-goal-summary{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:9px 0;padding:8px;border:1px solid #334155;border-radius:10px;background:#0b1220}.multi-goal-summary>span:first-child{font-weight:900;color:#fde68a;margin-right:3px}.multi-goal-badge{border:1px solid #92400e;border-radius:999px;background:#2b1707;color:#fde68a;padding:5px 9px;font-size:11px;font-weight:800;cursor:pointer}.prep-item.is-goal{border-color:#92400e!important;background:linear-gradient(90deg,rgba(120,53,15,.18),rgba(15,23,42,.2))}.prep-goal-badge{display:inline-flex;border:1px solid #f59e0b;border-radius:999px;background:#422006;color:#fde68a;padding:2px 7px;font-size:10px;font-weight:900}.prep-plan-heading{display:flex;align-items:center;flex-wrap:wrap;gap:7px}.prep-plan-empty{padding:12px;border:1px dashed #475569;border-radius:10px;color:#cbd5e1}.watch-card-target{align-self:start}.watch-card-target .muted{line-height:1.65}
-</style></head><body>
+</style>
+<style>
+/* PUBLIC v5.12.0 — optional shared watch rooms. */
+.watch-share-tools{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:-2px 0 10px}.watch-share-tools button{padding:7px 10px;font-size:11px}
+.shared-room-bar{display:none;margin:8px 0 10px;padding:9px 10px;border:1px solid #1d4ed8;border-radius:10px;background:linear-gradient(135deg,rgba(30,64,175,.16),rgba(15,23,42,.92))}.shared-room-bar.active{display:block}.shared-room-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.shared-room-title{font-weight:900;color:#bfdbfe}.shared-room-actions{display:flex;gap:5px;flex-wrap:wrap}.shared-room-actions button{padding:5px 8px;font-size:10px}.shared-room-members{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.shared-room-member{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border:1px solid #475569;border-radius:999px;background:#111827;color:#dbeafe;font-size:10px}.shared-room-member.me{border-color:#2563eb;background:#172554}.shared-room-note{margin-top:6px;color:#93a4bd;font-size:10px}
+.prep-room-members{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}.prep-room-member{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:999px;border:1px solid #374151;background:#0b1220;color:#94a3b8;font-size:9px}.prep-room-member.done{border-color:#166534;background:#052e20;color:#86efac}.prep-room-member.me{font-weight:800}.prep-item.is-room-all-watched{background:linear-gradient(90deg,rgba(5,46,32,.24),rgba(15,23,42,.12));border-color:#166534!important}.prep-all-done-badge{display:inline-flex;padding:1px 6px;border:1px solid #16a34a;border-radius:999px;background:#052e20;color:#86efac;font-size:9px;font-weight:900}
+#sharedRoomDialog{width:min(92vw,430px);border:1px solid #475569;border-radius:14px;background:#0f172a;color:#e5e7eb;padding:0;box-shadow:0 24px 80px rgba(0,0,0,.5)}#sharedRoomDialog::backdrop{background:rgba(2,6,23,.72)}.shared-room-dialog-body{padding:16px}.shared-room-dialog-body h3{margin:0 0 6px}.shared-room-dialog-body p{margin:6px 0 12px;color:#94a3b8;font-size:12px;line-height:1.55}.shared-room-dialog-body input{width:100%;margin-bottom:10px}.shared-room-dialog-actions{display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap}.shared-room-error{min-height:1.4em;color:#fca5a5;font-size:11px;margin:5px 0}
+@media(max-width:760px){.watch-share-tools{margin-top:0}.shared-room-bar{padding:8px}.prep-room-members{margin-left:0}.prep-room-member{font-size:9px}}
+</style>
+
+</head><body>
 <header>
   <div class="public-brand">
     <div class="brand-copy">
@@ -520,7 +531,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.11.2</span>
+      <span class="stat-chip public-release">PUBLIC v5.12.0</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -5099,7 +5110,8 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 </svg></div></div>
 </section>
 <aside id="right"><div class="mobile-sheet-head"><div><b>作品・接続の詳細</b><div class="mobile-sheet-sub">現在のゴールと接続根拠</div></div><button aria-label="詳細を閉じる" id="mobileDetailsClose" type="button">閉じる</button></div><div aria-label="右パネル表示" class="side-tabs" role="tablist"><button aria-selected="true" class="side-tab-btn active" data-side-tab="works" role="tab" type="button">作品</button><button aria-selected="false" class="side-tab-btn" data-side-tab="links" role="tab" type="button">接続</button></div><div class="side-tab-panel side-tab-works active"><div class="card"><h3>作品一覧</h3><div class="muted" id="count"></div><div class="node-list" id="list"></div></div><div class="card"><h3>現在のゴール</h3><div class="muted" id="detail">作品を選ぶと前後の接続を表示します。</div></div></div><div class="side-tab-panel side-tab-links"><div class="card path-explain" id="pathExplainCard"><h3>🧭 ゴールを結ぶ経路</h3><div class="muted" id="pathExplain">PATHモードで2作品以上をゴールにすると、採用した有向経路を表示します。</div></div><div class="card"><h3>直接つながる作品</h3><div class="edge-tooltip-note">図の矢印にカーソルを置くと、接続種別・重要度・根拠を確認できます。</div><div id="edgewrap"><table><thead><tr><th>元</th><th>先</th><th>接続</th><th>強さ</th></tr></thead><tbody id="et"></tbody></table></div></div></div></aside></main>
-<section id="watchWorkspace" class="watch-workspace" aria-label="予習・視聴プラン"><div class="watch-workspace-head"><div><span class="eyebrow">WATCH PLAN</span><h2>予習・視聴プラン</h2><p>見たい作品を決めて、予習ルート・視聴済み・残り時間を広い画面でまとめて管理できます。</p></div><button id="watchBackToChart" class="watch-back-btn" type="button">↑ チャートへ戻る</button></div><div class="watch-workspace-grid"><div class="card overall-watch-card watch-card-progress"><div id="overallWatchProgress" class="overall-watch-progress" aria-live="polite"></div></div><div class="card watch-card-target"><h3>🎯 ゴールの選び方</h3><div class="muted">チャートで見たい作品をクリック／タップするとゴールに追加されます。複数ゴールは自動で1本の予習プランに統合します。</div></div><div class="card watch-card-plan"><h3>予習プラン</h3><div aria-label="予習プランの詳しさ" class="prep-tier-controls" id="prepTierControls"><button class="prep-tier" data-tier="minimum">最低限</button><button class="prep-tier active" data-tier="recommended">おすすめ</button><button class="prep-tier" data-tier="complete">完全版</button></div><div class="muted" id="prepplan">見たい作品を選ぶと、予習した方がよい作品をおすすめ順に並べます。</div></div><div class="card watch-card-flow"><h3>見る順ナビ</h3><div class="muted" id="flow">作品を選ぶと、「前に見る候補」「次に見る候補」を表示します。</div></div></div></section>
+<section id="watchWorkspace" class="watch-workspace" aria-label="予習・視聴プラン"><div class="watch-workspace-head"><div><span class="eyebrow">WATCH PLAN</span><h2>予習・視聴プラン</h2><p>見たい作品を決めて、予習ルート・視聴済み・残り時間を広い画面でまとめて管理できます。</p></div><button id="watchBackToChart" class="watch-back-btn" type="button">↑ チャートへ戻る</button></div><div class="watch-workspace-grid"><div class="card overall-watch-card watch-card-progress"><div id="overallWatchProgress" class="overall-watch-progress" aria-live="polite"></div></div><div class="card watch-card-target"><h3>🎯 ゴールの選び方</h3><div class="muted">チャートで見たい作品をクリック／タップするとゴールに追加されます。複数ゴールは自動で1本の予習プランに統合します。</div></div><div class="card watch-card-plan"><h3>予習プラン</h3><div class="watch-share-tools"><button id="sharePlanImage" type="button">📷 画像で共有</button><button id="sharedRoomOpen" type="button">👥 一緒に見る</button></div><div id="sharedRoomBar" class="shared-room-bar" aria-live="polite"></div><div aria-label="予習プランの詳しさ" class="prep-tier-controls" id="prepTierControls"><button class="prep-tier" data-tier="minimum">最低限</button><button class="prep-tier active" data-tier="recommended">おすすめ</button><button class="prep-tier" data-tier="complete">完全版</button></div><div class="muted" id="prepplan">見たい作品を選ぶと、予習した方がよい作品をおすすめ順に並べます。</div></div><div class="card watch-card-flow"><h3>見る順ナビ</h3><div class="muted" id="flow">作品を選ぶと、「前に見る候補」「次に見る候補」を表示します。</div></div></div></section>
+<dialog id="sharedRoomDialog"><div class="shared-room-dialog-body"><h3 id="sharedRoomDialogTitle">一緒に見る</h3><p id="sharedRoomDialogText">表示名だけで参加できます。メールアドレスやアカウント登録は不要です。</p><input id="sharedRoomName" maxlength="24" autocomplete="nickname" placeholder="表示名（例：たろう）"><div id="sharedRoomError" class="shared-room-error"></div><div class="shared-room-dialog-actions"><button id="sharedRoomCancel" type="button">キャンセル</button><button id="sharedRoomSubmit" type="button">ルームを作る</button></div></div></dialog>
 <section aria-label="相関図について" class="below-chart-info"><div class="below-info-head"><div><span class="eyebrow">ABOUT THIS MAP</span><h2>相関図について</h2><p>操作中に常時見る必要のない情報を、チャート下にまとめました。</p></div></div><div class="below-info-grid"><div class="card info-card"><h3>日本向け今後の注目日</h3>
 <div class="muted">
 2026年9月23日：『アベンジャーズ／エンドゲーム：アンコール』<br/>
@@ -5198,7 +5210,7 @@ function setMobileViewBox(wrap,st,x,y,w,h){
   st.x=st.vbX; st.y=st.vbY;
 }
 
-// v5.11.1 Canvas renderer: mobile Graphviz tabs. The source SVG remains as the
+// v5.11.4 Canvas renderer: mobile Graphviz tabs. The source SVG remains as the
 // semantic/selection model; panning and zooming redraw a clipped Canvas view.
 // The mobile camera uses the viewport aspect ratio so zoom fills the portrait chart area,
 // while pinch/zoom keeps the touched world point anchored under the fingers.
@@ -5288,6 +5300,8 @@ function rebuildMobileCanvas(wrap,geometry=true){
   for(const p of st.primitives) canvasStylePrimitive(p);
   renderMobileCanvasCache(wrap);
   drawMobileCanvas(wrap);
+  // The full cache now contains the final selection styling; retire the fast overlay.
+  st.overlayActive=false; st.overlayState=null; clearMobileSelectionOverlay(wrap);
 }
 function resizeMobileCanvas(wrap){
   const cs=mobileCanvasStates.get(wrap); if(!cs) return;
@@ -5295,6 +5309,7 @@ function resizeMobileCanvas(wrap){
   st.viewportW=w;st.viewportH=h;
   const rw=Math.max(1,Math.round(w*dpr)),rh=Math.max(1,Math.round(h*dpr));
   if(cs.canvas.width!==rw||cs.canvas.height!==rh){cs.canvas.width=rw;cs.canvas.height=rh;cs.dpr=dpr}
+  if(cs.overlay&&(cs.overlay.width!==rw||cs.overlay.height!==rh)){cs.overlay.width=rw;cs.overlay.height=rh}
   cs.cssW=w;cs.cssH=h;drawMobileCanvas(wrap);
 }
 function trimMobileCanvasCaches(active){document.querySelectorAll('.svg-wrap').forEach(w=>{if(w===active)return;const x=mobileCanvasStates.get(w);if(x){x.caches=null;x.cachePixels=0;}});}
@@ -5308,8 +5323,10 @@ function initMobileCanvas(wrap){
   svg.setAttribute('viewBox',`${st.baseViewBox.x} ${st.baseViewBox.y} ${st.baseViewBox.w} ${st.baseViewBox.h}`);
   st.lastAppliedViewBox=null;
   const canvas=document.createElement('canvas');canvas.dataset.marvelMobileCanvas=key;canvas.setAttribute('aria-hidden','true');
-  wrap.insertBefore(canvas,svg.nextSibling);wrap.classList.add('mobile-canvas-active');
-  cs={wrap,svg,canvas,ctx:canvas.getContext('2d',{alpha:true,desynchronized:true}),primitives:[],nodeBoxes:[],syncRaf:0,dpr:1,frames:0,cullDraws:0};
+  wrap.insertBefore(canvas,svg.nextSibling);
+  const overlay=document.createElement('canvas');overlay.dataset.marvelMobileHighlight=key;overlay.setAttribute('aria-hidden','true');
+  canvas.insertAdjacentElement('afterend',overlay);wrap.classList.add('mobile-canvas-active');
+  cs={wrap,svg,canvas,ctx:canvas.getContext('2d',{alpha:true,desynchronized:true}),overlay,overlayCtx:overlay.getContext('2d',{alpha:true,desynchronized:true}),primitives:[],nodeBoxes:[],syncRaf:0,dpr:1,frames:0,cullDraws:0,overlayVersion:0,overlayDrawn:0,overlayActive:false,overlayState:null};
   mobileCanvasStates.set(wrap,cs);
   const observer=new MutationObserver(records=>{
     let geometry=false,style=false;
@@ -5351,6 +5368,132 @@ function chooseMobileCanvasCache(cs,targetDensity){
   const lods=[.25,.5,1];let lod=lods[lods.length-1];for(const x of lods){if(x>=targetDensity*.92){lod=x;break}}
   return {lod,cache:cs.caches?.get(lod)};
 }
+// v5.11.3: fast selection overlay. The heavy background cache remains untouched for
+// the first paint after a tap; only highlighted primitives are drawn on this small layer.
+function clearMobileSelectionOverlay(wrap){
+  const cs=mobileCanvasStates.get(wrap);if(!cs?.overlayCtx)return false;
+  const c=cs.overlay,ctx=cs.overlayCtx;ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.shadowBlur=0;ctx.clearRect(0,0,c.width,c.height);cs.overlayDrawn=0;cs.overlaySyntheticDrawn=0;return true;
+}
+function mobileOverlayNodeClass(id,state){
+  if(selectedIds.has(id)) return id===selected?'current-goal':'goal-node';
+  if(!state?.ctx?.has(id)) return null;
+  if(state.pathMode) return 'pathhl';
+  if(state.generic) return 'contexthl';
+  const b=state.back?.has(id),f=state.forward?.has(id),c=state.context?.has(id);
+  if(b&&f)return 'bothhl'; if(b)return 'backhl'; if(f)return 'forwardhl'; if(c)return 'contexthl';
+  return 'hl';
+}
+function mobileOverlayEdgeClass(key,state){
+  if(!key||!state)return null;
+  if(state.pathMode) return state.pathEdges?.has(key)?'pathhl':null;
+  if(state.generic) return state.contextEdges?.has(key)?'contexthl':null;
+  const b=state.backEdges?.has(key),f=state.forwardEdges?.has(key),c=state.contextEdges?.has(key);
+  if(b&&f)return 'bothhl'; if(b)return 'backhl'; if(f)return 'forwardhl'; if(c)return 'contexthl';
+  return null;
+}
+function mobileOverlayCategory(p,state){
+  const g=p.el.closest('g.node,g.edge,g.dynamic-edge-overlay');if(!g)return null;
+  if(g.matches('g.node')) return mobileOverlayNodeClass(gt(g),state);
+  // v5.11.4: edge <title> is rewritten to a human-readable tooltip after startup.
+  // Keep using the canonical connection key cached on the edge group instead.
+  const key=g.dataset?.edgeKey || (typeof window.marvelEdgeKeyFromGroup==='function'?window.marvelEdgeKeyFromGroup(g):'');
+  return mobileOverlayEdgeClass(key||null,state);
+}
+function mobileOverlayColor(category){
+  return category==='backhl'?'#38bdf8':category==='forwardhl'?'#34d399':category==='bothhl'||category==='pathhl'?'#a78bfa':category==='contexthl'?'#f59e0b':'#60a5fa';
+}
+function mobileOverlayCompressedBridges(edgeSet,visible){
+  const adj=new Map();
+  for(const k of (edgeSet||[])){
+    const [a,b]=String(k).split('->');if(!a||!b)continue;
+    if(!adj.has(a))adj.set(a,[]);adj.get(a).push(b);
+  }
+  const ans=[],seenBridge=new Set();
+  for(const start of visible){
+    for(const first of (adj.get(start)||[])){
+      if(visible.has(first))continue;
+      const q=[[first,[first]]],seen=new Set([first]);
+      while(q.length){
+        const [x,hidden]=q.shift();
+        for(const y of (adj.get(x)||[])){
+          if(visible.has(y)){
+            const key=`${start}->${y}`;
+            if(start!==y&&!seenBridge.has(key)){seenBridge.add(key);ans.push({source:start,target:y,hidden});}
+            continue;
+          }
+          if(!seen.has(y)){seen.add(y);q.push([y,[...hidden,y]]);}
+        }
+      }
+    }
+  }
+  return ans;
+}
+function mobileOverlaySyntheticSpecs(cs,state){
+  if(!cs||!state||state.generic)return [];
+  const visible=new Set(cs.nodeBoxes.map(n=>n.id));
+  const staticKeys=new Set([...cs.svg.querySelectorAll('g.edge:not(.dynamic-edge-overlay)')].map(g=>g.dataset?.edgeKey||(typeof window.marvelEdgeKeyFromGroup==='function'?window.marvelEdgeKeyFromGroup(g):'')).filter(Boolean));
+  const specs=[['backhl',state.backEdges],['forwardhl',state.forwardEdges],['contexthl',state.contextEdges],['pathhl',state.pathEdges||new Set()]];
+  const out=[],seen=new Set();
+  const add=(source,target,category,compressed=false)=>{
+    const key=`${source}->${target}`;if(source===target||staticKeys.has(key)||seen.has(`${category}|${key}`))return;
+    if(!visible.has(source)||!visible.has(target))return;
+    seen.add(`${category}|${key}`);out.push({source,target,category,compressed});
+  };
+  for(const [category,set] of specs){
+    for(const k of (set||[])){const [a,b]=String(k).split('->');if(a&&b)add(a,b,category,false);}
+    if(category!=='contexthl')for(const br of mobileOverlayCompressedBridges(set,visible))add(br.source,br.target,category,true);
+  }
+  return out;
+}
+function mobileOverlayBoxBoundary(box,from,to){
+  const cx=box.x+box.w/2,cy=box.y+box.h/2,dx=to.x-from.x,dy=to.y-from.y,ax=Math.abs(dx)||1e-6,ay=Math.abs(dy)||1e-6;
+  const t=Math.min((box.w/2)/ax,(box.h/2)/ay);
+  return {x:cx+dx*t,y:cy+dy*t};
+}
+function drawMobileSyntheticOverlayEdge(ctx,cs,spec,worldScale){
+  const a=cs.nodeBoxes.find(n=>n.id===spec.source)?.box,b=cs.nodeBoxes.find(n=>n.id===spec.target)?.box;if(!a||!b)return false;
+  const ac={x:a.x+a.w/2,y:a.y+a.h/2},bc={x:b.x+b.w/2,y:b.y+b.h/2};
+  const start=mobileOverlayBoxBoundary(a,ac,bc),end=mobileOverlayBoxBoundary(b,bc,ac),dx=end.x-start.x,dy=end.y-start.y;
+  const bend=Math.max(-34,Math.min(34,dx*.06));
+  const c1={x:start.x+dx*.34,y:start.y+dy*.34-bend},c2={x:start.x+dx*.68,y:start.y+dy*.68-bend};
+  const color=mobileOverlayColor(spec.category),w=Math.max(.001,worldScale),line=4.2/w;
+  ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=line;ctx.lineCap='round';ctx.lineJoin='round';ctx.shadowColor=color;ctx.shadowBlur=9;
+  ctx.setLineDash(spec.compressed?[10/w,6/w]:(spec.category==='contexthl'?[7/w,5/w]:[]));
+  const path=new Path2D();path.moveTo(start.x,start.y);path.bezierCurveTo(c1.x,c1.y,c2.x,c2.y,end.x,end.y);ctx.stroke(path);
+  const ang=Math.atan2(end.y-c2.y,end.x-c2.x),len=8/w,half=4.2/w;
+  const tip=end,back={x:end.x-Math.cos(ang)*len,y:end.y-Math.sin(ang)*len},px=-Math.sin(ang),py=Math.cos(ang);
+  const arrow=new Path2D();arrow.moveTo(tip.x,tip.y);arrow.lineTo(back.x+px*half,back.y+py*half);arrow.lineTo(back.x-px*half,back.y-py*half);arrow.closePath();ctx.fill(arrow);
+  ctx.restore();return true;
+}
+function drawMobileOverlayPrimitive(ctx,p,category,worldScale){
+  const ps=p.style;if(!ps||!ps.display)return false;
+  ctx.save();ctx.transform(p.m.a,p.m.b,p.m.c,p.m.d,p.m.e,p.m.f);ctx.globalAlpha=1;
+  const shadow=category==='current-goal'?['#ef4444',24]:category==='goal-node'?['#f59e0b',11]:[mobileOverlayColor(category),9];
+  ctx.shadowColor=shadow[0];ctx.shadowBlur=shadow[1];
+  if(p.tag==='text'){
+    ctx.fillStyle=ps.fill||'#111827';ctx.textAlign=ps.textAnchor==='middle'?'center':(ps.textAnchor==='end'?'right':'left');ctx.textBaseline='alphabetic';
+    ctx.font=`${ps.fontSize}px ${ps.fontFamily}`;for(const line of p.geom)ctx.fillText(line.text,line.x,line.y);
+  }else{
+    let fill=ps.fill,stroke=ps.stroke,lineWidth=ps.lineWidth;
+    if(p.el.closest('g.edge,g.dynamic-edge-overlay')){
+      const c=mobileOverlayColor(category);stroke=c;if(p.tag==='polygon')fill=c;lineWidth=Math.max(lineWidth||1,category==='contexthl'?3.6:4.2)/Math.max(.001,worldScale);
+    }
+    if(fill){ctx.fillStyle=fill;ctx.fill(p.geom)}
+    if(stroke&&lineWidth>0){ctx.strokeStyle=stroke;ctx.lineCap=ps.lineCap;ctx.lineJoin=ps.lineJoin;ctx.setLineDash(ps.dash||[]);ctx.lineWidth=ps.vectorEffect==='non-scaling-stroke'?Math.max(lineWidth,ps.lineWidth/Math.max(.001,worldScale)):lineWidth;ctx.stroke(p.geom)}
+  }
+  ctx.restore();return true;
+}
+function drawMobileSelectionOverlay(wrap,state){
+  const cs=mobileCanvasStates.get(wrap);if(!cs?.overlayCtx||!mobileChartMotion.matches)return false;
+  const st=ensureMobileViewBoxState(wrap),m=mobileViewBoxMetrics(wrap,st),ctx=cs.overlayCtx,dpr=cs.dpr||1;if(!st||!m)return false;
+  clearMobileSelectionOverlay(wrap);
+  if(!selectedIds.size||!state){cs.overlayActive=false;cs.overlayState=null;return true;}
+  ctx.setTransform(dpr*m.pxPerWorld,0,0,dpr*m.pxPerWorld,dpr*(m.offsetX-st.vbX*m.pxPerWorld),dpr*(m.offsetY-st.vbY*m.pxPerWorld));
+  let n=0;for(const p of cs.primitives){const category=mobileOverlayCategory(p,state);if(category&&drawMobileOverlayPrimitive(ctx,p,category,m.pxPerWorld))n++;}
+  let synthetic=0;for(const spec of mobileOverlaySyntheticSpecs(cs,state))if(drawMobileSyntheticOverlayEdge(ctx,cs,spec,m.pxPerWorld))synthetic++;
+  cs.overlayActive=true;cs.overlayState=state;cs.overlayVersion=(cs.overlayVersion||0)+1;cs.overlayDrawn=n+synthetic;cs.overlaySyntheticDrawn=synthetic;return (n+synthetic)>0;
+}
+
 // v5.11.2: adaptive pan LOD (.25 at overview, up to .5 when zoomed); pinch stays at .25.
 function drawMobileCanvas(wrap){
   const cs=mobileCanvasStates.get(wrap);if(!cs||!mobileChartMotion.matches)return false;
@@ -5363,7 +5506,9 @@ function drawMobileCanvas(wrap){
     const dx=m.offsetX+(ix-st.vbX)*m.pxPerWorld,dy=m.offsetY+(iy-st.vbY)*m.pxPerWorld,dw=(ix2-ix)*m.pxPerWorld,dh=(iy2-iy)*m.pxPerWorld;
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='medium';ctx.drawImage(cache,sx,sy,sw,sh,dx,dy,dw,dh);
   }
-  cs.frames++;cs.cullDraws=1;cs.lastLod=lod;return true;
+  cs.frames++;cs.cullDraws=1;cs.lastLod=lod;
+  if(cs.overlayActive&&cs.overlayState) drawMobileSelectionOverlay(wrap,cs.overlayState);
+  return true;
 }
 function mobileCanvasNodeBox(wrap,id){return mobileCanvasStates.get(wrap)?.nodeBoxes.find(x=>x.id===id)?.box||null}
 function mobileCanvasHitTest(wrap,clientX,clientY){
@@ -5374,7 +5519,7 @@ function mobileCanvasHitTest(wrap,clientX,clientY){
 }
 window.marvelCanvasAudit=()=>{
   const wrap=activeWrap(),cs=wrap&&mobileCanvasStates.get(wrap),st=wrap&&ensureViewState(wrap);
-  return {panel:wrap?.closest('.panel')?.id||null,active:!!cs,sourceViewBox:cs?.svg.getAttribute('viewBox')||null,canvas:[cs?.canvas.width||0,cs?.canvas.height||0],primitives:cs?.primitives.length||0,nodeBoxes:cs?.nodeBoxes.length||0,frames:cs?.frames||0,lastDrawn:cs?.cullDraws||0,cacheLod:cs?.lastLod||0,cachePixels:cs?.cachePixels||0,cacheVersion:cs?.cacheVersion||0,camera:st&&st.baseViewBox?{x:st.vbX,y:st.vbY,w:st.vbW,h:st.vbH}:null};
+  return {panel:wrap?.closest('.panel')?.id||null,active:!!cs,sourceViewBox:cs?.svg.getAttribute('viewBox')||null,canvas:[cs?.canvas.width||0,cs?.canvas.height||0],primitives:cs?.primitives.length||0,nodeBoxes:cs?.nodeBoxes.length||0,frames:cs?.frames||0,lastDrawn:cs?.cullDraws||0,cacheLod:cs?.lastLod||0,cachePixels:cs?.cachePixels||0,cacheVersion:cs?.cacheVersion||0,overlayVersion:cs?.overlayVersion||0,overlayDrawn:cs?.overlayDrawn||0,overlaySyntheticDrawn:cs?.overlaySyntheticDrawn||0,overlayActive:!!cs?.overlayActive,camera:st&&st.baseViewBox?{x:st.vbX,y:st.vbY,w:st.vbW,h:st.vbH}:null};
 };
 
 function applyView(wrap){
@@ -6063,6 +6208,112 @@ updatePreparationPlan();
 render();
 </script>
 
+
+<script>
+// PUBLIC v5.12.0: optional shared watch rooms. Normal browsing stays local/offline;
+// this controller connects to Cloudflare only after the user creates or joins a room.
+(()=>{
+  const ROOM_API='https://marvel-room-worker.kamochama.workers.dev';
+  const ROOM_ID_RE=/^[A-Za-z0-9_-]{22}$/;
+  const CRED_PREFIX='marvelJapanSharedRoom.v1.';
+  let roomState=null, memberId='', token='', displayName='', socket=null, connecting=false;
+  const pendingMessages=[];
+  const listeners=new Set();
+
+  function credKey(roomId){return CRED_PREFIX+roomId}
+  function loadCred(roomId){
+    try{const x=JSON.parse(localStorage.getItem(credKey(roomId))||'null');return x&&x.memberId&&x.token?x:null}catch(_){return null}
+  }
+  function saveCred(roomId){
+    if(!roomId||!memberId||!token)return;
+    try{localStorage.setItem(credKey(roomId),JSON.stringify({memberId,token,displayName}))}catch(_){}
+  }
+  function clearCred(roomId){try{localStorage.removeItem(credKey(roomId))}catch(_){}}
+  async function readResponse(res){
+    let data=null;try{data=await res.json()}catch(_){}
+    if(!res.ok){const e=new Error(data?.message||`HTTP ${res.status}`);e.status=res.status;e.code=data?.error||'request_failed';throw e}
+    return data||{};
+  }
+  function emit(kind='state'){
+    const detail={kind,active:!!roomState,state:roomState,memberId,displayName};
+    for(const fn of listeners){try{fn(detail)}catch(_){}}
+    window.dispatchEvent(new CustomEvent('marvelroomstate',{detail}));
+  }
+  function setState(next,kind='state'){
+    roomState=next||null;
+    if(roomState?.members){
+      const me=roomState.members.find(m=>m.id===memberId);
+      if(me?.name) displayName=me.name;
+    }
+    emit(kind);
+  }
+  function socketUrl(roomId){
+    const u=new URL(`${ROOM_API}/api/rooms/${roomId}/ws`);u.protocol='wss:';
+    u.searchParams.set('memberId',memberId);u.searchParams.set('token',token);return u.toString();
+  }
+  function connectSocket(roomId){
+    if(socket){try{socket.onclose=null;socket.close()}catch(_){}socket=null}
+    const ws=new WebSocket(socketUrl(roomId));socket=ws;
+    ws.onopen=()=>{while(pendingMessages.length&&ws.readyState===WebSocket.OPEN){try{ws.send(JSON.stringify(pendingMessages.shift()))}catch(_){break}}};
+    ws.onmessage=e=>{
+      let msg;try{msg=JSON.parse(e.data)}catch(_){return}
+      if(msg?.type==='state'&&msg.state)setState(msg.state,'remote');
+      else if(msg?.type==='error')window.dispatchEvent(new CustomEvent('marvelroomerror',{detail:msg}));
+    };
+    ws.onclose=e=>{
+      if(socket!==ws)return;
+      socket=null;emit('disconnected');
+      if(roomState&&e?.code!==1000&&e?.code!==4000)setTimeout(()=>{if(roomState&&!socket)connectSocket(roomState.roomId)},1200);
+    };
+    return ws;
+  }
+  async function join(roomId,name,opts={}){
+    if(!ROOM_ID_RE.test(roomId))throw new Error('共有ルームIDが正しくありません。');
+    if(connecting)throw new Error('接続処理中です。');
+    connecting=true;
+    try{
+      const saved=opts.credential||loadCred(roomId);
+      const body={displayName:String(name||saved?.displayName||'').trim()};
+      if(saved?.memberId&&saved?.token){body.memberId=saved.memberId;body.token=saved.token}
+      const res=await fetch(`${ROOM_API}/api/rooms/${roomId}/join`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+      const data=await readResponse(res);
+      memberId=data.memberId;token=data.token;displayName=body.displayName;setState(data.state,opts.eventKind||'joined');saveCred(roomId);connectSocket(roomId);
+      return {roomId,memberId,state:roomState,reused:!!(saved?.memberId&&saved?.token)};
+    }finally{connecting=false}
+  }
+  async function create(name){
+    const res=await fetch(`${ROOM_API}/api/rooms`,{method:'POST',headers:{'content-type':'application/json'},body:'{}'});
+    const data=await readResponse(res);
+    return join(data.roomId,name,{credential:null,eventKind:'created'});
+  }
+  async function leave(){
+    const rid=roomState?.roomId;
+    if(socket){try{socket.onclose=null;socket.close()}catch(_){}socket=null}
+    if(rid&&memberId&&token){
+      try{await fetch(`${ROOM_API}/api/rooms/${rid}/leave`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({memberId,token})})}catch(_){}
+      clearCred(rid);
+    }
+    pendingMessages.length=0;roomState=null;memberId='';token='';displayName='';emit('left');
+  }
+  function send(msg){if(socket&&socket.readyState===WebSocket.OPEN){socket.send(JSON.stringify(msg));return true}if(roomState){pendingMessages.push(msg);return true}return false}
+  function inviteUrl(){
+    if(!roomState?.roomId)return '';
+    const u=new URL(location.href);u.hash=`room=${roomState.roomId}`;return u.toString();
+  }
+  function roomIdFromHash(){
+    const m=String(location.hash||'').match(/^#room=([A-Za-z0-9_-]{22})$/);return m?m[1]:'';
+  }
+  function subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn)}
+  window.marvelSharedRoom={
+    ROOM_API,
+    get active(){return !!roomState},get state(){return roomState},get memberId(){return memberId},get displayName(){return displayName},
+    create,join,leave,send,inviteUrl,roomIdFromHash,loadCredential:loadCred,subscribe,
+    setWatched(workId,watched){return send({type:'watched:set',workId,watched:!!watched})},
+    setPlan(goalIds,tier){return send({type:'plan:set',goalIds:[...(goalIds||[])],tier})},
+    ping(){return send({type:'ping'})}
+  };
+})();
+</script>
 
 <script>
 // v5.10.0 core selection module: one state computation and one renderer, while preserving stable pan/zoom.
@@ -6906,6 +7157,22 @@ render();
     window.__marvelLastSelectionState=selectionStateCache;
   };
 
+  // v5.11.3: on mobile Canvas, paint the selection overlay immediately and
+  // defer the full DOM/UI/cache refresh by one painted frame. Desktop remains synchronous.
+  const selectBeforeImmediateOverlay=select;
+  let mobileSelectRafA=0,mobileSelectRafB=0;
+  function queueMobileFullSelectionRefresh(){
+    if(mobileSelectRafA)cancelAnimationFrame(mobileSelectRafA);if(mobileSelectRafB)cancelAnimationFrame(mobileSelectRafB);
+    mobileSelectRafA=requestAnimationFrame(()=>{mobileSelectRafA=0;mobileSelectRafB=requestAnimationFrame(()=>{mobileSelectRafB=0;refreshSelection(false);});});
+  }
+  select=function(id,multi=false){
+    const wrap=activeWrap();
+    if(!(mobileChartMotion.matches&&isMobileCanvasWrap(wrap))) return selectBeforeImmediateOverlay(id,multi);
+    toggleSelectionState(id,multi);normalizeSelection();selectionStateCache=computeSelectionState();
+    initMobileCanvas(wrap);drawMobileSelectionOverlay(wrap,selectionStateCache);
+    queueMobileFullSelectionRefresh();
+  };
+
   document.querySelectorAll('.combine-btn').forEach(btn=>{
     btn.onclick=()=>{
       combineMode=['and','path'].includes(btn.dataset.combine)?btn.dataset.combine:'or';
@@ -7063,7 +7330,7 @@ render();
     const state=selectedIds.size ? (window.__marvelLastSelectionState||computeSelectionState()) : null;
     const svg=document.querySelector('.panel.active .svg-wrap svg');
     return {
-      version:'5.11.2-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
+      version:'5.12.0-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
       dim:!!svg?.classList.contains('dim'),
       litNodes:svg?.querySelectorAll('g.node.hl,g.node.focus').length||0,
       litEdges:svg?.querySelectorAll('g.edge.hl').length||0,
@@ -7073,6 +7340,207 @@ render();
       staticEdgeKeys:[...document.querySelectorAll('.panel.active .svg-wrap svg g.edge:not(.dynamic-edge-overlay)')].map(edgeKeyFromSvgGroup).filter(Boolean).length
     };
   };
+
+  // PUBLIC v5.12.0: project shared room state into the existing watch-plan UI.
+  (()=>{
+    if(!window.marvelSharedRoom)return;
+    const room=window.marvelSharedRoom;
+    const bar=document.getElementById('sharedRoomBar'), openBtn=document.getElementById('sharedRoomOpen');
+    const dialog=document.getElementById('sharedRoomDialog'), nameInput=document.getElementById('sharedRoomName');
+    const submitBtn=document.getElementById('sharedRoomSubmit'), cancelBtn=document.getElementById('sharedRoomCancel');
+    const dialogTitle=document.getElementById('sharedRoomDialogTitle'), dialogText=document.getElementById('sharedRoomDialogText'), errorBox=document.getElementById('sharedRoomError');
+    let roomViewState=null, applyingRoomState=false, lastSentPlan='', joiningRoomId='';
+  
+    function escRoom(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+    function memberSet(memberId){return new Set(roomViewState?.watched?.[memberId]||[])}
+    function ownSet(){return memberSet(room.memberId)}
+    function currentPlanSignature(){return JSON.stringify({tier:prepTier,goalIds:orderedGoalIds()})}
+    function serverPlanSignature(){const p=roomViewState?.plan||{};return JSON.stringify({tier:p.tier||'recommended',goalIds:[...(p.goalIds||[])]})}
+    function maybePushPlan(){
+      if(!room.active||applyingRoomState)return;
+      const sig=currentPlanSignature();if(sig===serverPlanSignature()||sig===lastSentPlan)return;
+      if(room.setPlan(orderedGoalIds(),prepTier))lastSentPlan=sig;
+    }
+    function renderRoomBar(){
+      if(!bar)return;
+      if(!room.active||!roomViewState){bar.classList.remove('active');bar.innerHTML='';if(openBtn)openBtn.textContent='👥 一緒に見る';return}
+      const members=roomViewState.members||[];
+      bar.classList.add('active');
+      bar.innerHTML=`<div class="shared-room-head"><span class="shared-room-title">👥 共有中 · ${members.length}人</span><div class="shared-room-actions"><button id="sharedRoomCopy" type="button">招待リンクをコピー</button><button id="sharedRoomLeave" type="button">退出</button></div></div><div class="shared-room-members">${members.map(m=>`<span class="shared-room-member${m.id===room.memberId?' me':''}">${escRoom(m.name)}${m.id===room.memberId?'（自分）':''}</span>`).join('')}</div><div class="shared-room-note">チェックは参加者ごとに共有されます。30日間使われないルームは自動で削除されます。</div>`;
+      if(openBtn)openBtn.textContent='👥 共有中';
+      bar.querySelector('#sharedRoomCopy')?.addEventListener('click',async()=>{
+        const url=room.inviteUrl();try{await navigator.clipboard?.writeText(url);bar.querySelector('#sharedRoomCopy').textContent='コピーしました ✓'}catch(_){prompt('このリンクを共有してください',url)}
+      });
+      bar.querySelector('#sharedRoomLeave')?.addEventListener('click',()=>room.leave());
+    }
+    function decorateSharedPlan(){
+      if(!room.active||!roomViewState)return;
+      const members=roomViewState.members||[];
+      prepplan.querySelectorAll('.prep-item[data-plan-id]').forEach(row=>{
+        const id=row.dataset.planId;row.querySelector('.prep-room-members')?.remove();row.querySelector('.prep-all-done-badge')?.remove();
+        const states=members.map(m=>({m,done:memberSet(m.id).has(id)}));
+        const allDone=states.length>0&&states.every(x=>x.done);row.classList.toggle('is-room-all-watched',allDone);
+        const box=document.createElement('div');box.className='prep-room-members';
+        box.innerHTML=states.map(({m,done})=>`<span class="prep-room-member${done?' done':''}${m.id===room.memberId?' me':''}">${escRoom(m.name)} ${done?'✓':'—'}</span>`).join('');
+        row.querySelector('.prep-item-main')?.appendChild(box);
+        if(allDone){const badge=document.createElement('span');badge.className='prep-all-done-badge';badge.textContent='全員完了';row.querySelector('.prep-title-row')?.appendChild(badge)}
+      });
+      const all=prepplan.querySelector('#prepMarkAllWatched'),clear=prepplan.querySelector('#prepClearPlanWatched');
+      for(const b of [all,clear])if(b){b.disabled=true;b.title='共有中は1作品ずつチェックしてください';}
+    }
+  
+    const saveWatchedStateLocal=saveWatchedState;
+    saveWatchedState=function(){
+      if(room.active){try{localStorage.setItem(WATCHED_DIM_STORAGE_KEY,dimWatchedOnChart?'1':'0')}catch(_){}return}
+      return saveWatchedStateLocal();
+    };
+    const setWatchedLocal=setWatched;
+    setWatched=function(id,on){
+      if(!room.active)return setWatchedLocal(id,on);
+      if(!nm[id])return;
+      if(on)watchedIds.add(id);else watchedIds.delete(id);
+      if(roomViewState){roomViewState.watched=roomViewState.watched||{};roomViewState.watched[room.memberId]=[...watchedIds].sort()}
+      room.setWatched(id,!!on);applyWatchedDimming();
+    };
+    const updatePreparationPlanRoomBase=updatePreparationPlan;
+    updatePreparationPlan=function(){
+      updatePreparationPlanRoomBase();decorateSharedPlan();renderRoomBar();maybePushPlan();
+    };
+  
+    function applyIncomingState(next,kind){
+      if(!next)return;
+      roomViewState=JSON.parse(JSON.stringify(next));
+      applyingRoomState=true;
+      try{
+        watchedIds=ownSet();
+        const rp=roomViewState.plan||{};
+        const goals=(rp.goalIds||[]).filter(id=>nm[id]);
+        const tier=['minimum','recommended','complete'].includes(rp.tier)?rp.tier:'recommended';
+        const creating=kind==='created';
+        const differs=tier!==prepTier||JSON.stringify(goals)!==JSON.stringify(orderedGoalIds());
+        if(!creating&&differs){selectedIds=new Set(goals);selected=goals.slice(-1)[0]||null;prepTier=tier;selectionStateCache=null;refreshSelection(false)}
+        else updatePreparationPlanPreservingView();
+        applyWatchedDimming();renderRoomBar();
+        lastSentPlan=serverPlanSignature();
+        if(creating)requestAnimationFrame(()=>{lastSentPlan='';maybePushPlan()});
+      }finally{applyingRoomState=false}
+    }
+    window.addEventListener('marvelroomstate',e=>{
+      const d=e.detail||{};
+      if(d.active&&d.state)applyIncomingState(d.state,d.kind);
+      else if(d.kind==='left'){
+        roomViewState=null;applyingRoomState=true;
+        try{watchedIds=loadWatchedIds();updatePreparationPlanPreservingView();applyWatchedDimming();renderRoomBar()}finally{applyingRoomState=false}
+      }else renderRoomBar();
+    });
+  
+    function openRoomDialog(roomId=''){
+      joiningRoomId=roomId||'';errorBox.textContent='';
+      dialogTitle.textContent=joiningRoomId?'共有ルームに参加':'一緒に見るルームを作る';
+      dialogText.textContent=joiningRoomId?'表示名を入れると、このルームの予習プランとチェック状況を共有できます。':'共有リンクを送った相手と、参加者別の視聴済みをリアルタイムで共有できます。';
+      submitBtn.textContent=joiningRoomId?'参加する':'ルームを作る';
+      const saved=joiningRoomId?room.loadCredential(joiningRoomId):null;if(saved?.displayName)nameInput.value=saved.displayName;
+      if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','');setTimeout(()=>nameInput.focus(),20);
+    }
+    openBtn?.addEventListener('click',()=>room.active?renderRoomBar():openRoomDialog(room.roomIdFromHash()));
+    cancelBtn?.addEventListener('click',()=>dialog.close?.());
+    submitBtn?.addEventListener('click',async()=>{
+      const name=nameInput.value.trim();if(!name){errorBox.textContent='表示名を入力してください。';return}
+      submitBtn.disabled=true;errorBox.textContent='';
+      try{if(joiningRoomId)await room.join(joiningRoomId,name);else await room.create(name);dialog.close?.()}
+      catch(e){errorBox.textContent=e?.code==='room_full'?'このルームは満員です。':e?.code==='room_not_found'?'このルームは期限切れか、見つかりません。':`接続できませんでした：${e?.message||'通信エラー'}`}
+      finally{submitBtn.disabled=false}
+    });
+    renderRoomBar();
+    const inviteRoomId=room.roomIdFromHash();
+    if(inviteRoomId){
+      const saved=room.loadCredential(inviteRoomId);
+      if(saved?.displayName){
+        room.join(inviteRoomId,saved.displayName).catch(e=>{
+          openRoomDialog(inviteRoomId);
+          errorBox.textContent=e?.code==='room_not_found'?'このルームは期限切れか、見つかりません。':e?.code==='room_full'?'このルームは満員です。':'再接続できませんでした。表示名を確認してもう一度お試しください。';
+        });
+      }else requestAnimationFrame(()=>openRoomDialog(inviteRoomId));
+    }
+    window.marvelSharedRoomUI={openDialog:openRoomDialog,get viewState(){return roomViewState},decorate:decorateSharedPlan};
+  })();
+
+
+  // PUBLIC v5.12.0: render the current watch plan to a standalone PNG.
+  (()=>{
+    const shareButton=document.getElementById('sharePlanImage');
+    const TIER_LABEL={minimum:'最低限',recommended:'おすすめ',complete:'完全版'};
+    function wrapChars(ctx,text,maxWidth){
+      const out=[];let line='';
+      for(const ch of String(text||'')){
+        const next=line+ch;
+        if(line&&ctx.measureText(next).width>maxWidth){out.push(line);line=ch}else line=next;
+      }
+      if(line)out.push(line);return out.length?out:[''];
+    }
+    function roomView(){return window.marvelSharedRoomUI?.viewState||null}
+    function currentImageData(){
+      const goals=orderedGoalIds();
+      if(!goals.length)throw new Error('予習プランを作るには、先に見たい作品を選んでください。');
+      const plan=buildMultiGoalPlan(goals,prepTier);
+      const rv=roomView(),members=rv?.members||[];
+      return {goals,plan,tier:prepTier,members,roomWatched:rv?.watched||{}};
+    }
+    async function createBlob(){
+      const data=currentImageData(), rows=data.plan.orderedIds;
+      const sharedExtra=data.members.length?34:0;
+      const rowH=92+sharedExtra, width=1080, height=Math.max(620,300+rows.length*rowH+110);
+      const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+      const ctx=canvas.getContext('2d');
+      ctx.fillStyle='#0b1020';ctx.fillRect(0,0,width,height);
+      ctx.fillStyle='#e5e7eb';ctx.font='800 44px sans-serif';ctx.fillText('マーベル予習プラン',58,70);
+      ctx.fillStyle='#94a3b8';ctx.font='500 24px sans-serif';ctx.fillText(`${TIER_LABEL[data.tier]||data.tier} · ${rows.length}作品`,58,110);
+      const goalText=data.goals.map(id=>nm[id]?.title||id).join(' ／ ');
+      ctx.font='700 27px sans-serif';ctx.fillStyle='#fde68a';
+      const goalLines=wrapChars(ctx,`🎯 ${goalText}`,width-116).slice(0,3);let y=154;
+      for(const line of goalLines){ctx.fillText(line,58,y);y+=36}
+      y=Math.max(y+24,248);
+      const goalSet=new Set(data.goals);
+      rows.forEach((id,i)=>{
+        const top=y+i*rowH;
+        ctx.fillStyle=i%2?'#0f172a':'#111827';ctx.fillRect(42,top-34,width-84,rowH-8);
+        ctx.fillStyle='#2563eb';ctx.beginPath();ctx.arc(76,top,21,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#fff';ctx.font='800 20px sans-serif';ctx.textAlign='center';ctx.fillText(String(i+1),76,top+7);ctx.textAlign='left';
+        const title=nm[id]?.title||id;
+        ctx.font='700 25px sans-serif';ctx.fillStyle='#e5e7eb';
+        const titleLines=wrapChars(ctx,title,goalSet.has(id)?720:815).slice(0,2);let ty=top-6;
+        for(const line of titleLines){ctx.fillText(line,112,ty);ty+=30}
+        if(goalSet.has(id)){ctx.fillStyle='#f59e0b';ctx.font='800 17px sans-serif';ctx.fillText('🎯 ゴール',850,top-5)}
+        ctx.fillStyle='#94a3b8';ctx.font='500 18px sans-serif';ctx.fillText(nm[id]?.release||'',112,top+45);
+        if(data.members.length){
+          let sx=112;const sy=top+73;
+          for(const m of data.members){
+            const done=(data.roomWatched[m.id]||[]).includes(id);ctx.font='700 16px sans-serif';
+            const label=`${m.name} ${done?'✓':'—'}`, w=Math.min(230,ctx.measureText(label).width+24);
+            ctx.fillStyle=done?'#052e20':'#0b1220';ctx.fillRect(sx,sy-20,w,27);ctx.strokeStyle=done?'#166534':'#374151';ctx.strokeRect(sx,sy-20,w,27);ctx.fillStyle=done?'#86efac':'#94a3b8';ctx.fillText(label,sx+10,sy);sx+=w+10;if(sx>930)break;
+          }
+        }else{
+          const done=watchedIds.has(id);ctx.fillStyle=done?'#86efac':'#64748b';ctx.font='700 16px sans-serif';ctx.fillText(done?'視聴済み ✓':'未視聴',850,top+45);
+        }
+      });
+      ctx.fillStyle='#64748b';ctx.font='500 16px sans-serif';ctx.fillText('非公式ファン制作 · マーベル作品相関図 日本版',58,height-48);
+      return await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG生成に失敗しました')),'image/png'));
+    }
+    async function share(){
+      const blob=await createBlob();const file=new File([blob],'marvel-watch-plan.png',{type:'image/png'});
+      if(navigator.share&&navigator.canShare?.({files:[file]})){
+        await navigator.share({title:'マーベル予習プラン',files:[file]});return {method:'share'};
+      }
+      const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);return {method:'download'};
+    }
+    shareButton?.addEventListener('click',async()=>{
+      const old=shareButton.textContent;shareButton.disabled=true;shareButton.textContent='画像を作成中…';
+      try{await share()}catch(e){alert(e?.message||'画像を作成できませんでした。')}finally{shareButton.disabled=false;shareButton.textContent=old}
+    });
+    window.marvelPlanShare={createBlob,share,currentImageData};
+  })();
+  
+
 })();
 </script>
 
@@ -7200,7 +7668,7 @@ render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.11.2 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.12.0 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{
