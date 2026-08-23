@@ -332,7 +332,7 @@ main{max-width:1920px;margin:auto;grid-template-columns:minmax(0,1fr) 374px;min-
 }
 
 
-/* PUBLIC v5.10.18 — wide-chart layout + selection-independent reference charts. */
+/* PUBLIC v5.10.19 — wide-chart layout + selection-independent reference charts. */
 /* FINAL AUDIT: AND-edge filtering + Japanese official metadata corrections. */
 /* v5.10.12: New Mutants stays lineage-only (no direct arrows); graph clicks no longer auto-center; AI-use disclosure added. */
 main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
@@ -402,7 +402,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .overall-watch-card{border-color:#1e3a3a!important;background:linear-gradient(145deg,rgba(6,78,59,.16),rgba(15,23,42,.76))!important}
 @media(max-width:760px){.overall-watch-percent{font-size:16px}.overall-watch-stat{font-size:9px}}
 
-/* PUBLIC v5.10.18 — full-width watch workspace + stable checklist scroll. */
+/* PUBLIC v5.10.19 — full-width watch workspace + stable checklist scroll. */
 #right .side-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
 .watch-workspace{max-width:1600px;margin:0 auto;padding:22px 14px 8px}
 .watch-workspace-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:0 2px 12px}
@@ -446,7 +446,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
  .watch-card-plan .prep-progress-tools{display:block}.watch-card-plan .prep-watched-check{width:19px;height:19px}
 }
 
-/* PUBLIC v5.10.18 — scroll-friendly chart interaction.
+/* PUBLIC v5.10.19 — scroll-friendly chart interaction.
    Performance: pinch rect is cached per gesture; highlight scans stay on the active SVG.
    On phones, touch gestures belong to the browser/page; native pinch zoom is allowed and the chart never captures two-finger pan/pinch.
    Desktop Ctrl/Cmd + wheel zoom and mouse/pen drag remain available. */
@@ -467,7 +467,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .svg-wrap.scroll-friendly .zoom-hint{left:8px;right:auto;bottom:8px;max-width:70%}
 }
 
-/* PUBLIC v5.10.18 — mobile goal bar. The full chart is always visible on phones. */
+/* PUBLIC v5.10.19 — mobile goal bar. The full chart is always visible on phones. */
 #mobileFocusShell{display:none}
 @media(max-width:760px){
   #mobileFocusShell{display:block;margin:6px 8px 10px;padding:9px;border:1px solid #2b3a55;border-radius:13px;background:#0b1220;color:#e5e7eb}
@@ -486,14 +486,16 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   #mobilePrepJump{border-color:#1d4ed8;background:#172554;color:#dbeafe}
   .svg-wrap svg.dim g.node.goal-node{opacity:1!important;filter:saturate(1.2) brightness(1.08) drop-shadow(0 0 10px #f59e0b)!important}
   .svg-wrap svg.dim g.node.current-goal{opacity:1!important;filter:saturate(1.45) brightness(1.25) drop-shadow(0 0 24px #ef4444)!important}
-  .svg-wrap svg.dim g.node:not(.hl):not(.focus):not(.goal-node):not(.current-goal){opacity:.46!important;filter:grayscale(.42) saturate(.55) brightness(.92)!important}
-  .svg-wrap svg.dim g.edge:not(.hl){opacity:.12!important;filter:grayscale(.55) saturate(.38) brightness(.82)!important}
-  .svg-wrap svg.family-mode g.node{opacity:.44!important;filter:grayscale(.38) saturate(.62) brightness(.9)!important}
-  .svg-wrap svg.family-mode g.edge{opacity:.11!important;filter:grayscale(.5) saturate(.45) brightness(.8)!important}
+  /* v5.10.19 mobile paint-light mode: dimming uses opacity only.
+     Avoid running CSS filter programs across hundreds of SVG groups. */
+  .svg-wrap svg.dim g.node:not(.hl):not(.focus):not(.goal-node):not(.current-goal){opacity:.46!important;filter:none!important}
+  .svg-wrap svg.dim g.edge:not(.hl){opacity:.12!important;filter:none!important}
+  .svg-wrap svg.family-mode g.node{opacity:.44!important;filter:none!important}
+  .svg-wrap svg.family-mode g.edge{opacity:.11!important;filter:none!important}
   .svg-wrap svg.char-mode g.node,.svg-wrap svg.char-mode g.edge{opacity:.46!important}
-  .svg-wrap svg g.node.watched-dim:not(.focus){opacity:.34!important;filter:grayscale(.78) saturate(.28) brightness(.74)!important}
-  .svg-wrap svg.dim g.node.watched-dim:not(.focus){opacity:.30!important;filter:grayscale(.82) saturate(.24) brightness(.7)!important}
-  .svg-wrap svg{will-change:transform;backface-visibility:hidden}
+  .svg-wrap svg g.node.watched-dim:not(.focus){opacity:.34!important;filter:none!important}
+  .svg-wrap svg.dim g.node.watched-dim:not(.focus){opacity:.30!important;filter:none!important}
+  /* Do not permanently promote the several-thousand-pixel SVG to a compositor layer on phones. */
   .svg-wrap.gesture-active svg g.node,.svg-wrap.gesture-active svg g.edge{filter:none!important;transition:none!important}
   .svg-wrap.gesture-active svg g.node:hover{filter:none!important}
   #mobileGoalUndo{display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:#1f2937;color:#e5e7eb;font-size:12px;align-items:center;justify-content:space-between;gap:8px}
@@ -513,7 +515,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.10.18</span>
+      <span class="stat-chip public-release">PUBLIC v5.10.19</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -5139,6 +5141,7 @@ applyCharacterHighlight()
 function neighborhood(id,d){let seen=new Set([id]),front=new Set([id]);for(let k=0;k<d;k++){let next=new Set();for(const x of front){for(const e of(inc[x]||[])){if(!seen.has(e.source)){seen.add(e.source);next.add(e.source)}}for(const e of(out[x]||[])){if(!seen.has(e.target)){seen.add(e.target);next.add(e.target)}}}front=next}return seen}
 
 const viewStates=new Map();
+const mobileChartMotion=window.matchMedia('(max-width:760px)');
 function ensureViewState(wrap){
   if(!wrap) return null;
   let st=viewStates.get(wrap);
@@ -5149,7 +5152,11 @@ function applyView(wrap){
   if(!wrap) return;
   const svg=wrap.querySelector('svg'); if(!svg) return;
   const st=ensureViewState(wrap);
-  svg.style.transform=`translate3d(${st.x}px,${st.y}px,0) scale(${st.scale})`;
+  // On phones prefer a 2D transform without persistent GPU-layer hints.
+  // Desktop keeps translate3d because its larger GPU budget benefits from compositor motion.
+  svg.style.transform=mobileChartMotion.matches
+    ? `translate(${st.x}px,${st.y}px) scale(${st.scale})`
+    : `translate3d(${st.x}px,${st.y}px,0) scale(${st.scale})`;
 }
 function scheduleView(wrap){
   if(!wrap) return;
@@ -6757,7 +6764,7 @@ render();
     const state=selectedIds.size ? (window.__marvelLastSelectionState||computeSelectionState()) : null;
     const svg=document.querySelector('.panel.active .svg-wrap svg');
     return {
-      version:'5.10.18-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
+      version:'5.10.19-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
       dim:!!svg?.classList.contains('dim'),
       litNodes:svg?.querySelectorAll('g.node.hl,g.node.focus').length||0,
       litEdges:svg?.querySelectorAll('g.edge.hl').length||0,
@@ -6894,7 +6901,7 @@ render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.10.18 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.10.19 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{

@@ -1,202 +1,80 @@
 {
-  "version": "5.10.18-public",
-  "baseVersion": "5.10.17-public",
-  "date": "2026-08-23",
-  "changes": [
-    "cache svg-wrap bounding rect once per two-finger gesture",
-    "limit selection/character/family highlight scans to active SVG"
-  ],
-  "sha256": "27f12d957a631cefaa9c8a80f960bea26601e053444fb2d03043b2d027e08547",
-  "performance": {
-    "pinchLayoutReads": {
-      "v5.10.17": 120,
-      "v5.10.18": 1,
-      "scenario": "2 pointers × 60 moves each; wrapper getBoundingClientRect instrumentation"
+  "version": "5.10.19-public",
+  "basis": "5.10.18-public",
+  "purpose": "mobile SVG paint/compositing experiment",
+  "data": {
+    "works": 131,
+    "edges": 199,
+    "charLinks": 155
+  },
+  "mobileRendering": {
+    "strategy": {
+      "mobileTransform": "2D translate + scale",
+      "persistentWillChange": false,
+      "persistentBackfaceVisibilityHidden": false,
+      "dimmedNodeFilter": "none (opacity-only)",
+      "dimmedEdgeFilter": "none (opacity-only)",
+      "goalHighlightFilterPreserved": true,
+      "desktopTransform": "translate3d + scale (unchanged)",
+      "desktopDimFilters": "unchanged"
     },
-    "globalSvgQueriesPerGuardiansSelection": {
-      "v5.10.17": 4,
-      "v5.10.18": 0,
-      "selector": ".svg-wrap svg"
-    },
-    "headlessMicrobenchmarkMs": {
-      "note": "synthetic/headless only; not real-device FPS",
-      "v5.10.17": {
-        "pinch": {
-          "mean": 5.52,
-          "median": 6.0,
-          "p95": 8.0
-        },
-        "selection": {
-          "mean": 36.41,
-          "median": 52.0,
-          "p95": 83.4
-        }
-      },
+    "syntheticAB60FramePanMedian5Runs": {
       "v5.10.18": {
-        "pinch": {
-          "mean": 5.575,
-          "median": 6.0,
-          "p95": 6.6
-        },
-        "selection": {
-          "mean": 29.2425,
-          "median": 39.6,
-          "p95": 61.5
-        }
-      }
+        "maxRepaintArea": 11753993,
+        "LayoutDuration": 0.091837,
+        "RecalcStyleDuration": 0.0059559999999999995,
+        "ScriptDuration": 0.004803000000000002,
+        "TaskDuration": 0.241683
+      },
+      "v5.10.19": {
+        "maxRepaintArea": 1129440,
+        "LayoutDuration": 0.09054500000000001,
+        "RecalcStyleDuration": 0.006297,
+        "ScriptDuration": 0.005071999999999997,
+        "TaskDuration": 0.23781899999999997
+      },
+      "maxRepaintAreaRatio": 0.09608989898156312,
+      "maxRepaintAreaReductionPct": 90.39101010184369,
+      "taskDurationRatio": 0.984012115043259,
+      "taskDurationReductionPct": 1.5987884956740972,
+      "note": "Headless Chromium synthetic benchmark; not a real-device FPS measurement.",
+      "taskDurationConclusion": "No stable CPU-side speedup claimed; run-to-run variance was material. Acceptance is based on the reproducible repaint-area reduction plus functional regression."
+    },
+    "interactionRegression": {
+      "pinchRectReads": 1,
+      "selectionGlobalSvgSweeps": 0
     }
   },
   "regression": {
-    "base": {
-      "counts": {
-        "works": 131,
-        "edges": 199,
-        "charLinks": 155
+    "allPairsIdenticalToV5_10_18": true,
+    "pairModes": {
+      "or": {
+        "count": 8515,
+        "hash": "2f3a9ceda3d87b75"
       },
-      "pairModes": {
-        "or": {
-          "count": 8515,
-          "hash": "2f3a9ceda3d87b75"
-        },
-        "and": {
-          "count": 8515,
-          "hash": "c18dcecee8aea52c"
-        },
-        "path": {
-          "count": 8515,
-          "hash": "1a0f6c9489612a46"
-        }
+      "and": {
+        "count": 8515,
+        "hash": "c18dcecee8aea52c"
       },
-      "plans": {
-        "minimum": {
-          "count": 131,
-          "hash": "04717bff1636c18f"
-        },
-        "recommended": {
-          "count": 131,
-          "hash": "b3a190a0e996d8c7"
-        },
-        "complete": {
-          "count": 131,
-          "hash": "b36ed15a31e724ec"
-        }
-      },
-      "errors": []
+      "path": {
+        "count": 8515,
+        "hash": "1a0f6c9489612a46"
+      }
     },
-    "candidate": {
-      "counts": {
-        "works": 131,
-        "edges": 199,
-        "charLinks": 155
+    "singleGoalPlansIdenticalToV5_10_18": true,
+    "plans": {
+      "minimum": {
+        "count": 131,
+        "hash": "04717bff1636c18f"
       },
-      "pairModes": {
-        "or": {
-          "count": 8515,
-          "hash": "2f3a9ceda3d87b75"
-        },
-        "and": {
-          "count": 8515,
-          "hash": "c18dcecee8aea52c"
-        },
-        "path": {
-          "count": 8515,
-          "hash": "1a0f6c9489612a46"
-        }
+      "recommended": {
+        "count": 131,
+        "hash": "b3a190a0e996d8c7"
       },
-      "plans": {
-        "minimum": {
-          "count": 131,
-          "hash": "04717bff1636c18f"
-        },
-        "recommended": {
-          "count": 131,
-          "hash": "b3a190a0e996d8c7"
-        },
-        "complete": {
-          "count": 131,
-          "hash": "b36ed15a31e724ec"
-        }
-      },
-      "errors": []
-    },
-    "ui": {
-      "version": "5.10.18-public",
-      "guardians": {
-        "back": [
-          "guardians-of-the-galaxy-2014",
-          "guardians-of-the-galaxy-vol-2-2017",
-          "the-guardians-of-the-galaxy-holiday-special-2022"
-        ],
-        "fullPast": [
-          "guardians-of-the-galaxy-2014",
-          "guardians-of-the-galaxy-vol-2-2017",
-          "the-guardians-of-the-galaxy-holiday-special-2022"
-        ],
-        "litNodes": 4,
-        "litEdges": 3,
-        "recommended": [
-          "guardians-of-the-galaxy-2014",
-          "guardians-of-the-galaxy-vol-2-2017",
-          "the-guardians-of-the-galaxy-holiday-special-2022"
-        ]
-      },
-      "multiGoal": {
-        "afterAdd": [
-          "guardians-of-the-galaxy-vol-3-2023",
-          "the-marvels-2023"
-        ],
-        "afterRemove": [
-          "the-marvels-2023"
-        ],
-        "selected": "the-marvels-2023"
-      },
-      "newMutantsDirectEdges": 0,
-      "mobileDim": {
-        "opacity": "0.46",
-        "filter": "grayscale(0.42) saturate(0.55) brightness(0.92)"
-      },
-      "watchIndependent": {
-        "active": "watch",
-        "dim": false
-      },
-      "mobileGestures": {
-        "before": {
-          "x": 7.360000000000014,
-          "y": 186.80295683601565,
-          "scale": 0.06855396407650419
-        },
-        "afterOne": {
-          "x": 67.36000000000001,
-          "y": 231.80295683601565,
-          "scale": 0.06855396407650419
-        },
-        "afterTwo": {
-          "x": 27.97818181818181,
-          "y": 339.75316448875003,
-          "scale": 0.09971485683855155
-        },
-        "gesture": false
-      },
-      "pcWheel": {
-        "before": {
-          "x": 21.139999999999986,
-          "y": 179.39599286866456,
-          "scale": 0.1969063587740895
-        },
-        "afterPlain": {
-          "x": 21.139999999999986,
-          "y": 179.39599286866456,
-          "scale": 0.1969063587740895,
-          "prevented": false
-        },
-        "afterCtrl": {
-          "x": -15.29271502575881,
-          "y": 195.47984108204363,
-          "scale": 0.22358877064635096,
-          "prevented": true
-        }
-      },
-      "errors": []
+      "complete": {
+        "count": 131,
+        "hash": "b36ed15a31e724ec"
+      }
     },
     "assertions": [
       {
@@ -361,7 +239,7 @@
         "pass": true,
         "details": {
           "opacity": "0.46",
-          "filter": "grayscale(0.42) saturate(0.55) brightness(0.92)"
+          "filter": "none"
         }
       },
       {
@@ -487,6 +365,5 @@
       }
     ],
     "allPass": true
-  },
-  "allPass": true
+  }
 }
