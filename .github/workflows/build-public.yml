@@ -1,0 +1,52 @@
+name: Build public index
+
+on:
+  push:
+    branches:
+      - main
+      - sync/v5.14.1
+      - feature/v5.15.0-overview-details
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/build-public.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+      - name: Build generated public index
+        run: python scripts/build_public.py --output index.html
+      - name: Verify source layout and roundtrip
+        run: |
+          python tests/test_source_layout.py
+          python tests/test_build_roundtrip.py
+          grep -q 'PUBLIC v5.14.1\|PUBLIC v5.15.0' index.html
+      - name: Commit generated index when changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- index.html; then
+            echo 'generated index is already current'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'build: refresh generated public index [skip ci]'
+          git push
