@@ -1,112 +1,73 @@
 {
-  "version": "5.12.2-public",
-  "baseVersion": "5.12.1-public",
+  "version": "5.14.0-public",
+  "baseVersion": "5.13.0-public",
   "date": "2026-08-23",
-  "worker": {
-    "url": "https://marvel-room-worker.kamochama.workers.dev",
-    "expectedVersion": "0.1.0",
-    "healthConfirmedInDeploymentEnvironment": true
-  },
   "data": {
     "works": 131,
     "directedEdges": 199,
     "characterLinks": 155
   },
-  "algorithmRegression": {
-    "or": {
-      "pairs": 8515,
-      "hash": "2f3a9ceda3d87b75"
-    },
-    "and": {
-      "pairs": 8515,
-      "hash": "c18dcecee8aea52c"
-    },
-    "path": {
-      "pairs": 8515,
-      "hash": "1a0f6c9489612a46"
-    },
-    "plans": {
-      "minimum": {
-        "count": 131,
-        "hash": "04717bff1636c18f"
-      },
-      "recommended": {
-        "count": 131,
-        "hash": "b3a190a0e996d8c7"
-      },
-      "complete": {
-        "count": 131,
-        "hash": "b36ed15a31e724ec"
-      }
-    }
+  "mobileNavigation": {
+    "persistentSingleSearchInput": true,
+    "horizontalTabStripHidden": true,
+    "areaMenuTargets": ["overview", "mcu", "legacy", "road", "doomsday", "characters"],
+    "watchExcludedFromAreaMenu": true,
+    "watchWorkspaceAction": true,
+    "watchWorkspaceLabelSync": true,
+    "areaSheetWithin390x844Viewport": true,
+    "oldGuideHiddenOnMobile": true,
+    "mobileSearchPlaceholder": "作品を検索…"
   },
-  "sharedRooms": {
-    "clientCreateJoinConnect": true,
-    "perMemberWatchedUI": true,
-    "ownWatchedWebSocketUpdate": true,
-    "remotePlanSyncNoEcho": true,
-    "leaveRestoresLocalWatched": true,
-    "inviteHashJoinDialog": true,
-    "savedCredentialAutoRejoin": true,
-    "roomFullErrorUI": true,
-    "tokenAbsentFromInviteUrlAndDOM": true,
-    "createPreservesCurrentPlan": true,
-    "bulkSharedCheckDisabledForWorkerV010": true
+  "desktopNavigation": {
+    "sevenTabsPreserved": true,
+    "featuredEntryCompact": true
   },
-  "planImage": {
-    "pass": true,
-    "format": "image/png",
-    "testWidth": 1080,
-    "testHeight": 778,
-    "testBytes": 117110
+  "searchNavigation": {
+    "doesNotChangeGoals": true,
+    "singleQueryState": true,
+    "panelPriority": ["overview", "mcu", "road", "legacy", "doomsday"],
+    "centersResultNode": true
   },
-  "canvasRegression": {
-    "adaptiveLod": {
-      "fitPan": 0.25,
-      "readingZoomPan": 0.5,
-      "pinch": 0.25
-    },
-    "staticImmediateEdges": true,
-    "syntheticImmediateEdges": true
+  "featuredRoute": {
+    "enabled": true,
+    "targetId": "avengers-doomsday-2026-12-18",
+    "label": "ドゥームズデイへの道",
+    "previewDoesNotChangeGoals": true,
+    "incomingStrongClosure": true,
+    "directContextOneHop": true,
+    "outgoingTraversal": false,
+    "secretWarsAutoIncluded": false,
+    "existingGoalsRestoredOnExit": true,
+    "normalGoalLogicForAdd": true,
+    "configurationSingleSource": true
   },
-  "keyRegressions": {
-    "guardiansVol3ExactPast3": true,
-    "multiGoal": true,
-    "watchTabIndependent": true,
-    "newMutantsDirectEdges": 0,
-    "mobileGestures": true,
-    "pcWheelBehavior": true,
+  "regressionAgainstV5130": {
+    "or": {"pairs": 8515, "hashFnv1a64": "c7b1741074835354", "exact": true},
+    "and": {"pairs": 8515, "hashFnv1a64": "0b2c0975e1dd7845", "exact": true},
+    "path": {"pairs": 8515, "hashFnv1a64": "f614d9a7bcafbfb2", "exact": true},
+    "singleGoalPlans": {"count": 393, "hashFnv1a64": "4d3822b4e5fba9f1", "exact": true}
+  },
+  "interactionRegression": {
+    "desktopPlainWheelZoom": true,
+    "wheelOutsideChartUntouched": true,
+    "mobileOneFingerPan": true,
+    "mobileTwoFingerPinch": true,
+    "lastGoalRemovalFullRelightDesktop": true,
+    "lastGoalRemovalFullRelightMobile": true,
+    "dynamicHighlightEdgesCleared": true,
+    "sharedRoomDialog": true,
+    "watchedCheckbox": true,
+    "goalRemoval": true,
     "pageScriptErrors": 0
   },
-  "sha256Index": "cf3c1f8d1b89ff1d32f7de125c1f41592db334dcdcb49906e11567a1243b35b8",
-  "allPass": true,
-  "prepPlanGoalControls": {
-    "prepTitleDoesNotAddGoal": true,
-    "quickRemoveButton": true,
-    "mobileHitboxPx": [
-      32,
-      32
-    ],
-    "pairRegressionAgainstBase": {
-      "or": 8515,
-      "and": 8515,
-      "path": 8515
-    },
-    "singleGoalPlanRegressionAgainstBase": 393
+  "worker": {
+    "url": "https://marvel-room-worker.kamochama.workers.dev",
+    "expectedVersion": "0.1.0",
+    "frontendChangeRequiresRedeploy": false
   },
-  "v5122Fixes": {
-    "desktopPlainWheelZoom": true,
-    "desktopModifierRequired": false,
-    "wheelOutsideChartUntouched": true,
-    "lastGoalRemovalFullRelight": true,
-    "selectionClassesClearedAfterLastGoal": true,
-    "dynamicHighlightEdgesClearedAfterLastGoal": true,
-    "mobileCanvasRelightAfterLastGoal": true,
-    "regressionAgainstV5121": {
-      "orPairs": 8515,
-      "andPairs": 8515,
-      "pathPairs": 8515,
-      "singleGoalPlans": 393
-    }
-  }
+  "package": {
+    "rootFiles": ["index.html", "README.md", "AUDIT.md", "AUDIT.json", "preview.png", ".nojekyll"],
+    "exactSixFiles": true
+  },
+  "allPass": true
 }
