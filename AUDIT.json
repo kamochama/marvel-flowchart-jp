@@ -1,6 +1,6 @@
 {
-  "version": "5.12.0-public",
-  "baseVersion": "5.11.4-public",
+  "version": "5.12.2-public",
+  "baseVersion": "5.12.1-public",
   "date": "2026-08-23",
   "worker": {
     "url": "https://marvel-room-worker.kamochama.workers.dev",
@@ -78,6 +78,35 @@
     "pcWheelBehavior": true,
     "pageScriptErrors": 0
   },
-  "sha256Index": "79eb00b7f994f4882c6f67e4735b0f58c283c26ac380fcd380ded95e976ebf4f",
-  "allPass": true
+  "sha256Index": "cf3c1f8d1b89ff1d32f7de125c1f41592db334dcdcb49906e11567a1243b35b8",
+  "allPass": true,
+  "prepPlanGoalControls": {
+    "prepTitleDoesNotAddGoal": true,
+    "quickRemoveButton": true,
+    "mobileHitboxPx": [
+      32,
+      32
+    ],
+    "pairRegressionAgainstBase": {
+      "or": 8515,
+      "and": 8515,
+      "path": 8515
+    },
+    "singleGoalPlanRegressionAgainstBase": 393
+  },
+  "v5122Fixes": {
+    "desktopPlainWheelZoom": true,
+    "desktopModifierRequired": false,
+    "wheelOutsideChartUntouched": true,
+    "lastGoalRemovalFullRelight": true,
+    "selectionClassesClearedAfterLastGoal": true,
+    "dynamicHighlightEdgesClearedAfterLastGoal": true,
+    "mobileCanvasRelightAfterLastGoal": true,
+    "regressionAgainstV5121": {
+      "orPairs": 8515,
+      "andPairs": 8515,
+      "pathPairs": 8515,
+      "singleGoalPlans": 393
+    }
+  }
 }

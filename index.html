@@ -449,7 +449,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 /* PUBLIC v5.11.4 — scroll-friendly chart interaction.
    Performance: pinch rect is cached per gesture; highlight scans stay on the active SVG.
    On phones, touch gestures belong to the browser/page; native pinch zoom is allowed and the chart never captures two-finger pan/pinch.
-   Desktop Ctrl/Cmd + wheel zoom and mouse/pen drag remain available. */
+   Desktop wheel zoom and mouse/pen drag remain available. */
 .chart-watch-jump{
   position:absolute;top:10px;right:10px;z-index:7;
   display:inline-flex;align-items:center;gap:5px;
@@ -510,7 +510,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 }
 
 /* v5.10.12 integrated multi-goal planner */
-.multi-goal-summary{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:9px 0;padding:8px;border:1px solid #334155;border-radius:10px;background:#0b1220}.multi-goal-summary>span:first-child{font-weight:900;color:#fde68a;margin-right:3px}.multi-goal-badge{border:1px solid #92400e;border-radius:999px;background:#2b1707;color:#fde68a;padding:5px 9px;font-size:11px;font-weight:800;cursor:pointer}.prep-item.is-goal{border-color:#92400e!important;background:linear-gradient(90deg,rgba(120,53,15,.18),rgba(15,23,42,.2))}.prep-goal-badge{display:inline-flex;border:1px solid #f59e0b;border-radius:999px;background:#422006;color:#fde68a;padding:2px 7px;font-size:10px;font-weight:900}.prep-plan-heading{display:flex;align-items:center;flex-wrap:wrap;gap:7px}.prep-plan-empty{padding:12px;border:1px dashed #475569;border-radius:10px;color:#cbd5e1}.watch-card-target{align-self:start}.watch-card-target .muted{line-height:1.65}
+.multi-goal-summary{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:9px 0;padding:8px;border:1px solid #334155;border-radius:10px;background:#0b1220}.multi-goal-summary>span:first-child{font-weight:900;color:#fde68a;margin-right:3px}.multi-goal-badge-wrap{display:inline-flex;align-items:stretch;border:1px solid #92400e;border-radius:999px;overflow:hidden;background:#2b1707}.multi-goal-badge{border:0;border-radius:0;background:#2b1707;color:#fde68a;padding:5px 9px;font-size:11px;font-weight:800;cursor:pointer}.prep-goal-remove{min-width:32px;border:0;border-left:1px solid #92400e;background:#351607;color:#fca5a5;font-size:16px;font-weight:900;cursor:pointer}.prep-goal-remove:hover{background:#7f1d1d;color:#fff}.prep-item.is-goal{border-color:#92400e!important;background:linear-gradient(90deg,rgba(120,53,15,.18),rgba(15,23,42,.2))}.prep-goal-badge{display:inline-flex;border:1px solid #f59e0b;border-radius:999px;background:#422006;color:#fde68a;padding:2px 7px;font-size:10px;font-weight:900}.prep-plan-heading{display:flex;align-items:center;flex-wrap:wrap;gap:7px}.prep-plan-empty{padding:12px;border:1px dashed #475569;border-radius:10px;color:#cbd5e1}.watch-card-target{align-self:start}.watch-card-target .muted{line-height:1.65}
 </style>
 <style>
 /* PUBLIC v5.12.0 — optional shared watch rooms. */
@@ -531,7 +531,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.12.0</span>
+      <span class="stat-chip public-release">PUBLIC v5.12.2</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -558,7 +558,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   <div class="help-body">
     <div class="help-grid">
       <div class="help-step"><b>1. 作品を選ぶ</b><p>図の作品名をクリックするか、上部の検索欄から探します。複数作品をそのままゴールにできます。</p></div>
-      <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動。PCでは Ctrl / ⌘ + ホイールで図をズームできます。スマホではチャート内を1本指で移動、2本指で拡大・縮小できます。ページを動かすときはチャート外をスワイプしてください。</p></div>
+      <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動。PCではチャート上のホイールで図をズームできます。スマホではチャート内を1本指で移動、2本指で拡大・縮小できます。ページを動かすときはチャート外をスワイプしてください。</p></div>
       <div class="help-step"><b>3. 視聴順を決める</b><p>チャート下の大きな「予習・視聴プラン」で、最低限・おすすめ・完全版、視聴済みチェック、残り時間をまとめて管理できます。</p></div>
     </div>
     <div class="help-legend"><span>← 前史</span><span>→ 後続</span><span>中核 / 推奨 / 参照</span><span>OR / AND / PATH</span></div>
@@ -571,7 +571,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   <span class="guide-step"><b>1</b> 作品を検索 or クリック</span><span class="guide-arrow">→</span>
   <span class="guide-step"><b>2</b> <span style="color:#7dd3fc">←前史</span> / <span style="color:#6ee7b7">→後続</span> が点灯</span><span class="guide-arrow">→</span>
   <span class="guide-step"><b>3</b> もう一度クリックで解除</span>
-  <span class="guide-tip">通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム</span>
+  <span class="guide-tip">チャート上のホイール: 図をズーム / チャート外: ページ移動</span>
 </div><div class="tabs">
 <button class="tab active" data-target="overview">① 主要フロー</button><button class="tab" data-target="mcu">② MCU本流</button>
 <button class="tab" data-target="road">③ ストリート／旧TV</button><button class="tab" data-target="legacy">④ マルチバース</button>
@@ -5110,7 +5110,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 </svg></div></div>
 </section>
 <aside id="right"><div class="mobile-sheet-head"><div><b>作品・接続の詳細</b><div class="mobile-sheet-sub">現在のゴールと接続根拠</div></div><button aria-label="詳細を閉じる" id="mobileDetailsClose" type="button">閉じる</button></div><div aria-label="右パネル表示" class="side-tabs" role="tablist"><button aria-selected="true" class="side-tab-btn active" data-side-tab="works" role="tab" type="button">作品</button><button aria-selected="false" class="side-tab-btn" data-side-tab="links" role="tab" type="button">接続</button></div><div class="side-tab-panel side-tab-works active"><div class="card"><h3>作品一覧</h3><div class="muted" id="count"></div><div class="node-list" id="list"></div></div><div class="card"><h3>現在のゴール</h3><div class="muted" id="detail">作品を選ぶと前後の接続を表示します。</div></div></div><div class="side-tab-panel side-tab-links"><div class="card path-explain" id="pathExplainCard"><h3>🧭 ゴールを結ぶ経路</h3><div class="muted" id="pathExplain">PATHモードで2作品以上をゴールにすると、採用した有向経路を表示します。</div></div><div class="card"><h3>直接つながる作品</h3><div class="edge-tooltip-note">図の矢印にカーソルを置くと、接続種別・重要度・根拠を確認できます。</div><div id="edgewrap"><table><thead><tr><th>元</th><th>先</th><th>接続</th><th>強さ</th></tr></thead><tbody id="et"></tbody></table></div></div></div></aside></main>
-<section id="watchWorkspace" class="watch-workspace" aria-label="予習・視聴プラン"><div class="watch-workspace-head"><div><span class="eyebrow">WATCH PLAN</span><h2>予習・視聴プラン</h2><p>見たい作品を決めて、予習ルート・視聴済み・残り時間を広い画面でまとめて管理できます。</p></div><button id="watchBackToChart" class="watch-back-btn" type="button">↑ チャートへ戻る</button></div><div class="watch-workspace-grid"><div class="card overall-watch-card watch-card-progress"><div id="overallWatchProgress" class="overall-watch-progress" aria-live="polite"></div></div><div class="card watch-card-target"><h3>🎯 ゴールの選び方</h3><div class="muted">チャートで見たい作品をクリック／タップするとゴールに追加されます。複数ゴールは自動で1本の予習プランに統合します。</div></div><div class="card watch-card-plan"><h3>予習プラン</h3><div class="watch-share-tools"><button id="sharePlanImage" type="button">📷 画像で共有</button><button id="sharedRoomOpen" type="button">👥 一緒に見る</button></div><div id="sharedRoomBar" class="shared-room-bar" aria-live="polite"></div><div aria-label="予習プランの詳しさ" class="prep-tier-controls" id="prepTierControls"><button class="prep-tier" data-tier="minimum">最低限</button><button class="prep-tier active" data-tier="recommended">おすすめ</button><button class="prep-tier" data-tier="complete">完全版</button></div><div class="muted" id="prepplan">見たい作品を選ぶと、予習した方がよい作品をおすすめ順に並べます。</div></div><div class="card watch-card-flow"><h3>見る順ナビ</h3><div class="muted" id="flow">作品を選ぶと、「前に見る候補」「次に見る候補」を表示します。</div></div></div></section>
+<section id="watchWorkspace" class="watch-workspace" aria-label="予習・視聴プラン"><div class="watch-workspace-head"><div><span class="eyebrow">WATCH PLAN</span><h2>予習・視聴プラン</h2><p>見たい作品を決めて、予習ルート・視聴済み・残り時間を広い画面でまとめて管理できます。</p></div><button id="watchBackToChart" class="watch-back-btn" type="button">↑ チャートへ戻る</button></div><div class="watch-workspace-grid"><div class="card overall-watch-card watch-card-progress"><div id="overallWatchProgress" class="overall-watch-progress" aria-live="polite"></div></div><div class="card watch-card-target"><h3>🎯 ゴールの選び方</h3><div class="muted">チャートで見たい作品をクリック／タップするとゴールに追加されます。予習プラン上部の × で個別に解除できます。複数ゴールは自動で1本の予習プランに統合します。</div></div><div class="card watch-card-plan"><h3>予習プラン</h3><div class="watch-share-tools"><button id="sharePlanImage" type="button">📷 画像で共有</button><button id="sharedRoomOpen" type="button">👥 一緒に見る</button></div><div id="sharedRoomBar" class="shared-room-bar" aria-live="polite"></div><div aria-label="予習プランの詳しさ" class="prep-tier-controls" id="prepTierControls"><button class="prep-tier" data-tier="minimum">最低限</button><button class="prep-tier active" data-tier="recommended">おすすめ</button><button class="prep-tier" data-tier="complete">完全版</button></div><div class="muted" id="prepplan">見たい作品を選ぶと、予習した方がよい作品をおすすめ順に並べます。</div></div><div class="card watch-card-flow"><h3>見る順ナビ</h3><div class="muted" id="flow">作品を選ぶと、「前に見る候補」「次に見る候補」を表示します。</div></div></div></section>
 <dialog id="sharedRoomDialog"><div class="shared-room-dialog-body"><h3 id="sharedRoomDialogTitle">一緒に見る</h3><p id="sharedRoomDialogText">表示名だけで参加できます。メールアドレスやアカウント登録は不要です。</p><input id="sharedRoomName" maxlength="24" autocomplete="nickname" placeholder="表示名（例：たろう）"><div id="sharedRoomError" class="shared-room-error"></div><div class="shared-room-dialog-actions"><button id="sharedRoomCancel" type="button">キャンセル</button><button id="sharedRoomSubmit" type="button">ルームを作る</button></div></div></dialog>
 <section aria-label="相関図について" class="below-chart-info"><div class="below-info-head"><div><span class="eyebrow">ABOUT THIS MAP</span><h2>相関図について</h2><p>操作中に常時見る必要のない情報を、チャート下にまとめました。</p></div></div><div class="below-info-grid"><div class="card info-card"><h3>日本向け今後の注目日</h3>
 <div class="muted">
@@ -5644,7 +5644,7 @@ function initSvgInteraction(){
     hint.className='zoom-hint';
     hint.textContent=window.matchMedia('(max-width:760px)').matches
       ? '1本指: 図を移動 / 2本指: 図をズーム / タップ: ゴール追加・解除'
-      : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動';
+      : 'チャート上のホイール: 図をズーム / ドラッグ: 図を移動';
     wrap.appendChild(hint);
 
     const jump=document.createElement('button');
@@ -5662,12 +5662,10 @@ function initSvgInteraction(){
     });
     wrap.appendChild(jump);
 
-    // v5.10.12: plain wheel belongs to the document. Only an explicit
-    // Ctrl/Cmd modifier captures it for chart zoom. Trackpad pinch is
-    // exposed by Chromium/WebKit as a ctrlKey wheel and is handled here too.
+    // PUBLIC v5.12.2: on desktop, wheel over the chart zooms directly.
+    // Wheel outside the chart remains normal document scrolling; mobile keeps touch gestures.
     wrap.addEventListener('wheel',e=>{
-      if(!wrap.querySelector('svg')) return;
-      if(!(e.ctrlKey||e.metaKey)) return;
+      if(!wrap.querySelector('svg') || mobileChartMotion.matches) return;
       e.preventDefault();
       const mag=Math.min(3,Math.max(.35,Math.abs(e.deltaY)/90));
       const base=e.deltaY<0?1.10:0.91;
@@ -5801,7 +5799,14 @@ function initSvgInteraction(){
   });
 }
 
-function clearSvg(){const s=activeSvg();if(s){s.classList.remove('dim');s.querySelectorAll('.hl,.focus').forEach(x=>x.classList.remove('hl','focus'))}applyCharacterHighlight()}
+function clearSvg(){
+  document.querySelectorAll('.panel.active .svg-wrap svg').forEach(s=>{
+    s.classList.remove('dim');
+    s.querySelectorAll('.dynamic-edge-overlay').forEach(x=>x.remove());
+    s.querySelectorAll('.hl,.focus,.backhl,.forwardhl,.bothhl,.contexthl,.pathhl,.goal-node,.current-goal').forEach(x=>x.classList.remove('hl','focus','backhl','forwardhl','bothhl','contexthl','pathhl','goal-node','current-goal'));
+  });
+  applyCharacterHighlight();
+}
 function gt(g){let t=g.querySelector(':scope > title');return t?t.textContent.trim():''}
 function activePanel(){return document.querySelector('.panel.active')}
 function activeWrap(){return activePanel()?.querySelector('.svg-wrap')}
@@ -5970,7 +5975,7 @@ select = function(id,multi=false){ toggleSelectionState(id,multi); refreshSelect
 function installMultiSelectPatch(){
   document.querySelectorAll('.svg-wrap').forEach(wrap=>{
     const hint=wrap.querySelector('.zoom-hint');
-    if(hint) hint.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: 図を移動 / 2本指: 図をズーム / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
+    if(hint) hint.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: 図を移動 / 2本指: 図をズーム / タップ: ゴール追加・解除' : 'チャート上のホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
   });
 }
 cf.addEventListener('change',e=>{
@@ -7079,7 +7084,7 @@ render();
     const multi=goals.length>1;
     const goalIndex=new Map(goals.map((id,i)=>[id,i+1]));
     const heading=`<div class="prep-plan-heading"><strong>${multi?'複数ゴールの統合予習プラン':`${esc(nm[goals[0]]?.title||goals[0])} の予習プラン`}</strong><span class="prep-tier-label">${({minimum:'最低限',recommended:'おすすめ',complete:'完全版'})[prepTier]||prepTier}</span></div>`;
-    const goalBadges=`<div class="multi-goal-summary"><span>🎯 ${goals.length}作品をゴール中</span>${goals.map((id,i)=>`<button type="button" class="multi-goal-badge" data-goal-focus="${esc(id)}">ゴール ${i+1}：${esc(nm[id]?.title||id)}</button>`).join('')}</div>`;
+    const goalBadges=`<div class="multi-goal-summary"><span>🎯 ${goals.length}作品をゴール中</span>${goals.map((id,i)=>`<span class="multi-goal-badge-wrap"><button type="button" class="multi-goal-badge" data-goal-focus="${esc(id)}">ゴール ${i+1}：${esc(nm[id]?.title||id)}</button><button type="button" class="prep-goal-remove" data-id="${esc(id)}" title="このゴールを解除" aria-label="${esc(nm[id]?.title||id)}をゴールから解除">×</button></span>`).join('')}</div>`;
     const progress=prepProgressTools(plan.orderedIds);
     const timeSummary=multiGoalWatchTimeSummary(plan);
     const rows=plan.orderedIds.map((id,i)=>{
@@ -7096,9 +7101,12 @@ render();
     }).join('');
     prepplan.innerHTML=`${heading}${goalBadges}${progress}${timeSummary}<ol class="prep-list multi-goal-list">${rows}</ol><div class="prep-source">各ゴールの予習候補を統合し、重複を除いて有向接続順に並べています。参照のみの接続は並び順を強制しません。</div>`;
     prepplan.querySelectorAll('[data-goal-focus]').forEach(b=>b.onclick=()=>focusGoal(b.dataset.goalFocus));
+    prepplan.querySelectorAll('.prep-goal-remove').forEach(b=>b.onclick=e=>{
+      e.preventDefault(); e.stopPropagation(); removeGoal(b.dataset.id);
+    });
     prepplan.querySelectorAll('.prep-link').forEach(x=>x.onclick=e=>{
       e.preventDefault(); const id=x.dataset.id;
-      if(selectedIds.has(id)) focusGoal(id); else select(id,false);
+      if(selectedIds.has(id)) focusGoal(id);
     });
     wirePreparationProgress(plan.orderedIds,null);
     applyWatchedDimming();
@@ -7312,7 +7320,7 @@ render();
   },true);
 
   document.querySelectorAll('.svg-wrap .zoom-hint').forEach(h=>{
-    h.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: 図を移動 / 2本指: 図をズーム / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
+    h.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: 図を移動 / 2本指: 図をズーム / タップ: ゴール追加・解除' : 'チャート上のホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
   });
 
   ensureMobileFocusShell();
@@ -7330,7 +7338,7 @@ render();
     const state=selectedIds.size ? (window.__marvelLastSelectionState||computeSelectionState()) : null;
     const svg=document.querySelector('.panel.active .svg-wrap svg');
     return {
-      version:'5.12.0-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
+      version:'5.12.2-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
       dim:!!svg?.classList.contains('dim'),
       litNodes:svg?.querySelectorAll('g.node.hl,g.node.focus').length||0,
       litEdges:svg?.querySelectorAll('g.edge.hl').length||0,
@@ -7668,7 +7676,7 @@ render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.12.0 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.12.2 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{
