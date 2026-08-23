@@ -207,9 +207,9 @@ g.edge.fan-verified.fan-hidden{display:none}
   .tabs::-webkit-scrollbar{display:none}
   .tabs .tab{flex:0 0 auto;min-height:42px;padding:8px 10px;font-size:12px;scroll-snap-align:start}
   .flow-tabs-note{display:none}
-  .svg-wrap{height:65dvh;min-height:430px;max-height:none!important;border-radius:8px;touch-action:auto;overscroll-behavior:auto;background:#fff}
+  .svg-wrap{height:65dvh;min-height:430px;max-height:none!important;border-radius:8px;touch-action:pan-y;overscroll-behavior:auto;background:#fff}
   .svg-wrap .zoom-hint{left:8px;right:auto;bottom:8px;font-size:10px;padding:4px 7px;max-width:72%;white-space:normal}
-  .svg-wrap svg g.node{touch-action:auto}
+  .svg-wrap svg g.node{touch-action:pan-y}
 
   #right{display:block;position:fixed;left:0;right:0;bottom:0;top:auto;height:min(78dvh,760px);z-index:70;background:#0f172a;border:1px solid #475569;border-bottom:0;border-radius:18px 18px 0 0;padding:0 9px 18px;overflow:auto;overscroll-behavior:contain;box-shadow:0 -14px 40px rgba(0,0,0,.48);transform:translateY(calc(100% + 20px));transition:transform .22s ease;visibility:hidden}
   body.mobile-details-open #right{transform:translateY(0);visibility:visible}
@@ -332,7 +332,7 @@ main{max-width:1920px;margin:auto;grid-template-columns:minmax(0,1fr) 374px;min-
 }
 
 
-/* PUBLIC v5.10.15 — wide-chart layout + selection-independent reference charts. */
+/* PUBLIC v5.10.16 — wide-chart layout + selection-independent reference charts. */
 /* FINAL AUDIT: AND-edge filtering + Japanese official metadata corrections. */
 /* v5.10.12: New Mutants stays lineage-only (no direct arrows); graph clicks no longer auto-center; AI-use disclosure added. */
 main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
@@ -402,7 +402,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .overall-watch-card{border-color:#1e3a3a!important;background:linear-gradient(145deg,rgba(6,78,59,.16),rgba(15,23,42,.76))!important}
 @media(max-width:760px){.overall-watch-percent{font-size:16px}.overall-watch-stat{font-size:9px}}
 
-/* PUBLIC v5.10.15 — full-width watch workspace + stable checklist scroll. */
+/* PUBLIC v5.10.16 — full-width watch workspace + stable checklist scroll. */
 #right .side-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
 .watch-workspace{max-width:1600px;margin:0 auto;padding:22px 14px 8px}
 .watch-workspace-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:0 2px 12px}
@@ -446,7 +446,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
  .watch-card-plan .prep-progress-tools{display:block}.watch-card-plan .prep-watched-check{width:19px;height:19px}
 }
 
-/* PUBLIC v5.10.15 — scroll-friendly chart interaction.
+/* PUBLIC v5.10.16 — scroll-friendly chart interaction.
    On phones, touch gestures belong to the browser/page; native pinch zoom is allowed and the chart never captures two-finger pan/pinch.
    Desktop Ctrl/Cmd + wheel zoom and mouse/pen drag remain available. */
 .chart-watch-jump{
@@ -460,13 +460,13 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .chart-watch-jump:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
 .svg-wrap.scroll-friendly .zoom-hint{right:10px;left:auto;bottom:8px;max-width:min(520px,72%)}
 @media(max-width:760px){
-  .svg-wrap{touch-action:auto!important;overscroll-behavior:auto!important}
-  .svg-wrap svg,.svg-wrap svg g.node{touch-action:auto!important}
+  .svg-wrap{touch-action:pan-y!important;overscroll-behavior:auto!important}
+  .svg-wrap svg,.svg-wrap svg g.node{touch-action:pan-y!important}
   .chart-watch-jump{top:8px;right:8px;padding:6px 8px;font-size:10px}
   .svg-wrap.scroll-friendly .zoom-hint{left:8px;right:auto;bottom:8px;max-width:70%}
 }
 
-/* PUBLIC v5.10.15 — mobile goal bar. The full chart is always visible on phones. */
+/* PUBLIC v5.10.16 — mobile goal bar. The full chart is always visible on phones. */
 #mobileFocusShell{display:none}
 @media(max-width:760px){
   #mobileFocusShell{display:block;margin:6px 8px 10px;padding:9px;border:1px solid #2b3a55;border-radius:13px;background:#0b1220;color:#e5e7eb}
@@ -485,6 +485,13 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   #mobilePrepJump{border-color:#1d4ed8;background:#172554;color:#dbeafe}
   .svg-wrap svg.dim g.node.goal-node{opacity:1!important;filter:saturate(1.2) brightness(1.08) drop-shadow(0 0 10px #f59e0b)!important}
   .svg-wrap svg.dim g.node.current-goal{opacity:1!important;filter:saturate(1.45) brightness(1.25) drop-shadow(0 0 24px #ef4444)!important}
+  .svg-wrap svg.dim g.node:not(.hl):not(.focus):not(.goal-node):not(.current-goal){opacity:.46!important;filter:grayscale(.42) saturate(.55) brightness(.92)!important}
+  .svg-wrap svg.dim g.edge:not(.hl){opacity:.12!important;filter:grayscale(.55) saturate(.38) brightness(.82)!important}
+  .svg-wrap svg.family-mode g.node{opacity:.44!important;filter:grayscale(.38) saturate(.62) brightness(.9)!important}
+  .svg-wrap svg.family-mode g.edge{opacity:.11!important;filter:grayscale(.5) saturate(.45) brightness(.8)!important}
+  .svg-wrap svg.char-mode g.node,.svg-wrap svg.char-mode g.edge{opacity:.46!important}
+  .svg-wrap svg g.node.watched-dim:not(.focus){opacity:.34!important;filter:grayscale(.78) saturate(.28) brightness(.74)!important}
+  .svg-wrap svg.dim g.node.watched-dim:not(.focus){opacity:.30!important;filter:grayscale(.82) saturate(.24) brightness(.7)!important}
   #mobileGoalUndo{display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:#1f2937;color:#e5e7eb;font-size:12px;align-items:center;justify-content:space-between;gap:8px}
   #mobileGoalUndo.show{display:flex}
   #mobileGoalUndo button{min-height:40px;border:1px solid #60a5fa;border-radius:9px;background:#172554;color:#dbeafe;padding:6px 12px;font-weight:800}
@@ -502,7 +509,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.10.15</span>
+      <span class="stat-chip public-release">PUBLIC v5.10.16</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -529,7 +536,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   <div class="help-body">
     <div class="help-grid">
       <div class="help-step"><b>1. 作品を選ぶ</b><p>図の作品名をクリックするか、上部の検索欄から探します。複数作品をそのままゴールにできます。</p></div>
-      <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動。PCでは Ctrl / ⌘ + ホイールで図をズームできます。スマホではピンチでページ全体を拡大できます。チャート独自の2本指パン・ズームは使いません。</p></div>
+      <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動。PCでは Ctrl / ⌘ + ホイールで図をズームできます。スマホでは1本指でページ移動、2本指で全体図を拡大・縮小できます。必要なら2本指のまま少し動かすと図を移動できます。</p></div>
       <div class="help-step"><b>3. 視聴順を決める</b><p>チャート下の大きな「予習・視聴プラン」で、最低限・おすすめ・完全版、視聴済みチェック、残り時間をまとめて管理できます。</p></div>
     </div>
     <div class="help-legend"><span>← 前史</span><span>→ 後続</span><span>中核 / 推奨 / 参照</span><span>OR / AND / PATH</span></div>
@@ -5192,7 +5199,7 @@ function initSvgInteraction(){
     const hint=document.createElement('div');
     hint.className='zoom-hint';
     hint.textContent=window.matchMedia('(max-width:760px)').matches
-      ? '1本指: ページ移動 / ピンチ: ブラウザ標準ズーム / タップ: ゴール追加・解除'
+      ? '1本指: ページ移動 / 2本指: 図をズーム・移動 / タップ: ゴール追加・解除'
       : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動';
     wrap.appendChild(hint);
 
@@ -5234,13 +5241,6 @@ function initSvgInteraction(){
       if(e.target.closest?.('.chart-watch-jump')) return;
       const st=ensureViewState(wrap);
 
-      // v5.10.14: phones never opt into chart-specific touch gestures.
-      // One or multiple fingers stay page-owned; mouse/pen behavior is unchanged.
-      if(e.pointerType==='touch' && window.matchMedia('(max-width:760px)').matches){
-        st.pinching=false; st.drag=false; st.moved=false; st.pointerId=null;
-        return;
-      }
-
       pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,type:e.pointerType});
 
       if(e.pointerType==='touch'){
@@ -5271,7 +5271,6 @@ function initSvgInteraction(){
     },{passive:false});
 
     wrap.addEventListener('pointermove',e=>{
-      if(e.pointerType==='touch' && window.matchMedia('(max-width:760px)').matches) return;
       if(pointers.has(e.pointerId)) pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,type:e.pointerType});
       const st=ensureViewState(wrap);
       if(pointers.size>=2){
@@ -5494,7 +5493,7 @@ select = function(id,multi=false){ toggleSelectionState(id,multi); refreshSelect
 function installMultiSelectPatch(){
   document.querySelectorAll('.svg-wrap').forEach(wrap=>{
     const hint=wrap.querySelector('.zoom-hint');
-    if(hint) hint.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: ページ移動 / ピンチ: ブラウザ標準ズーム / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
+    if(hint) hint.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: ページ移動 / 2本指: 図をズーム・移動 / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
   });
 }
 cf.addEventListener('change',e=>{
@@ -6707,7 +6706,7 @@ render();
   },true);
 
   document.querySelectorAll('.svg-wrap .zoom-hint').forEach(h=>{
-    h.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: ページ移動 / ピンチ: ブラウザ標準ズーム / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
+    h.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: ページ移動 / 2本指: 図をズーム・移動 / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
   });
 
   ensureMobileFocusShell();
@@ -6725,7 +6724,7 @@ render();
     const state=selectedIds.size ? (window.__marvelLastSelectionState||computeSelectionState()) : null;
     const svg=document.querySelector('.panel.active .svg-wrap svg');
     return {
-      version:'5.10.15-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
+      version:'5.10.16-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
       dim:!!svg?.classList.contains('dim'),
       litNodes:svg?.querySelectorAll('g.node.hl,g.node.focus').length||0,
       litEdges:svg?.querySelectorAll('g.edge.hl').length||0,
@@ -6864,7 +6863,7 @@ render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.10.15 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.10.16 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{

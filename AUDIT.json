@@ -1,525 +1,98 @@
 {
-  "version": "5.10.15-public",
-  "date": "2026-08-23",
-  "static": {
-    "version": "5.10.15-public",
-    "nodes": 131,
-    "uniqueNodeIds": 131,
-    "duplicateNodeIds": [],
-    "edges": 199,
-    "uniqueEdges": 199,
-    "duplicateEdges": [],
-    "invalidEndpoints": [],
-    "selfLoops": [],
-    "cycles": [],
-    "importanceCounts": {
-      "core": 91,
-      "recommended": 75,
-      "reference": 33
-    },
-    "characterLinks": 155,
-    "invalidCharacterLinks": [],
-    "newMutantsDirectEdges": [],
-    "obsoleteCopyHits": [],
-    "pass": {
-      "nodes131": true,
-      "edges199": true,
-      "endpoints": true,
-      "selfLoops": true,
-      "acyclic": true,
-      "newMutantsIsolated": true,
-      "copyClean": true,
-      "characterLinks155": true
-    },
-    "allPass": true
+  "meta": {
+    "version": "PUBLIC v5.10.16",
+    "auditVersion": "5.10.16-public",
+    "svgCount": 7
   },
-  "pairModes": {
-    "or": {
-      "tested": 8515,
-      "bad": [],
-      "disconnected": 0,
-      "nonempty": 8500
+  "desktopWheel": {
+    "beforePlain": {
+      "x": 534.5,
+      "y": 865.796875,
+      "scale": 0.19504347931548882,
+      "scrollY": 0
     },
-    "and": {
-      "tested": 8515,
-      "bad": [],
-      "disconnected": 0,
-      "nonempty": 3082
+    "afterPlain": {
+      "scrollY": 480,
+      "scale": 0.19504347931548882
     },
-    "path": {
-      "tested": 8515,
-      "bad": [],
-      "disconnected": 6986,
-      "nonempty": 1529
+    "beforeCtrl": {
+      "x": 534.5,
+      "y": 865.796875,
+      "scale": 0.19504347931548882,
+      "scrollY": 0
+    },
+    "afterCtrl": {
+      "scrollY": 0,
+      "scale": 0.2462144598317174
     }
   },
-  "fullPlans": {
-    "allPlans": {
-      "renders": 393,
-      "goalRows": 393,
-      "uniqueOk": 393,
-      "errors": []
-    },
-    "watchedReduction": {
-      "before": "⏱未視聴 4作品 / 残り 約 7時間32分",
-      "after": "⏱未視聴 3作品 / 残り 約 5時間30分",
-      "stillRow": true,
-      "checked": true
-    },
-    "scrollStable": {
-      "id": "deadpool-wolverine-2024",
-      "dy": 0,
-      "anchorDelta": 0
-    },
-    "pass": {
-      "all393Render": true,
-      "goalPresentEveryPlan": true,
-      "dedupEveryPlan": true,
-      "watchedStaysAndReduces": true,
-      "scrollStable": true
-    },
-    "allPass": true
+  "mobileInitial": {
+    "mapDisplay": "block",
+    "touchAction": "pan-y",
+    "svgTouch": "pan-y",
+    "nodeTouch": "pan-y",
+    "hint": "1本指: ページ移動 / 2本指: 図をズーム・移動 / タップ: ゴール追加・解除"
   },
-  "doomsdayMultiGoal": {
-    "selected": [
-      "captain-america-brave-new-world-2025",
-      "thunderbolts-new-avengers-2025",
-      "the-fantastic-four-first-steps-2025",
-      "avengers-doomsday-2026-12-18"
-    ],
-    "focus": "avengers-doomsday-2026-12-18",
-    "plan": {
-      "orderedIds": [
-        "iron-man-2008",
-        "the-incredible-hulk-2008",
-        "iron-man-2-2010",
-        "captain-america-the-first-avenger-2011",
-        "a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011",
-        "thor-2011",
-        "the-avengers-2012",
-        "thor-the-dark-world-2013",
-        "guardians-of-the-galaxy-2014",
-        "captain-america-the-winter-soldier-2014",
-        "avengers-age-of-ultron-2015",
-        "ant-man-2015",
-        "marvel-s-agent-carter-series-20152016",
-        "captain-america-civil-war-2016",
-        "doctor-strange-2016",
-        "guardians-of-the-galaxy-vol-2-2017",
-        "spider-man-homecoming-2017",
-        "thor-ragnarok-2017",
-        "ant-man-and-the-wasp-2018",
-        "black-panther-2018",
-        "avengers-infinity-war-2018",
-        "captain-marvel-2019",
-        "avengers-endgame-2019",
-        "spider-man-no-way-home-2021",
-        "the-falcon-and-the-winter-soldier-2021",
-        "loki-s1-2021",
-        "wandavision-2021",
-        "loki-s2-2023",
-        "deadpool-wolverine-2024",
-        "captain-america-brave-new-world-2025",
-        "thunderbolts-new-avengers-2025",
-        "the-fantastic-four-first-steps-2025",
-        "spider-man-brand-new-day-2026-07-31",
-        "avengers-doomsday-2026-12-18"
-      ],
-      "goalIds": [
-        "captain-america-brave-new-world-2025",
-        "thunderbolts-new-avengers-2025",
-        "the-fantastic-four-first-steps-2025",
-        "avengers-doomsday-2026-12-18"
-      ],
-      "prepIds": [
-        "iron-man-2008",
-        "the-incredible-hulk-2008",
-        "iron-man-2-2010",
-        "captain-america-the-first-avenger-2011",
-        "a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011",
-        "thor-2011",
-        "the-avengers-2012",
-        "thor-the-dark-world-2013",
-        "guardians-of-the-galaxy-2014",
-        "captain-america-the-winter-soldier-2014",
-        "avengers-age-of-ultron-2015",
-        "ant-man-2015",
-        "marvel-s-agent-carter-series-20152016",
-        "captain-america-civil-war-2016",
-        "doctor-strange-2016",
-        "guardians-of-the-galaxy-vol-2-2017",
-        "spider-man-homecoming-2017",
-        "thor-ragnarok-2017",
-        "ant-man-and-the-wasp-2018",
-        "black-panther-2018",
-        "avengers-infinity-war-2018",
-        "captain-marvel-2019",
-        "avengers-endgame-2019",
-        "spider-man-no-way-home-2021",
-        "the-falcon-and-the-winter-soldier-2021",
-        "loki-s1-2021",
-        "wandavision-2021",
-        "loki-s2-2023",
-        "deadpool-wolverine-2024",
-        "spider-man-brand-new-day-2026-07-31"
-      ],
-      "rolesById": {
-        "iron-man-2008": [
-          "prep"
-        ],
-        "the-incredible-hulk-2008": [
-          "prep"
-        ],
-        "iron-man-2-2010": [
-          "prep"
-        ],
-        "captain-america-the-first-avenger-2011": [
-          "prep"
-        ],
-        "a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011": [
-          "prep"
-        ],
-        "thor-2011": [
-          "prep"
-        ],
-        "the-avengers-2012": [
-          "prep"
-        ],
-        "thor-the-dark-world-2013": [
-          "prep"
-        ],
-        "guardians-of-the-galaxy-2014": [
-          "prep"
-        ],
-        "captain-america-the-winter-soldier-2014": [
-          "prep"
-        ],
-        "avengers-age-of-ultron-2015": [
-          "prep"
-        ],
-        "ant-man-2015": [
-          "prep"
-        ],
-        "marvel-s-agent-carter-series-20152016": [
-          "prep"
-        ],
-        "captain-america-civil-war-2016": [
-          "prep"
-        ],
-        "doctor-strange-2016": [
-          "prep"
-        ],
-        "guardians-of-the-galaxy-vol-2-2017": [
-          "prep"
-        ],
-        "spider-man-homecoming-2017": [
-          "prep"
-        ],
-        "thor-ragnarok-2017": [
-          "prep"
-        ],
-        "avengers-infinity-war-2018": [
-          "prep"
-        ],
-        "ant-man-and-the-wasp-2018": [
-          "prep"
-        ],
-        "black-panther-2018": [
-          "prep"
-        ],
-        "avengers-endgame-2019": [
-          "prep"
-        ],
-        "captain-marvel-2019": [
-          "prep"
-        ],
-        "the-falcon-and-the-winter-soldier-2021": [
-          "prep"
-        ],
-        "captain-america-brave-new-world-2025": [
-          "goal"
-        ],
-        "spider-man-no-way-home-2021": [
-          "prep"
-        ],
-        "loki-s1-2021": [
-          "prep"
-        ],
-        "wandavision-2021": [
-          "prep"
-        ],
-        "loki-s2-2023": [
-          "prep"
-        ],
-        "deadpool-wolverine-2024": [
-          "prep"
-        ],
-        "thunderbolts-new-avengers-2025": [
-          "goal",
-          "prep"
-        ],
-        "the-fantastic-four-first-steps-2025": [
-          "goal",
-          "prep"
-        ],
-        "spider-man-brand-new-day-2026-07-31": [
-          "prep"
-        ],
-        "avengers-doomsday-2026-12-18": [
-          "goal"
-        ]
-      },
-      "sourceByGoal": {
-        "captain-america-brave-new-world-2025": [
-          "iron-man-2008",
-          "the-incredible-hulk-2008",
-          "iron-man-2-2010",
-          "captain-america-the-first-avenger-2011",
-          "a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011",
-          "thor-2011",
-          "the-avengers-2012",
-          "thor-the-dark-world-2013",
-          "guardians-of-the-galaxy-2014",
-          "captain-america-the-winter-soldier-2014",
-          "avengers-age-of-ultron-2015",
-          "ant-man-2015",
-          "marvel-s-agent-carter-series-20152016",
-          "captain-america-civil-war-2016",
-          "doctor-strange-2016",
-          "guardians-of-the-galaxy-vol-2-2017",
-          "spider-man-homecoming-2017",
-          "thor-ragnarok-2017",
-          "avengers-infinity-war-2018",
-          "ant-man-and-the-wasp-2018",
-          "black-panther-2018",
-          "avengers-endgame-2019",
-          "captain-marvel-2019",
-          "the-falcon-and-the-winter-soldier-2021"
-        ],
-        "thunderbolts-new-avengers-2025": [
-          "avengers-endgame-2019",
-          "spider-man-no-way-home-2021",
-          "loki-s1-2021",
-          "wandavision-2021",
-          "loki-s2-2023",
-          "deadpool-wolverine-2024"
-        ],
-        "the-fantastic-four-first-steps-2025": [
-          "avengers-endgame-2019",
-          "spider-man-no-way-home-2021",
-          "loki-s1-2021",
-          "wandavision-2021",
-          "loki-s2-2023",
-          "deadpool-wolverine-2024",
-          "thunderbolts-new-avengers-2025"
-        ],
-        "avengers-doomsday-2026-12-18": [
-          "avengers-endgame-2019",
-          "spider-man-no-way-home-2021",
-          "loki-s1-2021",
-          "wandavision-2021",
-          "loki-s2-2023",
-          "deadpool-wolverine-2024",
-          "thunderbolts-new-avengers-2025",
-          "the-fantastic-four-first-steps-2025",
-          "spider-man-brand-new-day-2026-07-31"
-        ]
-      },
-      "unknownOrderingPairs": []
-    },
-    "heading": "複数ゴールの統合予習プランおすすめ",
-    "goalBadges": [
-      "ゴール 1：キャプテン・アメリカ：ブレイブ・ニュー・ワールド",
-      "ゴール 2：サンダーボルツ*（ニュー・アベンジャーズ）",
-      "ゴール 3：ファンタスティック４：ファースト・ステップ",
-      "ゴール 4：アベンジャーズ／ドゥームズデイ"
-    ],
-    "rowIds": [
-      "iron-man-2008",
-      "the-incredible-hulk-2008",
-      "iron-man-2-2010",
-      "captain-america-the-first-avenger-2011",
-      "a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011",
-      "thor-2011",
-      "the-avengers-2012",
-      "thor-the-dark-world-2013",
-      "guardians-of-the-galaxy-2014",
-      "captain-america-the-winter-soldier-2014",
-      "avengers-age-of-ultron-2015",
-      "ant-man-2015",
-      "marvel-s-agent-carter-series-20152016",
-      "captain-america-civil-war-2016",
-      "doctor-strange-2016",
-      "guardians-of-the-galaxy-vol-2-2017",
-      "spider-man-homecoming-2017",
-      "thor-ragnarok-2017",
-      "ant-man-and-the-wasp-2018",
-      "black-panther-2018",
-      "avengers-infinity-war-2018",
-      "captain-marvel-2019",
-      "avengers-endgame-2019",
-      "spider-man-no-way-home-2021",
-      "the-falcon-and-the-winter-soldier-2021",
-      "loki-s1-2021",
-      "wandavision-2021",
-      "loki-s2-2023",
-      "deadpool-wolverine-2024",
-      "captain-america-brave-new-world-2025",
-      "thunderbolts-new-avengers-2025",
-      "the-fantastic-four-first-steps-2025",
-      "spider-man-brand-new-day-2026-07-31",
-      "avengers-doomsday-2026-12-18"
-    ],
-    "orderViolations": [],
-    "before": "⏱未視聴 34作品 / 残り 約 80時間31分",
-    "after": "⏱未視聴 33作品 / 残り 約 77時間30分",
-    "watchedChecked": true,
-    "pass": {
-      "fourGoalsSelected": true,
-      "allGoalsIncluded": true,
-      "deduped": true,
-      "directGoalDependenciesOrdered": true,
-      "allNonReferenceConstraintsRespected": true,
-      "unifiedUI": true,
-      "watchedReducesRemaining": true
-    },
-    "allPass": true
+  "mobileDim": {
+    "nodeOpacity": "0.46",
+    "nodeFilter": "grayscale(0.42) saturate(0.55) brightness(0.92)",
+    "edgeOpacity": "0.12",
+    "edgeFilter": "grayscale(0.55) saturate(0.38) brightness(0.82)"
   },
-  "mobileRuntime": {
-    "meta": {
-      "version": "PUBLIC v5.10.15",
-      "auditVersion": "5.10.15-public",
-      "svgCount": 7
+  "mobileOneFinger": {
+    "before": {
+      "x": 195,
+      "y": 612.3046875,
+      "scale": 0.06855396407650419,
+      "scrollY": 0
     },
-    "desktopWheel": {
-      "beforePlain": {
-        "x": 534.5,
-        "y": 865.796875,
-        "scale": 0.19504347931548882,
-        "scrollY": 0
-      },
-      "afterPlain": {
-        "scrollY": 480,
-        "scale": 0.19504347931548882
-      },
-      "beforeCtrl": {
-        "x": 534.5,
-        "y": 865.796875,
-        "scale": 0.19504347931548882,
-        "scrollY": 0
-      },
-      "afterCtrl": {
-        "scrollY": 0,
-        "scale": 0.2462144598317174
-      }
+    "after": {
+      "scrollY": 175,
+      "scale": 0.06855396407650419
+    }
+  },
+  "mobileTwoPointerChartState": {
+    "before": {
+      "x": 7.360000000000014,
+      "y": 186.80295683601565,
+      "scale": 0.06855396407650419
     },
-    "mobileInitial": {
-      "shell": true,
-      "shellDisplay": "block",
-      "mapDisplay": "block",
-      "touchAction": "auto",
-      "svgTouch": "auto",
-      "modeToggle": false,
-      "focusContent": false,
-      "goalBar": true,
-      "hint": "1本指: ページ移動 / ピンチ: ブラウザ標準ズーム / タップ: ゴール追加・解除",
-      "meta": "width=device-width,initial-scale=1"
+    "after": {
+      "x": -178.404821965593,
+      "y": 114.68031763814432,
+      "scale": 0.14410257121719605
+    }
+  },
+  "mobileTap": {
+    "ids": [
+      "guardians-of-the-galaxy-vol-3-2023"
+    ],
+    "selected": "guardians-of-the-galaxy-vol-3-2023",
+    "before": {
+      "x": -178.404821965593,
+      "y": 114.68031763814432,
+      "scale": 0.14410257121719605,
+      "scrollY": 0
     },
-    "mobileTap": {
-      "ids": [
-        "guardians-of-the-galaxy-vol-3-2023"
-      ],
-      "selected": "guardians-of-the-galaxy-vol-3-2023",
-      "before": {
-        "x": 7.360000000000014,
-        "y": 186.80295683601565,
-        "scale": 0.06855396407650419,
-        "scrollY": 0
-      },
-      "after": {
-        "x": 7.360000000000014,
-        "y": 186.80295683601565,
-        "scale": 0.06855396407650419,
-        "scrollY": 0
-      },
-      "nodeClass": "node focus current-goal",
-      "goalCount": "🎯 1作品をゴール中",
-      "mapDisplay": "block"
+    "after": {
+      "x": -178.404821965593,
+      "y": 114.68031763814432,
+      "scale": 0.14410257121719605,
+      "scrollY": 0
     },
-    "goalBar": {
-      "chips": [
-        {
-          "id": "guardians-of-the-galaxy-vol-3-2023",
-          "current": false
-        },
-        {
-          "id": "guardians-of-the-galaxy-vol-2-2017",
-          "current": false
-        },
-        {
-          "id": "the-guardians-of-the-galaxy-holiday-special-2022",
-          "current": true
-        }
-      ],
-      "clearH": 44,
-      "prepH": 44
-    },
-    "clearUndo": {
-      "before": [
-        "guardians-of-the-galaxy-vol-3-2023",
-        "guardians-of-the-galaxy-vol-2-2017",
-        "the-guardians-of-the-galaxy-holiday-special-2022"
-      ],
-      "focus": "the-guardians-of-the-galaxy-holiday-special-2022",
-      "cleared": [],
-      "shown": true,
-      "after": [
-        "guardians-of-the-galaxy-vol-3-2023",
-        "guardians-of-the-galaxy-vol-2-2017",
-        "the-guardians-of-the-galaxy-holiday-special-2022"
-      ],
-      "afterFocus": "the-guardians-of-the-galaxy-holiday-special-2022"
-    },
-    "mobileOneFinger": {
-      "before": {
-        "x": 195,
-        "y": 701.3046875,
-        "scale": 0.06855396407650419,
-        "scrollY": 0
-      },
-      "after": {
-        "scrollY": 175,
-        "scale": 0.06855396407650419
-      }
-    },
-    "mobileTwoPointerChartState": {
-      "before": {
-        "x": 7.360000000000014,
-        "y": 186.80295683601565,
-        "scale": 0.06855396407650419
-      },
-      "after": {
-        "x": 7.360000000000014,
-        "y": 186.80295683601565,
-        "scale": 0.06855396407650419
-      }
-    },
-    "pass": {
-      "version": true,
-      "sevenGraphs": true,
-      "plainWheelPage": true,
-      "ctrlWheelZoom": true,
-      "mobileFullMapOnly": true,
-      "mobileNativePinchAllowedByCss": true,
-      "mobileHint": true,
-      "mobileTapGoalNoMove": true,
-      "goalBarThree": true,
-      "goalBarTouchTargets": true,
-      "clearUndo": true,
-      "mobileOneFingerPage": true,
-      "mobileTwoPointerNoChartGesture": true
-    },
-    "allPass": true
+    "nodeClass": "node focus current-goal"
+  },
+  "pass": {
+    "version": true,
+    "sevenGraphs": true,
+    "plainWheelPage": true,
+    "ctrlWheelZoom": true,
+    "mobileTouchActionPany": true,
+    "mobileHint": true,
+    "mobileDimReadable": true,
+    "mobileOneFingerPage": true,
+    "mobileTwoPointerChartGesture": true,
+    "mobileTapGoalNoMove": true
   },
   "allPass": true
 }
