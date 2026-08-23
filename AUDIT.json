@@ -1,98 +1,492 @@
 {
-  "meta": {
-    "version": "PUBLIC v5.10.16",
-    "auditVersion": "5.10.16-public",
-    "svgCount": 7
-  },
-  "desktopWheel": {
-    "beforePlain": {
-      "x": 534.5,
-      "y": 865.796875,
-      "scale": 0.19504347931548882,
-      "scrollY": 0
+  "version": "5.10.18-public",
+  "baseVersion": "5.10.17-public",
+  "date": "2026-08-23",
+  "changes": [
+    "cache svg-wrap bounding rect once per two-finger gesture",
+    "limit selection/character/family highlight scans to active SVG"
+  ],
+  "sha256": "27f12d957a631cefaa9c8a80f960bea26601e053444fb2d03043b2d027e08547",
+  "performance": {
+    "pinchLayoutReads": {
+      "v5.10.17": 120,
+      "v5.10.18": 1,
+      "scenario": "2 pointers × 60 moves each; wrapper getBoundingClientRect instrumentation"
     },
-    "afterPlain": {
-      "scrollY": 480,
-      "scale": 0.19504347931548882
+    "globalSvgQueriesPerGuardiansSelection": {
+      "v5.10.17": 4,
+      "v5.10.18": 0,
+      "selector": ".svg-wrap svg"
     },
-    "beforeCtrl": {
-      "x": 534.5,
-      "y": 865.796875,
-      "scale": 0.19504347931548882,
-      "scrollY": 0
-    },
-    "afterCtrl": {
-      "scrollY": 0,
-      "scale": 0.2462144598317174
+    "headlessMicrobenchmarkMs": {
+      "note": "synthetic/headless only; not real-device FPS",
+      "v5.10.17": {
+        "pinch": {
+          "mean": 5.52,
+          "median": 6.0,
+          "p95": 8.0
+        },
+        "selection": {
+          "mean": 36.41,
+          "median": 52.0,
+          "p95": 83.4
+        }
+      },
+      "v5.10.18": {
+        "pinch": {
+          "mean": 5.575,
+          "median": 6.0,
+          "p95": 6.6
+        },
+        "selection": {
+          "mean": 29.2425,
+          "median": 39.6,
+          "p95": 61.5
+        }
+      }
     }
   },
-  "mobileInitial": {
-    "mapDisplay": "block",
-    "touchAction": "pan-y",
-    "svgTouch": "pan-y",
-    "nodeTouch": "pan-y",
-    "hint": "1本指: ページ移動 / 2本指: 図をズーム・移動 / タップ: ゴール追加・解除"
-  },
-  "mobileDim": {
-    "nodeOpacity": "0.46",
-    "nodeFilter": "grayscale(0.42) saturate(0.55) brightness(0.92)",
-    "edgeOpacity": "0.12",
-    "edgeFilter": "grayscale(0.55) saturate(0.38) brightness(0.82)"
-  },
-  "mobileOneFinger": {
-    "before": {
-      "x": 195,
-      "y": 612.3046875,
-      "scale": 0.06855396407650419,
-      "scrollY": 0
+  "regression": {
+    "base": {
+      "counts": {
+        "works": 131,
+        "edges": 199,
+        "charLinks": 155
+      },
+      "pairModes": {
+        "or": {
+          "count": 8515,
+          "hash": "2f3a9ceda3d87b75"
+        },
+        "and": {
+          "count": 8515,
+          "hash": "c18dcecee8aea52c"
+        },
+        "path": {
+          "count": 8515,
+          "hash": "1a0f6c9489612a46"
+        }
+      },
+      "plans": {
+        "minimum": {
+          "count": 131,
+          "hash": "04717bff1636c18f"
+        },
+        "recommended": {
+          "count": 131,
+          "hash": "b3a190a0e996d8c7"
+        },
+        "complete": {
+          "count": 131,
+          "hash": "b36ed15a31e724ec"
+        }
+      },
+      "errors": []
     },
-    "after": {
-      "scrollY": 175,
-      "scale": 0.06855396407650419
-    }
-  },
-  "mobileTwoPointerChartState": {
-    "before": {
-      "x": 7.360000000000014,
-      "y": 186.80295683601565,
-      "scale": 0.06855396407650419
+    "candidate": {
+      "counts": {
+        "works": 131,
+        "edges": 199,
+        "charLinks": 155
+      },
+      "pairModes": {
+        "or": {
+          "count": 8515,
+          "hash": "2f3a9ceda3d87b75"
+        },
+        "and": {
+          "count": 8515,
+          "hash": "c18dcecee8aea52c"
+        },
+        "path": {
+          "count": 8515,
+          "hash": "1a0f6c9489612a46"
+        }
+      },
+      "plans": {
+        "minimum": {
+          "count": 131,
+          "hash": "04717bff1636c18f"
+        },
+        "recommended": {
+          "count": 131,
+          "hash": "b3a190a0e996d8c7"
+        },
+        "complete": {
+          "count": 131,
+          "hash": "b36ed15a31e724ec"
+        }
+      },
+      "errors": []
     },
-    "after": {
-      "x": -178.404821965593,
-      "y": 114.68031763814432,
-      "scale": 0.14410257121719605
-    }
-  },
-  "mobileTap": {
-    "ids": [
-      "guardians-of-the-galaxy-vol-3-2023"
+    "ui": {
+      "version": "5.10.18-public",
+      "guardians": {
+        "back": [
+          "guardians-of-the-galaxy-2014",
+          "guardians-of-the-galaxy-vol-2-2017",
+          "the-guardians-of-the-galaxy-holiday-special-2022"
+        ],
+        "fullPast": [
+          "guardians-of-the-galaxy-2014",
+          "guardians-of-the-galaxy-vol-2-2017",
+          "the-guardians-of-the-galaxy-holiday-special-2022"
+        ],
+        "litNodes": 4,
+        "litEdges": 3,
+        "recommended": [
+          "guardians-of-the-galaxy-2014",
+          "guardians-of-the-galaxy-vol-2-2017",
+          "the-guardians-of-the-galaxy-holiday-special-2022"
+        ]
+      },
+      "multiGoal": {
+        "afterAdd": [
+          "guardians-of-the-galaxy-vol-3-2023",
+          "the-marvels-2023"
+        ],
+        "afterRemove": [
+          "the-marvels-2023"
+        ],
+        "selected": "the-marvels-2023"
+      },
+      "newMutantsDirectEdges": 0,
+      "mobileDim": {
+        "opacity": "0.46",
+        "filter": "grayscale(0.42) saturate(0.55) brightness(0.92)"
+      },
+      "watchIndependent": {
+        "active": "watch",
+        "dim": false
+      },
+      "mobileGestures": {
+        "before": {
+          "x": 7.360000000000014,
+          "y": 186.80295683601565,
+          "scale": 0.06855396407650419
+        },
+        "afterOne": {
+          "x": 67.36000000000001,
+          "y": 231.80295683601565,
+          "scale": 0.06855396407650419
+        },
+        "afterTwo": {
+          "x": 27.97818181818181,
+          "y": 339.75316448875003,
+          "scale": 0.09971485683855155
+        },
+        "gesture": false
+      },
+      "pcWheel": {
+        "before": {
+          "x": 21.139999999999986,
+          "y": 179.39599286866456,
+          "scale": 0.1969063587740895
+        },
+        "afterPlain": {
+          "x": 21.139999999999986,
+          "y": 179.39599286866456,
+          "scale": 0.1969063587740895,
+          "prevented": false
+        },
+        "afterCtrl": {
+          "x": -15.29271502575881,
+          "y": 195.47984108204363,
+          "scale": 0.22358877064635096,
+          "prevented": true
+        }
+      },
+      "errors": []
+    },
+    "assertions": [
+      {
+        "name": "data counts preserved",
+        "pass": true,
+        "details": {
+          "base": {
+            "works": 131,
+            "edges": 199,
+            "charLinks": 155
+          },
+          "cand": {
+            "works": 131,
+            "edges": 199,
+            "charLinks": 155
+          }
+        }
+      },
+      {
+        "name": "OR/AND/PATH all-pairs identical",
+        "pass": true,
+        "details": {
+          "base": {
+            "or": {
+              "count": 8515,
+              "hash": "2f3a9ceda3d87b75"
+            },
+            "and": {
+              "count": 8515,
+              "hash": "c18dcecee8aea52c"
+            },
+            "path": {
+              "count": 8515,
+              "hash": "1a0f6c9489612a46"
+            }
+          },
+          "cand": {
+            "or": {
+              "count": 8515,
+              "hash": "2f3a9ceda3d87b75"
+            },
+            "and": {
+              "count": 8515,
+              "hash": "c18dcecee8aea52c"
+            },
+            "path": {
+              "count": 8515,
+              "hash": "1a0f6c9489612a46"
+            }
+          }
+        }
+      },
+      {
+        "name": "393 single-goal plan outputs identical",
+        "pass": true,
+        "details": {
+          "base": {
+            "minimum": {
+              "count": 131,
+              "hash": "04717bff1636c18f"
+            },
+            "recommended": {
+              "count": 131,
+              "hash": "b3a190a0e996d8c7"
+            },
+            "complete": {
+              "count": 131,
+              "hash": "b36ed15a31e724ec"
+            }
+          },
+          "cand": {
+            "minimum": {
+              "count": 131,
+              "hash": "04717bff1636c18f"
+            },
+            "recommended": {
+              "count": 131,
+              "hash": "b3a190a0e996d8c7"
+            },
+            "complete": {
+              "count": 131,
+              "hash": "b36ed15a31e724ec"
+            }
+          }
+        }
+      },
+      {
+        "name": "Guardians Vol.3 back history exact 3",
+        "pass": true,
+        "details": {
+          "back": [
+            "guardians-of-the-galaxy-2014",
+            "guardians-of-the-galaxy-vol-2-2017",
+            "the-guardians-of-the-galaxy-holiday-special-2022"
+          ],
+          "fullPast": [
+            "guardians-of-the-galaxy-2014",
+            "guardians-of-the-galaxy-vol-2-2017",
+            "the-guardians-of-the-galaxy-holiday-special-2022"
+          ],
+          "litNodes": 4,
+          "litEdges": 3,
+          "recommended": [
+            "guardians-of-the-galaxy-2014",
+            "guardians-of-the-galaxy-vol-2-2017",
+            "the-guardians-of-the-galaxy-holiday-special-2022"
+          ]
+        }
+      },
+      {
+        "name": "Guardians recommended plan exact 3",
+        "pass": true,
+        "details": [
+          "guardians-of-the-galaxy-2014",
+          "guardians-of-the-galaxy-vol-2-2017",
+          "the-guardians-of-the-galaxy-holiday-special-2022"
+        ]
+      },
+      {
+        "name": "simple tap adds second goal",
+        "pass": true,
+        "details": {
+          "afterAdd": [
+            "guardians-of-the-galaxy-vol-3-2023",
+            "the-marvels-2023"
+          ],
+          "afterRemove": [
+            "the-marvels-2023"
+          ],
+          "selected": "the-marvels-2023"
+        }
+      },
+      {
+        "name": "re-tap removes only that goal",
+        "pass": true,
+        "details": {
+          "afterAdd": [
+            "guardians-of-the-galaxy-vol-3-2023",
+            "the-marvels-2023"
+          ],
+          "afterRemove": [
+            "the-marvels-2023"
+          ],
+          "selected": "the-marvels-2023"
+        }
+      },
+      {
+        "name": "New Mutants direct arrows remain zero",
+        "pass": true,
+        "details": 0
+      },
+      {
+        "name": "watch tab remains selection-independent",
+        "pass": true,
+        "details": {
+          "active": "watch",
+          "dim": false
+        }
+      },
+      {
+        "name": "mobile dim remains readable",
+        "pass": true,
+        "details": {
+          "opacity": "0.46",
+          "filter": "grayscale(0.42) saturate(0.55) brightness(0.92)"
+        }
+      },
+      {
+        "name": "one-finger pans chart",
+        "pass": true,
+        "details": {
+          "before": {
+            "x": 7.360000000000014,
+            "y": 186.80295683601565,
+            "scale": 0.06855396407650419
+          },
+          "afterOne": {
+            "x": 67.36000000000001,
+            "y": 231.80295683601565,
+            "scale": 0.06855396407650419
+          },
+          "afterTwo": {
+            "x": 27.97818181818181,
+            "y": 339.75316448875003,
+            "scale": 0.09971485683855155
+          },
+          "gesture": false
+        }
+      },
+      {
+        "name": "two-finger zooms chart",
+        "pass": true,
+        "details": {
+          "before": {
+            "x": 7.360000000000014,
+            "y": 186.80295683601565,
+            "scale": 0.06855396407650419
+          },
+          "afterOne": {
+            "x": 67.36000000000001,
+            "y": 231.80295683601565,
+            "scale": 0.06855396407650419
+          },
+          "afterTwo": {
+            "x": 27.97818181818181,
+            "y": 339.75316448875003,
+            "scale": 0.09971485683855155
+          },
+          "gesture": false
+        }
+      },
+      {
+        "name": "gesture class cleans up",
+        "pass": true,
+        "details": {
+          "before": {
+            "x": 7.360000000000014,
+            "y": 186.80295683601565,
+            "scale": 0.06855396407650419
+          },
+          "afterOne": {
+            "x": 67.36000000000001,
+            "y": 231.80295683601565,
+            "scale": 0.06855396407650419
+          },
+          "afterTwo": {
+            "x": 27.97818181818181,
+            "y": 339.75316448875003,
+            "scale": 0.09971485683855155
+          },
+          "gesture": false
+        }
+      },
+      {
+        "name": "PC plain wheel not captured",
+        "pass": true,
+        "details": {
+          "before": {
+            "x": 21.139999999999986,
+            "y": 179.39599286866456,
+            "scale": 0.1969063587740895
+          },
+          "afterPlain": {
+            "x": 21.139999999999986,
+            "y": 179.39599286866456,
+            "scale": 0.1969063587740895,
+            "prevented": false
+          },
+          "afterCtrl": {
+            "x": -15.29271502575881,
+            "y": 195.47984108204363,
+            "scale": 0.22358877064635096,
+            "prevented": true
+          }
+        }
+      },
+      {
+        "name": "PC Ctrl-wheel zoom captured",
+        "pass": true,
+        "details": {
+          "before": {
+            "x": 21.139999999999986,
+            "y": 179.39599286866456,
+            "scale": 0.1969063587740895
+          },
+          "afterPlain": {
+            "x": 21.139999999999986,
+            "y": 179.39599286866456,
+            "scale": 0.1969063587740895,
+            "prevented": false
+          },
+          "afterCtrl": {
+            "x": -15.29271502575881,
+            "y": 195.47984108204363,
+            "scale": 0.22358877064635096,
+            "prevented": true
+          }
+        }
+      },
+      {
+        "name": "no page script errors",
+        "pass": true,
+        "details": {
+          "base": [],
+          "cand": [],
+          "ui": []
+        }
+      }
     ],
-    "selected": "guardians-of-the-galaxy-vol-3-2023",
-    "before": {
-      "x": -178.404821965593,
-      "y": 114.68031763814432,
-      "scale": 0.14410257121719605,
-      "scrollY": 0
-    },
-    "after": {
-      "x": -178.404821965593,
-      "y": 114.68031763814432,
-      "scale": 0.14410257121719605,
-      "scrollY": 0
-    },
-    "nodeClass": "node focus current-goal"
-  },
-  "pass": {
-    "version": true,
-    "sevenGraphs": true,
-    "plainWheelPage": true,
-    "ctrlWheelZoom": true,
-    "mobileTouchActionPany": true,
-    "mobileHint": true,
-    "mobileDimReadable": true,
-    "mobileOneFingerPage": true,
-    "mobileTwoPointerChartGesture": true,
-    "mobileTapGoalNoMove": true
+    "allPass": true
   },
   "allPass": true
 }

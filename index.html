@@ -207,9 +207,9 @@ g.edge.fan-verified.fan-hidden{display:none}
   .tabs::-webkit-scrollbar{display:none}
   .tabs .tab{flex:0 0 auto;min-height:42px;padding:8px 10px;font-size:12px;scroll-snap-align:start}
   .flow-tabs-note{display:none}
-  .svg-wrap{height:65dvh;min-height:430px;max-height:none!important;border-radius:8px;touch-action:pan-y;overscroll-behavior:auto;background:#fff}
+  .svg-wrap{height:65dvh;min-height:430px;max-height:none!important;border-radius:8px;touch-action:none;overscroll-behavior:auto;background:#fff}
   .svg-wrap .zoom-hint{left:8px;right:auto;bottom:8px;font-size:10px;padding:4px 7px;max-width:72%;white-space:normal}
-  .svg-wrap svg g.node{touch-action:pan-y}
+  .svg-wrap svg g.node{touch-action:none}
 
   #right{display:block;position:fixed;left:0;right:0;bottom:0;top:auto;height:min(78dvh,760px);z-index:70;background:#0f172a;border:1px solid #475569;border-bottom:0;border-radius:18px 18px 0 0;padding:0 9px 18px;overflow:auto;overscroll-behavior:contain;box-shadow:0 -14px 40px rgba(0,0,0,.48);transform:translateY(calc(100% + 20px));transition:transform .22s ease;visibility:hidden}
   body.mobile-details-open #right{transform:translateY(0);visibility:visible}
@@ -332,7 +332,7 @@ main{max-width:1920px;margin:auto;grid-template-columns:minmax(0,1fr) 374px;min-
 }
 
 
-/* PUBLIC v5.10.16 — wide-chart layout + selection-independent reference charts. */
+/* PUBLIC v5.10.18 — wide-chart layout + selection-independent reference charts. */
 /* FINAL AUDIT: AND-edge filtering + Japanese official metadata corrections. */
 /* v5.10.12: New Mutants stays lineage-only (no direct arrows); graph clicks no longer auto-center; AI-use disclosure added. */
 main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
@@ -402,7 +402,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .overall-watch-card{border-color:#1e3a3a!important;background:linear-gradient(145deg,rgba(6,78,59,.16),rgba(15,23,42,.76))!important}
 @media(max-width:760px){.overall-watch-percent{font-size:16px}.overall-watch-stat{font-size:9px}}
 
-/* PUBLIC v5.10.16 — full-width watch workspace + stable checklist scroll. */
+/* PUBLIC v5.10.18 — full-width watch workspace + stable checklist scroll. */
 #right .side-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
 .watch-workspace{max-width:1600px;margin:0 auto;padding:22px 14px 8px}
 .watch-workspace-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:0 2px 12px}
@@ -446,7 +446,8 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
  .watch-card-plan .prep-progress-tools{display:block}.watch-card-plan .prep-watched-check{width:19px;height:19px}
 }
 
-/* PUBLIC v5.10.16 — scroll-friendly chart interaction.
+/* PUBLIC v5.10.18 — scroll-friendly chart interaction.
+   Performance: pinch rect is cached per gesture; highlight scans stay on the active SVG.
    On phones, touch gestures belong to the browser/page; native pinch zoom is allowed and the chart never captures two-finger pan/pinch.
    Desktop Ctrl/Cmd + wheel zoom and mouse/pen drag remain available. */
 .chart-watch-jump{
@@ -460,13 +461,13 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .chart-watch-jump:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
 .svg-wrap.scroll-friendly .zoom-hint{right:10px;left:auto;bottom:8px;max-width:min(520px,72%)}
 @media(max-width:760px){
-  .svg-wrap{touch-action:pan-y!important;overscroll-behavior:auto!important}
-  .svg-wrap svg,.svg-wrap svg g.node{touch-action:pan-y!important}
+  .svg-wrap{touch-action:none!important;overscroll-behavior:auto!important;contain:layout paint}
+  .svg-wrap svg,.svg-wrap svg g.node{touch-action:none!important}
   .chart-watch-jump{top:8px;right:8px;padding:6px 8px;font-size:10px}
   .svg-wrap.scroll-friendly .zoom-hint{left:8px;right:auto;bottom:8px;max-width:70%}
 }
 
-/* PUBLIC v5.10.16 — mobile goal bar. The full chart is always visible on phones. */
+/* PUBLIC v5.10.18 — mobile goal bar. The full chart is always visible on phones. */
 #mobileFocusShell{display:none}
 @media(max-width:760px){
   #mobileFocusShell{display:block;margin:6px 8px 10px;padding:9px;border:1px solid #2b3a55;border-radius:13px;background:#0b1220;color:#e5e7eb}
@@ -492,6 +493,9 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .svg-wrap svg.char-mode g.node,.svg-wrap svg.char-mode g.edge{opacity:.46!important}
   .svg-wrap svg g.node.watched-dim:not(.focus){opacity:.34!important;filter:grayscale(.78) saturate(.28) brightness(.74)!important}
   .svg-wrap svg.dim g.node.watched-dim:not(.focus){opacity:.30!important;filter:grayscale(.82) saturate(.24) brightness(.7)!important}
+  .svg-wrap svg{will-change:transform;backface-visibility:hidden}
+  .svg-wrap.gesture-active svg g.node,.svg-wrap.gesture-active svg g.edge{filter:none!important;transition:none!important}
+  .svg-wrap.gesture-active svg g.node:hover{filter:none!important}
   #mobileGoalUndo{display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:#1f2937;color:#e5e7eb;font-size:12px;align-items:center;justify-content:space-between;gap:8px}
   #mobileGoalUndo.show{display:flex}
   #mobileGoalUndo button{min-height:40px;border:1px solid #60a5fa;border-radius:9px;background:#172554;color:#dbeafe;padding:6px 12px;font-weight:800}
@@ -509,7 +513,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.10.16</span>
+      <span class="stat-chip public-release">PUBLIC v5.10.18</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -536,7 +540,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   <div class="help-body">
     <div class="help-grid">
       <div class="help-step"><b>1. 作品を選ぶ</b><p>図の作品名をクリックするか、上部の検索欄から探します。複数作品をそのままゴールにできます。</p></div>
-      <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動。PCでは Ctrl / ⌘ + ホイールで図をズームできます。スマホでは1本指でページ移動、2本指で全体図を拡大・縮小できます。必要なら2本指のまま少し動かすと図を移動できます。</p></div>
+      <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動。PCでは Ctrl / ⌘ + ホイールで図をズームできます。スマホではチャート内を1本指で移動、2本指で拡大・縮小できます。ページを動かすときはチャート外をスワイプしてください。</p></div>
       <div class="help-step"><b>3. 視聴順を決める</b><p>チャート下の大きな「予習・視聴プラン」で、最低限・おすすめ・完全版、視聴済みチェック、残り時間をまとめて管理できます。</p></div>
     </div>
     <div class="help-legend"><span>← 前史</span><span>→ 後続</span><span>中核 / 推奨 / 参照</span><span>OR / AND / PATH</span></div>
@@ -5138,14 +5142,26 @@ const viewStates=new Map();
 function ensureViewState(wrap){
   if(!wrap) return null;
   let st=viewStates.get(wrap);
-  if(!st){st={scale:1,x:0,y:0,drag:false,lastX:0,lastY:0};viewStates.set(wrap,st)}
+  if(!st){st={scale:1,x:0,y:0,drag:false,lastX:0,lastY:0,raf:0};viewStates.set(wrap,st)}
   return st;
 }
 function applyView(wrap){
   if(!wrap) return;
   const svg=wrap.querySelector('svg'); if(!svg) return;
   const st=ensureViewState(wrap);
-  svg.style.transform=`translate(${st.x}px,${st.y}px) scale(${st.scale})`;
+  svg.style.transform=`translate3d(${st.x}px,${st.y}px,0) scale(${st.scale})`;
+}
+function scheduleView(wrap){
+  if(!wrap) return;
+  const st=ensureViewState(wrap);
+  if(st.raf) return;
+  st.raf=requestAnimationFrame(()=>{st.raf=0;applyView(wrap)});
+}
+function flushView(wrap){
+  if(!wrap) return;
+  const st=ensureViewState(wrap);
+  if(st.raf){cancelAnimationFrame(st.raf);st.raf=0}
+  applyView(wrap);
 }
 function fitView(wrap){
   if(!wrap) return;
@@ -5199,7 +5215,7 @@ function initSvgInteraction(){
     const hint=document.createElement('div');
     hint.className='zoom-hint';
     hint.textContent=window.matchMedia('(max-width:760px)').matches
-      ? '1本指: ページ移動 / 2本指: 図をズーム・移動 / タップ: ゴール追加・解除'
+      ? '1本指: 図を移動 / 2本指: 図をズーム / タップ: ゴール追加・解除'
       : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動';
     wrap.appendChild(hint);
 
@@ -5240,19 +5256,16 @@ function initSvgInteraction(){
     wrap.addEventListener('pointerdown',e=>{
       if(e.target.closest?.('.chart-watch-jump')) return;
       const st=ensureViewState(wrap);
-
       pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,type:e.pointerType});
 
       if(e.pointerType==='touch'){
-        // A single finger is deliberately *not* captured: the browser may
-        // scroll the page vertically. Two active fingers opt into chart
-        // pan/pinch instead.
+        try{wrap.setPointerCapture?.(e.pointerId)}catch(_){}
+        wrap.classList.add('gesture-active','dragging');
         if(pointers.size<2){
-          st.pinching=false; st.drag=false; st.moved=false; st.pointerId=e.pointerId;
+          st.pinching=false; st.drag=true; st.moved=false; st.pointerId=e.pointerId;
           st.startX=e.clientX; st.startY=e.clientY; st.lastX=e.clientX; st.lastY=e.clientY;
           return;
         }
-        e.preventDefault();
         for(const id of pointers.keys()) try{wrap.setPointerCapture?.(id)}catch(_){}
       }
 
@@ -5260,6 +5273,7 @@ function initSvgInteraction(){
         const p=midpoint();
         st.pinching=true; st.moved=true; st.drag=false;
         st.pinchDist=Math.max(1,p.d); st.pinchX=p.x; st.pinchY=p.y;
+        st.gestureRect=wrap.getBoundingClientRect();
         wrap.classList.add('dragging');
         return;
       }
@@ -5277,16 +5291,35 @@ function initSvgInteraction(){
         e.preventDefault();
         const p=midpoint(); if(!p) return;
         st.moved=true; st.pinching=true; st.drag=false;
-        const dx=p.x-(st.pinchX??p.x), dy=p.y-(st.pinchY??p.y);
-        st.x+=dx; st.y+=dy;
+        const rect=st.gestureRect||wrap.getBoundingClientRect();
+        const oldScale=Math.max(.0001,st.scale);
         const factor=Math.max(.7,Math.min(1.45,p.d/Math.max(1,st.pinchDist||p.d)));
+        const nextScale=Math.max(.08,Math.min(4.5,oldScale*factor));
+        const oldPx=(st.pinchX??p.x)-rect.left, oldPy=(st.pinchY??p.y)-rect.top;
+        const newPx=p.x-rect.left, newPy=p.y-rect.top;
+        const wx=(oldPx-st.x)/oldScale, wy=(oldPy-st.y)/oldScale;
+        st.scale=nextScale;
+        st.x=newPx-wx*nextScale;
+        st.y=newPy-wy*nextScale;
         st.pinchX=p.x; st.pinchY=p.y; st.pinchDist=Math.max(1,p.d);
-        applyView(wrap);
-        if(Math.abs(factor-1)>.002) zoomAt(wrap,factor,p.x,p.y);
-        wrap.classList.add('dragging');
+        scheduleView(wrap);
+        wrap.classList.add('dragging','gesture-active');
         return;
       }
-      if(e.pointerType==='touch') return; // one finger remains page-owned
+
+      if(e.pointerType==='touch'){
+        if(!st.drag || st.pinching || pointers.size!==1) return;
+        e.preventDefault();
+        const total=Math.hypot(e.clientX-st.startX,e.clientY-st.startY);
+        if(!st.moved && total>5) st.moved=true;
+        if(!st.moved) return;
+        const dx=e.clientX-st.lastX, dy=e.clientY-st.lastY;
+        st.x+=dx; st.y+=dy; st.lastX=e.clientX; st.lastY=e.clientY;
+        scheduleView(wrap);
+        wrap.classList.add('dragging','gesture-active');
+        return;
+      }
+
       if(!st.drag || st.pinching) return;
       const total=Math.hypot(e.clientX-st.startX,e.clientY-st.startY);
       if(!st.moved && total>7){
@@ -5305,14 +5338,15 @@ function initSvgInteraction(){
       pointers.delete(e.pointerId);
       try{wrap.releasePointerCapture?.(e.pointerId)}catch(_){}
       if(wasPinching){
-        st.moved=true; st.pinching=false;
-        // After a two-finger gesture ends, the remaining touch is returned
-        // to page ownership instead of silently becoming a one-finger pan.
-        st.drag=false;
+        st.moved=true; st.pinching=false; st.drag=false;
       }else if(pointers.size===0){
         st.drag=false;
       }
-      if(pointers.size===0) wrap.classList.remove('dragging');
+      if(pointers.size===0){
+        flushView(wrap);
+        st.gestureRect=null;
+        wrap.classList.remove('dragging','gesture-active');
+      }
     };
     wrap.addEventListener('pointerup',endPointer);
     wrap.addEventListener('pointercancel',endPointer);
@@ -5323,7 +5357,7 @@ function initSvgInteraction(){
   });
 }
 
-function clearSvg(){document.querySelectorAll('.svg-wrap svg').forEach(s=>{s.classList.remove('dim');s.querySelectorAll('.hl,.focus').forEach(x=>x.classList.remove('hl','focus'))});applyCharacterHighlight()}
+function clearSvg(){const s=activeSvg();if(s){s.classList.remove('dim');s.querySelectorAll('.hl,.focus').forEach(x=>x.classList.remove('hl','focus'))}applyCharacterHighlight()}
 function gt(g){let t=g.querySelector(':scope > title');return t?t.textContent.trim():''}
 function activePanel(){return document.querySelector('.panel.active')}
 function activeWrap(){return activePanel()?.querySelector('.svg-wrap')}
@@ -5444,14 +5478,13 @@ render = function(){
   applyCharacterHighlight();
 };
 applyCharacterHighlight = function(){
-  document.querySelectorAll('.svg-wrap svg').forEach(svg=>{
-    svg.classList.remove('char-mode');
-    svg.querySelectorAll('.charhl').forEach(x=>x.classList.remove('charhl'));
-    if(!cf.value) return;
-    const ids=charWorks[cf.value]||new Set(); let hits=0;
-    svg.querySelectorAll('g.node').forEach(g=>{ const id=gt(g); if(ids.has(id)){ g.classList.add('charhl'); hits++; } });
-    if(hits && !selectedIds.size) svg.classList.add('char-mode');
-  });
+  const svg=activeSvg(); if(!svg) return;
+  svg.classList.remove('char-mode');
+  svg.querySelectorAll('.charhl').forEach(x=>x.classList.remove('charhl'));
+  if(!cf.value) return;
+  const ids=charWorks[cf.value]||new Set(); let hits=0;
+  svg.querySelectorAll('g.node').forEach(g=>{ const id=gt(g); if(ids.has(id)){ g.classList.add('charhl'); hits++; } });
+  if(hits && !selectedIds.size) svg.classList.add('char-mode');
 };
 hilite = function(){
   clearSvg();
@@ -5493,7 +5526,7 @@ select = function(id,multi=false){ toggleSelectionState(id,multi); refreshSelect
 function installMultiSelectPatch(){
   document.querySelectorAll('.svg-wrap').forEach(wrap=>{
     const hint=wrap.querySelector('.zoom-hint');
-    if(hint) hint.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: ページ移動 / 2本指: 図をズーム・移動 / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
+    if(hint) hint.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: 図を移動 / 2本指: 図をズーム / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
   });
 }
 cf.addEventListener('change',e=>{
@@ -6706,7 +6739,7 @@ render();
   },true);
 
   document.querySelectorAll('.svg-wrap .zoom-hint').forEach(h=>{
-    h.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: ページ移動 / 2本指: 図をズーム・移動 / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
+    h.textContent=window.matchMedia('(max-width:760px)').matches ? '1本指: 図を移動 / 2本指: 図をズーム / タップ: ゴール追加・解除' : '通常スクロール: ページ移動 / Ctrl・⌘ + ホイール: 図をズーム / ドラッグ: 図を移動 / クリック: ゴール追加・解除';
   });
 
   ensureMobileFocusShell();
@@ -6724,7 +6757,7 @@ render();
     const state=selectedIds.size ? (window.__marvelLastSelectionState||computeSelectionState()) : null;
     const svg=document.querySelector('.panel.active .svg-wrap svg');
     return {
-      version:'5.10.16-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
+      version:'5.10.18-public', selected:[...selectedIds], scope:scopeMode, importance:importanceMode, combine:combineMode,
       dim:!!svg?.classList.contains('dim'),
       litNodes:svg?.querySelectorAll('g.node.hl,g.node.focus').length||0,
       litEdges:svg?.querySelectorAll('g.edge.hl').length||0,
@@ -6789,17 +6822,15 @@ render();
   }
   window.marvelFamilyOf=familyOf;
   function applyFamilyFocus(){
-    const fam=familySelect.value;
-    document.querySelectorAll('.svg-wrap svg').forEach(svg=>{
-      svg.classList.remove('family-mode');
-      svg.querySelectorAll('.familyhl,.familyedge').forEach(x=>x.classList.remove('familyhl','familyedge'));
-      if(!fam) return;
-      let hits=0;
-      svg.querySelectorAll('g.node').forEach(g=>{const id=gt(g);if(familyOf(id)===fam){g.classList.add('familyhl');hits++;}});
-      svg.querySelectorAll('g.edge').forEach(g=>{const p=(window.marvelEdgeKeyFromGroup?.(g)||'').split('->');if(p.length===2&&familyOf(p[0])===fam&&familyOf(p[1])===fam)g.classList.add('familyedge');});
-      // Only dim the whole diagram for family browsing when no work selection is active.
-      if(hits && (!window.selectedIds || !selectedIds.size)) svg.classList.add('family-mode');
-    });
+    const fam=familySelect.value, svg=activeSvg(); if(!svg) return;
+    svg.classList.remove('family-mode');
+    svg.querySelectorAll('.familyhl,.familyedge').forEach(x=>x.classList.remove('familyhl','familyedge'));
+    if(!fam) return;
+    let hits=0;
+    svg.querySelectorAll('g.node').forEach(g=>{const id=gt(g);if(familyOf(id)===fam){g.classList.add('familyhl');hits++;}});
+    svg.querySelectorAll('g.edge').forEach(g=>{const p=(window.marvelEdgeKeyFromGroup?.(g)||'').split('->');if(p.length===2&&familyOf(p[0])===fam&&familyOf(p[1])===fam)g.classList.add('familyedge');});
+    // Only dim the active diagram for family browsing when no work selection is active.
+    if(hits && (!window.selectedIds || !selectedIds.size)) svg.classList.add('family-mode');
   }
   window.applyFamilyFocus=applyFamilyFocus;
   familySelect.addEventListener('change',()=>{
@@ -6863,7 +6894,7 @@ render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.10.16 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.10.18 · 2026-08-23</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{
