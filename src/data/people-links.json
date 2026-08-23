@@ -1,0 +1,932 @@
+[
+  {
+    "character": "トニー・スターク／アイアンマン",
+    "work_id": "iron-man-2008",
+    "title_ja": "アイアンマン",
+    "title_en": "Iron Man"
+  },
+  {
+    "character": "トニー・スターク／アイアンマン",
+    "work_id": "iron-man-2-2010",
+    "title_ja": "アイアンマン2",
+    "title_en": "Iron Man 2"
+  },
+  {
+    "character": "トニー・スターク／アイアンマン",
+    "work_id": "the-avengers-2012",
+    "title_ja": "アベンジャーズ",
+    "title_en": "The Avengers"
+  },
+  {
+    "character": "トニー・スターク／アイアンマン",
+    "work_id": "iron-man-3-2013",
+    "title_ja": "アイアンマン3",
+    "title_en": "Iron Man 3"
+  },
+  {
+    "character": "トニー・スターク／アイアンマン",
+    "work_id": "avengers-age-of-ultron-2015",
+    "title_ja": "アベンジャーズ／エイジ・オブ・ウルトロン",
+    "title_en": "Avengers: Age of Ultron"
+  },
+  {
+    "character": "トニー・スターク／アイアンマン",
+    "work_id": "captain-america-civil-war-2016",
+    "title_ja": "シビル・ウォー／キャプテン・アメリカ",
+    "title_en": "Captain America: Civil War"
+  },
+  {
+    "character": "トニー・スターク／アイアンマン",
+    "work_id": "spider-man-homecoming-2017",
+    "title_ja": "スパイダーマン：ホームカミング",
+    "title_en": "Spider-Man: Homecoming"
+  },
+  {
+    "character": "トニー・スターク／アイアンマン",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "トニー・スターク／アイアンマン",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "スティーブ・ロジャース／キャプテン・アメリカ",
+    "work_id": "captain-america-the-first-avenger-2011",
+    "title_ja": "キャプテン・アメリカ／ザ・ファースト・アベンジャー",
+    "title_en": "Captain America: The First Avenger"
+  },
+  {
+    "character": "スティーブ・ロジャース／キャプテン・アメリカ",
+    "work_id": "the-avengers-2012",
+    "title_ja": "アベンジャーズ",
+    "title_en": "The Avengers"
+  },
+  {
+    "character": "スティーブ・ロジャース／キャプテン・アメリカ",
+    "work_id": "captain-america-the-winter-soldier-2014",
+    "title_ja": "キャプテン・アメリカ／ウィンター・ソルジャー",
+    "title_en": "Captain America: The Winter Soldier"
+  },
+  {
+    "character": "スティーブ・ロジャース／キャプテン・アメリカ",
+    "work_id": "avengers-age-of-ultron-2015",
+    "title_ja": "アベンジャーズ／エイジ・オブ・ウルトロン",
+    "title_en": "Avengers: Age of Ultron"
+  },
+  {
+    "character": "スティーブ・ロジャース／キャプテン・アメリカ",
+    "work_id": "captain-america-civil-war-2016",
+    "title_ja": "シビル・ウォー／キャプテン・アメリカ",
+    "title_en": "Captain America: Civil War"
+  },
+  {
+    "character": "スティーブ・ロジャース／キャプテン・アメリカ",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "スティーブ・ロジャース／キャプテン・アメリカ",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "ソー",
+    "work_id": "thor-2011",
+    "title_ja": "マイティ・ソー",
+    "title_en": "Thor"
+  },
+  {
+    "character": "ソー",
+    "work_id": "the-avengers-2012",
+    "title_ja": "アベンジャーズ",
+    "title_en": "The Avengers"
+  },
+  {
+    "character": "ソー",
+    "work_id": "thor-the-dark-world-2013",
+    "title_ja": "マイティ・ソー／ダーク・ワールド",
+    "title_en": "Thor: The Dark World"
+  },
+  {
+    "character": "ソー",
+    "work_id": "avengers-age-of-ultron-2015",
+    "title_ja": "アベンジャーズ／エイジ・オブ・ウルトロン",
+    "title_en": "Avengers: Age of Ultron"
+  },
+  {
+    "character": "ソー",
+    "work_id": "thor-ragnarok-2017",
+    "title_ja": "マイティ・ソー バトルロイヤル",
+    "title_en": "Thor: Ragnarok"
+  },
+  {
+    "character": "ソー",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "ソー",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "ソー",
+    "work_id": "thor-love-and-thunder-2022",
+    "title_ja": "ソー：ラブ＆サンダー",
+    "title_en": "Thor: Love and Thunder"
+  },
+  {
+    "character": "ナターシャ・ロマノフ／ブラック・ウィドウ",
+    "work_id": "iron-man-2-2010",
+    "title_ja": "アイアンマン2",
+    "title_en": "Iron Man 2"
+  },
+  {
+    "character": "ナターシャ・ロマノフ／ブラック・ウィドウ",
+    "work_id": "the-avengers-2012",
+    "title_ja": "アベンジャーズ",
+    "title_en": "The Avengers"
+  },
+  {
+    "character": "ナターシャ・ロマノフ／ブラック・ウィドウ",
+    "work_id": "captain-america-the-winter-soldier-2014",
+    "title_ja": "キャプテン・アメリカ／ウィンター・ソルジャー",
+    "title_en": "Captain America: The Winter Soldier"
+  },
+  {
+    "character": "ナターシャ・ロマノフ／ブラック・ウィドウ",
+    "work_id": "avengers-age-of-ultron-2015",
+    "title_ja": "アベンジャーズ／エイジ・オブ・ウルトロン",
+    "title_en": "Avengers: Age of Ultron"
+  },
+  {
+    "character": "ナターシャ・ロマノフ／ブラック・ウィドウ",
+    "work_id": "captain-america-civil-war-2016",
+    "title_ja": "シビル・ウォー／キャプテン・アメリカ",
+    "title_en": "Captain America: Civil War"
+  },
+  {
+    "character": "ナターシャ・ロマノフ／ブラック・ウィドウ",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "ナターシャ・ロマノフ／ブラック・ウィドウ",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "ナターシャ・ロマノフ／ブラック・ウィドウ",
+    "work_id": "black-widow-2021",
+    "title_ja": "ブラック・ウィドウ",
+    "title_en": "Black Widow"
+  },
+  {
+    "character": "クリント・バートン／ホークアイ",
+    "work_id": "the-avengers-2012",
+    "title_ja": "アベンジャーズ",
+    "title_en": "The Avengers"
+  },
+  {
+    "character": "クリント・バートン／ホークアイ",
+    "work_id": "avengers-age-of-ultron-2015",
+    "title_ja": "アベンジャーズ／エイジ・オブ・ウルトロン",
+    "title_en": "Avengers: Age of Ultron"
+  },
+  {
+    "character": "クリント・バートン／ホークアイ",
+    "work_id": "captain-america-civil-war-2016",
+    "title_ja": "シビル・ウォー／キャプテン・アメリカ",
+    "title_en": "Captain America: Civil War"
+  },
+  {
+    "character": "クリント・バートン／ホークアイ",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "クリント・バートン／ホークアイ",
+    "work_id": "hawkeye-2021",
+    "title_ja": "ホークアイ",
+    "title_en": "Hawkeye"
+  },
+  {
+    "character": "ブルース・バナー／ハルク",
+    "work_id": "the-incredible-hulk-2008",
+    "title_ja": "インクレディブル・ハルク",
+    "title_en": "The Incredible Hulk"
+  },
+  {
+    "character": "ブルース・バナー／ハルク",
+    "work_id": "the-avengers-2012",
+    "title_ja": "アベンジャーズ",
+    "title_en": "The Avengers"
+  },
+  {
+    "character": "ブルース・バナー／ハルク",
+    "work_id": "avengers-age-of-ultron-2015",
+    "title_ja": "アベンジャーズ／エイジ・オブ・ウルトロン",
+    "title_en": "Avengers: Age of Ultron"
+  },
+  {
+    "character": "ブルース・バナー／ハルク",
+    "work_id": "thor-ragnarok-2017",
+    "title_ja": "マイティ・ソー バトルロイヤル",
+    "title_en": "Thor: Ragnarok"
+  },
+  {
+    "character": "ブルース・バナー／ハルク",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "ブルース・バナー／ハルク",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "ブルース・バナー／ハルク",
+    "work_id": "she-hulk-attorney-at-law-2022",
+    "title_ja": "シー・ハルク：ザ・アトーニー",
+    "title_en": "She-Hulk: Attorney at Law"
+  },
+  {
+    "character": "ワンダ・マキシモフ",
+    "work_id": "avengers-age-of-ultron-2015",
+    "title_ja": "アベンジャーズ／エイジ・オブ・ウルトロン",
+    "title_en": "Avengers: Age of Ultron"
+  },
+  {
+    "character": "ワンダ・マキシモフ",
+    "work_id": "captain-america-civil-war-2016",
+    "title_ja": "シビル・ウォー／キャプテン・アメリカ",
+    "title_en": "Captain America: Civil War"
+  },
+  {
+    "character": "ワンダ・マキシモフ",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "ワンダ・マキシモフ",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "ワンダ・マキシモフ",
+    "work_id": "wandavision-2021",
+    "title_ja": "ワンダヴィジョン",
+    "title_en": "WandaVision"
+  },
+  {
+    "character": "ワンダ・マキシモフ",
+    "work_id": "doctor-strange-in-the-multiverse-of-madness-2022",
+    "title_ja": "ドクター・ストレンジ／マルチバース・オブ・マッドネス",
+    "title_en": "Doctor Strange in the Multiverse of Madness"
+  },
+  {
+    "character": "ヴィジョン",
+    "work_id": "avengers-age-of-ultron-2015",
+    "title_ja": "アベンジャーズ／エイジ・オブ・ウルトロン",
+    "title_en": "Avengers: Age of Ultron"
+  },
+  {
+    "character": "ヴィジョン",
+    "work_id": "captain-america-civil-war-2016",
+    "title_ja": "シビル・ウォー／キャプテン・アメリカ",
+    "title_en": "Captain America: Civil War"
+  },
+  {
+    "character": "ヴィジョン",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "ヴィジョン",
+    "work_id": "wandavision-2021",
+    "title_ja": "ワンダヴィジョン",
+    "title_en": "WandaVision"
+  },
+  {
+    "character": "ヴィジョン",
+    "work_id": "visionquest-2026-10-14",
+    "title_ja": "VisionQuest\n（邦題未発表）",
+    "title_en": "VisionQuest"
+  },
+  {
+    "character": "サム・ウィルソン／キャプテン・アメリカ",
+    "work_id": "captain-america-the-winter-soldier-2014",
+    "title_ja": "キャプテン・アメリカ／ウィンター・ソルジャー",
+    "title_en": "Captain America: The Winter Soldier"
+  },
+  {
+    "character": "サム・ウィルソン／キャプテン・アメリカ",
+    "work_id": "captain-america-civil-war-2016",
+    "title_ja": "シビル・ウォー／キャプテン・アメリカ",
+    "title_en": "Captain America: Civil War"
+  },
+  {
+    "character": "サム・ウィルソン／キャプテン・アメリカ",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "サム・ウィルソン／キャプテン・アメリカ",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "サム・ウィルソン／キャプテン・アメリカ",
+    "work_id": "the-falcon-and-the-winter-soldier-2021",
+    "title_ja": "ファルコン＆ウィンター・ソルジャー",
+    "title_en": "The Falcon and the Winter Soldier"
+  },
+  {
+    "character": "サム・ウィルソン／キャプテン・アメリカ",
+    "work_id": "captain-america-brave-new-world-2025",
+    "title_ja": "キャプテン・アメリカ：ブレイブ・ニュー・ワールド",
+    "title_en": "Captain America: Brave New World"
+  },
+  {
+    "character": "バッキー・バーンズ",
+    "work_id": "captain-america-the-first-avenger-2011",
+    "title_ja": "キャプテン・アメリカ／ザ・ファースト・アベンジャー",
+    "title_en": "Captain America: The First Avenger"
+  },
+  {
+    "character": "バッキー・バーンズ",
+    "work_id": "captain-america-the-winter-soldier-2014",
+    "title_ja": "キャプテン・アメリカ／ウィンター・ソルジャー",
+    "title_en": "Captain America: The Winter Soldier"
+  },
+  {
+    "character": "バッキー・バーンズ",
+    "work_id": "captain-america-civil-war-2016",
+    "title_ja": "シビル・ウォー／キャプテン・アメリカ",
+    "title_en": "Captain America: Civil War"
+  },
+  {
+    "character": "バッキー・バーンズ",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "バッキー・バーンズ",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "バッキー・バーンズ",
+    "work_id": "the-falcon-and-the-winter-soldier-2021",
+    "title_ja": "ファルコン＆ウィンター・ソルジャー",
+    "title_en": "The Falcon and the Winter Soldier"
+  },
+  {
+    "character": "バッキー・バーンズ",
+    "work_id": "thunderbolts-new-avengers-2025",
+    "title_ja": "サンダーボルツ*（ニュー・アベンジャーズ）",
+    "title_en": "Thunderbolts* (New Avengers)"
+  },
+  {
+    "character": "イェレナ・ベロワ",
+    "work_id": "black-widow-2021",
+    "title_ja": "ブラック・ウィドウ",
+    "title_en": "Black Widow"
+  },
+  {
+    "character": "イェレナ・ベロワ",
+    "work_id": "hawkeye-2021",
+    "title_ja": "ホークアイ",
+    "title_en": "Hawkeye"
+  },
+  {
+    "character": "イェレナ・ベロワ",
+    "work_id": "thunderbolts-new-avengers-2025",
+    "title_ja": "サンダーボルツ*（ニュー・アベンジャーズ）",
+    "title_en": "Thunderbolts* (New Avengers)"
+  },
+  {
+    "character": "ロキ",
+    "work_id": "thor-2011",
+    "title_ja": "マイティ・ソー",
+    "title_en": "Thor"
+  },
+  {
+    "character": "ロキ",
+    "work_id": "the-avengers-2012",
+    "title_ja": "アベンジャーズ",
+    "title_en": "The Avengers"
+  },
+  {
+    "character": "ロキ",
+    "work_id": "thor-the-dark-world-2013",
+    "title_ja": "マイティ・ソー／ダーク・ワールド",
+    "title_en": "Thor: The Dark World"
+  },
+  {
+    "character": "ロキ",
+    "work_id": "thor-ragnarok-2017",
+    "title_ja": "マイティ・ソー バトルロイヤル",
+    "title_en": "Thor: Ragnarok"
+  },
+  {
+    "character": "ロキ",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "ロキ",
+    "work_id": "loki-s1-2021",
+    "title_ja": "ロキ シーズン1",
+    "title_en": "Loki S1"
+  },
+  {
+    "character": "ロキ",
+    "work_id": "loki-s2-2023",
+    "title_ja": "ロキ シーズン2",
+    "title_en": "Loki S2"
+  },
+  {
+    "character": "ドクター・ストレンジ",
+    "work_id": "doctor-strange-2016",
+    "title_ja": "ドクター・ストレンジ",
+    "title_en": "Doctor Strange"
+  },
+  {
+    "character": "ドクター・ストレンジ",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "ドクター・ストレンジ",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "ドクター・ストレンジ",
+    "work_id": "spider-man-no-way-home-2021",
+    "title_ja": "スパイダーマン：ノー・ウェイ・ホーム",
+    "title_en": "Spider-Man: No Way Home"
+  },
+  {
+    "character": "ドクター・ストレンジ",
+    "work_id": "doctor-strange-in-the-multiverse-of-madness-2022",
+    "title_ja": "ドクター・ストレンジ／マルチバース・オブ・マッドネス",
+    "title_en": "Doctor Strange in the Multiverse of Madness"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（MCU）",
+    "work_id": "captain-america-civil-war-2016",
+    "title_ja": "シビル・ウォー／キャプテン・アメリカ",
+    "title_en": "Captain America: Civil War"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（MCU）",
+    "work_id": "spider-man-homecoming-2017",
+    "title_ja": "スパイダーマン：ホームカミング",
+    "title_en": "Spider-Man: Homecoming"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（MCU）",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（MCU）",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（MCU）",
+    "work_id": "spider-man-far-from-home-2019",
+    "title_ja": "スパイダーマン：ファー・フロム・ホーム",
+    "title_en": "Spider-Man: Far From Home"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（MCU）",
+    "work_id": "spider-man-no-way-home-2021",
+    "title_ja": "スパイダーマン：ノー・ウェイ・ホーム",
+    "title_en": "Spider-Man: No Way Home"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（MCU）",
+    "work_id": "spider-man-brand-new-day-2026-07-31",
+    "title_ja": "スパイダーマン：ブランド・ニュー・デイ",
+    "title_en": "Spider-Man: Brand New Day"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（ライミ版）",
+    "work_id": "spider-man-2002",
+    "title_ja": "スパイダーマン",
+    "title_en": "Spider-Man"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（ライミ版）",
+    "work_id": "spider-man-2-2004",
+    "title_ja": "スパイダーマン２",
+    "title_en": "Spider-Man 2"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（ライミ版）",
+    "work_id": "spider-man-3-2007",
+    "title_ja": "スパイダーマン３",
+    "title_en": "Spider-Man 3"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（ライミ版）",
+    "work_id": "spider-man-no-way-home-2021",
+    "title_ja": "スパイダーマン：ノー・ウェイ・ホーム",
+    "title_en": "Spider-Man: No Way Home"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（ウェブ版）",
+    "work_id": "the-amazing-spider-man-2012",
+    "title_ja": "アメイジング・スパイダーマン",
+    "title_en": "The Amazing Spider-Man"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（ウェブ版）",
+    "work_id": "the-amazing-spider-man-2-2014",
+    "title_ja": "アメイジング・スパイダーマン2",
+    "title_en": "The Amazing Spider-Man 2"
+  },
+  {
+    "character": "ピーター・パーカー／スパイダーマン（ウェブ版）",
+    "work_id": "spider-man-no-way-home-2021",
+    "title_ja": "スパイダーマン：ノー・ウェイ・ホーム",
+    "title_en": "Spider-Man: No Way Home"
+  },
+  {
+    "character": "マット・マードック／デアデビル",
+    "work_id": "daredevil-s1-2015",
+    "title_ja": "デアデビル S1",
+    "title_en": "Daredevil S1"
+  },
+  {
+    "character": "マット・マードック／デアデビル",
+    "work_id": "daredevil-s2-2016",
+    "title_ja": "デアデビル S2",
+    "title_en": "Daredevil S2"
+  },
+  {
+    "character": "マット・マードック／デアデビル",
+    "work_id": "the-defenders-2017",
+    "title_ja": "マーベル／ザ・ディフェンダーズ",
+    "title_en": "The Defenders"
+  },
+  {
+    "character": "マット・マードック／デアデビル",
+    "work_id": "daredevil-s3-2018",
+    "title_ja": "デアデビル S3",
+    "title_en": "Daredevil S3"
+  },
+  {
+    "character": "マット・マードック／デアデビル",
+    "work_id": "spider-man-no-way-home-2021",
+    "title_ja": "スパイダーマン：ノー・ウェイ・ホーム",
+    "title_en": "Spider-Man: No Way Home"
+  },
+  {
+    "character": "マット・マードック／デアデビル",
+    "work_id": "she-hulk-attorney-at-law-2022",
+    "title_ja": "シー・ハルク：ザ・アトーニー",
+    "title_en": "She-Hulk: Attorney at Law"
+  },
+  {
+    "character": "マット・マードック／デアデビル",
+    "work_id": "echo-2024",
+    "title_ja": "エコー",
+    "title_en": "Echo"
+  },
+  {
+    "character": "マット・マードック／デアデビル",
+    "work_id": "daredevil-born-again-s1-2025",
+    "title_ja": "デアデビル：ボーン・アゲイン S1",
+    "title_en": "Daredevil: Born Again S1"
+  },
+  {
+    "character": "マット・マードック／デアデビル",
+    "work_id": "daredevil-born-again-s2-2026",
+    "title_ja": "デアデビル：ボーン・アゲイン S2",
+    "title_en": "Daredevil: Born Again S2"
+  },
+  {
+    "character": "ウィルソン・フィスク／キングピン",
+    "work_id": "daredevil-s1-2015",
+    "title_ja": "デアデビル S1",
+    "title_en": "Daredevil S1"
+  },
+  {
+    "character": "ウィルソン・フィスク／キングピン",
+    "work_id": "daredevil-s2-2016",
+    "title_ja": "デアデビル S2",
+    "title_en": "Daredevil S2"
+  },
+  {
+    "character": "ウィルソン・フィスク／キングピン",
+    "work_id": "daredevil-s3-2018",
+    "title_ja": "デアデビル S3",
+    "title_en": "Daredevil S3"
+  },
+  {
+    "character": "ウィルソン・フィスク／キングピン",
+    "work_id": "hawkeye-2021",
+    "title_ja": "ホークアイ",
+    "title_en": "Hawkeye"
+  },
+  {
+    "character": "ウィルソン・フィスク／キングピン",
+    "work_id": "echo-2024",
+    "title_ja": "エコー",
+    "title_en": "Echo"
+  },
+  {
+    "character": "ウィルソン・フィスク／キングピン",
+    "work_id": "daredevil-born-again-s1-2025",
+    "title_ja": "デアデビル：ボーン・アゲイン S1",
+    "title_en": "Daredevil: Born Again S1"
+  },
+  {
+    "character": "ウィルソン・フィスク／キングピン",
+    "work_id": "daredevil-born-again-s2-2026",
+    "title_ja": "デアデビル：ボーン・アゲイン S2",
+    "title_en": "Daredevil: Born Again S2"
+  },
+  {
+    "character": "フランク・キャッスル／パニッシャー",
+    "work_id": "daredevil-s2-2016",
+    "title_ja": "デアデビル S2",
+    "title_en": "Daredevil S2"
+  },
+  {
+    "character": "フランク・キャッスル／パニッシャー",
+    "work_id": "the-punisher-s1-2017",
+    "title_ja": "パニッシャー S1",
+    "title_en": "The Punisher S1"
+  },
+  {
+    "character": "フランク・キャッスル／パニッシャー",
+    "work_id": "the-punisher-s2-2019",
+    "title_ja": "パニッシャー S2",
+    "title_en": "The Punisher S2"
+  },
+  {
+    "character": "フランク・キャッスル／パニッシャー",
+    "work_id": "daredevil-born-again-s1-2025",
+    "title_ja": "デアデビル：ボーン・アゲイン S1",
+    "title_en": "Daredevil: Born Again S1"
+  },
+  {
+    "character": "フランク・キャッスル／パニッシャー",
+    "work_id": "the-punisher-one-last-kill-2026-05-12",
+    "title_ja": "パニッシャー：ワン・ラスト・キル",
+    "title_en": "The Punisher: One Last Kill"
+  },
+  {
+    "character": "ウェイド・ウィルソン／デッドプール",
+    "work_id": "deadpool-2016",
+    "title_ja": "デッドプール",
+    "title_en": "Deadpool"
+  },
+  {
+    "character": "ウェイド・ウィルソン／デッドプール",
+    "work_id": "deadpool-2-2018",
+    "title_ja": "デッドプール2",
+    "title_en": "Deadpool 2"
+  },
+  {
+    "character": "ウェイド・ウィルソン／デッドプール",
+    "work_id": "deadpool-wolverine-2024",
+    "title_ja": "デッドプール＆ウルヴァリン",
+    "title_en": "Deadpool & Wolverine"
+  },
+  {
+    "character": "ローガン／ウルヴァリン",
+    "work_id": "x-men-2000",
+    "title_ja": "X-MEN",
+    "title_en": "X-Men"
+  },
+  {
+    "character": "ローガン／ウルヴァリン",
+    "work_id": "x2-x-men-united-2003",
+    "title_ja": "X-MEN2",
+    "title_en": "X2: X-Men United"
+  },
+  {
+    "character": "ローガン／ウルヴァリン",
+    "work_id": "x-men-the-last-stand-2006",
+    "title_ja": "X-MEN：ファイナル ディシジョン",
+    "title_en": "X-Men: The Last Stand"
+  },
+  {
+    "character": "ローガン／ウルヴァリン",
+    "work_id": "x-men-origins-wolverine-2009",
+    "title_ja": "ウルヴァリン：X-MEN ZERO",
+    "title_en": "X-Men Origins: Wolverine"
+  },
+  {
+    "character": "ローガン／ウルヴァリン",
+    "work_id": "the-wolverine-2013",
+    "title_ja": "ウルヴァリン：SAMURAI",
+    "title_en": "The Wolverine"
+  },
+  {
+    "character": "ローガン／ウルヴァリン",
+    "work_id": "x-men-days-of-future-past-2014",
+    "title_ja": "X-MEN：フューチャー＆パスト",
+    "title_en": "X-Men: Days of Future Past"
+  },
+  {
+    "character": "ローガン／ウルヴァリン",
+    "work_id": "logan-2017",
+    "title_ja": "LOGAN／ローガン",
+    "title_en": "Logan"
+  },
+  {
+    "character": "ローガン／ウルヴァリン",
+    "work_id": "deadpool-wolverine-2024",
+    "title_ja": "デッドプール＆ウルヴァリン",
+    "title_en": "Deadpool & Wolverine"
+  },
+  {
+    "character": "キャロル・ダンヴァース／キャプテン・マーベル",
+    "work_id": "captain-marvel-2019",
+    "title_ja": "キャプテン・マーベル",
+    "title_en": "Captain Marvel"
+  },
+  {
+    "character": "キャロル・ダンヴァース／キャプテン・マーベル",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "キャロル・ダンヴァース／キャプテン・マーベル",
+    "work_id": "the-marvels-2023",
+    "title_ja": "マーベルズ",
+    "title_en": "The Marvels"
+  },
+  {
+    "character": "カマラ・カーン／ミズ・マーベル",
+    "work_id": "ms-marvel-2022",
+    "title_ja": "ミズ・マーベル",
+    "title_en": "Ms. Marvel"
+  },
+  {
+    "character": "カマラ・カーン／ミズ・マーベル",
+    "work_id": "the-marvels-2023",
+    "title_ja": "マーベルズ",
+    "title_en": "The Marvels"
+  },
+  {
+    "character": "モニカ・ランボー",
+    "work_id": "captain-marvel-2019",
+    "title_ja": "キャプテン・マーベル",
+    "title_en": "Captain Marvel"
+  },
+  {
+    "character": "モニカ・ランボー",
+    "work_id": "wandavision-2021",
+    "title_ja": "ワンダヴィジョン",
+    "title_en": "WandaVision"
+  },
+  {
+    "character": "モニカ・ランボー",
+    "work_id": "the-marvels-2023",
+    "title_ja": "マーベルズ",
+    "title_en": "The Marvels"
+  },
+  {
+    "character": "シュリ／ブラックパンサー",
+    "work_id": "black-panther-2018",
+    "title_ja": "ブラックパンサー",
+    "title_en": "Black Panther"
+  },
+  {
+    "character": "シュリ／ブラックパンサー",
+    "work_id": "avengers-infinity-war-2018",
+    "title_ja": "アベンジャーズ／インフィニティ・ウォー",
+    "title_en": "Avengers: Infinity War"
+  },
+  {
+    "character": "シュリ／ブラックパンサー",
+    "work_id": "avengers-endgame-2019",
+    "title_ja": "アベンジャーズ／エンドゲーム",
+    "title_en": "Avengers: Endgame"
+  },
+  {
+    "character": "シュリ／ブラックパンサー",
+    "work_id": "black-panther-wakanda-forever-2022",
+    "title_ja": "ブラックパンサー／ワカンダ・フォーエバー",
+    "title_en": "Black Panther: Wakanda Forever"
+  },
+  {
+    "character": "リリ・ウィリアムズ／アイアンハート",
+    "work_id": "black-panther-wakanda-forever-2022",
+    "title_ja": "ブラックパンサー／ワカンダ・フォーエバー",
+    "title_en": "Black Panther: Wakanda Forever"
+  },
+  {
+    "character": "リリ・ウィリアムズ／アイアンハート",
+    "work_id": "ironheart-2025",
+    "title_ja": "アイアンハート",
+    "title_en": "Ironheart"
+  },
+  {
+    "character": "ケイト・ビショップ",
+    "work_id": "hawkeye-2021",
+    "title_ja": "ホークアイ",
+    "title_en": "Hawkeye"
+  },
+  {
+    "character": "ケイト・ビショップ",
+    "work_id": "the-marvels-2023",
+    "title_ja": "マーベルズ",
+    "title_en": "The Marvels"
+  },
+  {
+    "character": "アガサ・ハークネス",
+    "work_id": "wandavision-2021",
+    "title_ja": "ワンダヴィジョン",
+    "title_en": "WandaVision"
+  },
+  {
+    "character": "アガサ・ハークネス",
+    "work_id": "agatha-all-along-2024",
+    "title_ja": "アガサ・オール・アロング",
+    "title_en": "Agatha All Along"
+  },
+  {
+    "character": "リード・リチャーズ／ミスター・ファンタスティック",
+    "work_id": "the-fantastic-four-first-steps-2025",
+    "title_ja": "ファンタスティック４：ファースト・ステップ",
+    "title_en": "The Fantastic Four: First Steps"
+  },
+  {
+    "character": "リード・リチャーズ／ミスター・ファンタスティック",
+    "work_id": "avengers-doomsday-2026-12-18",
+    "title_ja": "アベンジャーズ／ドゥームズデイ",
+    "title_en": "Avengers: Doomsday"
+  },
+  {
+    "character": "スー・ストーム／インビジブル・ウーマン",
+    "work_id": "the-fantastic-four-first-steps-2025",
+    "title_ja": "ファンタスティック４：ファースト・ステップ",
+    "title_en": "The Fantastic Four: First Steps"
+  },
+  {
+    "character": "スー・ストーム／インビジブル・ウーマン",
+    "work_id": "avengers-doomsday-2026-12-18",
+    "title_ja": "アベンジャーズ／ドゥームズデイ",
+    "title_en": "Avengers: Doomsday"
+  },
+  {
+    "character": "ジョニー・ストーム／ヒューマン・トーチ",
+    "work_id": "the-fantastic-four-first-steps-2025",
+    "title_ja": "ファンタスティック４：ファースト・ステップ",
+    "title_en": "The Fantastic Four: First Steps"
+  },
+  {
+    "character": "ジョニー・ストーム／ヒューマン・トーチ",
+    "work_id": "avengers-doomsday-2026-12-18",
+    "title_ja": "アベンジャーズ／ドゥームズデイ",
+    "title_en": "Avengers: Doomsday"
+  },
+  {
+    "character": "ベン・グリム／ザ・シング",
+    "work_id": "the-fantastic-four-first-steps-2025",
+    "title_ja": "ファンタスティック４：ファースト・ステップ",
+    "title_en": "The Fantastic Four: First Steps"
+  },
+  {
+    "character": "ベン・グリム／ザ・シング",
+    "work_id": "avengers-doomsday-2026-12-18",
+    "title_ja": "アベンジャーズ／ドゥームズデイ",
+    "title_en": "Avengers: Doomsday"
+  }
+]
