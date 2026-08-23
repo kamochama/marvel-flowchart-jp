@@ -1,28 +1,50 @@
-name: Build public index
+name: Build and deploy public site
 
 on:
   push:
     branches:
       - main
-      - sync/v5.14.1
-      - feature/v5.15.0-overview-details
     paths:
       - 'src/**'
       - 'scripts/**'
       - 'tests/**'
+      - 'index.html'
+      - 'README.md'
+      - 'AUDIT.md'
+      - 'AUDIT.json'
+      - 'preview.png'
+      - '.nojekyll'
       - '.github/workflows/build-public.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'index.html'
+      - 'README.md'
+      - 'AUDIT.md'
+      - 'AUDIT.json'
+      - 'preview.png'
+      - '.nojekyll'
+      - '.github/workflows/build-public.yml'
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -39,17 +61,38 @@ jobs:
           python tests/test_work_details.py
           python tests/test_overview_v515.py
           python tests/test_release_contract_v515.py
-          grep -q 'PUBLIC v5.14.1\|PUBLIC v5.15.0' index.html
-      - name: Commit generated index when changed
-        shell: bash
+          python tests/test_pages_workflow.py
+          grep -q 'PUBLIC v5.15.0' index.html
+      - name: Stage exact public site
         run: |
-          set -euo pipefail
-          if git diff --quiet -- index.html; then
-            echo 'generated index is already current'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'build: refresh generated public index [skip ci]'
-          git push
+          rm -rf _site
+          mkdir _site
+          cp index.html README.md AUDIT.md AUDIT.json preview.png .nojekyll _site/
+      - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Upload downloadable public ZIP artifact
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: marvel-flowchart-jp-public
+          path: _site/
+          include-hidden-files: true
+          retention-days: 30
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
