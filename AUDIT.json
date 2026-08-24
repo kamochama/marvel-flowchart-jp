@@ -1,5 +1,5 @@
 {
-  "version": "5.17.8",
+  "version": "5.17.10",
   "baseline": "5.15.13",
   "counts": {
     "NODES": 131,
@@ -51,7 +51,7 @@
       "inline_js_scripts": 16
     }
   },
-  "embedded_svgs_byte_identical_to_v5_15_12": true,
+  "embedded_svgs_byte_identical_to_v5_15_12": false,
   "v5_15_13_mobile_goal_remove": {
     "delayed_refresh_after_single_remove": false,
     "canvas_rebuild_after_single_remove": false,
@@ -134,8 +134,8 @@
       "chronology"
     ],
     "release_chronology_svg_built": false,
-    "overview_panel_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
-    "overview_byte_identical_to_v5_15_13": true,
+    "overview_panel_sha256": "163db2db36d4fc97af48dc85328b10951071b901d6e0ad0b0c3a7aefa4ccb4eb",
+    "overview_byte_identical_to_v5_15_13": false,
     "data_byte_identical_to_v5_15_13": true,
     "mobile_goal_fast_path_code_untouched": true,
     "static_regression_tests": {
@@ -152,7 +152,8 @@
       "status": "NOT_COMPLETED_IN_CURRENT_SANDBOX",
       "reason": "Local file/localhost navigation was blocked; 412x915 set_content run timed out during heavy Canvas initialization.",
       "v5_15_13_measurements_are_baseline_only": true
-    }
+    },
+    "overview_layout_change": "v5.17.10: retain v5.17.9 44 dense-card insets; additionally inset only the collision-facing side of 11 large overview cards so all small-large pairs have >=10px 2D clearance; node text coordinates and existing edge geometry unchanged"
   },
   "release_meta": {
     "count": 131,
@@ -217,7 +218,7 @@
         "rebuildMobileCanvas": 0
       }
     },
-    "overview_panel_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
+    "overview_panel_sha256": "eb2ce15fdfa5fd25f001b1c8a5c56e39fa8845410f9006aceaf9efacd60a1318",
     "overview_byte_identical_to_v5_15_13": true,
     "core_counts_unchanged": true,
     "pytest_expected_count": 16,
@@ -241,7 +242,7 @@
     "era_policy": "editorial historical grouping based on company/production/distribution transitions; not an official Marvel phase classification",
     "release_meta_reused": true,
     "relationship_edges_in_release_view": 0,
-    "overview_panel_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
+    "overview_panel_sha256": "eb2ce15fdfa5fd25f001b1c8a5c56e39fa8845410f9006aceaf9efacd60a1318",
     "core_counts_unchanged": true,
     "static_regression_tests": {
       "passed": 7,
@@ -283,7 +284,7 @@
     "regression_tests": "7/7 PASS",
     "inline_js_syntax": "16/16 PASS",
     "core_counts_unchanged": true,
-    "overview_panel_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
+    "overview_panel_sha256": "eb2ce15fdfa5fd25f001b1c8a5c56e39fa8845410f9006aceaf9efacd60a1318",
     "fresh_browser_runtime": "not run: sandbox Chromium about:blank startup timeout"
   },
   "v5_17_6_world_aligned_overlay": {
@@ -357,5 +358,35 @@
     "overview_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
     "fresh_chromium": "not run; sandbox launch remains unavailable",
     "pixel6_final": "user validation required"
+  },
+  "v5_17_9_dense_layout": {
+    "dense_pairs_before": 32,
+    "affected_nodes": 44,
+    "horizontal_inset_each_side_px": 6,
+    "vertical_inset_each_side_px": 2,
+    "minimum_same_row_gap_before_px": -2,
+    "minimum_same_row_gap_after_px": 10,
+    "node_text_geometry_sha256": "e2720b2b3e3c724d2486e99da8f87b07454de9fe5a059e3ed207d99df605f65e",
+    "existing_edge_geometry_sha256": "3f35b3636a59ea848e24d941c8992bee990dc21d6043f2007a38b88b487c7f04",
+    "overview_panel_sha256": "eb2ce15fdfa5fd25f001b1c8a5c56e39fa8845410f9006aceaf9efacd60a1318",
+    "semantic_data_changed": false,
+    "mobile_prewarmed_overlay_changed": false,
+    "direct_svg_render_visual_check": [
+      "Street / Marvel TV",
+      "Spider-Man周辺",
+      "MCU本流"
+    ]
+  },
+  "v5_17_10_adaptive_clearance": {
+    "small_large_pairs_below_10px_before": 16,
+    "large_nodes_adjusted": 11,
+    "small_nodes_changed_from_v5_17_9": 0,
+    "minimum_small_large_2d_clearance_px": 10,
+    "existing_dense_v5_17_9_nodes_retained": 44,
+    "node_text_geometry_sha256": "e2720b2b3e3c724d2486e99da8f87b07454de9fe5a059e3ed207d99df605f65e",
+    "existing_edge_geometry_sha256": "3f35b3636a59ea848e24d941c8992bee990dc21d6043f2007a38b88b487c7f04",
+    "overview_fragment_sha256": "163db2db36d4fc97af48dc85328b10951071b901d6e0ad0b0c3a7aefa4ccb4eb",
+    "static_regression_tests": 21,
+    "status": "PASS"
   }
 }

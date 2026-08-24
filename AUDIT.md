@@ -1,15 +1,15 @@
-# マーベル作品相関図 日本版 — PUBLIC v5.17.8 監査
+# マーベル作品相関図 日本版 — PUBLIC v5.17.10 監査
 
-監査日: 2026-08-24  
+監査日: 2026-08-25  
 基準版: PUBLIC v5.15.13  
-候補版: PUBLIC v5.17.8 prewarmed world overlay
+候補版: PUBLIC v5.17.10 adaptive small-large clearance
 
 ## 結果
 
 **5ビュー公開ナビゲーション: PASS（静的回帰）**  
 **② RELEASE_META 131 / 131: PASS**  
 **② 歴史表示: 7時代セクション / 7歴史マーカー / 最大SVG横幅1320: PASS（コード契約）**  
-**関係地図（v5.15.13）バイト不変: PASS**  
+**関係地図データ・文字座標・既存矢印幾何: PASS（v5.17.9の44作品＋v5.17.10の大枠11作品のみ外枠局所変更）**  
 **作品131 / 有向接続199 / 人物リンク155 / 詳細131: PASS**  
 **inline JavaScript 16本 構文エラー0: PASS**  
 **ゴール高速経路に refreshSelection(false) / rebuildMobileCanvas 再導入なし: PASS（静的回帰）**  
@@ -20,6 +20,30 @@ v5.17.2では公開順専用メタデータを維持したまま、②の見せ�
 歴史マーカーは、2005年Marvel自社製作資金、2009年DisneyによるMarvel取得、2013年Marvel/Netflix大型TV展開、2015年Sony×Marvel Studios協業、2019年Disneyによる21st Century Fox取得、2019年Disney+開始、2021年Marvel Studios初のDisney+シリーズを採用。
 
 この実行環境ではChromium headlessがDBus/zygote周辺でタイムアウトするため、v5.17.2のfreshな実ブラウザ画像検証は完走していない。v5.17.0で確認済みのPixel 6相当高速経路実測値は継承資料として保持するが、v5.17.2のfresh実測とは扱わない。
+
+## v5.17.10 関係地図 — 小枠×大枠の2次元クリアランス補正
+
+- v5.17.9の同一行監査では拾えなかった、別行の大枠と小枠が斜め方向に接触する組を2次元矩形距離で再監査。
+- 10px未満だった小枠×大枠は16組。調整対象は大きい枠11作品のみ。小枠側はv5.17.9から変更していない。
+- 大枠は接触している片側だけを内側へ寄せる。上下方向は2〜14px、例外的に `What If...? S1` の左側のみ24px調整。
+- 小枠×大枠の最小2次元クリアランス: `0px` → `10px`。
+- 既存edge 144グループの path / polygon 幾何SHA-256: `3f35b3636a59ea848e24d941c8992bee990dc21d6043f2007a38b88b487c7f04` — 不変。
+- node text / tspan 座標SHA-256: `e2720b2b3e3c724d2486e99da8f87b07454de9fe5a059e3ed207d99df605f65e` — 不変。
+- 関係地図overview断片SHA-256: `163db2db36d4fc97af48dc85328b10951071b901d6e0ad0b0c3a7aefa4ccb4eb`。
+- NODES 131 / EDGES 199 / CHAR_LINKS 155 / WORK_DETAILS 131 は不変。
+- SVG直接レンダリングで `Wonder Man × Jessica Jones`、`What If...? × Blade`、`Moon Knight × Blade(MCU)` を目視確認。
+
+## v5.17.9 関係地図 — 過密カード局所調整
+
+- 同一エリア・同一行でカード間隔が8px未満だった32組を機械抽出し、関係する44作品だけを対象にした。
+- 対象カードの外枠のみ左右6px・上下2px内側へ寄せ、カード中心・文字座標は変更していない。
+- 最小水平ギャップは `-2px` から `10px` へ改善。
+- 既存edge 144グループの path / polygon 幾何SHA-256: `3f35b3636a59ea848e24d941c8992bee990dc21d6043f2007a38b88b487c7f04` — v5.17.8と一致。
+- node text / tspan 座標SHA-256: `e2720b2b3e3c724d2486e99da8f87b07454de9fe5a059e3ed207d99df605f65e` — v5.17.8と一致。
+- 関係地図overview断片SHA-256は局所外枠変更により `eb2ce15fdfa5fd25f001b1c8a5c56e39fa8845410f9006aceaf9efacd60a1318` へ更新。
+- NODES 131 / EDGES 199 / CHAR_LINKS 155 / WORK_DETAILS 131 は不変。
+- v5.17.8 prewarmed world overlay、予習チェック後の点灯復元、スマホ高速ゴール追加・解除の回帰テストを維持。
+- SVG直接レンダリングで Street / Marvel TV、Spider-Man周辺、MCU本流の対象箇所を目視確認。
 
 ## 主要フロー
 
