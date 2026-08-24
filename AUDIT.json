@@ -1,6 +1,6 @@
 {
-  "version": "5.15.13",
-  "baseline": "5.15.12",
+  "version": "5.17.8",
+  "baseline": "5.15.13",
   "counts": {
     "NODES": 131,
     "EDGES": 199,
@@ -76,5 +76,286 @@
       "clear_all_sync_ms": "about 4",
       "page_errors": 0
     }
+  },
+  "stage_a_five_view_shell": {
+    "desktop_public_views": [
+      {
+        "target": "overview",
+        "label": "① 関係地図"
+      },
+      {
+        "target": "release",
+        "label": "② 公開順"
+      },
+      {
+        "target": "chronology",
+        "label": "③ 世界線・時系列"
+      },
+      {
+        "target": "watch",
+        "label": "④ この作品を見るなら"
+      },
+      {
+        "target": "characters",
+        "label": "⑤ 人物・組織"
+      }
+    ],
+    "mobile_public_views": [
+      {
+        "target": "overview",
+        "label": "関係地図"
+      },
+      {
+        "target": "release",
+        "label": "公開順"
+      },
+      {
+        "target": "chronology",
+        "label": "世界線・時系列"
+      },
+      {
+        "target": "watch",
+        "label": "この作品を見るなら"
+      },
+      {
+        "target": "characters",
+        "label": "人物・組織"
+      }
+    ],
+    "legacy_panels_retained": [
+      "mcu",
+      "road",
+      "legacy",
+      "doomsday"
+    ],
+    "legacy_panels_in_public_navigation": false,
+    "lazy_views": [
+      "release",
+      "chronology"
+    ],
+    "release_chronology_svg_built": false,
+    "overview_panel_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
+    "overview_byte_identical_to_v5_15_13": true,
+    "data_byte_identical_to_v5_15_13": true,
+    "mobile_goal_fast_path_code_untouched": true,
+    "static_regression_tests": {
+      "count": 7,
+      "status": "PASS"
+    },
+    "desktop_headless_chromium": {
+      "five_view_navigation": "PASS",
+      "lazy_initialization": "PASS",
+      "watch_workspace_route": "PASS",
+      "page_errors": 0
+    },
+    "fresh_pixel6_runtime_retest": {
+      "status": "NOT_COMPLETED_IN_CURRENT_SANDBOX",
+      "reason": "Local file/localhost navigation was blocked; 412x915 set_content run timed out during heavy Canvas initialization.",
+      "v5_15_13_measurements_are_baseline_only": true
+    }
+  },
+  "release_meta": {
+    "count": 131,
+    "sha256": "6aa30112365ff6cdc810f96d1fb2eab5711deb10c2dbb904f0ce38efc2dce6de",
+    "precision_counts": {
+      "day": 127,
+      "month": 2,
+      "year": 0,
+      "none": 2
+    },
+    "kind_counts": {
+      "theatrical": 74,
+      "streaming": 42,
+      "series-start": 5,
+      "home-video": 5,
+      "special": 2,
+      "imax-series-start": 1,
+      "undated": 2
+    },
+    "ordering_policy": {
+      "films": "U.S. theatrical opening",
+      "streaming": "global service premiere",
+      "partial_dates": "preserve confirmed precision; no invented day"
+    }
+  },
+  "stage_b_release_order": {
+    "release_meta_exact_node_key_match": true,
+    "initial_release_svg_count": 0,
+    "initial_release_canvas_count": 0,
+    "first_open_release_nodes": 131,
+    "first_open_relationship_edges": 0,
+    "relationship_edge_auto_injection": false,
+    "lazy_svg_build": true,
+    "lazy_mobile_canvas_build": true,
+    "initial_camera_current_year": 2026,
+    "current_schedule_corrections": {
+      "your-friendly-neighborhood-spider-man-s2-2026": "2027-01 month precision",
+      "spider-man-beyond-the-spider-verse-tba": "2027-06-18",
+      "wonder-man-s2-tba": "cancelled; node retained; no release date",
+      "blade-mcu-tba-tba": "undated; no invented replacement date"
+    },
+    "pixel6_equivalent_headless_chromium": {
+      "viewport": "412x915",
+      "initial": {
+        "releaseSvg": 0,
+        "releaseCanvas": 0
+      },
+      "first_open": {
+        "nodes": 131,
+        "edges": 0,
+        "canvas": true,
+        "nodeBoxes": 131,
+        "cacheVersion": 1,
+        "page_errors": 0
+      },
+      "goal_add_after_550ms": {
+        "refreshSelection": 0,
+        "rebuildMobileCanvas": 0
+      },
+      "goal_remove_after_550ms": {
+        "refreshSelection": 0,
+        "rebuildMobileCanvas": 0
+      }
+    },
+    "overview_panel_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
+    "overview_byte_identical_to_v5_15_13": true,
+    "core_counts_unchanged": true,
+    "pytest_expected_count": 16,
+    "fixed_zip_root_verified": true,
+    "evidence_scope": "v5.17.0 baseline evidence; not a fresh v5.17.2 browser run"
+  },
+  "stage_b_release_history": {
+    "era_count": 7,
+    "era_labels": [
+      "各社ライセンス展開期",
+      "Marvel Studios 自社製作への転換期",
+      "MCU成立期",
+      "共有世界・多媒体拡張期",
+      "再編・統合移行期",
+      "配信・マルチバース統合期",
+      "現在・発表済み作品"
+    ],
+    "milestone_count": 7,
+    "max_svg_width": 1320,
+    "layout": "historical eras stacked vertically; horizontal axis resets per era",
+    "era_policy": "editorial historical grouping based on company/production/distribution transitions; not an official Marvel phase classification",
+    "release_meta_reused": true,
+    "relationship_edges_in_release_view": 0,
+    "overview_panel_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
+    "core_counts_unchanged": true,
+    "static_regression_tests": {
+      "passed": 7,
+      "failed": 0
+    },
+    "inline_js_syntax": {
+      "scripts": 16,
+      "errors": 0
+    },
+    "fresh_browser_visual_check": "NOT COMPLETED: sandbox Chromium timed out in DBus/zygote startup; no success claim made",
+    "inherited_pixel6_evidence": "v5.17.0 only; fast goal add/remove path remains statically unchanged in v5.17.2"
+  },
+  "relation_map_mobile_v5_17_3": {
+    "selection_overlay_gesture": "GPU/CSS transform during active gesture; single redraw on settle",
+    "watched_dimming_preserves_selection_overlay": true,
+    "return_from_watch_restores_selection_overlay": true,
+    "mobile_highlight_arrow_end_gap_px": 6,
+    "relation_map_markup_sha256_unchanged": true,
+    "fresh_browser_runtime": "not run: sandbox Chromium startup timeout",
+    "dense_node_spacing": "deferred to local layout audit"
+  },
+  "v5_17_4_mobile_selection_gesture_cache": {
+    "mode": "full-map low-resolution selection cache during pan/pinch",
+    "lod": 0.35,
+    "full_map_viewbox": "3600x2500",
+    "per_gesture_primitive_redraw": false,
+    "settle_crisp_redraw": true,
+    "regression_tests": "6/6 PASS",
+    "inline_js_syntax": "16/16 PASS",
+    "pixel6_final": "user verification pending"
+  },
+  "v5_17_5_mobile_progressive_selection_cache": {
+    "immediate_overlay": "viewport plus 84px screen-space prefetch; bbox culling before category lookup",
+    "gesture_cache_lod": 0.35,
+    "cache_build": "requestAnimationFrame chunked, ~4ms frame budget",
+    "cancellable_generation": true,
+    "pre_cache_gesture_fallback": "transform previous viewport overlay",
+    "post_cache_gesture": "full-map low-resolution cache crop",
+    "regression_tests": "7/7 PASS",
+    "inline_js_syntax": "16/16 PASS",
+    "core_counts_unchanged": true,
+    "overview_panel_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
+    "fresh_browser_runtime": "not run: sandbox Chromium about:blank startup timeout"
+  },
+  "v5_17_6_world_aligned_overlay": {
+    "css_transform_fallback_removed": true,
+    "local_patch_screens_each_side": 1.6,
+    "local_patch_lod": 0.35,
+    "full_map_cache_progressive": true,
+    "frame_budget_ms": 4,
+    "regression_tests": "5/5 PASS",
+    "inline_js_syntax": "16/16 PASS",
+    "counts_unchanged": {
+      "NODES": 131,
+      "EDGES": 199,
+      "CHAR_LINKS": 155,
+      "WORK_DETAILS": 131
+    },
+    "overview_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
+    "fresh_chromium": "not run; sandbox launch timeout",
+    "pixel6_final": "user validation required"
+  },
+  "v5_17_7_async_selection_prefetch": {
+    "immediate_overlay": "current viewBox plus 84px screen-space prefetch only",
+    "local_patch_synchronous": false,
+    "local_patch_screens_each_side": 1.6,
+    "local_patch_lod": 0.35,
+    "local_patch_frame_budget_ms": 2.5,
+    "full_map_cache_starts_after_local_patch": true,
+    "full_map_cache_frame_budget_ms": 4,
+    "old_goal_generation_cancelled_on_new_selection": true,
+    "synthetic_edges_deferred_from_sync_goal_paint": true,
+    "primitive_overlay_metadata_preindexed": true,
+    "css_transform_fallback_removed": true,
+    "regression_tests": "6/6 PASS",
+    "inline_js_syntax": "16/16 PASS",
+    "counts_unchanged": {
+      "NODES": 131,
+      "EDGES": 199,
+      "CHAR_LINKS": 155,
+      "WORK_DETAILS": 131
+    },
+    "overview_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
+    "fresh_chromium": "not run; sandbox launch timeout known from v5.17.5-v5.17.6",
+    "pixel6_final": "user validation required"
+  },
+  "v5_17_8_prewarmed_world_overlay": {
+    "base_behavior": "v5.17.6 world-aligned selection overlay",
+    "preindexed_at_canvas_rebuild": [
+      "overlayNodePrimitives",
+      "overlayEdgePrimitives",
+      "overlayNodeBoxMap",
+      "overlayStaticEdgeKeys"
+    ],
+    "world_cache_preallocated_before_goal_selection": true,
+    "world_cache_lod": 0.35,
+    "goal_selection_full_primitive_scan": false,
+    "goal_selection_canvas_allocation": false,
+    "gesture_css_transform": false,
+    "gesture_local_patch": false,
+    "gesture_progressive_cache_switch": false,
+    "gesture_source": "single preallocated world overlay cache cropped with the same viewBox math as background",
+    "watched_dimming_overlay_restore": true,
+    "arrow_end_gap_px": 6,
+    "regression_tests": "12/12 PASS",
+    "inline_js_syntax": "16/16 PASS",
+    "counts_unchanged": {
+      "NODES": 131,
+      "EDGES": 199,
+      "CHAR_LINKS": 155,
+      "WORK_DETAILS": 131
+    },
+    "overview_sha256": "e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf",
+    "fresh_chromium": "not run; sandbox launch remains unavailable",
+    "pixel6_final": "user validation required"
   }
 }

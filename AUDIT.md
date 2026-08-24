@@ -1,19 +1,25 @@
-# マーベル作品相関図 日本版 — PUBLIC v5.15.5 監査
+# マーベル作品相関図 日本版 — PUBLIC v5.17.8 監査
 
 監査日: 2026-08-24  
-基準版: PUBLIC v5.15.1  
-候補版: PUBLIC v5.15.5
+基準版: PUBLIC v5.15.13  
+候補版: PUBLIC v5.17.8 prewarmed world overlay
 
 ## 結果
 
-**全体回帰: PASS**  
-**主要フロー網羅化: PASS**  
-**全131作品の詳細データ: PASS**  
-**詳細表示とゴール操作の分離: PASS**  
-**スマホのゴール選択・接続表示を旧経路へ復帰: PASS（静的・契約検証）**  
-**PC横詳細パネル維持: PASS（コード契約）**  
-**PC / スマホ実機操作: Pixel 6最終確認待ち**  
-**特集・共有ルーム: v5.15.1の既存コードを維持（実ブラウザ再確認待ち）**
+**5ビュー公開ナビゲーション: PASS（静的回帰）**  
+**② RELEASE_META 131 / 131: PASS**  
+**② 歴史表示: 7時代セクション / 7歴史マーカー / 最大SVG横幅1320: PASS（コード契約）**  
+**関係地図（v5.15.13）バイト不変: PASS**  
+**作品131 / 有向接続199 / 人物リンク155 / 詳細131: PASS**  
+**inline JavaScript 16本 構文エラー0: PASS**  
+**ゴール高速経路に refreshSelection(false) / rebuildMobileCanvas 再導入なし: PASS（静的回帰）**  
+**固定6ファイルZIP構成: PASS**
+
+v5.17.2では公開順専用メタデータを維持したまま、②の見せ方を再設計した。全期間を1本の巨大な横長タイムラインへ置く方式を廃止し、歴史時代ごとにX軸をリセットしたセクションを縦方向へ連結する。時代名は公式区分ではなく、企業・制作体制・配信構造の転換点を一次資料優先で整理した編集上の歴史区分である。
+
+歴史マーカーは、2005年Marvel自社製作資金、2009年DisneyによるMarvel取得、2013年Marvel/Netflix大型TV展開、2015年Sony×Marvel Studios協業、2019年Disneyによる21st Century Fox取得、2019年Disney+開始、2021年Marvel Studios初のDisney+シリーズを採用。
+
+この実行環境ではChromium headlessがDBus/zygote周辺でタイムアウトするため、v5.17.2のfreshな実ブラウザ画像検証は完走していない。v5.17.0で確認済みのPixel 6相当高速経路実測値は継承資料として保持するが、v5.17.2のfresh実測とは扱わない。
 
 ## 主要フロー
 
@@ -206,3 +212,120 @@ READMEは一般利用者向けの短い説明のみとし、内部実装・監�
 - Pixel 6相当 412×915 headless Chromium比較: v5.15.12 は1件削除後500ms以内に `refreshSelection=1 / rebuildMobileCanvas=1`、v5.15.13 は `0 / 0`。
 - v5.15.13 1件削除同期処理: 約7ms。全解除同期処理: 約4ms。ブラウザ pageerror: 0。
 - 作品131 / 有向接続199 / 人物リンク155 / 詳細131、埋め込みSVGはv5.15.12から変更なし。
+
+## v5.16.0 Stage A — 5ビューシェル
+
+- PC公開タブ: `① 関係地図 / ② 公開順 / ③ 世界線・時系列 / ④ この作品を見るなら / ⑤ 人物・組織` の5つだけを表示。
+- スマホ公開ビュー選択: `関係地図 / 公開順 / 世界線・時系列 / この作品を見るなら / 人物・組織` の5つ。横並びのPCタブはスマホでは非表示。
+- `mcu / road / legacy / doomsday` パネル: HTML内には保持し、公開ナビゲーション対象からのみ除外。
+- `release / chronology`: `data-lazy-initialized=0` から初回表示時だけ軽量初期化する Stage A プレースホルダー。SVGはまだ生成しない。
+- `watch`: 旧グラフパネルではなく既存の `watchWorkspace`（予習・視聴プラン）へ統一して遷移。チャート内の `↓ 予習・視聴プラン` も同じ経路へ統一。
+- 関係地図の `<div id="overview">` 断片 SHA-256: `e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf` — v5.15.13と完全一致。
+- データ SHA-256: NODES `a50afa68bff756cdacad13127d47f39d45fdb01d24ffda046dc64d7b2f17ab11` / EDGES `78a7af640a070ff82bb5599a6f1535c416ec77f348dc9577072799cd1fe6464c` / CHAR_LINKS `024e6e2e98cd0eeefea7f91729743e50563a599c75662ac0ab12eaf9e8eb3d44` / WORK_DETAILS `639867560b3c6e83d97ac2d34e2a083504c5f067924017ce60aaa6853e63e780` — v5.15.13と一致。
+- Stage A回帰テスト: 7件。データ数、overviewハッシュ、PC/スマホ5ビュー、旧パネル非公開化、lazy入口、watch経路、モバイル遅延full refresh再導入防止を検査。
+- inline JavaScript: 16本を `node --check` し構文エラー0。
+- PC headless Chromium: 5ビュー切替、release/chronology lazy初期化、watchWorkspace遷移、pageerror 0を確認。
+- モバイル高速経路: Stage Aではゴール追加・既存ゴール切替・1件削除・全解除のv5.15.13コードを変更していない。`setTimeout(()=>refreshSelection(...` の再導入なし、lazy initializerから `refreshSelection` / `rebuildMobileCanvas` 呼び出しなし。
+- Pixel 6相当 412×915の新規実測は今回のサンドボックスでは完走できなかったため、v5.15.13の `500ms後 refreshSelection=0 / rebuildMobileCanvas=0` を「今回再測定済み」とは扱わない。
+
+
+
+## v5.17.0 Stage B — 公開順
+
+- `RELEASE_META`: 131 / 131作品。`NODES` とキー集合が完全一致し、既存作品データとは別レイヤーで保持。
+- 日付精度: day 127 / month 2 / none 2。未定は `Blade (MCU)`、中止報道反映は `Wonder Man S2`。
+- 公開種別: theatrical 74 / streaming 42 / series-start 5 / home-video 5 / special 2 / imax-series-start 1 / undated 2。
+- 主順序: 映画は米国劇場公開日、ストリーミングはグローバル配信開始日。日本公開日は主ソートへ混ぜない。
+- 部分日付: `2027-03` / `2027-01` のように月精度を保持。内部ソート用の末尾センチネルは表示日へ出さない。
+- 2026-08-24再監査: `Your Friendly Neighborhood Spider-Man S2` はD23 2026後の最新報道に合わせ2027年1月へ更新。`Spider-Man: Beyond the Spider-Verse` はSony Group FY2025 Q4/CinemaCon 2026に合わせ2027-06-18へ更新。
+- `Wonder Man S2`: 2026-07-31のキャンセル報道を `status=cancelled` としてRELEASE_METAへ保持。相関図の作品ID自体は互換性・関係データ不変条件のため削除しない。
+- `Blade (MCU)`: Disneyの公開カレンダーから外れた後も新しい確定日がないため `公開日未定`。推測の2028日付等を割り当てない。
+- 生成方式: 初期HTMLの `#release` にはSVGなし。②初回表示時のみ131カードを含むSVGを生成し、スマホではその時点でCanvasキャッシュを作成。
+- 公開順SVG: `g.node.release-node` 131 / `g.edge` 0。`data-relationship-edges=off` で既存199接続の矢印を公開順上へ自動追加しない。
+- 初回カメラ: PC/スマホとも現在年（監査時2026）の帯を初期表示。Pixel 6相当では年帯先頭を500×500 world-unit cameraで表示し、日付文字を読める縮尺へ調整。
+- 検索・ゴール: `release` を検索対象へ追加。ゴール状態は共有し、カード位置は固定のまま既存の関連点灯を適用。
+- Pixel 6相当 412×915 headless Chromium: 初期 `release SVG=0 / Canvas=0`、②初回表示 `nodes=131 / edges=0 / Canvas生成 / cacheVersion=1 / nodeBoxes=131`、pageerror 0。
+- 同環境で公開順表示中にゴール追加後550ms: `refreshSelection=0 / rebuildMobileCanvas=0`。削除後550msも `0 / 0`。追加時Canvas overlayはactive、キャッシュversionは1のまま。
+- 関係地図断片SHA-256: `e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf` — v5.15.13 / v5.16.0から不変。
+- `RELEASE_META` SHA-256: `6aa30112365ff6cdc810f96d1fb2eab5711deb10c2dbb904f0ce38efc2dce6de`。
+- Stage A + Stage B pytest: 16件。全件PASSを最終パッケージ直前に再実行する。
+
+## v5.17.3 関係地図モバイル回帰修正
+
+- 作品 / 有向接続 / 人物リンク / 詳細: **131 / 199 / 155 / 131 — PASS**
+- ①関係地図断片 SHA-256: **v5.17.2と完全一致 — PASS**
+- inline JavaScript: **16本 / 構文エラー0 — PASS**
+- 点灯中パン: 選択オーバーレイの毎フレーム全primitive再描画を廃止。ジェスチャー中は既存オーバーレイをCSS/GPU transformで追従し、終了時に1回再描画。
+- 視聴済みチェック: watched-dim由来のCanvasキャッシュ更新時は選択オーバーレイを保持。
+- 予習プラン→チャート復帰: 二重requestAnimationFrame後に選択オーバーレイを復元。
+- 点灯矢印先端: モバイル選択オーバーレイでカード境界手前に6pxの視覚余白を追加。
+- Chromium fresh実ブラウザ計測: **このサンドボックスでは起動がtimeoutしたため未実施**。Pixel 6実機確認が必要。
+- 作品間隔の過密箇所: **未変更**。接続経路を壊さないよう次段で局所レイアウト監査する。
+
+## v5.17.4 追加監査 — 点灯矢印ジェスチャーキャッシュ
+
+- 点灯中の移動でviewport外へ出た矢印が移動先で突然再描画される原因を、viewportサイズの点灯Canvasをtransform追従していたことと特定。
+- 関係地図全体 3600×2500 に対し LOD 0.35 の選択専用キャッシュを追加。ジェスチャー中は現在のviewBox範囲だけを drawImage で切り出す。
+- ジェスチャー中の全プリミティブ再走査: なし。
+- 指を離した後の通常解像度点灯レイヤー再描画: 1回。
+- 回帰テスト: 6 / 6 PASS。
+- inline JavaScript: 16 / 16 構文PASS。
+- 作品131 / 有向接続199 / 人物リンク155 / 詳細131: 不変。
+- 関係地図SHA-256: `e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf`（不変）。
+- Pixel 6実機での最終体感確認はユーザー確認待ち。
+
+
+## v5.17.5 追加監査 — ゴール選択の段階点灯キャッシュ
+
+- ゴール選択直後の通常解像度overlayは、現在viewBox＋84px相当の周辺だけをbboxで先に描画。
+- 全地図選択キャッシュ LOD 0.35 は同期生成せず、`requestAnimationFrame` で1フレーム約4msの予算に分割。
+- 新しい選択状態が来た場合は build token で旧生成をキャンセルし、同じゴールでも選択状態オブジェクトが変われば再生成。
+- キャッシュ完成前のジェスチャーは直前overlayのtransform追従をフォールバックに使用し、完成後は全地図キャッシュ切り出しへ移行。
+- 回帰テスト: 7 / 7 PASS。
+- inline JavaScript: 16 / 16 構文PASS。
+- 作品131 / 有向接続199 / 人物リンク155 / 詳細131: v5.17.4と完全一致。
+- ①関係地図断片 SHA-256: `e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf`（不変）。
+- Chromium実行: sandboxでは `about:blank` でも20秒timeout。Pixel 6実機の体感確認が最終確認点。
+
+## v5.17.6 追加監査 — 点灯レイヤーの座標系統一
+
+- v5.17.5で全地図キャッシュ完成前だけ使用していたCSS `matrix(...)` transform追従を廃止。
+- ゴール選択時に現在viewBoxの上下左右1.6画面分を含むローカル点灯パッチ（LOD 0.35）をワールド座標で生成。
+- ジェスチャー中はローカルパッチまたは完成済み全地図キャッシュから、背景Canvasと同一のviewBox→drawImage式で切り出す。
+- 全地図キャッシュは従来どおり1フレーム約4ms予算で段階生成。
+- 回帰テスト: 5 / 5 PASS。
+- inline JavaScript: 16 / 16 構文PASS。
+- 作品131 / 有向接続199 / 人物リンク155 / 詳細131: v5.17.5と完全一致。
+- ①関係地図断片 SHA-256: `e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf`（不変）。
+- Chromium実行はsandbox制約のため未実施。Pixel 6実機の体感確認が最終確認点。
+
+## v5.17.7 追加監査 — ゴール追加時の同期負荷削減
+
+- v5.17.6で同期生成していた上下左右1.6画面ぶんのローカル点灯パッチを、ゴール追加の同期経路から完全に除外。
+- ゴール追加直後は現在viewBox＋84px相当のみを通常解像度overlayへ即時描画。
+- ローカル点灯パッチ LOD 0.35 は `requestAnimationFrame`、1フレーム約2.5ms予算で段階生成。部分生成中もワールド座標のpatch canvasを切り出せる。
+- ローカルパッチ完成後に全地図点灯キャッシュを約4ms/フレームで段階生成。旧ゴール用の進行中生成は新規選択時にtoken/RAFを破棄。
+- 同期経路から `mobileOverlaySyntheticSpecs()` を除外。補助・圧縮矢印は非同期パッチ側から描画。
+- Canvas primitive生成時に `overlayNodeId / overlayEdgeKey / overlayIsEdge` を索引化し、点灯判定ごとのDOM `closest()` を廃止。
+- v5.17.6のCSS transform非使用・ワールド座標切り出しを維持。
+- 回帰テスト: 6 / 6 PASS。
+- inline JavaScript: 16 / 16 構文PASS。
+- 作品131 / 有向接続199 / 人物リンク155 / 詳細131: v5.17.6と完全一致。
+- ①関係地図断片 SHA-256: `e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf`（不変）。
+- Chromium fresh実行はsandbox制約のため未実施。Pixel 6実機のゴール追加体感が最終確認点。
+
+
+## v5.17.8 追加監査 — 点灯Canvas事前準備＋直接索引描画
+
+- 基準: v5.17.6の「背景と点灯を同じワールド座標で動かす」方式へ戻し、部分パッチ→全地図キャッシュ切替を廃止。
+- Canvas primitive生成時に `overlayNodeId / overlayEdgeKey / overlayIsEdge / overlayDynamic` を記録。
+- 地図Canvas再構築時に `overlayNodePrimitives / overlayEdgePrimitives / overlayNodeBoxMap / overlayStaticEdgeKeys` を事前生成。
+- LOD 0.35 の全地図点灯Canvasをゴール選択前に確保。ゴール追加時の `document.createElement('canvas')` を廃止。
+- ゴール追加時の点灯描画は `state.ctx` と選択中のedge setから関連IDだけを取り出し、索引Mapから直接primitiveを取得。`cs.primitives` 全走査なし。
+- スワイプ中は事前確保済み全地図点灯Canvasを背景と同じviewBox→drawImage式で切り出す。CSS transform、ローカルパッチ、段階キャッシュ切替なし。
+- 視聴済みチェック後のoverlay保持・予習プランからの復元・矢印先端6px余白は維持。
+- 回帰テスト: 12 / 12 PASS。
+- inline JavaScript: 16 / 16 構文PASS。
+- 作品131 / 有向接続199 / 人物リンク155 / 詳細131: v5.17.6と完全一致。
+- ①関係地図断片 SHA-256: `e52bac09197e3ff702ae729aebc8bef9d4af1f50e324736c6d79f4355959ccaf`（不変）。
+- fresh Chromium実機相当計測はsandbox制約のため未実施。Pixel 6実機で「ゴール追加時の引っ掛かり」と「スワイプ時の浮き感」の両方を最終確認する。
