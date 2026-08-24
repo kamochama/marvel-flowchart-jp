@@ -144,3 +144,65 @@ READMEは一般利用者向けの短い説明のみとし、内部実装・監�
 - 作品データ131 / 有向接続199 / 人物リンク155 / 詳細131: v5.15.6と完全一致
 - 主要作品の地図座標・サイズ: 変更なし
 - 補助作品は小型カード化し、OPTIONAL / APPENDIX / LEGACY-SUPPLEMENTは破線・低強度表示
+
+
+## v5.15.8 エリア跨ぎ線の束ね
+
+- 全体地図ノード: 131
+- 全体地図接続グループ: 144
+- 束ね対象: 39接続 / 7エリア対
+- 非束ね接続: 105（ジオメトリ維持）
+- 主要76作品ノード: v5.15.7 と完全一致
+- NODES 131 / EDGES 199 / CHAR_LINKS 155: v5.15.7 と完全一致
+- inline JavaScript 16本: 構文エラー 0
+- SVGテキストの可視 `\n`: 0
+- ルーティング: 地区間の空きスペースを共通レーンとして使う直角型 collector routing
+
+
+## v5.15.10 ゴール解除の軽量化
+
+- モバイル1件解除: Canvas即時再描画 → full refreshを2 requestAnimationFrame後へ遅延
+- モバイル全解除: overlay即時消去 → full refreshを遅延
+- 選択変更ごとの `tagEdgeImportance()`: 削除
+- 選択変更ごとの `enhanceEdgeTooltips()`: 削除（初期化時1回）
+- `applyWatchedDimming()` の重複呼び出し: 削除
+- v5.15.8 全体地図SVG: 完全一致
+- NODES / EDGES / CHAR_LINKS / WORK_DETAILS: v5.15.8と完全一致
+
+
+## v5.15.10 ゴール横スクロール安定化
+
+- ゴール欄の全 innerHTML 再生成: 廃止（初期骨格生成のみ）
+- ゴールチップ: ID単位の差分更新
+- 横スクロール位置 scrollLeft: 維持
+- pointer / 慣性scroll中の重い refreshSelection: 延期
+- ゴール追加・解除直後のゴール欄: 即時更新
+- v5.15.9の地図SVG・作品/接続/人物/詳細データ: 完全一致
+
+## v5.15.11 既存ゴール選択の軽量化 / 新規ゴール左寄せ
+
+- 原因: `focusGoal(id)` がゴール集合不変でも `refreshSelection(false)` を同期実行していた。
+- モバイル既存ゴール選択: `selected` と current-goal 表示のみ更新し、`refreshSelection()` / `computeSelectionState()` を呼ばない。
+- Canvas: 既存の `selectionStateCache` を再利用してオーバーレイのみ再描画。
+- ゴール欄: 表示順のみ newest-first。`selectedIds` の挿入順は維持。
+- 新規チップ追加時: `scrollLeft=0` で左端に表示。
+- TDD回帰テスト: `tests/test_v51511_goal_focus.py` RED → GREEN。
+
+## v5.15.12 スマホ新規ゴール追加のフリーズ対策
+
+- 原因: モバイルでゴール追加直後に `queueMobileFullSelectionRefresh()` が90ms後の `refreshSelection(false)` を予約していた。これが選択UI/SVG側の重い後追い更新の起点になっていた。
+- 修正: モバイル新規ゴール追加経路から遅延フル更新を廃止。選択状態計算・ゴールバー差分更新・Canvas選択オーバーレイ描画のみで追加処理を終了する。
+- 予習プラン: ゴール追加時には再生成せず dirty とし、「予習プランを見る」で `updatePreparationPlan()` とPATH説明を1回だけ更新する。
+- Pixel 6相当 412×915 headless Chromium最終確認: v5.15.11 は追加後に `refreshSelection=1`、v5.15.12 は500ms後も `refreshSelection=0 / rebuildMobileCanvas=0`。
+- v5.15.12 の3ゴール連続追加では各同期処理は約8〜13ms、追加中 `refreshSelection=0 / rebuildMobileCanvas=0 / updatePreparationPlan=0`。予習プラン表示時のみ `updatePreparationPlan=1`。
+- ブラウザ pageerror: 0。
+- 作品131 / 有向接続199 / 人物リンク155 / 詳細131はv5.15.11とバイト一致。埋め込みSVG 7枚も完全一致。
+- inline JavaScript 16本: 構文エラー0。
+
+## v5.15.13 スマホゴール削除のフリーズ対策
+
+- 原因: モバイル1件削除と「すべて解除」にだけ `queueMobileFullSelectionRefresh()` が残り、90ms後の `refreshSelection(false)` → SVG変更 → Canvas再構築を起こしていた。
+- 修正: 1件削除・全解除とも遅延フル更新を廃止。選択状態／ゴールバー／Canvasオーバーレイだけ即時更新し、予習プラン・PATH説明は dirty として表示時に更新する。
+- Pixel 6相当 412×915 headless Chromium比較: v5.15.12 は1件削除後500ms以内に `refreshSelection=1 / rebuildMobileCanvas=1`、v5.15.13 は `0 / 0`。
+- v5.15.13 1件削除同期処理: 約7ms。全解除同期処理: 約4ms。ブラウザ pageerror: 0。
+- 作品131 / 有向接続199 / 人物リンク155 / 詳細131、埋め込みSVGはv5.15.12から変更なし。

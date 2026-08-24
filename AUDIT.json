@@ -1,135 +1,80 @@
 {
-  "version": "5.15.7-public",
-  "baseVersion": "5.15.6-public",
-  "date": "2026-08-24",
-  "data": {
-    "works": 131,
-    "directedEdges": 199,
-    "characterLinks": 155
+  "version": "5.15.13",
+  "baseline": "5.15.12",
+  "counts": {
+    "NODES": 131,
+    "EDGES": 199,
+    "CHAR_LINKS": 155,
+    "WORK_DETAILS": 131
   },
-  "overview": {
-    "previousWorks": 63,
-    "works": 76,
-    "foxXmenWorksAdded": 13,
-    "newMutantsDirectEdges": 0,
-    "usesMasterEdgesOnly": true,
-    "groups": [
-      "MCU / INFINITY SAGA",
-      "MCU / MULTIVERSE SAGA",
-      "DISNEY+ / TV",
-      "FOX X-MEN UNIVERSE",
-      "ANIMATION / SPECIAL"
-    ],
-    "groupHeadingAndDescription": true,
-    "mobileCanvasWorks": 76
+  "data_hashes_sha256": {
+    "NODES": "a50afa68bff756cdacad13127d47f39d45fdb01d24ffda046dc64d7b2f17ab11",
+    "EDGES": "78a7af640a070ff82bb5599a6f1535c416ec77f348dc9577072799cd1fe6464c",
+    "CHAR_LINKS": "024e6e2e98cd0eeefea7f91729743e50563a599c75662ac0ab12eaf9e8eb3d44",
+    "WORK_DETAILS": "639867560b3c6e83d97ac2d34e2a083504c5f067924017ce60aaa6853e63e780"
   },
-  "workDetails": {
-    "total": 131,
-    "withSynopsisJa": 131,
-    "withMapRoleJa": 131,
-    "unreleasedWorks": 8,
-    "unreleasedOfficialScopeOnly": true,
-    "spoilerLight": true,
-    "unsafeHtmlRejected": true,
-    "duplicateAudit": true
-  },
-  "interaction": {
-    "desktopLeftClickInspectsOnly": true,
-    "desktopSideDetailPreserved": true,
-    "mobileTapSelectsSingleGoal": true,
-    "mobileRetapClearsGoal": true,
-    "mobileDifferentTapReplacesGoal": true,
-    "mobileSearchSelectsGoal": true,
-    "mobileChartDetailControlsHidden": true,
-    "prepPlanInlineDetails": true,
-    "prepPlanInlineDetailFields": [
-      "synopsis_ja",
-      "map_role_ja"
-    ],
-    "pcRightClickTogglesGoal": true,
-    "featuredGoalButtonUsesGoalApi": true,
-    "blankChartContextMenuPreserved": true
-  },
-  "regressionAgainstV5141": {
-    "or": {
-      "pairs": 8515,
-      "hashFnv1a64": "9c38afad0f8ac3fe",
-      "exact": true
+  "embedded_svg_count": 7,
+  "inline_js_syntax_checked": 16,
+  "visible_literal_newline_in_svg_text": 0,
+  "goal_focus_lightweight_regression": "PASS",
+  "newest_goal_left_regression": "PASS",
+  "fixed_zip_root": [
+    "index.html",
+    "README.md",
+    "AUDIT.md",
+    "AUDIT.json",
+    "preview.png",
+    ".nojekyll"
+  ],
+  "v5_15_12_mobile_goal_add": {
+    "delayed_refresh_after_add": false,
+    "canvas_rebuild_after_add": false,
+    "prep_plan_refresh": "on_open_if_dirty",
+    "pixel6_equivalent_chromium": {
+      "viewport": "412x915",
+      "v5.15.11_refreshSelection_after_add": 1,
+      "v5.15.12_after_500ms": {
+        "refreshSelection": 0,
+        "rebuildMobileCanvas": 0
+      },
+      "three_goal_sync_ms_range": "about 8-13",
+      "prep_updates_during_add": 0,
+      "prep_updates_on_open": 1,
+      "page_errors": 0
     },
-    "and": {
-      "pairs": 8515,
-      "hashFnv1a64": "ad48d8c46ae1bd61",
-      "exact": true
-    },
-    "path": {
-      "pairs": 8515,
-      "hashFnv1a64": "8b9847fcda5cdf96",
-      "exact": true
-    },
-    "singleGoalPlans": {
-      "count": 393,
-      "hashFnv1a64": "a3c6f1c12199a903",
-      "exact": true
+    "invariants": {
+      "works": 131,
+      "directed_edges": 199,
+      "character_links": 155,
+      "details": 131,
+      "embedded_svgs": 7,
+      "inline_js_scripts": 16
     }
   },
-  "interactionSmoke": {
-    "contractChecks": true,
-    "inlineJavaScriptSyntax": true,
-    "dataPayloadExactAgainstV5151": true,
-    "desktopSideDetailCodePathPreserved": true,
-    "mobileLegacyGoalCodePathRestored": true,
-    "prepInlineDetailsCodePathPresent": true,
-    "realDevicePixel6Pending": true,
-    "connectionTierBidirectionalSync": true,
-    "connectionTierDefaultRecommended": true,
-    "svgLiteralNewlineLabelsFixed": 76,
-    "mobileTopOperationRemoved": true,
-    "chartConnectionTierSelect": true,
-    "watchConnectionTierSelect": true,
-    "connectionTierSharedSetter": true,
-    "connectionTierAffectsRecursiveTraversal": true,
-    "completeTraversalPreservedFromV5154": true,
-    "tierRegressionExampleEndgame": {
-      "minimum": 8,
-      "recommended": 46,
-      "complete": 48
-    },
-    "overviewHomeMapLayout": true,
-    "overviewHomeAreas": 7,
-    "overviewHomeAreaDuplicateWorks": 0,
-    "overviewMapWorks": 131,
-    "overviewMapEdges": 144,
-    "overviewMainLandmarks": 76,
-    "overviewSupportWorks": 55,
-    "overviewMainEdges": 77,
-    "overviewSupportEdges": 67,
-    "overviewMainNodeMarkupByteStable": true,
-    "overviewSupportDuplicateWorks": 0
-  },
-  "sourceBuild": {
-    "baselineParts": 14,
-    "baselineRoundtripExact": true,
-    "baselineSha256": "1d3d57aaba730740f8aad78351806fc3cdbbd8d07cc91a5f82bed6ab10a2fdad",
-    "generatedStandaloneIndex": true,
-    "githubActionsBuild": false,
-    "deploymentMode": "main-root-direct"
-  },
-  "worker": {
-    "url": "https://marvel-room-worker.kamochama.workers.dev",
-    "expectedVersion": "0.1.0",
-    "frontendChangeRequiresRedeploy": false
-  },
-  "package": {
-    "rootFiles": [
-      "index.html",
-      "README.md",
-      "AUDIT.md",
-      "AUDIT.json",
-      "preview.png",
-      ".nojekyll"
-    ],
-    "exactSixFiles": true
-  },
-  "allPass": false,
-  "candidateStatus": "static verification passed; real-device interaction confirmation pending"
+  "embedded_svgs_byte_identical_to_v5_15_12": true,
+  "v5_15_13_mobile_goal_remove": {
+    "delayed_refresh_after_single_remove": false,
+    "canvas_rebuild_after_single_remove": false,
+    "delayed_refresh_after_clear_all": false,
+    "canvas_rebuild_after_clear_all": false,
+    "prep_plan_refresh": "on_open_if_dirty",
+    "pixel6_equivalent_chromium": {
+      "viewport": "412x915",
+      "v5.15.12_single_remove_after_500ms": {
+        "refreshSelection": 1,
+        "rebuildMobileCanvas": 1
+      },
+      "v5.15.13_single_remove_after_500ms": {
+        "refreshSelection": 0,
+        "rebuildMobileCanvas": 0
+      },
+      "v5.15.13_clear_all_after_500ms": {
+        "refreshSelection": 0,
+        "rebuildMobileCanvas": 0
+      },
+      "single_remove_sync_ms": "about 7",
+      "clear_all_sync_ms": "about 4",
+      "page_errors": 0
+    }
+  }
 }
