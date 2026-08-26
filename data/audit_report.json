@@ -1,0 +1,194 @@
+{
+  "schema_version": "4.0",
+  "audited_at": "2026-08-26",
+  "counts": {
+    "works": 131,
+    "connections": 199,
+    "chronology": 103,
+    "story_groups": 16,
+    "story_members": 103,
+    "story_path_edges": 83,
+    "entity_returns": 8,
+    "prewatch_overrides": 6
+  },
+  "structural_checks": {
+    "missing_endpoint": 0,
+    "duplicate_edge_pair": 0,
+    "self_loop": 0,
+    "derived_title_mismatch": 0,
+    "story_path_missing_edge": 0
+  },
+  "prewatch_tier_counts": {
+    "minimum": 93,
+    "recommended": 72,
+    "complete": 34
+  },
+  "relation_scope_counts": {
+    "story": 119,
+    "crossover": 34,
+    "character": 31,
+    "world_lore": 11,
+    "promotion": 3,
+    "variant_meta": 1
+  },
+  "relation_kind_counts": {
+    "sequel": 54,
+    "crossover": 31,
+    "aftermath": 8,
+    "world_lore": 13,
+    "character_continuity": 34,
+    "lead_in": 11,
+    "story_link": 38,
+    "spinoff": 6,
+    "promotion": 3,
+    "variant_callback": 1
+  },
+  "scope_corrections_count": 10,
+  "prewatch_graph_cycles": {
+    "minimum": false,
+    "minimum_recommended": false,
+    "complete": false
+  },
+  "key_goal_incoming_tiers": {
+    "spider-man-brand-new-day-2026-07-31": [
+      {
+        "source_id": "spider-man-no-way-home-2021",
+        "tier": "minimum",
+        "scope": "story",
+        "kind": "story_link"
+      },
+      {
+        "source_id": "she-hulk-attorney-at-law-2022",
+        "tier": "recommended",
+        "scope": "character",
+        "kind": "character_continuity"
+      },
+      {
+        "source_id": "the-punisher-one-last-kill-2026-05-12",
+        "tier": "recommended",
+        "scope": "character",
+        "kind": "character_continuity"
+      },
+      {
+        "source_id": "thunderbolts-new-avengers-2025",
+        "tier": "recommended",
+        "scope": "character",
+        "kind": "character_continuity"
+      }
+    ],
+    "visionquest-2026-10-14": [
+      {
+        "source_id": "agatha-all-along-2024",
+        "tier": "minimum",
+        "scope": "story",
+        "kind": "sequel"
+      },
+      {
+        "source_id": "wandavision-2021",
+        "tier": "minimum",
+        "scope": "story",
+        "kind": "sequel"
+      },
+      {
+        "source_id": "avengers-age-of-ultron-2015",
+        "tier": "recommended",
+        "scope": "story",
+        "kind": "story_link"
+      }
+    ],
+    "avengers-doomsday-2026-12-18": [
+      {
+        "source_id": "the-fantastic-four-first-steps-2025",
+        "tier": "minimum",
+        "scope": "story",
+        "kind": "lead_in"
+      },
+      {
+        "source_id": "deadpool-wolverine-2024",
+        "tier": "recommended",
+        "scope": "crossover",
+        "kind": "crossover"
+      },
+      {
+        "source_id": "avengers-endgame-2019",
+        "tier": "recommended",
+        "scope": "story",
+        "kind": "story_link"
+      },
+      {
+        "source_id": "thor-love-and-thunder-2022",
+        "tier": "recommended",
+        "scope": "character",
+        "kind": "character_continuity"
+      },
+      {
+        "source_id": "black-panther-wakanda-forever-2022",
+        "tier": "recommended",
+        "scope": "character",
+        "kind": "character_continuity"
+      },
+      {
+        "source_id": "ant-man-and-the-wasp-quantumania-2023",
+        "tier": "complete",
+        "scope": "promotion",
+        "kind": "promotion"
+      },
+      {
+        "source_id": "captain-america-brave-new-world-2025",
+        "tier": "complete",
+        "scope": "promotion",
+        "kind": "promotion"
+      },
+      {
+        "source_id": "shang-chi-and-the-legend-of-the-ten-rings-2021",
+        "tier": "complete",
+        "scope": "promotion",
+        "kind": "promotion"
+      },
+      {
+        "source_id": "thunderbolts-new-avengers-2025",
+        "tier": "minimum",
+        "scope": "story",
+        "kind": "lead_in"
+      },
+      {
+        "source_id": "marvel-s-agent-carter-series-20152016",
+        "tier": "complete",
+        "scope": "character",
+        "kind": "character_continuity"
+      },
+      {
+        "source_id": "x-men-the-last-stand-2006",
+        "tier": "complete",
+        "scope": "character",
+        "kind": "character_continuity"
+      },
+      {
+        "source_id": "the-marvels-2023",
+        "tier": "recommended",
+        "scope": "story",
+        "kind": "story_link"
+      }
+    ],
+    "avengers-secret-wars-2027-12-17": [
+      {
+        "source_id": "avengers-doomsday-2026-12-18",
+        "tier": "minimum",
+        "scope": "story",
+        "kind": "story_link"
+      }
+    ]
+  },
+  "foundation_decisions": [
+    "importance(core/recommended/reference)は関係地図用の旧編集重要度として保持し、prewatch_tierを独立正本にした",
+    "minimum=再帰、recommended=minimum closure＋recommended 1波、complete=none以外を再帰という探索規則をprewatch_policy.jsonで固定",
+    "promotionは公式ソースであっても物語前提とはみなさずcompleteのみ",
+    "story_paths.csvは時系列の連続線正本、prewatch_tierとは独立",
+    "Brand New Day / VisionQuest / Doomsday / Secret Warsの主要接続は現行公式・一次情報で再確認"
+  ],
+  "open_items": [
+    "旧FOX/Sony/Marvel Television作品の全日本語表記を当時の一次配給元まで再検証する作業は継続課題",
+    "Doomsday公開後は帰還proxyを実際の物語directnessへ再分類する",
+    "完全版は現状199 edgeすべての意味ある関係を対象にするため、UI側では件数が多いゴールに折りたたみ表示が必要になる可能性がある"
+  ]
+}

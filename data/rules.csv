@@ -1,0 +1,18 @@
+﻿rule_no,visual,meaning,management_value
+1,太実線,直接続編／明示的direct lead-in,very strong / solid_thick
+2,実線,同一人物・組織の強い継続,strong / solid
+3,破線,間接的な物語・世界観接続,medium / dashed
+4,点線,マルチバース横断／別宇宙接続,dotted
+5,禁止,What If...?等を根拠なくDoomsdayの直接前日譚にしない,audit rule
+6,未来作,未公開作品は確定事項と推測を分ける,audit rule
+7,系列内の線,story_membersで隣接していてもconnections.csvに対応edgeがなければ線を引かない,connections-only
+8,大枠／段,同じ世界線・系列への所属は位置と枠で表し、物語接続を自動推論しない,grouping-is-not-an-edge
+9,proxy edge,出演・俳優帰還を旧作から結ぶ場合はdirect sequel扱い禁止,reference-or-recommended-only
+10,連続線の正本,chronologyの連続線はstory_paths.csvに列挙されたedgeのみ,story_paths-only
+11,キャラクター帰還,出演・帰還は作品の直接続編と分離しrelation_scope=characterで管理,proxy-not-story
+12,公式関連作／予習,公式プロモーション関連はprewatchには使えるが関係地図・時系列線へ自動表示しない,promotion-separate
+13,stable work_id,公開日や題名が更新されても既存work_idは原則変更しない,stable-identifiers
+14,最低限,prewatch_tier=minimumのみを再帰探索,minimum-recursive
+15,おすすめ,minimum closure＋recommended 1波＋追加作品のminimum closure,recommended-one-wave
+16,完全版,minimum/recommended/completeを再帰探索,complete-recursive
+17,promotion,公式関連・予習キャンペーンは物語の必須線に昇格させない,promotion-complete-only

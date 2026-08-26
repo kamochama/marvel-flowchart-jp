@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "tiers": [
+    "minimum",
+    "recommended",
+    "complete",
+    "none"
+  ],
+  "labels_ja": {
+    "minimum": "最低限",
+    "recommended": "おすすめ",
+    "complete": "完全版",
+    "none": "対象外"
+  },
+  "tier_meaning": {
+    "minimum": "そのゴールの本筋・直接続編・強いlead-in。最低限モードで再帰的に辿る。",
+    "recommended": "理解・人物関係・主要クロスオーバーを大きく補強する接続。",
+    "complete": "人物再登場、世界観、マルチバース、variant、公式関連企画など補助情報まで含む。",
+    "none": "関係データには残すが予習プランには使わない。"
+  },
+  "modes": {
+    "minimum": {
+      "label_ja": "最低限",
+      "algorithm": "recursive_tier_closure",
+      "recursive_tiers": [
+        "minimum"
+      ],
+      "description": "ゴールからminimum edgeだけを逆向きに再帰探索する。"
+    },
+    "recommended": {
+      "label_ja": "おすすめ",
+      "algorithm": "minimum_closure_plus_one_recommended_wave",
+      "steps": [
+        "minimum closureを作る",
+        "そのclosure中の各作品へ入るrecommended edgeを1波だけ追加",
+        "追加作品についてminimum closureを追加"
+      ],
+      "recursive_tiers": [
+        "minimum"
+      ],
+      "expansion_tiers": [
+        "recommended"
+      ],
+      "expansion_waves": 1
+    },
+    "complete": {
+      "label_ja": "完全版",
+      "algorithm": "recursive_tier_closure",
+      "recursive_tiers": [
+        "minimum",
+        "recommended",
+        "complete"
+      ],
+      "description": "none以外を逆向きに再帰探索する。visited setで重複・循環を防止する。"
+    }
+  },
+  "ordering": "release_sort_date then chronology only as display aid; graph reachability decides inclusion",
+  "deprecated_fields": {
+    "connections.csv.render_prewatch": "v4以降の予習判定には使用せずprewatch_tierを使用する。"
+  }
+}

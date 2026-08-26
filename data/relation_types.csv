@@ -1,0 +1,7 @@
+﻿relation_scope,meaning_ja,chronology_default,relation_map_default,prewatch_guidance,notes_v4
+story,物語の続編・後日談・前提・明示されたlead-in,候補,表示,importance/coreを基準にminimumまたはrecommended。直接続編・明示lead-inはminimum候補。,relation_scopeとprewatch_tierは独立。関係の種類が同じでもゴール理解への重要度は異なる。
+character,人物・チームの再登場／帰還。作品同士の直接続編とは限らない,非表示,表示（補助）,主要人物の直前作はrecommended、単純な帰還proxyはcompleteが基本。,relation_scopeとprewatch_tierは独立。関係の種類が同じでもゴール理解への重要度は異なる。
+crossover,クロスオーバー・合流・マルチバース横断,強い場合のみ,表示,本筋合流はminimum/recommended、補助的multiverse参照はcomplete。,relation_scopeとprewatch_tierは独立。関係の種類が同じでもゴール理解への重要度は異なる。
+world_lore,世界観・組織・設定の継続,非表示,表示（補助）,原則recommendedまたはcomplete。直接物語を起動する場合のみminimum候補。,relation_scopeとprewatch_tierは独立。関係の種類が同じでもゴール理解への重要度は異なる。
+promotion,公式の関連作・予習企画。物語接続を意味しない,非表示,非表示,completeのみ。公式企画でも物語接続とはみなさない。,relation_scopeとprewatch_tierは独立。関係の種類が同じでもゴール理解への重要度は異なる。
+variant_meta,変異体・同俳優callback・メタ接続,非表示,表示（reference）,completeのみ。,relation_scopeとprewatch_tierは独立。関係の種類が同じでもゴール理解への重要度は異なる。

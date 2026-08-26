@@ -1,0 +1,22 @@
+﻿entity_type,entity_id,severity,issue,action,status,source_url
+connection,avengers-endgame-2019 -> the-guardians-of-the-galaxy-holiday-special-2022,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,the-guardians-of-the-galaxy-holiday-special-2022 -> guardians-of-the-galaxy-vol-3-2023,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,agatha-all-along-2024 -> visionquest-2026-10-14,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,wandavision-2021 -> visionquest-2026-10-14,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,black-widow-2021 -> thunderbolts-new-avengers-2025,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,the-falcon-and-the-winter-soldier-2021 -> thunderbolts-new-avengers-2025,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,ant-man-and-the-wasp-2018 -> thunderbolts-new-avengers-2025,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,avengers-doomsday-2026-12-18 -> avengers-secret-wars-2027-12-17,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,spider-man-2002 -> spider-man-2-2004,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,spider-man-2-2004 -> spider-man-3-2007,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,spider-man-3-2007 -> spider-man-no-way-home-2021,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,guardians-of-the-galaxy-vol-2-2017 -> the-guardians-of-the-galaxy-holiday-special-2022,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,fantastic-four-2005 -> fantastic-four-rise-of-the-silver-surfer-2007,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,avengers-age-of-ultron-2015 -> visionquest-2026-10-14,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,thunderbolts-new-avengers-2025 -> avengers-doomsday-2026-12-18,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+connection,thunderbolts-new-avengers-2025 -> spider-man-brand-new-day-2026-07-31,low,cached Japanese title differed from works.csv,resynced derived title fields,resolved,
+model,connections.csv,high,story / character return / promotion / variant were previously mixed as generic work edges,added semantic scope + independent render policies,resolved,
+model,story_members.csv,high,adjacent placement could be mistaken for a continuous story line,removed line authority; added story_paths.csv as edge-backed line truth,resolved,
+connection,Agent Carter -> Doomsday,medium,return was verified but prior work proxy could look like a sequel,web-verified character proxy; chronology disabled,resolved,https://marvel.disney.co.jp/movie/avengers-doomsday/news/20260726_01
+connection,X-Men: The Last Stand -> Doomsday,medium,legacy cast return could look like direct continuation,web-verified character proxy; chronology disabled,resolved,https://marvel.disney.co.jp/movie/avengers-doomsday/news/20260726_01
+work,spider-man-beyond-the-spider-verse-tba,medium,old announced US date 2027-06-04 is stale,updated to Sony Group 2026 official 2027-06-18; stable ID retained,resolved,https://www.sony.com/ja/SonyInfo/blog/2026/05/19/

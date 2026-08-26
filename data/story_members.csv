@@ -1,0 +1,104 @@
+﻿group_id,segment_id,sequence_order,work_id,title_ja,relation_mode,placement_note
+spider_raimi,spider_raimi__1,1,spider-man-2002,スパイダーマン,line,配置用。連続線はstory_paths.csvを参照。
+spider_raimi,spider_raimi__1,2,spider-man-2-2004,スパイダーマン2,line,配置用。連続線はstory_paths.csvを参照。
+spider_raimi,spider_raimi__1,3,spider-man-3-2007,スパイダーマン3,line,配置用。連続線はstory_paths.csvを参照。
+spider_amazing,spider_amazing__1,1,the-amazing-spider-man-2012,アメイジング・スパイダーマン,line,配置用。連続線はstory_paths.csvを参照。
+spider_amazing,spider_amazing__1,2,the-amazing-spider-man-2-2014,アメイジング・スパイダーマン2,line,配置用。連続線はstory_paths.csvを参照。
+spider_mcu,spider_mcu__1,1,spider-man-homecoming-2017,スパイダーマン：ホームカミング,line,配置用。連続線はstory_paths.csvを参照。
+spider_mcu,spider_mcu__1,2,spider-man-far-from-home-2019,スパイダーマン：ファー・フロム・ホーム,line,配置用。連続線はstory_paths.csvを参照。
+spider_mcu,spider_mcu__1,3,spider-man-no-way-home-2021,スパイダーマン：ノー・ウェイ・ホーム,line,配置用。連続線はstory_paths.csvを参照。
+spider_mcu,spider_mcu__1,4,spider-man-brand-new-day-2026-07-31,スパイダーマン：ブランド・ニュー・デイ,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,1,captain-america-the-first-avenger-2011,キャプテン・アメリカ／ザ・ファースト・アベンジャー,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,2,captain-marvel-2019,キャプテン・マーベル,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,3,iron-man-2008,アイアンマン,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,4,iron-man-2-2010,アイアンマン2,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,5,the-incredible-hulk-2008,インクレディブル・ハルク,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,6,thor-2011,マイティ・ソー,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,7,the-avengers-2012,アベンジャーズ,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,8,avengers-age-of-ultron-2015,アベンジャーズ／エイジ・オブ・ウルトロン,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,9,avengers-infinity-war-2018,アベンジャーズ／インフィニティ・ウォー,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,10,avengers-endgame-2019,アベンジャーズ／エンドゲーム,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,11,avengers-doomsday-2026-12-18,アベンジャーズ／ドゥームズデイ,line,配置用。連続線はstory_paths.csvを参照。
+mcu_shared,mcu_shared__1,12,avengers-secret-wars-2027-12-17,Avengers: Secret Wars （邦題未発表）,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cap,mcu_cap__1,1,captain-america-the-winter-soldier-2014,キャプテン・アメリカ／ウィンター・ソルジャー,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cap,mcu_cap__1,2,captain-america-civil-war-2016,シビル・ウォー／キャプテン・アメリカ,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cap,mcu_cap__1,3,black-widow-2021,ブラック・ウィドウ,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cap,mcu_cap__1,4,the-falcon-and-the-winter-soldier-2021,ファルコン＆ウィンター・ソルジャー,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cap,mcu_cap__1,5,captain-america-brave-new-world-2025,キャプテン・アメリカ：ブレイブ・ニュー・ワールド,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cap,mcu_cap__1,6,thunderbolts-new-avengers-2025,サンダーボルツ*,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cosmic_marvels,mcu_cosmic_marvels__1,1,ms-marvel-2022,ミズ・マーベル,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cosmic_marvels,mcu_cosmic_marvels__1,2,secret-invasion-2023,シークレット・インベージョン,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cosmic_marvels,mcu_cosmic_marvels__1,3,the-marvels-2023,マーベルズ,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cosmic_marvels,mcu_cosmic_marvels__2,1,guardians-of-the-galaxy-2014,ガーディアンズ・オブ・ギャラクシー,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cosmic_marvels,mcu_cosmic_marvels__2,2,guardians-of-the-galaxy-vol-2-2017,ガーディアンズ・オブ・ギャラクシー：リミックス,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cosmic_marvels,mcu_cosmic_marvels__2,3,the-guardians-of-the-galaxy-holiday-special-2022,ガーディアンズ・オブ・ギャラクシー ホリデー・スペシャル,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cosmic_marvels,mcu_cosmic_marvels__2,4,guardians-of-the-galaxy-vol-3-2023,ガーディアンズ・オブ・ギャラクシー：VOLUME 3,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cosmic_marvels,mcu_cosmic_marvels__3,1,i-am-groot-s1-2022,アイ・アム・グルート S1,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cosmic_marvels,mcu_cosmic_marvels__3,2,i-am-groot-s2-2023,アイ・アム・グルート S2,line,配置用。連続線はstory_paths.csvを参照。
+mcu_cosmic_marvels,mcu_cosmic_marvels__4,1,the-fantastic-four-first-steps-2025,ファンタスティック４：ファースト・ステップ,single,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__1,1,loki-s1-2021,ロキ シーズン1,line,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__1,2,loki-s2-2023,ロキ シーズン2,line,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__2,1,what-if-s1-2021,ホワット・イフ…？ シーズン1,line,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__2,2,what-if-s2-2023,ホワット・イフ…？ シーズン2,line,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__2,3,what-if-s3-2024,ホワット・イフ…？ シーズン3,line,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__3,1,doctor-strange-2016,ドクター・ストレンジ,line,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__3,2,wandavision-2021,ワンダヴィジョン,line,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__3,3,doctor-strange-in-the-multiverse-of-madness-2022,ドクター・ストレンジ／マルチバース・オブ・マッドネス,line,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__3,4,agatha-all-along-2024,アガサ・オール・アロング,line,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__3,5,visionquest-2026-10-14,VisionQuest （邦題未発表）,line,配置用。連続線はstory_paths.csvを参照。
+mcu_magic,mcu_magic__4,1,deadpool-wolverine-2024,デッドプール＆ウルヴァリン,single,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__1,1,daredevil-s1-2015,デアデビル S1,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__1,2,daredevil-s2-2016,デアデビル S2,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__1,3,daredevil-s3-2018,デアデビル S3,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__1,4,daredevil-born-again-s1-2025,デアデビル：ボーン・アゲイン S1,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__1,5,daredevil-born-again-s2-2026,デアデビル：ボーン・アゲイン S2,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__1,6,daredevil-born-again-s3-tba,デアデビル：ボーン・アゲイン S3,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__2,1,jessica-jones-s1-2015,ジェシカ・ジョーンズ S1,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__2,2,luke-cage-s1-2016,ルーク・ケイジ S1,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__2,3,iron-fist-s1-2017,アイアン・フィスト S1,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__2,4,the-defenders-2017,マーベル／ザ・ディフェンダーズ,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__2,5,jessica-jones-s2-2018,ジェシカ・ジョーンズ S2,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__2,6,luke-cage-s2-2018,ルーク・ケイジ S2,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__2,7,iron-fist-s2-2018,アイアン・フィスト S2,line,配置用。連続線はstory_paths.csvを参照。
+mcu_street,mcu_street__2,8,jessica-jones-s3-2019,ジェシカ・ジョーンズ S3,line,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__1,1,ant-man-2015,アントマン,line,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__1,2,ant-man-and-the-wasp-2018,アントマン＆ワスプ,line,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__1,3,ant-man-and-the-wasp-quantumania-2023,アントマン＆ワスプ：クアントマニア,line,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__2,1,black-panther-2018,ブラックパンサー,line,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__2,2,black-panther-wakanda-forever-2022,ブラックパンサー／ワカンダ・フォーエバー,line,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__3,1,hawkeye-2021,ホークアイ,line,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__3,2,echo-2024,エコー,line,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__4,1,shang-chi-and-the-legend-of-the-ten-rings-2021,シャン・チー／テン・リングスの伝説,single,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__4,2,eternals-2021,エターナルズ,single,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__4,3,moon-knight-2022,ムーンナイト,single,配置用。連続線はstory_paths.csvを参照。
+mcu_ground,mcu_ground__4,4,werewolf-by-night-2022,ウェアウルフ・バイ・ナイト,single,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__1,1,the-punisher-s1-2017,パニッシャー S1,line,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__1,2,the-punisher-s2-2019,パニッシャー S2,line,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__1,3,the-punisher-one-last-kill-2026-05-12,パニッシャー：ワン・ラスト・キル,line,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__2,1,she-hulk-attorney-at-law-2022,シー・ハルク：ザ・アトーニー,single,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__2,2,ironheart-2025,アイアンハート,single,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__3,1,thor-the-dark-world-2013,マイティ・ソー／ダーク・ワールド,line,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__3,2,thor-ragnarok-2017,マイティ・ソー バトルロイヤル,line,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__3,3,thor-love-and-thunder-2022,ソー：ラブ＆サンダー,line,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__4,1,iron-man-3-2013,アイアンマン3,single,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__4,2,wonder-man-s1-2026,ワンダーマン S1,single,配置用。連続線はstory_paths.csvを参照。
+mcu_aux,mcu_aux__4,3,blade-mcu-tba-tba,Blade（MCU／邦題未発表）,single,配置用。連続線はstory_paths.csvを参照。
+ssu_venom,ssu_venom__1,1,venom-2018,ヴェノム,line,配置用。連続線はstory_paths.csvを参照。
+ssu_venom,ssu_venom__1,2,venom-let-there-be-carnage-2021,ヴェノム：レット・ゼア・ビー・カーネイジ,line,配置用。連続線はstory_paths.csvを参照。
+ssu_venom,ssu_venom__1,3,venom-the-last-dance-2024,ヴェノム：ザ・ラストダンス,line,配置用。連続線はstory_paths.csvを参照。
+ssu_standalone,ssu_standalone__1,1,morbius-2022,モービウス,line,配置用。連続線はstory_paths.csvを参照。
+ssu_standalone,ssu_standalone__1,2,madame-web-2024,マダム・ウェブ,line,配置用。連続線はstory_paths.csvを参照。
+ssu_standalone,ssu_standalone__1,3,kraven-the-hunter-2024,クレイヴン・ザ・ハンター,line,配置用。連続線はstory_paths.csvを参照。
+fox_original,fox_original__1,1,x-men-first-class-2011,X-MEN：ファースト・ジェネレーション,line,配置用。連続線はstory_paths.csvを参照。
+fox_original,fox_original__1,2,x-men-origins-wolverine-2009,ウルヴァリン：X-MEN ZERO,line,配置用。連続線はstory_paths.csvを参照。
+fox_original,fox_original__1,3,x-men-2000,X-MEN,line,配置用。連続線はstory_paths.csvを参照。
+fox_original,fox_original__1,4,x2-x-men-united-2003,X-MEN2,line,配置用。連続線はstory_paths.csvを参照。
+fox_original,fox_original__1,5,x-men-the-last-stand-2006,X-MEN：ファイナル ディシジョン,line,配置用。連続線はstory_paths.csvを参照。
+fox_original,fox_original__1,6,the-wolverine-2013,ウルヴァリン：SAMURAI,line,配置用。連続線はstory_paths.csvを参照。
+fox_original,fox_original__1,7,x-men-days-of-future-past-2014,X-MEN：フューチャー＆パスト,line,配置用。連続線はstory_paths.csvを参照。
+fox_revised,fox_revised__1,1,x-men-apocalypse-2016,X-MEN：アポカリプス,line,配置用。連続線はstory_paths.csvを参照。
+fox_revised,fox_revised__1,2,dark-phoenix-2019,X-MEN：ダーク・フェニックス,line,配置用。連続線はstory_paths.csvを参照。
+fox_revised,fox_revised__1,3,deadpool-2016,デッドプール,line,配置用。連続線はstory_paths.csvを参照。
+fox_revised,fox_revised__1,4,deadpool-2-2018,デッドプール2,line,配置用。連続線はstory_paths.csvを参照。
+fox_ambiguous,fox_ambiguous__1,1,logan-2017,LOGAN／ローガン,line,配置用。連続線はstory_paths.csvを参照。
+fox_ambiguous,fox_ambiguous__1,2,the-new-mutants-2020,ニュー・ミュータント,line,配置用。連続線はstory_paths.csvを参照。

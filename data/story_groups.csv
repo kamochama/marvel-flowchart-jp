@@ -1,0 +1,17 @@
+﻿group_id,world_group,label_ja,description,layout_mode,nav_key,line_policy,management_note
+spider_raimi,Spider-Man,Raimi,Raimi 3部作,sequence,spider,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+spider_amazing,Spider-Man,Amazing,Amazing 2部作,sequence,,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+spider_mcu,Spider-Man,MCU Spider-Man,MCU Spider-Man系列,sequence,,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+mcu_shared,MCU,共有イベントの背骨,主要MCU共有イベント,sequence,avengers,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+mcu_cap,MCU,Captain America / Widow / Thunderbolts,Cap系の強い系列線,sequence,avengers,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+mcu_cosmic_marvels,MCU,宇宙・マーベルズ系,Guardians / Marvels / Fantastic Four周辺,mixed,guardians,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+mcu_magic,MCU,魔術・マルチバース系,Loki / What If...? / Strange / Wanda周辺,mixed,magic,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+mcu_street,MCU,街・地上サイド,Daredevil / Defenders 周辺,mixed,,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+mcu_ground,MCU,ワカンダ・量子・新世代,Ant-Man / Wakanda / Hawkeye 等,mixed,wakanda,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+mcu_aux,MCU,補助系列・今後,Punisher / Thor / Ironheart / future 等,mixed,,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+mcu_overflow,MCU,未整理・保留,現Stage Cで自動退避される残余,mixed,,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+ssu_venom,SSU,Venom本線,Venom trilogy,sequence,ssu,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+ssu_standalone,SSU,独立作品,Morbius / Madame Web / Kraven,sequence,,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+fox_original,FOX X-MEN,旧系列,Days of Future Pastまで,sequence,fox,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+fox_revised,FOX X-MEN,改変後系列,Apocalypse / Dark Phoenix / Deadpool,sequence,,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。
+fox_ambiguous,FOX X-MEN,位置づけ慎重,LOGAN / New Mutants,sequence,,story_paths-only,所属・囲いはgroup。連続線の正本はstory_paths.csv。

@@ -1,0 +1,118 @@
+{
+  "schema_version": "4.0",
+  "principles": {
+    "canonical_source": "CSV/JSON in Git",
+    "xlsx_generated_only_on_request": true,
+    "stable_work_ids": true,
+    "grouping_is_not_edge": true,
+    "story_members_are_placement_only": true,
+    "continuous_story_lines_source": "story_paths.csv",
+    "work_edge_semantics_are_separated": true,
+    "story_paths_are_explicit_line_whitelist": true,
+    "connections_render_chronology_is_default_hint_only": true,
+    "prewatch_source": "connections.csv.prewatch_tier",
+    "prewatch_policy": "prewatch_policy.json",
+    "importance_is_legacy_editorial_weight": true
+  },
+  "derived_fields": {
+    "connections.csv": [
+      "source_title_ja",
+      "target_title_ja"
+    ],
+    "story_members.csv": [
+      "title_ja"
+    ],
+    "story_paths.csv": [
+      "source_title_ja",
+      "target_title_ja"
+    ]
+  },
+  "files": {
+    "works.csv": {
+      "primary_key": "work_id"
+    },
+    "connections.csv": {
+      "primary_key": "edge_id",
+      "foreign_keys": {
+        "source_id": "works.work_id",
+        "target_id": "works.work_id"
+      }
+    },
+    "chronology.csv": {
+      "primary_key": "work_id"
+    },
+    "story_groups.csv": {
+      "primary_key": "group_id"
+    },
+    "story_members.csv": {
+      "purpose": "placement/group membership only"
+    },
+    "story_paths.csv": {
+      "purpose": "continuous edge-backed story lines; every row references a real connection edge"
+    },
+    "relation_types.csv": {
+      "purpose": "relation_scope definitions"
+    },
+    "entity_returns.csv": {
+      "purpose": "evidence behind character-return proxy edges"
+    },
+    "sources.csv": {
+      "primary_key": "source_id"
+    },
+    "rules.csv": {
+      "primary_key": "rule_no"
+    },
+    "prewatch_policy.json": {
+      "purpose": "minimum/recommended/complete traversal semantics"
+    },
+    "prewatch_overrides.csv": {
+      "purpose": "manual/semantic tier overrides with evidence"
+    }
+  },
+  "enums": {
+    "relation_scope": [
+      "story",
+      "character",
+      "crossover",
+      "world_lore",
+      "promotion",
+      "variant_meta"
+    ],
+    "directness": [
+      "direct",
+      "strong",
+      "indirect",
+      "proxy",
+      "promotional"
+    ],
+    "continuity_scope": [
+      "same_or_intended",
+      "multiverse",
+      "variant",
+      "promotional",
+      "uncertain_legacy_tv",
+      "uncertain_return_continuity"
+    ],
+    "prewatch_tier": [
+      "minimum",
+      "recommended",
+      "complete",
+      "none"
+    ],
+    "relation_kind": [
+      "sequel",
+      "spinoff",
+      "lead_in",
+      "aftermath",
+      "crossover",
+      "character_continuity",
+      "world_lore",
+      "promotion",
+      "variant_callback",
+      "story_link"
+    ]
+  },
+  "deprecated_fields": {
+    "connections.csv.render_prewatch": "v4以降はprewatch_tierを使用"
+  }
+}
