@@ -1,5 +1,5 @@
 {
-  "version": "5.17.10",
+  "version": "5.20.5",
   "baseline": "5.15.13",
   "counts": {
     "NODES": 131,
@@ -133,7 +133,7 @@
       "release",
       "chronology"
     ],
-    "release_chronology_svg_built": false,
+    "release_chronology_svg_built": "release and chronology both lazy-built on first open; neither built at initial load",
     "overview_panel_sha256": "163db2db36d4fc97af48dc85328b10951071b901d6e0ad0b0c3a7aefa4ccb4eb",
     "overview_byte_identical_to_v5_15_13": false,
     "data_byte_identical_to_v5_15_13": true,
@@ -388,5 +388,440 @@
     "overview_fragment_sha256": "163db2db36d4fc97af48dc85328b10951071b901d6e0ad0b0c3a7aefa4ccb4eb",
     "static_regression_tests": 21,
     "status": "PASS"
+  },
+  "stage_c_chronology": {
+    "lane_count": 5,
+    "lanes": [
+      {
+        "id": "mcu-main",
+        "label": "MCU",
+        "sub": "Marvel Studios / Defenders を含む公式時系列を基準",
+        "tone": "#38bdf8"
+      },
+      {
+        "id": "raimi",
+        "label": "Raimi Spider-Man",
+        "sub": "3部作の続編順",
+        "tone": "#ef4444"
+      },
+      {
+        "id": "amazing",
+        "label": "Amazing Spider-Man",
+        "sub": "2部作の続編順",
+        "tone": "#60a5fa"
+      },
+      {
+        "id": "ssu",
+        "label": "Sony Spider-Man Universe",
+        "sub": "Venom 系列と独立作品を分離",
+        "tone": "#a78bfa"
+      },
+      {
+        "id": "fox-xmen",
+        "label": "FOX X-MEN / Deadpool",
+        "sub": "Days of Future Past を分岐点として表示",
+        "tone": "#f59e0b"
+      }
+    ],
+    "meta_count": 103,
+    "meta_sha256": "d8de9c4b0b7338764865abbb5c81cb9fa430f5d78a2ce90bd500d35ff93915f6",
+    "lane_counts": {
+      "amazing": 2,
+      "fox-xmen": 13,
+      "mcu-main": 79,
+      "raimi": 3,
+      "ssu": 6
+    },
+    "track_counts": {
+      "ambiguous": 2,
+      "main": 64,
+      "multiverse": 4,
+      "original": 5,
+      "pivot": 1,
+      "revised": 2,
+      "revised-side": 2,
+      "shared-origin": 1,
+      "standalone": 3,
+      "time-crossing": 4,
+      "unplaced": 12,
+      "venom-line": 3
+    },
+    "certainty_counts": {
+      "ambiguous": 7,
+      "confirmed": 84,
+      "partial": 9,
+      "unknown": 3
+    },
+    "earth_fields": 0,
+    "in_universe_date_fields": 0,
+    "mcu_reference": "Disney+ Japan MCU complete chronological order article, 2025-03-31; current Marvel browse still exposes chronological collections",
+    "fox_policy": "Days of Future Past is rendered as pivot; original/revised tracks split; Logan and The New Mutants remain ambiguous/unforced",
+    "future_unplaced": [
+      "spider-man-brand-new-day-2026-07-31",
+      "avengers-doomsday-2026-12-18",
+      "avengers-secret-wars-2027-12-17"
+    ],
+    "search_panel_order": [
+      "overview",
+      "release",
+      "chronology"
+    ],
+    "lazy_build": true,
+    "relationship_data_content_identical_to_v5_17_10": true,
+    "regression_tests": {
+      "passed": 10,
+      "failed": 0
+    },
+    "inline_js_syntax": {
+      "scripts": 16,
+      "errors": 0
+    },
+    "fresh_browser_visual_check": "NOT COMPLETED: sandbox blocks file:// and localhost with ERR_BLOCKED_BY_ADMINISTRATOR",
+    "source_urls": [
+      "https://www.disneyplus.com/ja-jp/explore/articles/mcu-series",
+      "https://www.disneyplus.com/ja-jp/browse/page-60f4707d-19bb-4c0c-9390-ab269137be50",
+      "https://www.marvel.com/movies/the-fantastic-four-first-steps"
+    ]
+  },
+  "stage_c_chronology_layout": {
+    "layout": "central_mcu_mainline_with_horizontal_branch_lanes",
+    "lane_order": {
+      "top": [
+        "raimi",
+        "amazing"
+      ],
+      "center": [
+        "mcu-main"
+      ],
+      "bottom": [
+        "ssu",
+        "fox-xmen"
+      ]
+    },
+    "direction": "left_to_right_only",
+    "branch_policy": "side continuities branch from the central MCU line and continue rightward",
+    "chronology_meta_count": 103,
+    "chronology_meta_sha256": "39a63b7253b286f32a52b3eaf7ce3f9e07ad80b17e890fde51a6e896d7db3420",
+    "changed_functions": [
+      "buildChronologyView",
+      "fitChronologyInitialView",
+      "activatePanel chronology camera branch"
+    ],
+    "untouched_major_features": [
+      "overview graph",
+      "release history view",
+      "watch workspace",
+      "shared room",
+      "goal selection fast path"
+    ],
+    "fresh_browser_visual_verification": "NOT_COMPLETED_IN_CURRENT_SANDBOX"
+  },
+  "stage_c_chronology_ui": {
+    "sticky_left_lane_labels": true,
+    "sticky_lane_labels": [
+      "Raimi",
+      "Amazing",
+      "MCU 本流",
+      "SSU",
+      "FOX X-MEN"
+    ],
+    "sticky_sync": "desktop transform + mobile viewBox/Canvas",
+    "work_title_frame": true,
+    "regression_tests": "3/3 PASS",
+    "inline_js": "16/16 PASS",
+    "fresh_browser_visual_verification": "NOT_COMPLETED_IN_CURRENT_SANDBOX"
+  },
+  "stage_c_sticky_label_refinement": {
+    "classification_labels": "plain text with color bar only",
+    "sticky_overlay_width_px": 112,
+    "sticky_label_width_px": 92,
+    "title_box_emphasis": "increased",
+    "data_changed": false,
+    "inline_js_syntax_checked": 16
+  },
+  "stage_c_overview_style_work_cards": {
+    "root_cause": "chronologyCard used a separate inner-title-box/chip/note UI instead of overview-style whole-work cards",
+    "card_structure": "single whole-work card",
+    "fill": "#111827",
+    "stroke_width": 2.2,
+    "title_alignment": "center",
+    "secondary_line": "work release label",
+    "card_size": [
+      190,
+      64
+    ],
+    "horizontal_step": 208,
+    "removed": [
+      "chronology-title-box",
+      "chronology-chip",
+      "chronology-note"
+    ],
+    "sticky_classification_labels": "plain text + thin color bar; no box",
+    "regression_test": "PASS",
+    "inline_js_syntax_checked": 16,
+    "data_changed": false
+  },
+  "stage_c_title_fit": {
+    "card_width_px": 190,
+    "title_inner_width_px": 170,
+    "title_font_px": 10.5,
+    "release_font_px": 8.5,
+    "layout": "width-aware max 2 lines",
+    "chronology_titles_checked": 103,
+    "overflow_count": 0,
+    "content_mismatch_count": 0,
+    "inline_js_syntax_checked": 16,
+    "data_changed": false
+  },
+  "stage_c_spider_man_unified_band": {
+    "status": "PASS_STATIC_REGRESSION",
+    "band": "Spider-Man",
+    "subrows": [
+      "Raimi",
+      "Amazing",
+      "MCU Spider-Man"
+    ],
+    "junction": "spider-man-no-way-home-2021",
+    "mcu_spider_extracted_from_mainline": [
+      "spider-man-homecoming-2017",
+      "spider-man-far-from-home-2019",
+      "spider-man-no-way-home-2021"
+    ],
+    "duplicate_junction_card": false,
+    "ssu_kept_separate": true,
+    "rightward_merge_regression_tests": 5,
+    "title_fit_regression_tests": 4,
+    "inline_js_syntax_checked": 16,
+    "data_identical_to_v5_18_5": true,
+    "fresh_browser_visual_verification": "NOT_COMPLETED_IN_CURRENT_SANDBOX"
+  },
+  "stage_c_no_dangling_line_stubs": {
+    "decorative_lane_axes_removed": true,
+    "start_stub_removed": true,
+    "end_stub_removed": true,
+    "no_way_home_return_target": "next real MCU chronology card",
+    "dangling_line_regression_tests": {
+      "count": 2,
+      "status": "PASS"
+    },
+    "spider_and_title_regression_tests": {
+      "count": 9,
+      "status": "PASS"
+    },
+    "inline_js_syntax_checked": 16,
+    "core_data_hashes_unchanged_from_v5_18_6": true,
+    "fresh_browser_visual_verification": "NOT_COMPLETED_IN_CURRENT_SANDBOX"
+  },
+  "stage_c_jump_ui": {
+    "enabled": true,
+    "groups": {
+      "大きな入口": [
+        "captain-america-the-first-avenger-2011",
+        "spider-man-2002",
+        "venom-2018",
+        "x-men-first-class-2011"
+      ],
+      "MCU主要シリーズ": [
+        "iron-man-2008",
+        "captain-america-the-first-avenger-2011",
+        "thor-2011",
+        "guardians-of-the-galaxy-2014",
+        "ant-man-2015",
+        "doctor-strange-2016",
+        "black-panther-2018",
+        "captain-marvel-2019",
+        "spider-man-homecoming-2017"
+      ]
+    },
+    "preserves_zoom": true,
+    "flash_focus": true,
+    "data_changed": false
+  },
+  "mobile_resize_camera_preserve": {
+    "enabled": true,
+    "fixes": [
+      "window.resize auto-fit on mobile",
+      "media-query change auto-fit on mobile",
+      "orientationchange auto-fit on mobile"
+    ],
+    "strategy": "preserve current camera and redraw instead of fitView",
+    "data_changed": false
+  },
+  "stage_c_series_group_boxes": {
+    "enabled": true,
+    "major_groups": [
+      "Spider-Man系列",
+      "SSU",
+      "FOX X-MEN"
+    ],
+    "sub_groups": [
+      "Raimi",
+      "Amazing",
+      "MCU Spider-Man",
+      "Venom本線",
+      "独立作品",
+      "旧系列",
+      "改変後系列",
+      "位置づけ慎重"
+    ],
+    "mcu_rough_groups": [
+      "キャプテン・アメリカ系",
+      "アイアンマン系",
+      "ソー系",
+      "ガーディアンズ系",
+      "アントマン系",
+      "ドクター・ストレンジ系",
+      "ワカンダ系",
+      "キャプテン・マーベル系"
+    ],
+    "style": "large translucent rounded rectangles with high-visibility labels",
+    "data_changed": false,
+    "visual_verification": "NOT_COMPLETED_IN_CURRENT_SANDBOX"
+  },
+  "stage_c_cluster_style_group_boxes": {
+    "enabled": true,
+    "style": "overview-cluster-inspired boxes with strong border and labeled header band",
+    "major_groups": [
+      "Spider-Man系列",
+      "SSU",
+      "FOX X-MEN",
+      "初期アベンジャーズ系",
+      "ガーディアンズ系",
+      "魔術・マルチバース系",
+      "ワカンダ・量子・マーベルズ"
+    ],
+    "data_changed": false,
+    "visual_verification": "NOT_COMPLETED_IN_CURRENT_SANDBOX"
+  },
+  "mobile_canvas_rect_support": {
+    "enabled": true,
+    "root_cause": "mobile primitive selector excluded SVG rect elements",
+    "selector": "path,polygon,polyline,rect,text",
+    "rounded_rect_rx_supported": true,
+    "affects": [
+      "chronology-group-box",
+      "chronology-group-head",
+      "chronology-lane-bg"
+    ],
+    "data_changed": false,
+    "device_visual_verification": "PENDING_USER_DEVICE"
+  },
+  "stage_c_in_frame_navigation": {
+    "enabled": true,
+    "major_frames": [
+      "spider",
+      "ssu",
+      "fox",
+      "avengers",
+      "guardians",
+      "magic",
+      "wakanda"
+    ],
+    "open_from": [
+      "frame header band",
+      "small ナビ button"
+    ],
+    "actions": [
+      "fit frame",
+      "jump to curated milestones"
+    ],
+    "milestone_jump_preserves_zoom": true,
+    "mobile_canvas_hit_test": "exact hit first, padded hit fallback",
+    "browser_validation": {
+      "engine": "Chromium headless",
+      "viewport": "412x915",
+      "mobile_touch_canvas": true,
+      "verified": [
+        "frame nav opens from canvas",
+        "correct frame palette opens",
+        "milestone jump closes palette",
+        "milestone jump preserves camera width"
+      ]
+    },
+    "data_changed": false
+  },
+  "stage_c_multilane_story_layout": {
+    "enabled": true,
+    "concept": "universe frame outside, story-lane rows inside",
+    "mcu_rows": [
+      "shared spine",
+      "avengers/captain america",
+      "cosmic/marvels",
+      "magic/multiverse",
+      "street/defenders",
+      "ground/new heroes",
+      "overflow/future"
+    ],
+    "spider_rows": [
+      "Raimi",
+      "Amazing",
+      "MCU Spider-Man"
+    ],
+    "width_strategy": "reduce horizontal spread and use vertical expansion",
+    "data_changed": false,
+    "visual_verification": "NOT_COMPLETED_IN_CURRENT_SANDBOX"
+  },
+  "stage_c_overlap_cleanup": {
+    "enabled": true,
+    "changes": [
+      "wider horizontal spacing",
+      "larger row gaps",
+      "branch lines moved to gutters",
+      "reduced helper labels",
+      "line-before-card rendering order"
+    ],
+    "data_changed": false,
+    "visual_verification": "NOT_COMPLETED_IN_CURRENT_SANDBOX"
+  },
+  "stage_c_mobile_header_overlap_cleanup": {
+    "enabled": true,
+    "changes": [
+      "groupBox top clearance added",
+      "subgroup subtitles reduced",
+      "mobile auxiliary labels hidden"
+    ],
+    "data_changed": false,
+    "evidence": "user_screenshot_overlap_case"
+  },
+  "stage_c_nested_frame_cleanup": {
+    "enabled": true,
+    "world_frames": [
+      "Spider-Man",
+      "MCU",
+      "SSU",
+      "FOX X-MEN"
+    ],
+    "inner_representation": "lane header rail, not nested four-sided box",
+    "mini_navigation": {
+      "max_width_desktop_px": 280,
+      "max_width_mobile_px": 250,
+      "horizontal_scroll": true,
+      "mobile_title_hidden": true
+    },
+    "fit_group_selector": "generic data-chronology-group-key",
+    "data_changed": false,
+    "visual_verification": "HEADLESS_CHROMIUM_TIMED_OUT; USER_DEVICE_RECHECK_REQUIRED"
+  },
+  "stage_c_branch_cleanup": {
+    "enabled": true,
+    "removed_generic_branches": [
+      "mcu shared->cosmic",
+      "mcu shared->magic",
+      "mcu shared->ground",
+      "ssu main->standalone"
+    ],
+    "added_visual_junctions": true,
+    "data_changed": false,
+    "evidence": "user_screenshot_possible_disconnected_lines"
+  },
+  "stage_c_strong_series_links_restored": {
+    "enabled": true,
+    "restored_sequences": [
+      "captain america / black widow / thunderbolts row",
+      "i am groot s1 -> s2",
+      "thor dark world -> ragnarok -> love and thunder"
+    ],
+    "kept_pruned_generic_branches": true,
+    "data_changed": false
   }
 }
