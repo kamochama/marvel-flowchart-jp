@@ -34,7 +34,7 @@ def migrate_works(rows: list[dict[str, str]]) -> list[dict[str, str]]:
 
 def _certainty_from_legacy(row: dict[str, str]) -> str:
     confidence = (row.get("audit_confidence") or "").strip().lower()
-    return {"high": "confirmed", "medium": "strong", "low": "uncertain"}.get(confidence, "unknown")
+    return {"high": "confirmed", "medium": "probable", "low": "uncertain"}.get(confidence, "unknown")
 
 
 def _is_cancelled_wonder_man_edge(row: dict[str, str]) -> bool:
@@ -141,6 +141,7 @@ def migrate_chronology(rows: list[dict[str, str]]) -> dict[str, list[dict[str, s
                     "label_en": "",
                     "continuity_kind": "legacy_world_group",
                     "certainty": "unknown",
+                    "verification_status": "legacy_seed",
                     "notes": "Migrated from legacy chronology world_group as a seed; independent continuity audit required.",
                 })
             work_continuities.append({
@@ -149,6 +150,7 @@ def migrate_chronology(rows: list[dict[str, str]]) -> dict[str, list[dict[str, s
                 "continuity_id": continuity_id,
                 "relation_to_continuity": "legacy_group_membership",
                 "certainty": "unknown",
+                "verification_status": "legacy_seed",
                 "notes": (row.get("note") or "").strip(),
             })
         dispositions.append({
@@ -198,9 +200,9 @@ def write_work_relation_tables(repo_root: Path) -> dict[str, int]:
     work_fields = list(works[0].keys()) if works else ["work_id"]
     _write_csv(library / "works.csv", works, work_fields)
     _write_csv(library / "work_relations.csv", conn["work_relations"], ["work_relation_id", "source_work_id", "target_work_id", "relation_kind", "relation_scope", "directness", "continuity_scope", "certainty", "verification_status", "notes"])
-    _write_csv(library / "continuities.csv", chrono["continuities"], ["continuity_id", "label_ja", "label_en", "continuity_kind", "certainty", "notes"])
-    _write_csv(library / "work_continuities.csv", chrono["work_continuities"], ["work_continuity_id", "work_id", "continuity_id", "relation_to_continuity", "certainty", "notes"])
-    _write_csv(library / "chronology_assertions.csv", chrono["chronology_assertions"], ["chronology_assertion_id", "continuity_id", "earlier_work_id", "later_work_id", "certainty", "notes"])
+    _write_csv(library / "continuities.csv", chrono["continuities"], ["continuity_id", "label_ja", "label_en", "continuity_kind", "certainty", "verification_status", "notes"])
+    _write_csv(library / "work_continuities.csv", chrono["work_continuities"], ["work_continuity_id", "work_id", "continuity_id", "relation_to_continuity", "certainty", "verification_status", "notes"])
+    _write_csv(library / "chronology_assertions.csv", chrono["chronology_assertions"], ["chronology_assertion_id", "continuity_id", "earlier_work_id", "later_work_id", "certainty", "verification_status", "notes"])
     _write_csv(migration / "connection_dispositions.csv", conn["dispositions"], ["legacy_row_id", "legacy_edge_id", "source_id", "target_id", "legacy_relation_scope", "legacy_relation_kind", "disposition", "work_relation_id", "migration_note", "legacy_reason"])
     _write_csv(migration / "chronology_dispositions.csv", chrono["dispositions"], ["legacy_row_id", "work_id", "world_group", "lane", "track", "legacy_order", "disposition", "migration_note"])
 
