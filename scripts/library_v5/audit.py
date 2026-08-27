@@ -17,6 +17,7 @@ FACT_ID_COLUMNS = {
     "continuities.csv": "continuity_id",
 }
 QUALIFYING_EVIDENCE_ROLES = {"primary", "supporting"}
+RAW_SQLITE_PATH = "data/derived/db/marvel.sqlite"
 
 
 def sha256_file(path: Path) -> str:
@@ -45,10 +46,7 @@ def check_primary_keys(table_name: str, rows: list[dict[str, str]], primary_key:
     return issues
 
 
-def check_foreign_keys(
-    tables: dict[str, list[dict[str, str]]],
-    schemas: dict[str, dict[str, object]],
-) -> list[dict[str, str]]:
+def check_foreign_keys(tables: dict[str, list[dict[str, str]]], schemas: dict[str, dict[str, object]]) -> list[dict[str, str]]:
     issues: list[dict[str, str]] = []
     for table_name, table_schema in schemas.items():
         rows = tables.get(table_name, [])
@@ -86,10 +84,7 @@ def check_evidence_coverage(tables: dict[str, list[dict[str, str]]]) -> list[dic
     return issues
 
 
-def check_migration_coverage(
-    legacy_counts: dict[str, int],
-    disposition_counts: dict[str, int],
-) -> list[dict[str, str]]:
+def check_migration_coverage(legacy_counts: dict[str, int], disposition_counts: dict[str, int]) -> list[dict[str, str]]:
     issues: list[dict[str, str]] = []
     for dataset in sorted(legacy_counts):
         expected = legacy_counts[dataset]
@@ -110,8 +105,7 @@ def _csv_header(path: Path) -> list[str]:
     if not path.exists():
         return []
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
-        reader = csv.reader(handle)
-        return next(reader, [])
+        return next(csv.reader(handle), [])
 
 
 def manifest_output_path(repo_root: Path) -> Path:
@@ -138,6 +132,7 @@ def build_manifest(repo_root: Path) -> dict[str, object]:
         "data/derived/library_manifest.json",
         "data/derived/audit.json",
         "data/derived/LIBRARY_AUDIT.md",
+        RAW_SQLITE_PATH,
     }
     canonical_inputs = _hash_tree(repo_root, "data/library", excluded)
     persistent_inputs = _hash_tree(repo_root, "data/migration", excluded)
@@ -244,8 +239,7 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
         ("data/derived/prewatch_edges.csv", "prewatch_edge_id"),
     ]
     for rel, pk in derived_checks:
-        rows = _read_csv(repo_root / rel)
-        issues.extend(check_primary_keys(rel, rows, pk))
+        issues.extend(check_primary_keys(rel, _read_csv(repo_root / rel), pk))
 
     return {
         "schema_version": "5.0",
