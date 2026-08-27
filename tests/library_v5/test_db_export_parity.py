@@ -69,7 +69,7 @@ def _old_semantic_rows() -> set[tuple[str, ...]]:
     }
 
 
-def _db_semantic_rows(connection) -> set[tuple[str, ...]]:
+def _db_legacy_semantic_rows(connection) -> set[tuple[str, ...]]:
     return {
         tuple(row)
         for row in connection.execute(
@@ -78,19 +78,24 @@ def _db_semantic_rows(connection) -> set[tuple[str, ...]]:
                    canonical_entity_id,relation_id,support_fact_ids,
                    appearance_kinds,verification_statuses,certainty_values,notes
             FROM v_work_connection_reasons
+            WHERE reason_kind <> 'multiverse_transition'
             """
         )
     }
 
 
+def _edge_pairs(rows: list[dict[str, str]]) -> set[tuple[str, str]]:
+    return {(row["source_work_id"], row["target_work_id"]) for row in rows}
+
+
 class DbWorkConnectionParityTests(unittest.TestCase):
-    def test_sql_reason_view_matches_current_python_oracle_semantics(self) -> None:
+    def test_sql_reason_view_preserves_legacy_python_oracle_semantics(self) -> None:
         old = _old_semantic_rows()
         with tempfile.TemporaryDirectory() as tmp:
             db_path = Path(tmp) / "marvel.sqlite"
             compile_database(ROOT, db_path)
             connection = open_query_connection(db_path)
-            new = _db_semantic_rows(connection)
+            new = _db_legacy_semantic_rows(connection)
             connection.close()
 
         self.assertEqual(old, new)
@@ -116,7 +121,7 @@ class DbWorkConnectionParityTests(unittest.TestCase):
             self.assertEqual(edge_count, reason_pairs)
             connection.close()
 
-    def test_db_export_matches_current_reason_and_edge_rows(self) -> None:
+    def test_db_export_preserves_legacy_projection_and_pair_compatibility(self) -> None:
         oracle_reasons = _old_reason_rows()
         oracle_edges = collapse_reasons_to_edges(oracle_reasons)
         with tempfile.TemporaryDirectory() as tmp:
@@ -126,19 +131,30 @@ class DbWorkConnectionParityTests(unittest.TestCase):
             exported_reasons = _read_csv(temp / "derived" / "work_pair_reasons.csv")
             exported_edges = _read_csv(temp / "derived" / "work_edges_all.csv")
 
+        legacy_exported_reasons = [
+            row for row in exported_reasons
+            if row["reason_kind"] != "multiverse_transition"
+        ]
         legacy_projection = [
             {field: row[field] for field in LEGACY_REASON_FIELDS}
-            for row in exported_reasons
+            for row in legacy_exported_reasons
         ]
         self.assertEqual(legacy_projection, oracle_reasons)
         self.assertTrue(
             all(
                 all(row[field] == "" for field in TRANSITION_REASON_FIELDS)
-                for row in exported_reasons
+                for row in legacy_exported_reasons
             )
         )
-        self.assertEqual(exported_edges, oracle_edges)
-        self.assertEqual(counts, {"work_pair_reasons": len(oracle_reasons), "work_edges_all": len(oracle_edges)})
+
+        # Phase 2 may add new reasons to an already-supported pair, but the
+        # pilot migration must not create or remove graph pairs.
+        self.assertEqual(_edge_pairs(exported_edges), _edge_pairs(oracle_edges))
+        self.assertEqual(len(exported_edges), len(oracle_edges))
+        self.assertEqual(
+            counts,
+            {"work_pair_reasons": len(exported_reasons), "work_edges_all": len(exported_edges)},
+        )
 
     def test_db_export_is_byte_deterministic(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
