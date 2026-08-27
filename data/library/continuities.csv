@@ -1,6 +1,6 @@
-continuity_id,label_ja,label_en,continuity_kind,certainty,notes
-continuity-fox-x-men,FOX X-MEN,,legacy_world_group,unknown,Migrated from legacy chronology world_group as a seed; independent continuity audit required.
-continuity-mcu,MCU,,legacy_world_group,unknown,Migrated from legacy chronology world_group as a seed; independent continuity audit required.
-continuity-ssu,SSU,,legacy_world_group,unknown,Migrated from legacy chronology world_group as a seed; independent continuity audit required.
-continuity-spider-man-amazing,Spider-Man / Amazing,,legacy_world_group,unknown,Migrated from legacy chronology world_group as a seed; independent continuity audit required.
-continuity-spider-man-raimi,Spider-Man / Raimi,,legacy_world_group,unknown,Migrated from legacy chronology world_group as a seed; independent continuity audit required.
+continuity_id,label_ja,label_en,continuity_kind,certainty,verification_status,notes
+continuity-fox-x-men,FOX X-MEN,,legacy_world_group,unknown,legacy_seed,Migrated from legacy chronology world_group as a seed; independent continuity audit required.
+continuity-mcu,MCU,,legacy_world_group,unknown,legacy_seed,Migrated from legacy chronology world_group as a seed; independent continuity audit required.
+continuity-ssu,SSU,,legacy_world_group,unknown,legacy_seed,Migrated from legacy chronology world_group as a seed; independent continuity audit required.
+continuity-spider-man-amazing,Spider-Man / Amazing,,legacy_world_group,unknown,legacy_seed,Migrated from legacy chronology world_group as a seed; independent continuity audit required.
+continuity-spider-man-raimi,Spider-Man / Raimi,,legacy_world_group,unknown,legacy_seed,Migrated from legacy chronology world_group as a seed; independent continuity audit required.

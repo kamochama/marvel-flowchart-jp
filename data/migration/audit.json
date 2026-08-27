@@ -26,6 +26,23 @@
       "connections": 199,
       "entity_returns": 8,
       "story_paths": 83
+    },
+    "verification_statuses": {
+      "appearances.csv": {
+        "legacy_seed": 164
+      },
+      "continuities.csv": {
+        "legacy_seed": 5
+      },
+      "portrayals.csv": {
+        "legacy_seed": 6
+      },
+      "work_continuities.csv": {
+        "legacy_seed": 103
+      },
+      "work_relations.csv": {
+        "legacy_seed": 162
+      }
     }
   },
   "ok": true,
