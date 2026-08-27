@@ -28,9 +28,15 @@ HIGH_IMPACT_WORK_ID_FRAGMENTS = (
 ALLOWED_STATUSES = {"legacy_seed", "source_verified", "conflicted", "superseded"}
 ALLOWED_TRANSITIONS = {
     "legacy_seed": {"legacy_seed", "source_verified", "conflicted", "superseded"},
-    "source_verified": {"conflicted", "superseded"},
+    "source_verified": {"source_verified", "conflicted", "superseded"},
     "conflicted": {"conflicted", "source_verified", "superseded"},
     "superseded": {"superseded"},
+}
+SAME_STATUS_REVIEW_ACTIONS = {
+    "retained_seed",
+    "verified_rechecked",
+    "conflict_rechecked",
+    "superseded_rechecked",
 }
 
 
@@ -96,7 +102,7 @@ def validate_reviews(
                 issues.append(_issue("created_verified_without_evidence", f"reviews.csv row {index} created_verified requires at least one evidence id", row=str(index), review_id=review_id))
         else:
             allowed = previous in ALLOWED_STATUSES and new in ALLOWED_TRANSITIONS.get(previous, set())
-            if previous == new and action not in {"retained_seed", "conflict_rechecked", "superseded_rechecked"}:
+            if previous == new and action not in SAME_STATUS_REVIEW_ACTIONS:
                 allowed = False
         if not allowed:
             issues.append(_issue("invalid_review_transition", f"reviews.csv row {index} invalid transition {previous!r}->{new!r} for action {action!r}", row=str(index), review_id=review_id))
