@@ -7,8 +7,8 @@ from scripts.library_v5.db_schema import DB_SCHEMA_VERSION, canonical_table_name
 
 
 class LibraryDbSchemaTests(unittest.TestCase):
-    def test_phase1_schema_has_current_canonical_tables_and_reviews(self) -> None:
-        self.assertEqual(DB_SCHEMA_VERSION, "1.0-phase1")
+    def test_phase2_schema_has_current_canonical_tables_and_reviews(self) -> None:
+        self.assertEqual(DB_SCHEMA_VERSION, "1.1-phase2-events")
         self.assertEqual(
             canonical_table_names(),
             (
@@ -22,6 +22,12 @@ class LibraryDbSchemaTests(unittest.TestCase):
                 "work_continuities",
                 "chronology_assertions",
                 "work_relations",
+                "events",
+                "event_occurrences",
+                "event_participants",
+                "event_relations",
+                "multiverse_transitions",
+                "transition_participants",
                 "sources",
                 "evidence",
                 "reviews",
