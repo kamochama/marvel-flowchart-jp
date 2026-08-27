@@ -5,7 +5,6 @@ import hashlib
 import json
 from collections import Counter
 from pathlib import Path
-from typing import Iterable
 
 
 FACT_ID_COLUMNS = {
@@ -15,6 +14,7 @@ FACT_ID_COLUMNS = {
     "entity_relations.csv": "entity_relation_id",
     "chronology_assertions.csv": "chronology_assertion_id",
     "work_continuities.csv": "work_continuity_id",
+    "continuities.csv": "continuity_id",
 }
 
 
@@ -76,11 +76,11 @@ def check_evidence_coverage(tables: dict[str, list[dict[str, str]]]) -> list[dic
     issues: list[dict[str, str]] = []
     for table_name, id_column in FACT_ID_COLUMNS.items():
         for row in tables.get(table_name, []):
-            if (row.get("verification_status") or "").strip() != "verified":
+            if (row.get("verification_status") or "").strip() != "source_verified":
                 continue
             fact_id = (row.get(id_column) or "").strip()
             if (table_name, fact_id) not in evidence_pairs:
-                issues.append(_issue("verified_without_evidence", f"verified {table_name} fact lacks evidence", table=table_name, fact_id=fact_id))
+                issues.append(_issue("source_verified_without_evidence", f"source_verified {table_name} fact lacks evidence", table=table_name, fact_id=fact_id))
     return issues
 
 
@@ -131,6 +131,16 @@ def build_manifest(repo_root: Path) -> dict[str, object]:
     return {"schema_version": "5.0", "hash_algorithm": "sha256", "files": files}
 
 
+def _verification_status_counts(tables: dict[str, list[dict[str, str]]]) -> dict[str, dict[str, int]]:
+    result: dict[str, dict[str, int]] = {}
+    for table_name, rows in sorted(tables.items()):
+        if not rows or "verification_status" not in rows[0]:
+            continue
+        counts = Counter((row.get("verification_status") or "").strip() or "<blank>" for row in rows)
+        result[table_name] = dict(sorted(counts.items()))
+    return result
+
+
 def audit_repository(repo_root: Path) -> dict[str, object]:
     schema_path = repo_root / "data" / "library" / "schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
@@ -158,9 +168,6 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
     issues.extend(check_foreign_keys(tables, table_schemas))
     issues.extend(check_evidence_coverage(tables))
 
-    # Evidence uses a polymorphic fact reference. Validate source FK through the
-    # schema above, then verify the referenced fact exists when it targets a
-    # canonical table with a known primary key.
     fact_indexes: dict[str, set[str]] = {}
     for table_name, table_schema in table_schemas.items():
         pk = table_schema.get("primary_key")
@@ -196,7 +203,6 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
         },
     ))
 
-    # Derived reason IDs and logical edge IDs must also be unique.
     derived_checks = [
         ("data/derived/work_pair_reasons.csv", "reason_id"),
         ("data/derived/work_edges_all.csv", "edge_id"),
@@ -212,6 +218,7 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
         "issues": sorted(issues, key=lambda i: (i.get("code", ""), i.get("table", ""), i.get("row", ""), i.get("message", ""))),
         "observed_counts": {
             "canonical_tables": {name: len(rows) for name, rows in sorted(tables.items())},
+            "verification_statuses": _verification_status_counts(tables),
             "legacy_inputs": {
                 "connections": len(connection_rows),
                 "char_links": len(char_rows),
@@ -239,6 +246,13 @@ def write_audit_outputs(repo_root: Path) -> dict[str, object]:
 
     counts = audit["observed_counts"]
     issue_lines = [f"- [{i['code']}] {i['message']}" for i in audit["issues"]] or ["- none"]
+    verification_lines: list[str] = []
+    for table_name, statuses in counts["verification_statuses"].items():
+        status_text = ", ".join(f"{status}={count}" for status, count in statuses.items())
+        verification_lines.append(f"- {table_name}: {status_text}")
+    if not verification_lines:
+        verification_lines = ["- none"]
+
     md = "\n".join([
         "# Marvel Library v5 Migration Audit",
         "",
@@ -251,6 +265,10 @@ def write_audit_outputs(repo_root: Path) -> dict[str, object]:
         "## Legacy input coverage",
         "",
         *(f"- {k}: {v}" for k, v in counts["legacy_inputs"].items()),
+        "",
+        "## Verification backlog",
+        "",
+        *verification_lines,
         "",
         "## Derived observations",
         "",
