@@ -1,1 +1,2 @@
 transition_participant_id,transition_id,entity_id,participant_role,identity_certainty,verification_status,notes
+transition-participant-thunderbolts-f4-excelsior,event-thunderbolts-f4-excelsior-arrival,entity-fantastic-four-excelsior,vehicle,confirmed,source_verified,Only the Fantastic Four-marked spacecraft is recorded as a confirmed transition participant; Reed Sue Johnny and Ben are not asserted to be aboard.

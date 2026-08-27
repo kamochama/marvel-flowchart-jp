@@ -43,15 +43,23 @@ def _reason_rows(db_path: Path) -> list[dict[str, str]]:
     try:
         cursor = connection.execute(
             """
-            SELECT source_work_id,target_work_id,reason_kind,
-                   canonical_entity_id,relation_id,
-                   transition_id,event_id,event_occurrence_id,
-                   source_continuity_id,destination_continuity_id,participant_fact_ids,
-                   support_fact_ids,appearance_kinds,verification_statuses,certainty_values,
-                   notes,reason_discriminator
-            FROM v_work_connection_reasons
-            ORDER BY source_work_id,target_work_id,reason_kind,
-                     canonical_entity_id,relation_id,transition_id,event_occurrence_id,reason_discriminator
+            SELECT r.source_work_id,r.target_work_id,r.reason_kind,
+                   r.canonical_entity_id,r.relation_id,
+                   r.transition_id,r.event_id,r.event_occurrence_id,
+                   r.source_continuity_id,r.destination_continuity_id,r.participant_fact_ids,
+                   r.support_fact_ids,r.appearance_kinds,r.verification_statuses,r.certainty_values,
+                   CASE
+                     WHEN r.reason_kind='multiverse_transition'
+                          AND TRIM(COALESCE(eo.notes, '')) <> ''
+                     THEN r.notes || '; ' || eo.notes
+                     ELSE r.notes
+                   END AS notes,
+                   r.reason_discriminator
+            FROM v_work_connection_reasons AS r
+            LEFT JOIN event_occurrences AS eo
+              ON eo.event_occurrence_id = r.event_occurrence_id
+            ORDER BY r.source_work_id,r.target_work_id,r.reason_kind,
+                     r.canonical_entity_id,r.relation_id,r.transition_id,r.event_occurrence_id,r.reason_discriminator
             """
         )
         rows: list[dict[str, str]] = []
