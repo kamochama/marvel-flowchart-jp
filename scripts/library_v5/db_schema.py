@@ -4,11 +4,11 @@ import sqlite3
 from dataclasses import dataclass
 
 
-DB_SCHEMA_VERSION = "1.0-phase1"
+DB_SCHEMA_VERSION = "1.1-phase2-events"
 
 VERIFICATION_STATUSES = ("legacy_seed", "source_verified", "conflicted", "superseded")
 CERTAINTIES = ("confirmed", "probable", "uncertain", "unknown")
-ENTITY_TYPES = ("character", "organization", "artifact", "place", "species", "event", "concept")
+ENTITY_TYPES = ("character", "organization", "artifact", "place", "species", "event", "concept", "vehicle")
 ENTITY_RELATION_KINDS = ("variant_of", "identity_of", "successor_identity_of", "member_of")
 APPEARANCE_KINDS = ("onscreen", "voice", "post_credit", "archive", "mention", "photo_or_recording", "unknown")
 PORTRAYAL_KINDS = ("same_character", "variant", "voice", "archive", "unknown_role")
@@ -17,6 +17,13 @@ RELATION_SCOPES = ("story", "character", "crossover", "world_lore", "promotion",
 DIRECTNESSES = ("direct", "strong", "indirect", "proxy", "promotional")
 CONTINUITY_SCOPES = ("same_or_intended", "multiverse", "variant", "promotional", "uncertain_legacy_tv", "uncertain_return_continuity")
 WORK_RELATION_KINDS = ("sequel", "spinoff", "lead_in", "aftermath", "crossover", "world_lore", "promotion", "variant_callback", "story_link")
+EVENT_KINDS = ("multiverse_transition", "battle", "disaster", "spell", "tva_intervention", "incursion", "other")
+EVENT_OCCURRENCE_KINDS = ("depicted", "post_credit", "referenced", "flashback", "caused", "aftermath")
+EVENT_PARTICIPANT_ROLES = ("participant", "traveler", "vehicle", "summoner", "carrier", "affected", "observer", "other")
+EVENT_RELATION_KINDS = ("causes", "enables", "prevents", "aftermath_of", "part_of", "precedes")
+TRANSITION_KINDS = ("physical_crossing", "summoning", "portal", "spell_displacement", "tva_transfer", "incursion_contact", "universe_exchange", "unknown")
+TRANSITION_PARTICIPANT_ROLES = ("traveler", "vehicle", "summoner", "carrier", "affected", "other")
+DIRECTIONAL_TRANSITION_KINDS = ("physical_crossing", "summoning", "spell_displacement", "tva_transfer")
 
 
 def _in_check(column: str, values: tuple[str, ...]) -> str:
@@ -55,6 +62,12 @@ TABLE_SPECS: tuple[TableSpec, ...] = (
     TableSpec("work_continuities", "data/library/work_continuities.csv", "work_continuity_id", ("work_continuity_id", "work_id", "continuity_id", "relation_to_continuity", "certainty", "verification_status", "notes")),
     TableSpec("chronology_assertions", "data/library/chronology_assertions.csv", "chronology_assertion_id", ("chronology_assertion_id", "continuity_id", "earlier_work_id", "later_work_id", "certainty", "verification_status", "notes")),
     TableSpec("work_relations", "data/library/work_relations.csv", "work_relation_id", ("work_relation_id", "source_work_id", "target_work_id", "relation_kind", "relation_scope", "directness", "continuity_scope", "certainty", "verification_status", "notes")),
+    TableSpec("events", "data/library/events.csv", "event_id", ("event_id", "name_ja", "name_en", "event_kind", "primary_continuity_id", "certainty", "verification_status", "notes")),
+    TableSpec("event_occurrences", "data/library/event_occurrences.csv", "event_occurrence_id", ("event_occurrence_id", "event_id", "work_id", "occurrence_kind", "certainty", "verification_status", "notes")),
+    TableSpec("event_participants", "data/library/event_participants.csv", "event_participant_id", ("event_participant_id", "event_id", "entity_id", "participant_role", "certainty", "verification_status", "notes")),
+    TableSpec("event_relations", "data/library/event_relations.csv", "event_relation_id", ("event_relation_id", "source_event_id", "relation_kind", "target_event_id", "certainty", "verification_status", "notes")),
+    TableSpec("multiverse_transitions", "data/library/multiverse_transitions.csv", "transition_id", ("transition_id", "source_continuity_id", "destination_continuity_id", "transition_kind", "direction_certainty", "verification_status", "notes")),
+    TableSpec("transition_participants", "data/library/transition_participants.csv", "transition_participant_id", ("transition_participant_id", "transition_id", "entity_id", "participant_role", "identity_certainty", "verification_status", "notes")),
     TableSpec("sources", "data/library/sources.csv", "source_id", ("source_id", "purpose", "official_source", "checked_point", "url")),
     TableSpec("evidence", "data/library/evidence.csv", "evidence_id", ("evidence_id", "fact_table", "fact_id", "source_id", "evidence_role", "quoted_or_paraphrased_note", "verified_at")),
     TableSpec("reviews", "data/content_audit/reviews.csv", "review_id", ("review_id", "fact_table", "fact_id", "previous_verification_status", "new_verification_status", "review_action", "evidence_ids", "reviewed_at", "notes")),
@@ -190,6 +203,79 @@ DDL: tuple[str, ...] = (
         directness TEXT NOT NULL {_in_check('directness', DIRECTNESSES)},
         continuity_scope TEXT NOT NULL {_in_check('continuity_scope', CONTINUITY_SCOPES)},
         certainty TEXT NOT NULL {_in_check('certainty', CERTAINTIES)},
+        verification_status TEXT NOT NULL {_in_check('verification_status', VERIFICATION_STATUSES)},
+        notes TEXT NOT NULL DEFAULT ''
+    )
+    """,
+    f"""
+    CREATE TABLE events (
+        event_id TEXT PRIMARY KEY CHECK(length(trim(event_id)) > 0),
+        name_ja TEXT NOT NULL DEFAULT '',
+        name_en TEXT NOT NULL DEFAULT '',
+        event_kind TEXT NOT NULL {_in_check('event_kind', EVENT_KINDS)},
+        primary_continuity_id TEXT REFERENCES continuities(continuity_id),
+        certainty TEXT NOT NULL {_in_check('certainty', CERTAINTIES)},
+        verification_status TEXT NOT NULL {_in_check('verification_status', VERIFICATION_STATUSES)},
+        notes TEXT NOT NULL DEFAULT ''
+    )
+    """,
+    f"""
+    CREATE TABLE event_occurrences (
+        event_occurrence_id TEXT PRIMARY KEY CHECK(length(trim(event_occurrence_id)) > 0),
+        event_id TEXT NOT NULL REFERENCES events(event_id),
+        work_id TEXT NOT NULL REFERENCES works(work_id),
+        occurrence_kind TEXT NOT NULL {_in_check('occurrence_kind', EVENT_OCCURRENCE_KINDS)},
+        certainty TEXT NOT NULL {_in_check('certainty', CERTAINTIES)},
+        verification_status TEXT NOT NULL {_in_check('verification_status', VERIFICATION_STATUSES)},
+        notes TEXT NOT NULL DEFAULT ''
+    )
+    """,
+    f"""
+    CREATE TABLE event_participants (
+        event_participant_id TEXT PRIMARY KEY CHECK(length(trim(event_participant_id)) > 0),
+        event_id TEXT NOT NULL REFERENCES events(event_id),
+        entity_id TEXT NOT NULL REFERENCES entities(entity_id),
+        participant_role TEXT NOT NULL {_in_check('participant_role', EVENT_PARTICIPANT_ROLES)},
+        certainty TEXT NOT NULL {_in_check('certainty', CERTAINTIES)},
+        verification_status TEXT NOT NULL {_in_check('verification_status', VERIFICATION_STATUSES)},
+        notes TEXT NOT NULL DEFAULT ''
+    )
+    """,
+    f"""
+    CREATE TABLE event_relations (
+        event_relation_id TEXT PRIMARY KEY CHECK(length(trim(event_relation_id)) > 0),
+        source_event_id TEXT NOT NULL REFERENCES events(event_id),
+        relation_kind TEXT NOT NULL {_in_check('relation_kind', EVENT_RELATION_KINDS)},
+        target_event_id TEXT NOT NULL REFERENCES events(event_id),
+        certainty TEXT NOT NULL {_in_check('certainty', CERTAINTIES)},
+        verification_status TEXT NOT NULL {_in_check('verification_status', VERIFICATION_STATUSES)},
+        notes TEXT NOT NULL DEFAULT ''
+    )
+    """,
+    f"""
+    CREATE TABLE multiverse_transitions (
+        transition_id TEXT PRIMARY KEY REFERENCES events(event_id),
+        source_continuity_id TEXT REFERENCES continuities(continuity_id),
+        destination_continuity_id TEXT REFERENCES continuities(continuity_id),
+        transition_kind TEXT NOT NULL {_in_check('transition_kind', TRANSITION_KINDS)},
+        direction_certainty TEXT NOT NULL {_in_check('direction_certainty', CERTAINTIES)},
+        verification_status TEXT NOT NULL {_in_check('verification_status', VERIFICATION_STATUSES)},
+        notes TEXT NOT NULL DEFAULT '',
+        CHECK (
+            transition_kind NOT IN ('physical_crossing','summoning','spell_displacement','tva_transfer')
+            OR source_continuity_id IS NULL
+            OR destination_continuity_id IS NULL
+            OR source_continuity_id <> destination_continuity_id
+        )
+    )
+    """,
+    f"""
+    CREATE TABLE transition_participants (
+        transition_participant_id TEXT PRIMARY KEY CHECK(length(trim(transition_participant_id)) > 0),
+        transition_id TEXT NOT NULL REFERENCES multiverse_transitions(transition_id),
+        entity_id TEXT NOT NULL REFERENCES entities(entity_id),
+        participant_role TEXT NOT NULL {_in_check('participant_role', TRANSITION_PARTICIPANT_ROLES)},
+        identity_certainty TEXT NOT NULL {_in_check('identity_certainty', CERTAINTIES)},
         verification_status TEXT NOT NULL {_in_check('verification_status', VERIFICATION_STATUSES)},
         notes TEXT NOT NULL DEFAULT ''
     )
