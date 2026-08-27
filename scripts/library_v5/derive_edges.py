@@ -54,6 +54,44 @@ def _reason_row(
     }
 
 
+def _identity_canonical_map(entity_relations: list[dict[str, str]]) -> dict[str, str]:
+    """Resolve directed identity_of aliases to one canonical entity.
+
+    identity_of is deliberately different from variant_of: only identity_of
+    collapses entities automatically. The source side is treated as the alias
+    and the target side as the canonical identity. Contradictory mappings or
+    cycles are rejected instead of being resolved arbitrarily.
+    """
+    direct: dict[str, str] = {}
+    for row in entity_relations:
+        if (row.get("verification_status") or "").strip() == "superseded":
+            continue
+        if (row.get("relation_kind") or "").strip() != "identity_of":
+            continue
+        source = (row.get("source_entity_id") or "").strip()
+        target = (row.get("target_entity_id") or "").strip()
+        if not source or not target or source == target:
+            continue
+        previous = direct.get(source)
+        if previous and previous != target:
+            raise ValueError(f"conflicting identity_of targets for {source}: {previous} vs {target}")
+        direct[source] = target
+
+    def resolve(entity_id: str) -> str:
+        seen: set[str] = set()
+        current = entity_id
+        while current in direct:
+            if current in seen:
+                chain = " -> ".join(sorted(seen | {current}))
+                raise ValueError(f"identity_of cycle detected: {chain}")
+            seen.add(current)
+            current = direct[current]
+        return current
+
+    entities = set(direct) | set(direct.values())
+    return {entity_id: resolve(entity_id) for entity_id in entities}
+
+
 def _variant_components(entity_relations: list[dict[str, str]]) -> dict[str, str]:
     parent: dict[str, str] = {}
 
@@ -115,9 +153,11 @@ def derive_reasons(
         raise ValueError("target_centric mode requires target_work_id")
 
     work_order = {row["work_id"].strip(): _work_sort_key(row) for row in works}
+    identity_map = _identity_canonical_map(entity_relations)
     appearances_by_entity: dict[str, dict[str, list[dict[str, str]]]] = defaultdict(lambda: defaultdict(list))
     for row in appearances:
-        entity_id = (row.get("entity_id") or "").strip()
+        raw_entity_id = (row.get("entity_id") or "").strip()
+        entity_id = identity_map.get(raw_entity_id, raw_entity_id)
         work_id = (row.get("work_id") or "").strip()
         status = (row.get("verification_status") or "").strip()
         if entity_id and work_id and status != "superseded":
