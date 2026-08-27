@@ -39,7 +39,7 @@ The HTML flowchart must stop being a place where facts exist independently. It b
 
 ### 2.1 Canonical text, compiled database
 
-`data/library/` remains canonical. SQLite is rebuilt deterministically from canonical text input.
+`data/library/` remains canonical. SQLite is rebuilt from canonical text input.
 
 Reasons:
 
@@ -47,7 +47,7 @@ Reasons:
 - evidence and audit decisions are reviewable line by line;
 - accidental database binary rewrites do not obscure factual changes;
 - the database can be deleted and rebuilt without losing knowledge;
-- CI can compare deterministic database/query outputs against canonical hashes.
+- CI can compare stable schema/data fingerprints and query outputs against canonical hashes.
 
 The generated SQLite file must never be edited as the authoritative source.
 
@@ -59,7 +59,7 @@ Examples:
 
 - “First Steps is set on Earth-828” → continuity membership;
 - “the Fantastic Four ship travels from Earth-828 to Earth-616” → multiverse transition;
-- “the ship's arrival is shown in Thunderbolts*” → transition occurrence in a containing work/event;
+- “the ship's arrival is shown in Thunderbolts*” → event occurrence;
 - “First Steps directly leads into Doomsday” → explicit work relation;
 - “Michael Keaton plays Adrian Toomes in Homecoming and Morbius” → portrayal facts;
 - “Adrian Toomes is the same individual after crossing universes” → same entity ID across appearances, supported by evidence.
@@ -68,15 +68,7 @@ No one `work_relations` row should be forced to carry all of those meanings.
 
 ### 2.3 Derived edges are views, not canonical facts
 
-A rendered line may be derived from:
-
-- explicit work relations;
-- shared entity appearances;
-- an entity moving between universes;
-- a shared event or causal event relation;
-- organization membership;
-- artifact transfer/ownership;
-- a verified production/meta relation when the selected view requests it.
+A rendered line may be derived from explicit work relations, shared entity appearances, universe transitions, shared/causal events, organization membership, artifact transfer/ownership, or verified production/meta relations when a view requests them.
 
 The reason list remains available so the UI can explain **why** a line exists.
 
@@ -100,11 +92,13 @@ Review history and approved/pending canonical patches. `reviews.csv` is persiste
 
 Generated from canonical facts. Safe to delete and rebuild. Not authoritative.
 
-The implementation may avoid committing the SQLite binary if binary churn is undesirable; CI may create it as an artifact. The semantic requirement is that every HTML/data export is produced by querying this compiled database rather than directly re-implementing joins over canonical CSV in the HTML generator.
+The SQLite binary does **not** need to be byte-identical across environments. Determinism is measured by canonical input hashes, schema version, ordered logical table contents, versioned view outputs, and a stable logical database fingerprint. CI may store the binary as an artifact rather than commit it.
+
+Every HTML/data export must be produced by querying the compiled database rather than re-implementing canonical joins independently in the HTML generator.
 
 ### 3.4 Derived exports — `data/derived/`
 
-Generated graph edges, reason tables, prewatch data, chronology views, audit summaries, and static JSON payloads.
+Generated graph edges, reason tables, prewatch data, chronology views, audit summaries, database fingerprints, and static JSON payloads.
 
 ### 3.5 Flowchart view configuration — `views/flowchart/`
 
@@ -112,15 +106,13 @@ Presentation policy only: lanes, labels, line strength, glow, dimming, filters, 
 
 ## 4. Database domains and canonical tables
 
-DB v1 is organized by domain rather than by one giant generic triple table.
+DB v1 uses practical normalized domain tables rather than one generic subject-predicate-object table.
 
 ### 4.1 Works and release/production metadata
 
 #### `works`
 
-Existing stable `work_id` remains the primary key.
-
-Core fields include titles, format/type, franchise/label metadata that is factual rather than layout-specific, and stable identifiers.
+Existing stable `work_id` remains the primary key. It stores work identity and core audiovisual metadata, not layout placement.
 
 #### `releases`
 
@@ -138,21 +130,17 @@ Fields:
 - `verification_status`
 - `notes`
 
-This avoids collapsing Japanese release date, US release date, streaming date, and rerelease into one work field.
+This separates Japanese release date, US release date, streaming date, and rerelease.
 
 #### `production_status_assertions`
 
-Tracks current production/release status as auditable assertions rather than overwriting history.
-
-Examples: announced, filming, completed, delayed, cancelled, released.
-
-Fields include assertion ID, work ID, status, effective/checked date, certainty, verification status, and notes.
+Auditable time-stamped production/release status assertions such as announced, filming, completed, delayed, cancelled, and released. Historical assertions are retained instead of overwritten.
 
 ### 4.2 Real-world people and credits
 
 #### `people`
 
-Existing performer/person registry.
+Existing real-person registry.
 
 #### `credits`
 
@@ -163,17 +151,17 @@ Fields:
 - `credit_id` PK
 - `work_id` FK
 - `person_id` FK
-- `credit_kind` (`director`, `writer`, `producer`, `composer`, etc.)
+- `credit_kind` (`director`, `writer`, `producer`, `composer`, `cast_announced`, etc.)
 - `credit_detail`
 - `certainty`
 - `verification_status`
 - `notes`
 
+A cast announcement with an unknown role can be stored here without inventing a character identity.
+
 #### `portrayals`
 
-Retained as the acting-specific bridge between real people and fictional entities.
-
-A person appearing in a cast announcement with an unknown role may exist as a person/cast credit while `entity_id` remains unset until role evidence exists.
+Acting-specific bridge between real people and fictional entities. A role with insufficient evidence may keep `entity_id` null/unknown according to the existing unknown-role rule.
 
 ### 4.3 Fictional entities and identity
 
@@ -183,15 +171,15 @@ One row per fictional entity identity.
 
 Initial entity types:
 
-- character
-- organization
-- artifact
-- place
-- species
-- vehicle
-- abstract_concept
+- `character`
+- `organization`
+- `artifact`
+- `place`
+- `species`
+- `vehicle`
+- `abstract_concept`
 
-`event` is removed from the long-term entity taxonomy because events become first-class rows in `events`.
+`event` is removed from the long-term entity taxonomy because events become first-class rows in `events`. Existing migrated event-like entities are superseded through a migration ledger rather than silently deleted.
 
 #### `entity_aliases`
 
@@ -206,13 +194,11 @@ Fields:
 - `alias_kind` (`name`, `title`, `mantle`, `codename`, `legacy_label`)
 - `validity_notes`
 
-This allows “Frank Castle”, “Punisher”, localized names, and mantles to be indexed without creating duplicate entities.
+This allows Frank Castle / Punisher, localized names, and mantles to be indexed without duplicate identities.
 
 #### `entity_relations`
 
-Typed relationships between entity identities.
-
-Identity-oriented kinds include:
+Identity-oriented entity relations:
 
 - `identity_of`
 - `variant_of`
@@ -220,7 +206,7 @@ Identity-oriented kinds include:
 - `clone_of`
 - `alternate_form_of`
 
-Social/organizational relationships that need temporal/event context should normally use dedicated membership/relationship tables rather than overloading identity relations.
+Existing legacy alias entities may continue to resolve through `identity_of` during migration. New simple aliases should normally use `entity_aliases`, not create new entities.
 
 ### 4.4 Appearances and fictional participation
 
@@ -230,24 +216,25 @@ Canonical work × entity appearance facts.
 
 Appearance kind remains explicit: onscreen, voice, post-credit, archive, mention, recording/photo, unknown.
 
-An appearance does not by itself say whether the entity belongs to the same universe as another appearance. Continuity membership and transitions provide that context.
+An appearance does not itself assert same-universe continuity.
 
 #### `entity_memberships`
 
-Tracks fictional membership/affiliation such as Avengers, Thunderbolts/New Avengers, TVA, X-Men, Illuminati, Wakandan institutions, etc.
+Tracks membership/affiliation such as Avengers, Thunderbolts/New Avengers, TVA, X-Men, Illuminati, and organizations/institutions.
 
 Fields:
 
 - `membership_id` PK
 - `member_entity_id` FK
 - `group_entity_id` FK
-- optional `work_id` FK or `event_id` FK giving observation/context
+- optional `work_id` FK
+- optional `event_id` FK
 - `membership_kind`
 - `certainty`
 - `verification_status`
 - `notes`
 
-Membership must not automatically create a work-to-work edge unless a derived view explicitly asks for that relation.
+Membership does not automatically create work edges unless a derived view requests that semantic relation.
 
 ### 4.5 Continuities, universes, timelines
 
@@ -255,19 +242,17 @@ Membership must not automatically create a work-to-work edge unless a derived vi
 
 One row per named or intentionally unnamed continuity context.
 
-Examples include Earth-616/MCU main universe, Earth-828, Earth-838, Raimi Spider-Man universe, Webb Spider-Man universe, a Sony/Venom/Morbius universe, TVA/outside-timeline context, and explicitly unresolved legacy return buckets.
+Examples include MCU main universe, Earth-828, Earth-838, Raimi Spider-Man universe, Webb Spider-Man universe, Sony/Venom/Morbius universe, TVA/outside-timeline context, and explicitly unresolved legacy-return contexts.
 
-A continuity row may be named only as specifically as evidence supports. Unknown universe numbers are not invented.
+A continuity is named only as specifically as evidence supports. Unknown Earth numbers are not invented.
 
 #### `work_continuities`
 
-Maps works to their primary/depicted continuity context.
-
-A franchise being produced by Marvel Studios is not sufficient to assert `same universe` membership.
+Maps works to primary/depicted continuity contexts. Marvel Studios/MCU franchise inclusion is not sufficient to assert same-universe membership.
 
 #### `chronology_assertions`
 
-Retained for source-backed relative ordering. Layout order is not chronology.
+Source-backed relative ordering. Layout order remains separate.
 
 ### 4.6 Events
 
@@ -286,19 +271,11 @@ Fields:
 - `verification_status`
 - `notes`
 
-Examples:
-
-- Battle of New York
-- Blip / Snap-related events
-- Battle of Earth
-- Westview Hex
-- universe-incursion events
-- TVA pruning/intervention events
-- the Thunderbolts* post-credit F4 ship arrival
+Examples include Battle of New York, Blip-related events, Battle of Earth, Westview Hex, incursions, TVA interventions, and the Thunderbolts* post-credit Fantastic Four ship arrival.
 
 #### `event_occurrences`
 
-Links an event to the work in which it is depicted, referenced, or caused.
+Links an event to the work in which it is depicted, referenced, caused, or revisited.
 
 Fields:
 
@@ -310,71 +287,72 @@ Fields:
 - `verification_status`
 - `notes`
 
-This prevents the containing work from being confused with the event itself.
+The containing work is therefore not confused with the event itself.
 
 #### `event_participants`
 
-Links fictional entities to events.
-
-Fields include event, entity, participant role, certainty, verification status, notes.
+Links fictional entities to events, with participant role, certainty, verification status, and notes.
 
 #### `event_relations`
 
-Typed event-to-event causal or temporal relations.
-
-Initial kinds:
-
-- `causes`
-- `enables`
-- `prevents`
-- `aftermath_of`
-- `part_of`
-- `precedes`
-
-This supports event-level causal queries without inventing work edges.
+Typed event-to-event relations such as `causes`, `enables`, `prevents`, `aftermath_of`, `part_of`, and `precedes`.
 
 ### 4.7 Multiverse transitions
 
+A universe crossing is modeled as a specialized event, not fundamentally as a work-to-work edge.
+
 #### `multiverse_transitions`
 
-This is a required DB v1 table, introduced because a universe crossing is not fundamentally a work-to-work relation.
+One-to-one specialized data for an `events` row whose `event_kind` is a multiverse transition.
 
 Fields:
 
-- `transition_id` PK
-- `containing_work_id` FK — work in which the transition is depicted/revealed
-- optional `event_id` FK — associated event when modeled
-- `traveler_entity_id` FK — character, object, vehicle, organization proxy, etc.
+- `transition_id` PK and FK to `events.event_id`
 - optional `source_continuity_id` FK
 - optional `destination_continuity_id` FK
 - `transition_kind` (`physical_crossing`, `summoning`, `portal`, `spell_displacement`, `tva_transfer`, `incursion_contact`, `universe_exchange`, `unknown`)
 - `direction_certainty`
-- `identity_certainty` — certainty that the traveler is the same individual/object rather than a variant
 - `verification_status`
 - `notes`
 
-Unknown source/destination is allowed. Unknown facts stay null rather than receiving invented Earth numbers.
+The containing work is obtained through `event_occurrences`; it is not duplicated in this table.
+
+#### `transition_participants`
+
+Many-to-many transition traveler/subject facts.
+
+Fields:
+
+- `transition_participant_id` PK
+- `transition_id` FK
+- `entity_id` FK
+- `participant_role` (`traveler`, `vehicle`, `summoner`, `carrier`, `affected`, etc.)
+- `identity_certainty` — certainty that this is the same individual/object rather than a variant
+- `verification_status`
+- `notes`
+
+This avoids creating multiple duplicated transition rows when a team, several characters, or a vehicle carrying characters crosses universes together.
+
+Unknown source/destination is allowed and stays null rather than receiving an invented universe number.
 
 Examples the model must represent cleanly:
 
 - Raimi Peter Parker → MCU main universe in No Way Home;
 - Webb Peter Parker → MCU main universe in No Way Home;
-- Eddie Brock/Venom → MCU and return in the No Way Home/Let There Be Carnage crossover sequence;
+- Eddie Brock/Venom → MCU and back in the Let There Be Carnage / No Way Home sequence;
 - Adrian Toomes → Sony/Venom/Morbius universe after No Way Home events;
 - Monica Rambeau → an alternate universe in The Marvels;
 - Doctor Strange/America Chavez traversing multiple universes in Multiverse of Madness;
-- Wade Wilson moving via TVA/multiverse mechanisms in Deadpool & Wolverine;
-- Earth-828 Fantastic Four-marked ship arriving in Earth-616 in Thunderbolts*.
+- Wade Wilson and other travelers moved through TVA/multiverse mechanisms in Deadpool & Wolverine;
+- the Earth-828 Fantastic Four-marked ship arriving in Earth-616 in Thunderbolts*.
 
-A transition may create a derived work connection, but the canonical fact remains the transition itself.
+A transition may generate one or more derived work connections, but the canonical fact remains the transition/event.
 
 ### 4.8 Artifacts, possession, and transfer
 
 #### `entity_possessions`
 
-Tracks possession/custody/use of artifacts or other entities.
-
-Examples: Captain America's shield, Mjolnir, Infinity Stones, Ten Rings.
+Tracks possession/custody/use of artifacts or other transferable fictional entities such as Captain America's shield, Mjolnir, Infinity Stones, and Ten Rings.
 
 Fields:
 
@@ -388,31 +366,27 @@ Fields:
 - `verification_status`
 - `notes`
 
-This allows succession/transfer queries without encoding them as work relations.
-
 ### 4.9 Explicit work relations
 
 #### `work_relations`
 
-Retained, but narrowed.
+Retained but narrowed to relations inherently between works or explicit editorial/story relationships that cannot be reduced to primitive facts.
 
-Use it only when the relation is inherently between works or is an explicit editorial/story relationship that cannot be reduced to more primitive facts.
-
-Good examples:
+Good uses:
 
 - direct sequel
 - spinoff
-- explicitly stated direct lead-in
-- explicit aftermath relationship
-- explicit story trilogy membership/order when source-backed
+- explicitly stated lead-in
+- explicit aftermath
+- explicit story trilogy/order
 - official promotion association as a production/meta fact
 
 Not appropriate as sole storage for:
 
-- a character merely appearing in both works;
+- a shared character appearance;
 - a person/object crossing universes;
 - actor reuse;
-- an artifact passing between characters;
+- artifact possession/transfer;
 - two works depicting the same event.
 
 ### 4.10 Evidence and review
@@ -421,57 +395,72 @@ Not appropriate as sole storage for:
 #### `evidence`
 #### `reviews`
 
-Existing evidence model remains normative.
-
-Every `source_verified` auditable fact requires qualifying evidence. Contradictory evidence remains recorded. Review history is not deleted when a fact is superseded.
+Existing evidence model remains normative. Every `source_verified` auditable fact requires qualifying evidence. Conflicting evidence remains recorded. Review history is retained when facts are superseded.
 
 ## 5. SQLite schema and constraints
 
 The SQLite compiler creates tables mirroring the canonical semantic model and applies stronger runtime constraints than CSV alone can express.
 
-Required constraints include:
+Required controls include:
 
-- primary-key uniqueness;
-- foreign keys enabled with `PRAGMA foreign_keys = ON`;
-- enum-style `CHECK` constraints where stable;
+- PK uniqueness;
+- `PRAGMA foreign_keys = ON`;
+- stable enum-style `CHECK` constraints where appropriate;
 - non-empty stable IDs;
-- uniqueness for semantically duplicate facts where safe;
-- source-verified fact/evidence integrity checked before DB publication;
-- no silently dangling appearance, portrayal, continuity, event, transition, or evidence references.
+- safe semantic uniqueness constraints;
+- source-verified fact/evidence integrity before DB publication;
+- no dangling appearance, portrayal, continuity, event, transition, participant, or evidence references.
 
-The compiler must fail rather than partially publish a broken DB.
+The compiler fails rather than partially publishing a broken DB.
 
-## 6. SQL views as the public query contract
+## 6. Logical database fingerprint
 
-Consumers should prefer named SQL views over hard-coding table joins.
+DB reproducibility is defined semantically, not by raw `.sqlite` bytes.
+
+The compiler produces `data/derived/db/library_db_manifest.json` containing:
+
+- canonical input SHA-256 hashes;
+- DB schema version;
+- normalized SQL schema hash;
+- ordered row count and content hash for every table;
+- ordered content hash for every versioned public view;
+- SQLite version as diagnostic metadata, not as a correctness key.
+
+Two builds from identical canonical facts are equivalent when these logical fingerprints match. Raw SQLite byte equality is not required because page layout and environment details may differ without changing database meaning.
+
+## 7. SQL views as the public query contract
+
+Consumers should prefer named versioned views over hard-coded joins.
 
 Initial DB v1 views:
 
 ### `v_work_connections_all`
 
-One logical work pair per connection, with aggregated reasons.
-
-Reasons can originate from explicit relations, shared entity identity, verified transitions, shared events, or other approved fact types.
+One logical work pair per connection with aggregated reasons.
 
 ### `v_work_connection_reasons`
 
-One row per reason supporting a work pair, preserving originating fact IDs, verification status, certainty, and reason type.
+One row per reason supporting a work pair, preserving source fact IDs, verification status, certainty, and reason type.
 
 ### `v_entity_work_history`
 
-All works for a fictional entity, with appearance kind, continuity context, portrayal info when available, and verification status.
+Works for an entity with appearance kind, continuity context, portrayal data when available, and verification state.
 
 ### `v_multiverse_crossings`
 
-Human-readable source/destination continuity, traveler identity, containing work, event, and evidence status.
+Source/destination continuity, transition event, containing work(s), participants/travelers, identity certainty, and evidence status.
 
 ### `v_continuity_works`
 
-Works and events belonging to/depicting each continuity context.
+Works/events associated with each continuity context.
+
+### `v_event_history`
+
+Event occurrences, participants, causes/aftermath links, and associated works.
 
 ### `v_prewatch_candidates`
 
-Input view for the existing prewatch policy engine. The final prewatch graph remains policy-derived rather than a fact table.
+Input view for the existing policy engine. Final prewatch remains derived policy, not canonical fact.
 
 ### `v_flowchart_nodes`
 
@@ -479,17 +468,13 @@ Work metadata needed by the HTML generator, excluding layout coordinates.
 
 ### `v_flowchart_edge_candidates`
 
-All potential physical work edges with reason summaries and verification/strength inputs. Visibility and visual strength remain view policy decisions outside canonical SQL facts.
+All candidate physical work edges with reason summaries and verification/strength inputs. Visibility and visual strength remain view policy decisions.
 
-Views are versioned contracts. HTML generation should depend on these views, not arbitrary ad hoc SQL over internal tables.
+These views are the database-facing interface for downstream exporters.
 
-## 7. HTML generation boundary
+## 8. HTML generation boundary
 
-GitHub Pages remains a static site.
-
-The browser does not need a live server database.
-
-Build pipeline:
+GitHub Pages remains static. The browser does not require a live server DB.
 
 ```text
 data/library + data/content_audit
@@ -505,53 +490,45 @@ export compact static JSON
 generate/assemble index.html
 ```
 
-The HTML must not contain manually maintained character/relation fact arrays such as legacy `CHAR_LINKS`.
+The HTML must not contain manually maintained fact arrays such as legacy `CHAR_LINKS`.
 
-The browser receives only the data required for interaction. Large evidence/source payloads may be split into lazy-load JSON if needed later.
+Browser payloads contain only data required for interaction. Large evidence/source payloads may later be split into lazy-load JSON.
 
-SQLite-in-the-browser/WASM is explicitly out of scope for DB v1 because it adds runtime weight without improving canonical correctness. It may be reconsidered only if future interactive query requirements justify it.
+SQLite-in-browser/WASM is out of scope for DB v1 because it adds runtime weight without improving canonical correctness.
 
-## 8. Derived edge policy
+## 9. Derived edge policy
 
-The database exposes **what relationships can be derived**, not how strongly the UI must show them.
+The database exposes what relationships can be derived, not how strongly the UI must show them.
 
-Every candidate edge carries reason metadata such as:
-
-- reason type;
-- source fact ID(s);
-- fact verification status;
-- certainty;
-- directness where applicable;
-- continuity/variant interpretation;
-- human-readable reason summary.
+Every edge reason carries source fact IDs, reason type, verification state, certainty, and continuity/variant interpretation.
 
 Examples:
 
-- verified direct work relation → strong candidate;
-- confirmed same-entity multiverse transition → strong crossover candidate;
-- same character appearing in two works → character-continuity candidate;
+- verified explicit lead-in → strong candidate;
+- confirmed same-individual multiverse transition → strong crossover candidate;
+- shared canonical character identity → character-continuity candidate;
 - same actor playing variants → variant/meta candidate, never same-character by default;
-- legacy seed with unresolved return continuity → available but weak/uncertain candidate.
+- unresolved legacy return identity → available but uncertain candidate.
 
-Final opacity/glow/bundling is `views/flowchart/` policy.
+Final opacity/glow/bundling remains `views/flowchart/` policy.
 
-## 9. Migration from current Library v5
+## 10. Migration from current Library v5
 
-Migration is incremental and preserves all current audited work.
+Migration is incremental and preserves current audited work.
 
 ### Phase 1 — DB compiler without semantic rewrite
 
 - create SQLite schema matching existing canonical tables;
-- load current canonical facts read-only;
-- reproduce current derived work graph through SQL views;
-- prove DB build determinism;
-- keep existing CSV-driven derived builder as regression oracle only.
+- load canonical facts read-only;
+- reproduce the current derived graph through SQL views;
+- prove logical DB fingerprint determinism;
+- keep the existing derived builder only as a regression oracle.
 
-No content facts change solely because DB v1 exists.
+No content facts change merely because DB v1 exists.
 
-### Phase 2 — Add new normalized canonical tables
+### Phase 2 — normalized canonical tables
 
-Introduce, with tests:
+Introduce with tests:
 
 - `releases`
 - `production_status_assertions`
@@ -563,80 +540,82 @@ Introduce, with tests:
 - `event_participants`
 - `event_relations`
 - `multiverse_transitions`
+- `transition_participants`
 - `entity_possessions`
 
-Existing data moves only when the new table is semantically better. Migration ledger records each moved/superseded legacy representation.
+Existing data moves only when the new table is semantically better. A migration ledger records each moved/superseded representation.
 
-### Phase 3 — Multiverse audit migration
+### Phase 3 — multiverse audit decomposition
 
-Current audited multiverse relations are decomposed where appropriate.
+Audited multiverse work relations are decomposed where appropriate.
 
-For example, Thunderbolts* → First Steps remains useful as a derived/display connection, while the canonical underlying fact becomes a transition/event describing the Earth-828 Fantastic Four-marked ship arriving in Earth-616.
+For example, Thunderbolts* → First Steps may remain as a useful derived/display connection, while the canonical underlying crossing is an event/transition describing the Earth-828 Fantastic Four-marked ship arriving in Earth-616.
 
-The explicit First Steps → Doomsday lead-in remains `work_relations` because it is inherently a source-backed relation between works.
+The explicit First Steps → Doomsday lead-in remains `work_relations` because it is inherently a source-backed work-to-work relation.
 
 ### Phase 4 — HTML switches to DB exports
 
-- generate flowchart node JSON from `v_flowchart_nodes`;
-- generate edge/reason JSON from `v_flowchart_edge_candidates` and policy;
-- remove independent fact arrays from HTML;
-- compare old/new selected-path behavior and prewatch results;
-- retain mobile performance requirements.
+- generate node JSON from `v_flowchart_nodes`;
+- generate edge/reason JSON from `v_flowchart_edge_candidates` plus view policy;
+- remove independent Marvel fact arrays from HTML;
+- compare selected-path/prewatch behavior against existing implementation;
+- preserve Pixel 6/mobile performance requirements.
 
 ### Phase 5 — broader content audit
 
-Continue the 131-work audit using the richer fact model. New information should enter the semantically correct table rather than creating ad hoc edges.
+Continue the 131-work audit using the richer semantic model. New facts enter their correct domain table rather than creating ad hoc edges.
 
-## 10. Backward compatibility and main-branch safety
+## 11. Backward compatibility and main safety
 
-- `main` is not changed during DB design or experimental migration.
-- Existing `work_id` values stay stable.
-- Existing audited fact IDs stay stable unless a migration ledger explicitly supersedes them.
-- Old derived files may remain temporarily as regression outputs, but not as competing canonical sources.
+- `main` remains unchanged during DB design/experimental migration.
+- Existing stable `work_id` values remain stable.
+- Existing audited fact IDs remain stable unless explicitly superseded through migration records.
+- Old derived files may temporarily remain as regression outputs, not competing canonical sources.
 - No fixed edge count is a correctness target.
-- Current static GitHub Pages deployment remains viable throughout migration.
+- Static GitHub Pages deployment remains viable throughout migration.
 
-## 11. Testing requirements
+## 12. Testing requirements
 
-DB v1 implementation must use TDD and add tests for:
+DB v1 implementation must use TDD and cover:
 
-1. deterministic SQLite compilation from identical canonical input;
-2. FK and CHECK constraint enforcement;
+1. identical canonical input producing identical logical DB fingerprints and public-view outputs;
+2. FK and CHECK enforcement;
 3. canonical SHA immutability during ordinary build;
 4. SQL view contract stability;
 5. parity of existing audited relations before semantic migration;
-6. multiverse transition derivation without asserting false same-universe membership;
-7. same actor / different entity never creating same-character continuity;
-8. same individual moving between universes preserving identity when evidence supports it;
-9. unknown source/destination continuity staying null rather than fabricated;
-10. HTML export containing no canonical-only manual fact arrays;
-11. generated JSON determinism;
-12. Pixel-6-oriented static payload/performance regression checks when HTML generation is switched.
+6. multiverse transition derivation without false same-universe membership;
+7. multiple transition participants without duplicated transition identity;
+8. same actor / different entity never producing same-character continuity;
+9. same individual moving between universes preserving identity only when evidence supports it;
+10. unknown source/destination continuity staying null rather than fabricated;
+11. HTML export containing no manual canonical fact arrays;
+12. deterministic generated JSON;
+13. Pixel-6-oriented static payload/performance regression checks when HTML generation switches.
 
-## 12. Success criteria
+## 13. Success criteria
 
-DB v1 is successful when:
+DB v1 succeeds when:
 
-- a complete SQLite database can be deterministically rebuilt from Git canonical facts;
+- SQLite can be rebuilt from Git canonical facts with the same logical fingerprint;
 - ordinary build never mutates canonical input;
 - `index.html` no longer owns independent Marvel facts;
-- all HTML graph data comes through versioned DB views/exports;
-- multiverse crossings are queryable independently from work-to-work relationships;
+- HTML graph data comes through versioned DB views/exports;
+- multiverse crossings are queryable independently from work-to-work relations;
 - fictional identity, actor identity, continuity, events, production metadata, and evidence remain distinct;
-- existing audited facts and IDs survive migration without silent loss;
-- a reviewer can answer “why is this line here?” by tracing a derived edge back through DB view rows to canonical fact/evidence IDs;
-- future views can be built from the same library without modifying canonical facts merely to satisfy presentation needs.
+- existing audited facts/IDs survive without silent loss;
+- a reviewer can trace “why is this line here?” from derived edge → DB reason row → canonical fact → evidence;
+- future views can be added without changing canonical facts solely for presentation.
 
-## 13. Explicit non-goals for DB v1
+## 14. Explicit non-goals for DB v1
 
 DB v1 does not attempt to:
 
-- model every Marvel Comics continuity;
+- model all Marvel Comics continuities;
 - become a public writable server database;
 - add user accounts or collaborative editing;
 - run SQL directly in the browser;
-- replace the current flowchart UI design in the same step;
+- redesign the flowchart UI in the same step;
 - infer unsupported Earth numbers or exact return identities;
-- normalize every possible fictional relationship before there is a concrete query/use case.
+- normalize every imaginable fictional relationship before a concrete query/use case exists.
 
 The design intentionally prefers a normalized but practical audiovisual-works library over a fully generic knowledge graph.
