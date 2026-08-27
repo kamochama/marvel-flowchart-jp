@@ -107,6 +107,23 @@ class PublicViewContractTests(unittest.TestCase):
             self.assertTrue(all(row[0] == "entity-x-cacda9afb6" for row in rows))
             connection.close()
 
+    def test_work_connection_rollup_has_no_correlated_scalar_subquery(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = Path(tmp) / "marvel.sqlite"
+            compile_database(ROOT, db_path)
+            connection = open_query_connection(db_path)
+            plan = [
+                str(row[3]).upper()
+                for row in connection.execute(
+                    "EXPLAIN QUERY PLAN SELECT * FROM v_work_connections_all"
+                )
+            ]
+            connection.close()
+            self.assertFalse(
+                any("CORRELATED SCALAR SUBQUERY" in detail for detail in plan),
+                "v_work_connections_all must aggregate reason rows in one pass: " + " | ".join(plan),
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
