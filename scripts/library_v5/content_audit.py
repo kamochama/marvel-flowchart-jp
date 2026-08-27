@@ -13,6 +13,12 @@ FACT_ID_COLUMNS = {
     "chronology_assertions.csv": "chronology_assertion_id",
     "work_continuities.csv": "work_continuity_id",
     "continuities.csv": "continuity_id",
+    "events.csv": "event_id",
+    "event_occurrences.csv": "event_occurrence_id",
+    "event_participants.csv": "event_participant_id",
+    "event_relations.csv": "event_relation_id",
+    "multiverse_transitions.csv": "transition_id",
+    "transition_participants.csv": "transition_participant_id",
 }
 
 HIGH_IMPACT_WORK_ID_FRAGMENTS = (
