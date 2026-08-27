@@ -29,3 +29,5 @@ jobs:
           python-version: '3.12'
       - name: Unit tests
         run: python -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
+      - name: Ordinary canonical read-only build
+        run: python -m scripts.library_v5.build --repo-root .
