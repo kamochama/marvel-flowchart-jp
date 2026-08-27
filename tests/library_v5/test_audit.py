@@ -68,16 +68,20 @@ class LibraryAuditTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "data/library").mkdir(parents=True)
-            (root / "data/derived").mkdir(parents=True)
+            (root / "data/derived/db").mkdir(parents=True)
             (root / "data/migration/bootstrap/library").mkdir(parents=True)
             (root / "data/library/entities.csv").write_text("entity_id\ne1\n", encoding="utf-8")
             (root / "data/library/manifest.json").write_text("old", encoding="utf-8")
+            (root / "data/derived/db/marvel.sqlite").write_bytes(b"sqlite-physical-layout")
+            (root / "data/derived/db/library_db_manifest.json").write_text('{"equivalence":"logical"}\n', encoding="utf-8")
             (root / "data/migration/bootstrap/library/entities.csv").write_text("candidate", encoding="utf-8")
             first = build_manifest(root)
             second = build_manifest(root)
             self.assertEqual(first, second)
             self.assertNotIn("data/library/manifest.json", first["files"])
             self.assertNotIn("data/migration/bootstrap/library/entities.csv", first["files"])
+            self.assertNotIn("data/derived/db/marvel.sqlite", first["files"])
+            self.assertIn("data/derived/db/library_db_manifest.json", first["files"])
 
     def test_full_build_is_byte_deterministic_on_fixture(self):
         from scripts.library_v5.audit import sha256_file
