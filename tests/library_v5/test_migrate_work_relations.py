@@ -28,7 +28,7 @@ class WorkRelationMigrationTests(unittest.TestCase):
         self.assertNotIn("priority", migrated[0])
         self.assertEqual(migrated[0]["classification"], "Phase 1")
 
-    def test_direct_sequel_becomes_explicit_work_relation(self):
+    def test_direct_sequel_becomes_explicit_work_relation_seed(self):
         from scripts.library_v5.migrate_works_relations import migrate_connections
 
         rows = [{
@@ -46,6 +46,7 @@ class WorkRelationMigrationTests(unittest.TestCase):
         result = migrate_connections(rows)
         self.assertEqual(len(result["work_relations"]), 1)
         self.assertEqual(result["work_relations"][0]["relation_kind"], "sequel")
+        self.assertEqual(result["work_relations"][0]["verification_status"], "legacy_seed")
         self.assertNotIn("prewatch_tier", result["work_relations"][0])
         self.assertEqual(result["dispositions"][0]["disposition"], "migrated_explicit_relation")
 
@@ -67,7 +68,7 @@ class WorkRelationMigrationTests(unittest.TestCase):
         self.assertEqual(result["work_relations"], [])
         self.assertEqual(result["dispositions"][0]["disposition"], "appearance_derived_pending_audit")
 
-    def test_promotion_is_preserved_as_promotion_fact_not_prewatch_policy(self):
+    def test_promotion_is_preserved_as_promotion_seed_not_prewatch_policy(self):
         from scripts.library_v5.migrate_works_relations import migrate_connections
 
         rows = [{
@@ -85,6 +86,7 @@ class WorkRelationMigrationTests(unittest.TestCase):
         result = migrate_connections(rows)
         self.assertEqual(len(result["work_relations"]), 1)
         self.assertEqual(result["work_relations"][0]["relation_scope"], "promotion")
+        self.assertEqual(result["work_relations"][0]["verification_status"], "legacy_seed")
         self.assertEqual(result["dispositions"][0]["disposition"], "migrated_promotion_fact")
 
     def test_cancelled_wonder_man_s2_edge_is_explicitly_rejected(self):
