@@ -12,6 +12,27 @@ from scripts.library_v5.derive_edges import collapse_reasons_to_edges, derive_re
 
 ROOT = Path(__file__).resolve().parents[2]
 LIB = ROOT / "data" / "library"
+LEGACY_REASON_FIELDS = (
+    "reason_id",
+    "source_work_id",
+    "target_work_id",
+    "reason_kind",
+    "entity_id",
+    "relation_id",
+    "support_fact_ids",
+    "appearance_kinds",
+    "verification_statuses",
+    "certainty_values",
+    "notes",
+)
+TRANSITION_REASON_FIELDS = (
+    "transition_id",
+    "event_id",
+    "event_occurrence_id",
+    "source_continuity_id",
+    "destination_continuity_id",
+    "participant_fact_ids",
+)
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -105,7 +126,17 @@ class DbWorkConnectionParityTests(unittest.TestCase):
             exported_reasons = _read_csv(temp / "derived" / "work_pair_reasons.csv")
             exported_edges = _read_csv(temp / "derived" / "work_edges_all.csv")
 
-        self.assertEqual(exported_reasons, oracle_reasons)
+        legacy_projection = [
+            {field: row[field] for field in LEGACY_REASON_FIELDS}
+            for row in exported_reasons
+        ]
+        self.assertEqual(legacy_projection, oracle_reasons)
+        self.assertTrue(
+            all(
+                all(row[field] == "" for field in TRANSITION_REASON_FIELDS)
+                for row in exported_reasons
+            )
+        )
         self.assertEqual(exported_edges, oracle_edges)
         self.assertEqual(counts, {"work_pair_reasons": len(oracle_reasons), "work_edges_all": len(oracle_edges)})
 
