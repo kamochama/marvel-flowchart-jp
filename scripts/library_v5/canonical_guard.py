@@ -24,10 +24,28 @@ def canonical_hashes(repo_root: Path) -> dict[str, str]:
     }
 
 
-def assert_canonical_unchanged(before: dict[str, str], after: dict[str, str]) -> None:
+def protected_input_hashes(repo_root: Path) -> dict[str, str]:
+    """Hash authoritative library files plus persistent human review history."""
+    repo_root = repo_root.resolve()
+    result = canonical_hashes(repo_root)
+    reviews = repo_root / "data" / "content_audit" / "reviews.csv"
+    if reviews.exists():
+        result[reviews.relative_to(repo_root).as_posix()] = _sha256(reviews)
+    return dict(sorted(result.items()))
+
+
+def _assert_hashes_unchanged(before: dict[str, str], after: dict[str, str], *, error_code: str) -> None:
     if before == after:
         return
     keys = sorted(set(before) | set(after))
     changed = [key for key in keys if before.get(key) != after.get(key)]
     detail = ", ".join(changed) if changed else "unknown"
-    raise RuntimeError(f"canonical_input_mutated: {detail}")
+    raise RuntimeError(f"{error_code}: {detail}")
+
+
+def assert_canonical_unchanged(before: dict[str, str], after: dict[str, str]) -> None:
+    _assert_hashes_unchanged(before, after, error_code="canonical_input_mutated")
+
+
+def assert_protected_inputs_unchanged(before: dict[str, str], after: dict[str, str]) -> None:
+    _assert_hashes_unchanged(before, after, error_code="protected_input_mutated")
