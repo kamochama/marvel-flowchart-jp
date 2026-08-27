@@ -11,6 +11,7 @@ from .derive_edges import write_derived_edges
 from .extract_legacy import write_legacy_seeds
 from .migrate_entities import write_entity_seed_tables
 from .migrate_works_relations import write_work_relation_tables
+from .review_migration import write_review_outputs
 
 
 GENERATED_PATHS = [
@@ -59,6 +60,7 @@ def build(repo_root: Path, *, clean: bool = True) -> dict[str, object]:
     result["works_relations"] = write_work_relation_tables(repo_root)
     result["derived_edges"] = write_derived_edges(repo_root, mode="combined_all_pairs")
     result["compatibility"] = write_compatibility_outputs(repo_root)
+    result["migration_review"] = write_review_outputs(repo_root)
     audit = write_audit_outputs(repo_root)
     result["audit_ok"] = audit["ok"]
     result["audit_issue_count"] = len(audit["issues"])
