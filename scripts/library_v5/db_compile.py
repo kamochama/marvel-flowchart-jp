@@ -7,6 +7,7 @@ import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
 
+from .audit import check_transition_semantics
 from .db_schema import TABLE_SPECS, TableSpec, create_schema
 from .db_views import install_internal_helpers, install_public_views
 
@@ -15,6 +16,14 @@ from .db_views import install_internal_helpers, install_public_views
 class CompileResult:
     db_path: Path
     table_counts: dict[str, int]
+
+
+_NULLABLE_BLANK_COLUMNS = {
+    ("portrayals", "entity_id"),
+    ("events", "primary_continuity_id"),
+    ("multiverse_transitions", "source_continuity_id"),
+    ("multiverse_transitions", "destination_continuity_id"),
+}
 
 
 def _read_csv_rows(path: Path, spec: TableSpec) -> list[dict[str, str]]:
@@ -32,7 +41,7 @@ def _row_values(spec: TableSpec, row: dict[str, str]) -> tuple[object, ...]:
     values: list[object] = []
     for column in spec.columns:
         value: object = row.get(column, "")
-        if spec.name == "portrayals" and column == "entity_id" and value == "":
+        if (spec.name, column) in _NULLABLE_BLANK_COLUMNS and value == "":
             value = None
         values.append(value)
     return tuple(values)
@@ -43,6 +52,14 @@ def _insert_rows(connection: sqlite3.Connection, spec: TableSpec, rows: list[dic
     placeholders = ",".join("?" for _ in spec.columns)
     statement = f"INSERT INTO {spec.name} ({columns}) VALUES ({placeholders})"
     connection.executemany(statement, (_row_values(spec, row) for row in rows))
+
+
+def _run_semantic_checks(table_rows: dict[str, list[dict[str, str]]]) -> None:
+    issues = check_transition_semantics({f"{name}.csv": rows for name, rows in table_rows.items()})
+    if issues:
+        codes = ",".join(sorted({issue["code"] for issue in issues}))
+        detail = "; ".join(issue["message"] for issue in issues)
+        raise ValueError(f"{codes}: {detail}")
 
 
 def _run_integrity_checks(connection: sqlite3.Connection) -> None:
@@ -69,14 +86,17 @@ def compile_database(repo_root: Path, output_path: Path | None = None) -> Compil
 
     connection: sqlite3.Connection | None = None
     table_counts: dict[str, int] = {}
+    table_rows: dict[str, list[dict[str, str]]] = {}
     try:
         connection = sqlite3.connect(temp_path)
         create_schema(connection)
         with connection:
             for spec in TABLE_SPECS:
                 rows = _read_csv_rows(repo_root / spec.source_path, spec)
+                table_rows[spec.name] = rows
                 _insert_rows(connection, spec, rows)
                 table_counts[spec.name] = len(rows)
+            _run_semantic_checks(table_rows)
             install_internal_helpers(connection)
             install_public_views(connection)
             _run_integrity_checks(connection)
