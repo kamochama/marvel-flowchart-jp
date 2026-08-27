@@ -1,4 +1,4 @@
-name: Library v5 migration CI
+name: Library v5 canonical freeze CI
 
 on:
   pull_request:
@@ -7,6 +7,7 @@ on:
       - 'data/library/**'
       - 'data/migration/**'
       - 'data/derived/**'
+      - 'data/content_audit/**'
       - 'scripts/library_v5/**'
       - 'tests/library_v5/**'
       - 'views/flowchart/**'
@@ -14,7 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   test:
@@ -22,51 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: library-v5-migration
+          ref: ${{ github.head_ref || github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Unit tests
         run: python -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
-      - name: Build and audit migration
-        run: python -m scripts.library_v5.build --repo-root .
-      - name: Verify canonical-only edge regeneration
-        run: |
-          cp data/derived/work_pair_reasons.csv /tmp/work_pair_reasons.csv
-          cp data/derived/work_edges_all.csv /tmp/work_edges_all.csv
-          mv index.html /tmp/index.html.legacy
-          rm data/derived/work_pair_reasons.csv data/derived/work_edges_all.csv
-          python - <<'PY'
-          from pathlib import Path
-          from scripts.library_v5.derive_edges import write_derived_edges
-          summary = write_derived_edges(Path('.'))
-          print(summary)
-          PY
-          cmp /tmp/work_pair_reasons.csv data/derived/work_pair_reasons.csv
-          cmp /tmp/work_edges_all.csv data/derived/work_edges_all.csv
-          mv /tmp/index.html.legacy index.html
-      - name: Capture first deterministic manifest
-        run: cp data/library/manifest.json /tmp/library-v5-manifest-first.json
-      - name: Rebuild clean
-        run: python -m scripts.library_v5.build --repo-root .
-      - name: Verify deterministic output manifest
-        run: cmp /tmp/library-v5-manifest-first.json data/library/manifest.json
-      - name: Print migration audit
-        if: always()
-        run: |
-          echo '--- MIGRATION_AUDIT.md ---'
-          cat data/migration/MIGRATION_AUDIT.md || true
-          echo '--- audit.json ---'
-          cat data/migration/audit.json || true
-      - name: Persist generated migration outputs
-        if: success()
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/library data/derived data/migration views/flowchart
-          if git diff --cached --quiet; then
-            echo 'Generated outputs already current.'
-          else
-            git commit -m 'build: refresh library v5 migration outputs [skip ci]'
-            git push origin HEAD:library-v5-migration
-          fi
