@@ -80,6 +80,41 @@ jobs:
           print(json.dumps(canonical_hashes(Path('.')), sort_keys=True, indent=2))
           PY
           cmp /tmp/canonical-before.json /tmp/canonical-after-second.json
+      - name: Verify SQLite integrity and print Phase 1 summary
+        run: |
+          python - <<'PY'
+          import csv
+          import json
+          import sqlite3
+          from pathlib import Path
+
+          root = Path('.')
+          db_path = root / 'data/derived/db/marvel.sqlite'
+          connection = sqlite3.connect(db_path)
+          fk = connection.execute('PRAGMA foreign_key_check').fetchall()
+          integrity = connection.execute('PRAGMA integrity_check').fetchall()
+          connection.close()
+          assert fk == [], fk
+          assert integrity == [('ok',)], integrity
+
+          manifest = json.loads((root / 'data/derived/db/library_db_manifest.json').read_text(encoding='utf-8'))
+          def csv_count(path):
+              with path.open('r', encoding='utf-8-sig', newline='') as handle:
+                  return sum(1 for _ in csv.DictReader(handle))
+          summary = {
+              'db_schema_version': manifest['db_schema_version'],
+              'equivalence': manifest['equivalence'],
+              'table_rows': {name: info['row_count'] for name, info in manifest['tables'].items()},
+              'view_rows': {name: info['row_count'] for name, info in manifest['views'].items()},
+              'graph_rows': {
+                  'work_pair_reasons': csv_count(root / 'data/derived/work_pair_reasons.csv'),
+                  'work_edges_all': csv_count(root / 'data/derived/work_edges_all.csv'),
+              },
+              'foreign_key_check_rows': len(fk),
+              'integrity_check': integrity[0][0],
+          }
+          print(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True))
+          PY
       - name: Reconstruct bootstrap candidate in staging
         run: python -m scripts.library_v5.bootstrap --repo-root .
       - name: Verify bootstrap determinism and canonical isolation
