@@ -1,10 +1,16 @@
 from __future__ import annotations
 
 import sqlite3
+import tempfile
 import unittest
+from pathlib import Path
 
+from scripts.library_v5.db_compile import compile_database, open_query_connection
 from scripts.library_v5.db_schema import create_schema
 from scripts.library_v5.db_views import install_internal_helpers
+
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 class MultiverseIdentityHelperTests(unittest.TestCase):
@@ -62,6 +68,44 @@ class MultiverseIdentityHelperTests(unittest.TestCase):
         install_internal_helpers(connection)
         identity = dict(connection.execute("SELECT raw_entity_id, canonical_entity_id FROM _entity_identity_map"))
         self.assertEqual(identity["frank-alias"], "frank-alias")
+
+
+class PublicViewContractTests(unittest.TestCase):
+    def test_phase1_public_views_are_installed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = Path(tmp) / "marvel.sqlite"
+            compile_database(ROOT, db_path)
+            connection = open_query_connection(db_path)
+            names = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='view'")}
+            self.assertTrue(
+                {
+                    "v_entity_work_history",
+                    "v_continuity_works",
+                    "v_work_connection_reasons",
+                    "v_work_connections_all",
+                    "v_flowchart_nodes",
+                    "v_flowchart_edge_candidates",
+                }
+                <= names
+            )
+            connection.close()
+
+    def test_frank_castle_alias_is_resolved_in_entity_history(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = Path(tmp) / "marvel.sqlite"
+            compile_database(ROOT, db_path)
+            connection = open_query_connection(db_path)
+            rows = connection.execute(
+                """
+                SELECT DISTINCT canonical_entity_id, work_id
+                FROM v_entity_work_history
+                WHERE raw_entity_id='entity-x-797ce92fcd'
+                ORDER BY work_id
+                """
+            ).fetchall()
+            self.assertTrue(rows)
+            self.assertTrue(all(row[0] == "entity-x-cacda9afb6" for row in rows))
+            connection.close()
 
 
 if __name__ == "__main__":
