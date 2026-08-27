@@ -1,4 +1,6 @@
+import tempfile
 import unittest
+from pathlib import Path
 
 
 class ContentAuditTests(unittest.TestCase):
@@ -66,6 +68,17 @@ class ContentAuditTests(unittest.TestCase):
         }
         queue = build_review_queue(tables)
         self.assertEqual([row["fact_id"] for row in queue], ["ap-seed"])
+
+    def test_ordinary_content_audit_refuses_to_create_persistent_review_ledger(self):
+        from scripts.library_v5.content_audit import write_content_audit_outputs
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "data/library").mkdir(parents=True)
+            (root / "data/derived").mkdir(parents=True)
+            with self.assertRaisesRegex(RuntimeError, "missing_content_review_ledger"):
+                write_content_audit_outputs(root)
+            self.assertFalse((root / "data/content_audit/reviews.csv").exists())
 
 
 if __name__ == "__main__":
