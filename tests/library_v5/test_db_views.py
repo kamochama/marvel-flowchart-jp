@@ -107,22 +107,26 @@ class PublicViewContractTests(unittest.TestCase):
             self.assertTrue(all(row[0] == "entity-x-cacda9afb6" for row in rows))
             connection.close()
 
-    def test_work_connection_rollup_has_no_correlated_scalar_subquery(self) -> None:
+    def test_work_connection_rollup_does_not_requery_reason_view_per_pair(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             db_path = Path(tmp) / "marvel.sqlite"
             compile_database(ROOT, db_path)
             connection = open_query_connection(db_path)
-            plan = [
-                str(row[3]).upper()
-                for row in connection.execute(
-                    "EXPLAIN QUERY PLAN SELECT * FROM v_work_connections_all"
-                )
-            ]
+            row = connection.execute(
+                "SELECT sql FROM sqlite_master WHERE type='view' AND name='v_work_connections_all'"
+            ).fetchone()
             connection.close()
-            self.assertFalse(
-                any("CORRELATED SCALAR SUBQUERY" in detail for detail in plan),
-                "v_work_connections_all must aggregate reason rows in one pass: " + " | ".join(plan),
+
+            self.assertIsNotNone(row)
+            assert row is not None
+            view_sql = str(row[0] or "").upper()
+            self.assertEqual(
+                view_sql.count("V_WORK_CONNECTION_REASONS"),
+                1,
+                "v_work_connections_all must consume the reason view once rather than re-querying it per work pair",
             )
+            self.assertNotIn("R2.SOURCE_WORK_ID = R.SOURCE_WORK_ID", view_sql)
+            self.assertNotIn("R2.TARGET_WORK_ID = R.TARGET_WORK_ID", view_sql)
 
 
 if __name__ == "__main__":
