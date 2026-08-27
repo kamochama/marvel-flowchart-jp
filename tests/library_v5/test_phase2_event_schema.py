@@ -50,7 +50,7 @@ class Phase2EventCanonicalSchemaTests(unittest.TestCase):
             "destination_continuity_id": "continuities.continuity_id",
         })
         self.assertEqual(set(transitions["nullable_columns"]), {"source_continuity_id", "destination_continuity_id"})
-        self.assertEqual(tables["transition_participants.csv"]["foreign_keys"], {"transition_id": "events.event_id", "entity_id": "entities.entity_id"})
+        self.assertEqual(tables["transition_participants.csv"]["foreign_keys"], {"transition_id": "multiverse_transitions.transition_id", "entity_id": "entities.entity_id"})
 
     def test_event_and_transition_vocabulary_is_explicit(self) -> None:
         enums = self.schema["enums"]
