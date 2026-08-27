@@ -39,6 +39,12 @@ def _write_rows(path: Path, header: list[str], rows: list[dict[str, str]]) -> No
         writer.writerows(rows)
 
 
+def _clear_phase2_fact_rows(library: Path) -> None:
+    """Make synthetic Phase 2 fixtures independent of real migrated rows."""
+    for name, header in PHASE2_HEADERS.items():
+        _write_rows(library / name, header, [])
+
+
 def _first_continuity_id(root: Path) -> str:
     with (root / "data" / "library" / "continuities.csv").open("r", encoding="utf-8-sig", newline="") as handle:
         row = next(csv.DictReader(handle))
@@ -81,6 +87,7 @@ class Phase2DbCompileTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = _copy_canonical_fixture(Path(tmp))
             library = root / "data" / "library"
+            _clear_phase2_fact_rows(library)
             _write_rows(library / "events.csv", PHASE2_HEADERS["events.csv"], [{
                 "event_id": "event-transition-unknown-endpoints",
                 "name_ja": "世界移動",
@@ -120,6 +127,7 @@ class Phase2DbCompileTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = _copy_canonical_fixture(Path(tmp))
             library = root / "data" / "library"
+            _clear_phase2_fact_rows(library)
             _write_rows(library / "events.csv", PHASE2_HEADERS["events.csv"], [{
                 "event_id": "event-not-transition",
                 "name_ja": "戦闘",
@@ -151,6 +159,7 @@ class Phase2DbCompileTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = _copy_canonical_fixture(Path(tmp))
             library = root / "data" / "library"
+            _clear_phase2_fact_rows(library)
             continuity_id = _first_continuity_id(root)
             _write_rows(library / "events.csv", PHASE2_HEADERS["events.csv"], [{
                 "event_id": "event-same-continuity",
