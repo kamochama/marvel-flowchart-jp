@@ -1,0 +1,37 @@
+{
+  "content_audit_backlog": {
+    "appearance_derived_pending_audit": 36,
+    "decomposed_entity_return_seed": 8,
+    "legacy_display_placement_seed": 103,
+    "migrated_appearance_seed": 155,
+    "migrated_explicit_relation": 159,
+    "migrated_promotion_fact": 3,
+    "rejected_superseded": 1
+  },
+  "dispositions": {
+    "chronology": {
+      "legacy_display_placement_seed": 103
+    },
+    "connections": {
+      "appearance_derived_pending_audit": 36,
+      "migrated_explicit_relation": 159,
+      "migrated_promotion_fact": 3,
+      "rejected_superseded": 1
+    },
+    "entity_seeds": {
+      "decomposed_entity_return_seed": 8,
+      "migrated_appearance_seed": 155
+    },
+    "story_paths": {
+      "reproduced_from_v5_graph": 83
+    }
+  },
+  "principle": "Disposition counts are review observations, not correctness targets.",
+  "row_counts": {
+    "chronology": 103,
+    "connections": 199,
+    "entity_seeds": 163,
+    "story_paths": 83
+  },
+  "schema_version": "5.0"
+}
