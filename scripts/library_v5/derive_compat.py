@@ -31,7 +31,7 @@ def derive_story_path_compat(
             note = "Legacy path pair is explained by the current derived v5 graph."
         else:
             disposition = "unexplained_legacy_path"
-            note = "Legacy path pair is not yet explained by migrated canonical facts; retained in migration ledger only."
+            note = "Legacy path pair is not yet explained by current canonical facts; frozen migration history retains the original disposition."
         dispositions.append({
             "legacy_row_id": f"story-path-{index:06d}",
             "path_id": (row.get("path_id") or "").strip(),
@@ -49,8 +49,6 @@ def derive_prewatch_compat(
     legacy_connections: list[dict[str, str]],
     appearances: list[dict[str, str]] | None = None,
 ) -> list[dict[str, str]]:
-    # appearances are deliberately not consulted: prewatch is policy, not an
-    # intrinsic property of appearance facts.
     del appearances
     rows: list[dict[str, str]] = []
     for legacy in legacy_connections:
@@ -124,13 +122,11 @@ def write_compatibility_outputs(repo_root: Path) -> dict[str, int]:
     )
 
     derived = repo_root / "data" / "derived"
-    migration = repo_root / "data" / "migration"
     view = repo_root / "views" / "flowchart"
 
     story_fields = list(legacy_story[0].keys()) + ["derived_edge_id", "generation_status"] if legacy_story else ["path_id", "source_id", "target_id", "derived_edge_id", "generation_status"]
     _write_csv(derived / "story_paths.csv", compat["story_paths"], story_fields)
     _write_csv(derived / "prewatch_edges.csv", prewatch, ["prewatch_edge_id", "source_work_id", "target_work_id", "tier", "reason", "basis"])
-    _write_csv(migration / "story_path_dispositions.csv", compat["dispositions"], ["legacy_row_id", "path_id", "edge_order", "source_id", "target_id", "legacy_edge_id", "disposition", "migration_note"])
 
     view.mkdir(parents=True, exist_ok=True)
     (view / "policy.json").write_text(json.dumps(default_flowchart_policy(), ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -139,6 +135,6 @@ def write_compatibility_outputs(repo_root: Path) -> dict[str, int]:
 
     return {
         "story_paths_reproduced": len(compat["story_paths"]),
-        "story_path_dispositions": len(compat["dispositions"]),
+        "story_path_dispositions_observed": len(compat["dispositions"]),
         "prewatch_edges": len(prewatch),
     }
