@@ -1,0 +1,25 @@
+name: Library v5 migration CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'data/library/**'
+      - 'data/migration/**'
+      - 'data/derived/**'
+      - 'scripts/library_v5/**'
+      - 'tests/library_v5/**'
+      - 'views/flowchart/**'
+      - '.github/workflows/library-v5-ci.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
