@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .audit import check_transition_semantics
 from .db_schema import TABLE_SPECS, TableSpec, create_schema
+from .db_transition_reasons import install_transition_reason_views
 from .db_views import install_internal_helpers, install_public_views
 
 
@@ -99,6 +100,7 @@ def compile_database(repo_root: Path, output_path: Path | None = None) -> Compil
             _run_semantic_checks(table_rows)
             install_internal_helpers(connection)
             install_public_views(connection)
+            install_transition_reason_views(connection)
             _run_integrity_checks(connection)
         connection.close()
         connection = None
