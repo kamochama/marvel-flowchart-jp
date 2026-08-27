@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .db_schema import TABLE_SPECS, TableSpec, create_schema
-from .db_views import install_internal_helpers
+from .db_views import install_internal_helpers, install_public_views
 
 
 @dataclass(frozen=True)
@@ -78,6 +78,7 @@ def compile_database(repo_root: Path, output_path: Path | None = None) -> Compil
                 _insert_rows(connection, spec, rows)
                 table_counts[spec.name] = len(rows)
             install_internal_helpers(connection)
+            install_public_views(connection)
             _run_integrity_checks(connection)
         connection.close()
         connection = None
