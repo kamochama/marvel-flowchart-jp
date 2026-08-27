@@ -1,5 +1,6 @@
 {
   "patch_id": "2026-08-27-first-steps-doomsday-continuity-scope-fix",
+  "retry_after_db_views": true,
   "operations": [
     {
       "table": "work_relations.csv",
