@@ -1,0 +1,24 @@
+{
+  "canonical_fact_source": false,
+  "default_edge_mode": "combined_all_pairs",
+  "internal_ids_language": "stable_ascii",
+  "left_labels_language": "ja",
+  "principles": {
+    "distinct_work_pairs_remain_distinct_logical_edges": true,
+    "user_facing_lane_labels_are_japanese": true,
+    "view_may_hide_or_dim_fact": true,
+    "view_may_not_delete_canonical_fact": true
+  },
+  "schema_version": "1.0",
+  "view_only_properties": [
+    "lane",
+    "region",
+    "line_visibility",
+    "line_opacity",
+    "glow",
+    "dimming",
+    "bundling",
+    "crossing_treatment",
+    "card_geometry"
+  ]
+}

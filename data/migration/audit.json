@@ -1,0 +1,33 @@
+{
+  "issues": [],
+  "observed_counts": {
+    "canonical_tables": {
+      "appearances.csv": 164,
+      "chronology_assertions.csv": 0,
+      "continuities.csv": 5,
+      "entities.csv": 40,
+      "entity_relations.csv": 0,
+      "evidence.csv": 15,
+      "people.csv": 6,
+      "portrayals.csv": 6,
+      "sources.csv": 23,
+      "work_continuities.csv": 103,
+      "work_relations.csv": 162,
+      "works.csv": 131
+    },
+    "derived": {
+      "prewatch_edges": 199,
+      "story_paths_reproduced": 83,
+      "work_edges_all": 354,
+      "work_pair_reasons": 557
+    },
+    "legacy_inputs": {
+      "char_links": 155,
+      "connections": 199,
+      "entity_returns": 8,
+      "story_paths": 83
+    }
+  },
+  "ok": true,
+  "schema_version": "5.0"
+}

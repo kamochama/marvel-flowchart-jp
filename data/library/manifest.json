@@ -1,0 +1,32 @@
+{
+  "files": {
+    "data/derived/prewatch_edges.csv": "bf8831bec41d92920e9e4afe4b75435a8d318e529bc3bdb80bda316cef91f4d8",
+    "data/derived/story_paths.csv": "5190f81fdb503e0df643277114e50f80e84f85ec25127a9f53307361f0d6f4e2",
+    "data/derived/work_edges_all.csv": "ec8b6078d4b2b9e51b311148f2c3b9ed44585488413fe1a9bab0e6d7654dbe8d",
+    "data/derived/work_pair_reasons.csv": "4778dde93de1a9bb9daabd771975bc30f74bf92ed4929a4a154abee4a5860f39",
+    "data/library/appearances.csv": "eb4fd7eaa9a1b37af1beaa744d624aefdebca4ba24597bc8c4c0df07c9153c41",
+    "data/library/chronology_assertions.csv": "980ef8d2627a28f999a144aa3527bd212470cd2b03b52a8d21f59d7855fec57e",
+    "data/library/continuities.csv": "16c4742e097a7ad5090533d214de5ef2d70bdeb8a5a60a726669d34653ceff52",
+    "data/library/entities.csv": "490fae65d86c028ba89bb5d906e39420c308307c11db54c75c34f339f8c48ec4",
+    "data/library/entity_relations.csv": "8aed7762c17e8cbcc496e3aba45f0b34dfb55b51fdc7d394f298cc59260e80f3",
+    "data/library/evidence.csv": "c980c3d3e7044eb24abfb085724c5a249a039cb86d484f8412aea62a9137b5a5",
+    "data/library/people.csv": "4f5b3a54472871bd68ba107b9589e43a7ed40cabe19594a8b207d291d7114dbe",
+    "data/library/portrayals.csv": "9ca5486d8da73fc0f451cfdec7cf7650f15cb11f8f51c21e029f481be8c12f29",
+    "data/library/schema.json": "d46df830260e6eefc6b5e283d096e8256b1c3baa0c97703e86e7f34d39983ef5",
+    "data/library/sources.csv": "f8edc22944c4824ef982b4e0c671e08a0ede4b139ca20003b0c8f6c538799208",
+    "data/library/work_continuities.csv": "d7067b8346e0b3ec8172fbbd341932654961357fa72d59f59a2b0d711366267e",
+    "data/library/work_relations.csv": "bad3271634162e0c88bdc976bb9a4ab99f5a0b9fdb9678fd765374f6e19a15f0",
+    "data/library/works.csv": "8a49f8962129927b518a5ec97409f0cc4bdd8eb73a675c00a26e42876d27bacb",
+    "data/migration/chronology_dispositions.csv": "ade4a449c13053b2b44d418cdb5cab7ac26da986222067755cd686dd6174da70",
+    "data/migration/connection_dispositions.csv": "e0cb353b92c0f9aec48cc942859410132e214b61b7fda4097c9134d1bdf46c32",
+    "data/migration/entity_seed_dispositions.csv": "d899756bb990b40e97429c3c18f2dd6888ec9f86b86e78afd85b000f162c27ec",
+    "data/migration/legacy_char_links.csv": "f934366c5a43e3a9b7c2de7a3e73ee474042ec74aa3cca3d35ca56719a065dab",
+    "data/migration/legacy_entity_returns.csv": "cf344acf217b7f34f1d0814565b1c2493a09617ec39329fb92f1cb281504bec7",
+    "data/migration/legacy_extract_summary.json": "f7616edc291d6412aa1d9624d107eea652176a65f4110aced8c396dc5bc4824e",
+    "data/migration/story_path_dispositions.csv": "49ab01b85feebe6f6089553b8ed508e531b9f68df9982356a96a6511e28c02ed",
+    "views/flowchart/README.md": "6ba54b7869e02607ae517f2522bf7897dd8adb6bd898bf7af16266bbdd15f632",
+    "views/flowchart/policy.json": "9357d1449fa3b8bd16d8a600fbc0447f0e28e3f208f23a28475209cd99336fa3"
+  },
+  "hash_algorithm": "sha256",
+  "schema_version": "5.0"
+}
