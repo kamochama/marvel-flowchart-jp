@@ -24,6 +24,8 @@ _VIEW_ORDER_KEYS = {
     "v_work_connections_all": ("source_work_id", "target_work_id"),
     "v_flowchart_nodes": ("work_id",),
     "v_flowchart_edge_candidates": ("source_work_id", "target_work_id"),
+    "v_event_history": ("event_id", "event_occurrence_id", "event_participant_id"),
+    "v_multiverse_crossings": ("transition_id", "event_occurrence_id", "transition_participant_id"),
 }
 
 
