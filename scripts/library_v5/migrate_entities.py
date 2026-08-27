@@ -239,7 +239,7 @@ def write_entity_seed_tables(repo_root: Path) -> dict[str, int]:
         "appearances": ["appearance_id", "work_id", "entity_id", "appearance_kind", "certainty", "verification_status", "notes"],
         "people": ["person_id", "name", "notes"],
         "portrayals": ["portrayal_id", "work_id", "person_id", "entity_id", "portrayal_kind", "certainty", "verification_status", "notes"],
-        "entity_relations": ["entity_relation_id", "source_entity_id", "relation_kind", "target_entity_id", "certainty", "notes"],
+        "entity_relations": ["entity_relation_id", "source_entity_id", "relation_kind", "target_entity_id", "certainty", "verification_status", "notes"],
         "evidence": ["evidence_id", "fact_table", "fact_id", "source_id", "evidence_role", "quoted_or_paraphrased_note", "verified_at"],
         "dispositions": ["legacy_row_id", "legacy_kind", "disposition", "fact_ids", "notes"],
     }
