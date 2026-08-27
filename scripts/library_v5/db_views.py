@@ -483,6 +483,70 @@ def install_public_views(connection: sqlite3.Connection) -> None:
               AND wc.verification_status <> 'superseded'
               AND wc.continuity_id IN (mt.source_continuity_id, mt.destination_continuity_id)
         )
+          AND (
+            NOT EXISTS (
+                SELECT 1
+                FROM transition_participants AS tp0
+                JOIN _entity_identity_map AS im0
+                  ON im0.raw_entity_id = tp0.entity_id
+                JOIN _v_resolved_appearances AS ra0
+                  ON ra0.canonical_entity_id = im0.canonical_entity_id
+                JOIN work_continuities AS wc0
+                  ON wc0.work_id = ra0.work_id
+                JOIN _v_supported_work_pairs AS sb0
+                  ON (sb0.source_work_id = ra0.work_id AND sb0.target_work_id = eo.work_id)
+                  OR (sb0.target_work_id = ra0.work_id AND sb0.source_work_id = eo.work_id)
+                WHERE tp0.transition_id = mt.transition_id
+                  AND tp0.verification_status <> 'superseded'
+                  AND wc0.verification_status <> 'superseded'
+                  AND wc0.continuity_id = mt.source_continuity_id
+                  AND ra0.work_id <> eo.work_id
+            )
+            OR EXISTS (
+                SELECT 1
+                FROM transition_participants AS tp
+                JOIN _entity_identity_map AS im
+                  ON im.raw_entity_id = tp.entity_id
+                JOIN _v_resolved_appearances AS ra
+                  ON ra.canonical_entity_id = im.canonical_entity_id
+                JOIN work_continuities AS pwc
+                  ON pwc.work_id = ra.work_id
+                JOIN works AS pw
+                  ON pw.work_id = ra.work_id
+                WHERE tp.transition_id = mt.transition_id
+                  AND tp.verification_status <> 'superseded'
+                  AND pwc.verification_status <> 'superseded'
+                  AND pwc.continuity_id = mt.source_continuity_id
+                  AND ra.work_id = CASE
+                          WHEN eo.work_id = b.source_work_id THEN b.target_work_id
+                          ELSE b.source_work_id
+                      END
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM _v_resolved_appearances AS ra2
+                      JOIN work_continuities AS pwc2
+                        ON pwc2.work_id = ra2.work_id
+                      JOIN works AS pw2
+                        ON pw2.work_id = ra2.work_id
+                      JOIN _v_supported_work_pairs AS sb2
+                        ON (sb2.source_work_id = ra2.work_id AND sb2.target_work_id = eo.work_id)
+                        OR (sb2.target_work_id = ra2.work_id AND sb2.source_work_id = eo.work_id)
+                      WHERE ra2.canonical_entity_id = im.canonical_entity_id
+                        AND pwc2.verification_status <> 'superseded'
+                        AND pwc2.continuity_id = mt.source_continuity_id
+                        AND ra2.work_id <> eo.work_id
+                        AND (
+                            COALESCE(NULLIF(TRIM(pw2.release_sort_date), ''), '9999-99-99')
+                                > COALESCE(NULLIF(TRIM(pw.release_sort_date), ''), '9999-99-99')
+                            OR (
+                                COALESCE(NULLIF(TRIM(pw2.release_sort_date), ''), '9999-99-99')
+                                    = COALESCE(NULLIF(TRIM(pw.release_sort_date), ''), '9999-99-99')
+                                AND ra2.work_id > ra.work_id
+                            )
+                        )
+                  )
+            )
+        )
         """
     )
 
