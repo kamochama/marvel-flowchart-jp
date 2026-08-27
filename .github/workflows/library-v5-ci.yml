@@ -29,27 +29,68 @@ jobs:
           python-version: '3.12'
       - name: Unit tests
         run: python -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
+      - name: Capture canonical input hashes
+        run: |
+          python - <<'PY' > /tmp/canonical-before.json
+          import json
+          from pathlib import Path
+          from scripts.library_v5.canonical_guard import canonical_hashes
+          print(json.dumps(canonical_hashes(Path('.')), sort_keys=True, indent=2))
+          PY
       - name: Ordinary canonical read-only build
         run: python -m scripts.library_v5.build --repo-root .
-      - name: Reconstruct bootstrap candidate
-        run: python -m scripts.library_v5.bootstrap --repo-root .
-      - name: Verify initial canonical equals bootstrap candidate
+      - name: Verify canonical inputs unchanged
         run: |
+          python - <<'PY' > /tmp/canonical-after.json
+          import json
+          from pathlib import Path
+          from scripts.library_v5.canonical_guard import canonical_hashes
+          print(json.dumps(canonical_hashes(Path('.')), sort_keys=True, indent=2))
+          PY
+          cmp /tmp/canonical-before.json /tmp/canonical-after.json
+      - name: Verify canonical-only edge regeneration without index HTML
+        run: |
+          cp data/derived/work_pair_reasons.csv /tmp/work_pair_reasons.csv
+          cp data/derived/work_edges_all.csv /tmp/work_edges_all.csv
+          mv index.html /tmp/index.html.legacy
+          rm data/derived/work_pair_reasons.csv data/derived/work_edges_all.csv
           python - <<'PY'
           from pathlib import Path
-          from scripts.library_v5.bootstrap import candidate_manifest
-          from scripts.library_v5.canonical_guard import canonical_hashes
-          root = Path('.')
-          candidate = candidate_manifest(root)
-          current = canonical_hashes(root)
-          if candidate != current:
-              missing = sorted(set(candidate) ^ set(current))
-              changed = sorted(k for k in set(candidate) & set(current) if candidate[k] != current[k])
-              raise SystemExit(f'bootstrap candidate mismatch: missing={missing} changed={changed}')
-          print(f'bootstrap candidate matches {len(current)} canonical files')
+          from scripts.library_v5.derive_edges import write_derived_edges
+          print(write_derived_edges(Path('.'), mode='combined_all_pairs'))
           PY
-      - name: Verify bootstrap determinism
+          cmp /tmp/work_pair_reasons.csv data/derived/work_pair_reasons.csv
+          cmp /tmp/work_edges_all.csv data/derived/work_edges_all.csv
+          mv /tmp/index.html.legacy index.html
+      - name: Verify ordinary build determinism
+        run: |
+          cp data/derived/library_manifest.json /tmp/library-manifest-first.json
+          python -m scripts.library_v5.build --repo-root .
+          cmp /tmp/library-manifest-first.json data/derived/library_manifest.json
+          python - <<'PY' > /tmp/canonical-after-second.json
+          import json
+          from pathlib import Path
+          from scripts.library_v5.canonical_guard import canonical_hashes
+          print(json.dumps(canonical_hashes(Path('.')), sort_keys=True, indent=2))
+          PY
+          cmp /tmp/canonical-before.json /tmp/canonical-after-second.json
+      - name: Reconstruct bootstrap candidate in staging
+        run: python -m scripts.library_v5.bootstrap --repo-root .
+      - name: Verify bootstrap determinism and canonical isolation
         run: |
           cp data/migration/bootstrap/candidate_manifest.json /tmp/bootstrap-manifest-first.json
           python -m scripts.library_v5.bootstrap --repo-root .
           cmp /tmp/bootstrap-manifest-first.json data/migration/bootstrap/candidate_manifest.json
+          python - <<'PY' > /tmp/canonical-after-bootstrap.json
+          import json
+          from pathlib import Path
+          from scripts.library_v5.canonical_guard import canonical_hashes
+          print(json.dumps(canonical_hashes(Path('.')), sort_keys=True, indent=2))
+          PY
+          cmp /tmp/canonical-before.json /tmp/canonical-after-bootstrap.json
+      - name: Print content audit queue head
+        run: |
+          echo '--- CONTENT_AUDIT.md ---'
+          cat data/content_audit/CONTENT_AUDIT.md
+          echo '--- queue.csv (first 80 lines) ---'
+          head -n 80 data/content_audit/queue.csv
