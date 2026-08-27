@@ -15,6 +15,12 @@ REASON_FIELDS = [
     "reason_kind",
     "entity_id",
     "relation_id",
+    "transition_id",
+    "event_id",
+    "event_occurrence_id",
+    "source_continuity_id",
+    "destination_continuity_id",
+    "participant_fact_ids",
     "support_fact_ids",
     "appearance_kinds",
     "verification_statuses",
@@ -38,12 +44,14 @@ def _reason_rows(db_path: Path) -> list[dict[str, str]]:
         cursor = connection.execute(
             """
             SELECT source_work_id,target_work_id,reason_kind,
-                   canonical_entity_id,relation_id,support_fact_ids,
-                   appearance_kinds,verification_statuses,certainty_values,
+                   canonical_entity_id,relation_id,
+                   transition_id,event_id,event_occurrence_id,
+                   source_continuity_id,destination_continuity_id,participant_fact_ids,
+                   support_fact_ids,appearance_kinds,verification_statuses,certainty_values,
                    notes,reason_discriminator
             FROM v_work_connection_reasons
             ORDER BY source_work_id,target_work_id,reason_kind,
-                     canonical_entity_id,relation_id,reason_discriminator
+                     canonical_entity_id,relation_id,transition_id,event_occurrence_id,reason_discriminator
             """
         )
         rows: list[dict[str, str]] = []
@@ -53,6 +61,12 @@ def _reason_rows(db_path: Path) -> list[dict[str, str]]:
             reason_kind,
             canonical_entity_id,
             relation_id,
+            transition_id,
+            event_id,
+            event_occurrence_id,
+            source_continuity_id,
+            destination_continuity_id,
+            participant_fact_ids,
             support_fact_ids,
             appearance_kinds,
             verification_statuses,
@@ -72,6 +86,12 @@ def _reason_rows(db_path: Path) -> list[dict[str, str]]:
                     "reason_kind": kind,
                     "entity_id": str(canonical_entity_id or ""),
                     "relation_id": str(relation_id or ""),
+                    "transition_id": str(transition_id or ""),
+                    "event_id": str(event_id or ""),
+                    "event_occurrence_id": str(event_occurrence_id or ""),
+                    "source_continuity_id": str(source_continuity_id or ""),
+                    "destination_continuity_id": str(destination_continuity_id or ""),
+                    "participant_fact_ids": str(participant_fact_ids or ""),
                     "support_fact_ids": str(support_fact_ids or ""),
                     "appearance_kinds": str(appearance_kinds or ""),
                     "verification_statuses": str(verification_statuses or ""),
@@ -87,6 +107,8 @@ def _reason_rows(db_path: Path) -> list[dict[str, str]]:
                 row["reason_kind"],
                 row["entity_id"],
                 row["relation_id"],
+                row["transition_id"],
+                row["event_occurrence_id"],
                 row["reason_id"],
             ),
         )
