@@ -6,7 +6,8 @@ import unittest
 from pathlib import Path
 
 from scripts.library_v5.db_compile import compile_database, open_query_connection
-from scripts.library_v5.derive_edges import derive_reasons
+from scripts.library_v5.db_export import export_work_graph
+from scripts.library_v5.derive_edges import collapse_reasons_to_edges, derive_reasons
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -18,8 +19,8 @@ def _read_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def _old_semantic_rows() -> set[tuple[str, ...]]:
-    reasons = derive_reasons(
+def _old_reason_rows() -> list[dict[str, str]]:
+    return derive_reasons(
         _read_csv(LIB / "works.csv"),
         _read_csv(LIB / "appearances.csv"),
         _read_csv(LIB / "work_relations.csv"),
@@ -27,6 +28,9 @@ def _old_semantic_rows() -> set[tuple[str, ...]]:
         mode="combined_all_pairs",
         portrayals=_read_csv(LIB / "portrayals.csv"),
     )
+
+
+def _old_semantic_rows() -> set[tuple[str, ...]]:
     return {
         (
             row["source_work_id"],
@@ -40,7 +44,7 @@ def _old_semantic_rows() -> set[tuple[str, ...]]:
             row["certainty_values"],
             row["notes"],
         )
-        for row in reasons
+        for row in _old_reason_rows()
     }
 
 
@@ -90,6 +94,29 @@ class DbWorkConnectionParityTests(unittest.TestCase):
             edge_count = connection.execute("SELECT count(*) FROM v_work_connections_all").fetchone()[0]
             self.assertEqual(edge_count, reason_pairs)
             connection.close()
+
+    def test_db_export_matches_current_reason_and_edge_rows(self) -> None:
+        oracle_reasons = _old_reason_rows()
+        oracle_edges = collapse_reasons_to_edges(oracle_reasons)
+        with tempfile.TemporaryDirectory() as tmp:
+            temp = Path(tmp)
+            db_path = compile_database(ROOT, temp / "marvel.sqlite").db_path
+            counts = export_work_graph(db_path, temp / "derived")
+            exported_reasons = _read_csv(temp / "derived" / "work_pair_reasons.csv")
+            exported_edges = _read_csv(temp / "derived" / "work_edges_all.csv")
+
+        self.assertEqual(exported_reasons, oracle_reasons)
+        self.assertEqual(exported_edges, oracle_edges)
+        self.assertEqual(counts, {"work_pair_reasons": len(oracle_reasons), "work_edges_all": len(oracle_edges)})
+
+    def test_db_export_is_byte_deterministic(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp = Path(tmp)
+            db_path = compile_database(ROOT, temp / "marvel.sqlite").db_path
+            export_work_graph(db_path, temp / "first")
+            export_work_graph(db_path, temp / "second")
+            for name in ("work_pair_reasons.csv", "work_edges_all.csv"):
+                self.assertEqual((temp / "first" / name).read_bytes(), (temp / "second" / name).read_bytes())
 
 
 if __name__ == "__main__":
