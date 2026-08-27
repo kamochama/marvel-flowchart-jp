@@ -21,5 +21,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Inspect legacy CHAR_LINKS marker
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('index.html').read_text(encoding='utf-8')
+          marker = 'CHAR_LINKS'
+          i = text.find(marker)
+          print('CHAR_LINKS_INDEX', i)
+          if i >= 0:
+              print(text[max(0, i-180):i+1600])
+          PY
       - name: Unit tests
         run: python -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
