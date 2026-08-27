@@ -48,6 +48,7 @@ def install_internal_helpers(connection: sqlite3.Connection) -> None:
 def install_public_views(connection: sqlite3.Connection) -> None:
     for view_name in (
         *PUBLIC_VIEW_NAMES,
+        "_v_supported_work_pairs",
         "_v_base_work_connection_reasons",
         "_v_entity_work_pairs",
         "_v_entity_work_presence",
@@ -342,6 +343,21 @@ def install_public_views(connection: sqlite3.Connection) -> None:
 
     connection.execute(
         """
+        CREATE VIEW _v_supported_work_pairs AS
+        SELECT source_work_id, target_work_id
+        FROM _v_entity_work_pairs
+        UNION
+        SELECT source_work_id, target_work_id
+        FROM work_relations
+        WHERE verification_status <> 'superseded'
+          AND TRIM(source_work_id) <> ''
+          AND TRIM(target_work_id) <> ''
+          AND source_work_id <> target_work_id
+        """
+    )
+
+    connection.execute(
+        """
         CREATE VIEW v_work_connection_reasons AS
         SELECT * FROM _v_base_work_connection_reasons
 
@@ -447,10 +463,7 @@ def install_public_views(connection: sqlite3.Connection) -> None:
               || '; destination=' || COALESCE(mt.destination_continuity_id, 'unknown')
               || '; occurrence=' || eo.event_occurrence_id AS notes,
             mt.transition_id || ':' || eo.event_occurrence_id AS reason_discriminator
-        FROM (
-            SELECT DISTINCT source_work_id, target_work_id
-            FROM _v_base_work_connection_reasons
-        ) AS b
+        FROM _v_supported_work_pairs AS b
         JOIN event_occurrences AS eo
           ON eo.work_id IN (b.source_work_id, b.target_work_id)
          AND eo.verification_status <> 'superseded'
