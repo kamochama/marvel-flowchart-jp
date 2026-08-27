@@ -62,6 +62,7 @@ def validate_reviews(
     issues: list[dict[str, str]] = []
     seen_review_ids: set[str] = set()
     latest_by_fact: dict[tuple[str, str], dict[str, str]] = {}
+    last_status_by_fact: dict[tuple[str, str], str] = {}
 
     for index, review in enumerate(review_rows, start=2):
         review_id = (review.get("review_id") or "").strip()
@@ -83,6 +84,10 @@ def validate_reviews(
             if evidence_id not in evidence_ids:
                 issues.append(_issue("review_missing_evidence", f"reviews.csv row {index} references missing evidence {evidence_id}", row=str(index), evidence_id=evidence_id))
 
+        prior_review_status = last_status_by_fact.get(key)
+        if prior_review_status is not None and previous != prior_review_status:
+            issues.append(_issue("review_history_discontinuity", f"reviews.csv row {index} previous status {previous!r} does not match prior review status {prior_review_status!r}", row=str(index), review_id=review_id))
+
         allowed = previous in ALLOWED_STATUSES and new in ALLOWED_TRANSITIONS.get(previous, set())
         if previous == new and action not in {"retained_seed", "conflict_rechecked", "superseded_rechecked"}:
             allowed = False
@@ -90,6 +95,7 @@ def validate_reviews(
             issues.append(_issue("invalid_review_transition", f"reviews.csv row {index} invalid transition {previous!r}->{new!r} for action {action!r}", row=str(index), review_id=review_id))
 
         latest_by_fact[key] = review
+        last_status_by_fact[key] = new
 
     for key, review in latest_by_fact.items():
         fact = facts.get(key)
@@ -179,6 +185,17 @@ def _load_tables(repo_root: Path) -> dict[str, list[dict[str, str]]]:
     return {name: _read_csv(repo_root / "data" / "library" / name) for name in FACT_ID_COLUMNS}
 
 
+def review_issues_from_repo(repo_root: Path) -> list[dict[str, str]]:
+    reviews_path = repo_root / "data" / "content_audit" / "reviews.csv"
+    if not reviews_path.exists():
+        return [_issue("missing_content_review_ledger", "persistent data/content_audit/reviews.csv is required input")]
+    return validate_reviews(
+        _load_tables(repo_root),
+        _read_csv(repo_root / "data" / "library" / "evidence.csv"),
+        _read_csv(reviews_path),
+    )
+
+
 def _high_degree_work_ids(repo_root: Path) -> set[str]:
     counts: Counter[str] = Counter()
     for row in _read_csv(repo_root / "data" / "derived" / "work_edges_all.csv"):
@@ -191,14 +208,9 @@ def _high_degree_work_ids(repo_root: Path) -> set[str]:
 
 def write_content_audit_outputs(repo_root: Path) -> dict[str, object]:
     audit_dir = repo_root / "data" / "content_audit"
-    audit_dir.mkdir(parents=True, exist_ok=True)
     reviews_path = audit_dir / "reviews.csv"
     if not reviews_path.exists():
-        _write_csv(
-            reviews_path,
-            [],
-            ["review_id", "fact_table", "fact_id", "previous_verification_status", "new_verification_status", "review_action", "evidence_ids", "reviewed_at", "notes"],
-        )
+        raise RuntimeError("missing_content_review_ledger: data/content_audit/reviews.csv must be created and reviewed explicitly")
 
     tables = _load_tables(repo_root)
     evidence_rows = _read_csv(repo_root / "data" / "library" / "evidence.csv")
@@ -235,5 +247,6 @@ def write_content_audit_outputs(repo_root: Path) -> dict[str, object]:
         *([f"- [{issue['code']}] {issue['message']}" for issue in issues] or ["- none"]),
         "",
     ]
+    audit_dir.mkdir(parents=True, exist_ok=True)
     (audit_dir / "CONTENT_AUDIT.md").write_text("\n".join(lines), encoding="utf-8")
     return {"queue_count": len(queue), "review_count": len(review_rows), "issues": issues, "status_counts": dict(status_counts)}
