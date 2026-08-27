@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from scripts.library_v5.apply_review_patch import ALLOWED_PATHS
+from scripts.library_v5.audit import check_transition_semantics
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -70,6 +71,32 @@ class Phase2EventCanonicalSchemaTests(unittest.TestCase):
         for table_name in EXPECTED:
             with self.subTest(table=table_name):
                 self.assertIn("verification_status", self.schema["tables"][table_name]["required_columns"])
+
+    def test_transition_must_point_to_multiverse_event(self) -> None:
+        issues = check_transition_semantics({
+            "events.csv": [{"event_id": "event-a", "event_kind": "battle", "verification_status": "source_verified"}],
+            "multiverse_transitions.csv": [{
+                "transition_id": "event-a",
+                "source_continuity_id": "continuity-a",
+                "destination_continuity_id": "continuity-b",
+                "transition_kind": "physical_crossing",
+                "verification_status": "source_verified",
+            }],
+        })
+        self.assertTrue(any(issue["code"] == "transition_event_kind_mismatch" for issue in issues))
+
+    def test_directional_crossing_rejects_same_source_and_destination(self) -> None:
+        issues = check_transition_semantics({
+            "events.csv": [{"event_id": "event-a", "event_kind": "multiverse_transition", "verification_status": "source_verified"}],
+            "multiverse_transitions.csv": [{
+                "transition_id": "event-a",
+                "source_continuity_id": "continuity-a",
+                "destination_continuity_id": "continuity-a",
+                "transition_kind": "physical_crossing",
+                "verification_status": "source_verified",
+            }],
+        })
+        self.assertTrue(any(issue["code"] == "transition_same_continuity" for issue in issues))
 
 
 if __name__ == "__main__":
