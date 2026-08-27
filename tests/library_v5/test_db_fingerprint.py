@@ -24,15 +24,20 @@ class LibraryDbFingerprintTests(unittest.TestCase):
             self.assertEqual(first["tables"], second["tables"])
             self.assertEqual(first["views"], second["views"])
 
-    def test_fingerprint_contains_schema_tables_views_and_canonical_hashes(self) -> None:
+    def test_fingerprint_contains_phase2_schema_tables_views_and_canonical_hashes(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             db_path = compile_database(ROOT, Path(tmp) / "marvel.sqlite").db_path
             fingerprint = logical_fingerprint(db_path, repo_root=ROOT)
-            self.assertEqual(fingerprint["db_schema_version"], "1.0-phase1")
+            self.assertEqual(fingerprint["db_schema_version"], "1.1-phase2-events")
             self.assertIn("works", fingerprint["tables"])
             self.assertIn("reviews", fingerprint["tables"])
+            self.assertIn("events", fingerprint["tables"])
+            self.assertIn("multiverse_transitions", fingerprint["tables"])
+            self.assertIn("transition_participants", fingerprint["tables"])
             self.assertIn("v_work_connection_reasons", fingerprint["views"])
             self.assertIn("data/library/works.csv", fingerprint["canonical_inputs"])
+            self.assertIn("data/library/events.csv", fingerprint["canonical_inputs"])
+            self.assertIn("data/library/multiverse_transitions.csv", fingerprint["canonical_inputs"])
             self.assertEqual(len(fingerprint["equivalence"]), 64)
 
     def test_manifest_writer_is_deterministic_for_same_db_semantics(self) -> None:
