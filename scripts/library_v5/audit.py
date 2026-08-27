@@ -16,6 +16,7 @@ FACT_ID_COLUMNS = {
     "work_continuities.csv": "work_continuity_id",
     "continuities.csv": "continuity_id",
 }
+QUALIFYING_EVIDENCE_ROLES = {"primary", "supporting"}
 
 
 def sha256_file(path: Path) -> str:
@@ -72,6 +73,7 @@ def check_evidence_coverage(tables: dict[str, list[dict[str, str]]]) -> list[dic
     evidence_pairs = {
         ((row.get("fact_table") or "").strip(), (row.get("fact_id") or "").strip())
         for row in tables.get("evidence.csv", [])
+        if (row.get("evidence_role") or "").strip() in QUALIFYING_EVIDENCE_ROLES
     }
     issues: list[dict[str, str]] = []
     for table_name, id_column in FACT_ID_COLUMNS.items():
@@ -80,7 +82,7 @@ def check_evidence_coverage(tables: dict[str, list[dict[str, str]]]) -> list[dic
                 continue
             fact_id = (row.get(id_column) or "").strip()
             if (table_name, fact_id) not in evidence_pairs:
-                issues.append(_issue("source_verified_without_evidence", f"source_verified {table_name} fact lacks evidence", table=table_name, fact_id=fact_id))
+                issues.append(_issue("source_verified_without_evidence", f"source_verified {table_name} fact lacks qualifying primary/supporting evidence", table=table_name, fact_id=fact_id))
     return issues
 
 
@@ -132,8 +134,10 @@ def _hash_tree(repo_root: Path, root_name: str, excluded: set[str]) -> dict[str,
 def build_manifest(repo_root: Path) -> dict[str, object]:
     repo_root = repo_root.resolve()
     excluded = {
-        "data/library/manifest.json",  # legacy generated file; removed at freeze point
+        "data/library/manifest.json",
         "data/derived/library_manifest.json",
+        "data/derived/audit.json",
+        "data/derived/LIBRARY_AUDIT.md",
     }
     canonical_inputs = _hash_tree(repo_root, "data/library", excluded)
     persistent_inputs = _hash_tree(repo_root, "data/migration", excluded)
@@ -169,6 +173,8 @@ def _verification_status_counts(tables: dict[str, list[dict[str, str]]]) -> dict
 
 
 def audit_repository(repo_root: Path) -> dict[str, object]:
+    from .content_audit import review_issues_from_repo
+
     schema_path = repo_root / "data" / "library" / "schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     table_schemas = schema["tables"]
@@ -205,6 +211,8 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
         fact_id = (row.get("fact_id") or "").strip()
         if fact_table in fact_indexes and fact_id not in fact_indexes[fact_table]:
             issues.append(_issue("broken_evidence_fact_reference", f"evidence.csv row {index} references missing {fact_table}:{fact_id}", table="evidence.csv", row=str(index), fact_id=fact_id, fact_table=fact_table))
+
+    issues.extend(review_issues_from_repo(repo_root))
 
     connection_rows = _read_csv(repo_root / "data" / "connections.csv")
     char_rows = _read_csv(repo_root / "data" / "migration" / "legacy_char_links.csv")
