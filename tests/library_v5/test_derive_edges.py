@@ -8,10 +8,10 @@ WORKS = [
     {"work_id": "d", "release_sort_date": "2014-01-01"},
 ]
 APPEARANCES = [
-    {"appearance_id": "ap-a", "work_id": "a", "entity_id": "entity-hero", "verification_status": "verified"},
-    {"appearance_id": "ap-b", "work_id": "b", "entity_id": "entity-hero", "verification_status": "verified"},
-    {"appearance_id": "ap-c", "work_id": "c", "entity_id": "entity-hero", "verification_status": "verified"},
-    {"appearance_id": "ap-d", "work_id": "d", "entity_id": "entity-hero", "verification_status": "verified"},
+    {"appearance_id": "ap-a", "work_id": "a", "entity_id": "entity-hero", "appearance_kind": "onscreen", "certainty": "confirmed", "verification_status": "source_verified"},
+    {"appearance_id": "ap-b", "work_id": "b", "entity_id": "entity-hero", "appearance_kind": "post_credit", "certainty": "confirmed", "verification_status": "source_verified"},
+    {"appearance_id": "ap-c", "work_id": "c", "entity_id": "entity-hero", "appearance_kind": "onscreen", "certainty": "confirmed", "verification_status": "source_verified"},
+    {"appearance_id": "ap-d", "work_id": "d", "entity_id": "entity-hero", "appearance_kind": "onscreen", "certainty": "confirmed", "verification_status": "source_verified"},
 ]
 
 
@@ -23,6 +23,17 @@ class EdgeDerivationTests(unittest.TestCase):
         pairs = {(row["source_work_id"], row["target_work_id"]) for row in reasons}
         self.assertEqual(pairs, {("a", "b"), ("a", "c"), ("a", "d"), ("b", "c"), ("b", "d"), ("c", "d")})
         self.assertTrue(all(row["reason_kind"] == "shared_entity" for row in reasons))
+
+    def test_shared_entity_reason_preserves_source_fact_ids_kinds_and_statuses(self):
+        from scripts.library_v5.derive_edges import derive_reasons
+
+        reasons = derive_reasons(WORKS[:2], APPEARANCES[:2], [], [], mode="all_pairs")
+        self.assertEqual(len(reasons), 1)
+        reason = reasons[0]
+        self.assertEqual(reason["support_fact_ids"], "ap-a|ap-b")
+        self.assertEqual(reason["appearance_kinds"], "onscreen|post_credit")
+        self.assertEqual(reason["verification_statuses"], "source_verified")
+        self.assertEqual(reason["certainty_values"], "confirmed")
 
     def test_adjacent_release_yields_only_consecutive_appearances(self):
         from scripts.library_v5.derive_edges import derive_reasons
@@ -42,10 +53,16 @@ class EdgeDerivationTests(unittest.TestCase):
             "relation_scope": "story",
             "directness": "direct",
             "continuity_scope": "same_or_intended",
+            "certainty": "confirmed",
+            "verification_status": "source_verified",
         }]
         reasons = derive_reasons(WORKS[:2], APPEARANCES[:2], explicit, [], mode="combined_all_pairs")
         ab = [r for r in reasons if r["source_work_id"] == "a" and r["target_work_id"] == "b"]
         self.assertEqual({r["reason_kind"] for r in ab}, {"shared_entity", "explicit_relation"})
+        explicit_reason = next(r for r in ab if r["reason_kind"] == "explicit_relation")
+        self.assertEqual(explicit_reason["support_fact_ids"], "wr-a-b")
+        self.assertEqual(explicit_reason["verification_statuses"], "source_verified")
+        self.assertEqual(explicit_reason["certainty_values"], "confirmed")
         edges = collapse_reasons_to_edges(reasons)
         self.assertEqual(len(edges), 1)
         self.assertEqual(len(edges[0]["reason_ids"].split("|")), 2)
@@ -54,8 +71,8 @@ class EdgeDerivationTests(unittest.TestCase):
         from scripts.library_v5.derive_edges import derive_reasons
 
         appearances = [
-            {"appearance_id": "ap-tony", "work_id": "a", "entity_id": "entity-tony-stark", "verification_status": "verified"},
-            {"appearance_id": "ap-doom", "work_id": "b", "entity_id": "entity-doctor-doom", "verification_status": "verified"},
+            {"appearance_id": "ap-tony", "work_id": "a", "entity_id": "entity-tony-stark", "appearance_kind": "onscreen", "certainty": "confirmed", "verification_status": "source_verified"},
+            {"appearance_id": "ap-doom", "work_id": "b", "entity_id": "entity-doctor-doom", "appearance_kind": "onscreen", "certainty": "confirmed", "verification_status": "source_verified"},
         ]
         portrayals = [
             {"work_id": "a", "person_id": "person-rdj", "entity_id": "entity-tony-stark"},
@@ -68,14 +85,16 @@ class EdgeDerivationTests(unittest.TestCase):
         from scripts.library_v5.derive_edges import derive_reasons
 
         appearances = [
-            {"appearance_id": "ap-main", "work_id": "a", "entity_id": "entity-prof-x-main", "verification_status": "verified"},
-            {"appearance_id": "ap-variant", "work_id": "b", "entity_id": "entity-prof-x-variant", "verification_status": "verified"},
+            {"appearance_id": "ap-main", "work_id": "a", "entity_id": "entity-prof-x-main", "appearance_kind": "onscreen", "certainty": "confirmed", "verification_status": "source_verified"},
+            {"appearance_id": "ap-variant", "work_id": "b", "entity_id": "entity-prof-x-variant", "appearance_kind": "onscreen", "certainty": "confirmed", "verification_status": "source_verified"},
         ]
         entity_relations = [{
             "entity_relation_id": "er-1",
             "source_entity_id": "entity-prof-x-variant",
             "relation_kind": "variant_of",
             "target_entity_id": "entity-prof-x-main",
+            "certainty": "confirmed",
+            "verification_status": "source_verified",
         }]
         self.assertEqual(derive_reasons(WORKS[:2], appearances, [], entity_relations, mode="all_pairs"), [])
         reasons = derive_reasons(WORKS[:2], appearances, [], entity_relations, mode="all_pairs", include_variants=True)
