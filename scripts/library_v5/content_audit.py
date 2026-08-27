@@ -71,6 +71,7 @@ def validate_reviews(
         previous = (review.get("previous_verification_status") or "").strip()
         new = (review.get("new_verification_status") or "").strip()
         action = (review.get("review_action") or "").strip()
+        review_evidence_ids = _split_ids(review.get("evidence_ids") or "")
 
         if not review_id or review_id in seen_review_ids:
             issues.append(_issue("duplicate_review_id", f"reviews.csv row {index} has missing or duplicate review_id={review_id!r}", row=str(index), review_id=review_id))
@@ -80,7 +81,7 @@ def validate_reviews(
         key = (table, fact_id)
         if key not in facts:
             issues.append(_issue("review_missing_fact", f"reviews.csv row {index} references missing fact {table}:{fact_id}", row=str(index), fact_table=table, fact_id=fact_id))
-        for evidence_id in _split_ids(review.get("evidence_ids") or ""):
+        for evidence_id in review_evidence_ids:
             if evidence_id not in evidence_ids:
                 issues.append(_issue("review_missing_evidence", f"reviews.csv row {index} references missing evidence {evidence_id}", row=str(index), evidence_id=evidence_id))
 
@@ -88,9 +89,15 @@ def validate_reviews(
         if prior_review_status is not None and previous != prior_review_status:
             issues.append(_issue("review_history_discontinuity", f"reviews.csv row {index} previous status {previous!r} does not match prior review status {prior_review_status!r}", row=str(index), review_id=review_id))
 
-        allowed = previous in ALLOWED_STATUSES and new in ALLOWED_TRANSITIONS.get(previous, set())
-        if previous == new and action not in {"retained_seed", "conflict_rechecked", "superseded_rechecked"}:
-            allowed = False
+        is_creation = action == "created_verified"
+        if is_creation:
+            allowed = prior_review_status is None and previous == "" and new == "source_verified"
+            if not review_evidence_ids:
+                issues.append(_issue("created_verified_without_evidence", f"reviews.csv row {index} created_verified requires at least one evidence id", row=str(index), review_id=review_id))
+        else:
+            allowed = previous in ALLOWED_STATUSES and new in ALLOWED_TRANSITIONS.get(previous, set())
+            if previous == new and action not in {"retained_seed", "conflict_rechecked", "superseded_rechecked"}:
+                allowed = False
         if not allowed:
             issues.append(_issue("invalid_review_transition", f"reviews.csv row {index} invalid transition {previous!r}->{new!r} for action {action!r}", row=str(index), review_id=review_id))
 
