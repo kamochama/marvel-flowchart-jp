@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .audit import write_audit_outputs
 from .canonical_guard import assert_canonical_unchanged, canonical_hashes
+from .content_audit import write_content_audit_outputs
 from .derive_compat import write_compatibility_outputs
 from .derive_edges import write_derived_edges
 
@@ -44,13 +45,20 @@ def build(repo_root: Path, *, clean: bool = True) -> dict[str, object]:
     result: dict[str, object] = {}
     result["derived_edges"] = write_derived_edges(repo_root, mode="combined_all_pairs")
     result["compatibility"] = write_compatibility_outputs(repo_root)
+    content_audit = write_content_audit_outputs(repo_root)
+    result["content_audit"] = {
+        "queue_count": content_audit["queue_count"],
+        "review_count": content_audit["review_count"],
+        "issue_count": len(content_audit["issues"]),
+        "status_counts": content_audit["status_counts"],
+    }
     audit = write_audit_outputs(repo_root)
 
     after = canonical_hashes(repo_root)
     assert_canonical_unchanged(before, after)
     result["canonical_files"] = len(after)
-    result["audit_ok"] = audit["ok"]
-    result["audit_issue_count"] = len(audit["issues"])
+    result["audit_ok"] = audit["ok"] and not content_audit["issues"]
+    result["audit_issue_count"] = len(audit["issues"]) + len(content_audit["issues"])
     return result
 
 
