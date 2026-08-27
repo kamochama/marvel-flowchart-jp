@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import csv
 from pathlib import Path
-from typing import Iterable
 
 from .ids import slug_id
 
@@ -62,6 +61,7 @@ def _relation_row(row: dict[str, str]) -> dict[str, str]:
         "directness": (row.get("directness") or "indirect").strip() or "indirect",
         "continuity_scope": (row.get("continuity_scope") or "same_or_intended").strip() or "same_or_intended",
         "certainty": _certainty_from_legacy(row),
+        "verification_status": "legacy_seed",
         "notes": notes or "Migrated from legacy connections.csv pending v5 fact audit.",
     }
 
@@ -197,7 +197,7 @@ def write_work_relation_tables(repo_root: Path) -> dict[str, int]:
 
     work_fields = list(works[0].keys()) if works else ["work_id"]
     _write_csv(library / "works.csv", works, work_fields)
-    _write_csv(library / "work_relations.csv", conn["work_relations"], ["work_relation_id", "source_work_id", "target_work_id", "relation_kind", "relation_scope", "directness", "continuity_scope", "certainty", "notes"])
+    _write_csv(library / "work_relations.csv", conn["work_relations"], ["work_relation_id", "source_work_id", "target_work_id", "relation_kind", "relation_scope", "directness", "continuity_scope", "certainty", "verification_status", "notes"])
     _write_csv(library / "continuities.csv", chrono["continuities"], ["continuity_id", "label_ja", "label_en", "continuity_kind", "certainty", "notes"])
     _write_csv(library / "work_continuities.csv", chrono["work_continuities"], ["work_continuity_id", "work_id", "continuity_id", "relation_to_continuity", "certainty", "notes"])
     _write_csv(library / "chronology_assertions.csv", chrono["chronology_assertions"], ["chronology_assertion_id", "continuity_id", "earlier_work_id", "later_work_id", "certainty", "notes"])
