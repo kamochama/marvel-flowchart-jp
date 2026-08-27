@@ -33,6 +33,27 @@ class ContentAuditTests(unittest.TestCase):
         self.assertIn("invalid_review_transition", codes)
         self.assertIn("review_current_status_mismatch", codes)
 
+    def test_verified_rechecked_allows_source_verified_status_to_stay_verified(self):
+        from scripts.library_v5.content_audit import validate_reviews
+
+        tables = {
+            "work_relations.csv": [{"work_relation_id": "wr-1", "verification_status": "source_verified"}],
+        }
+        evidence = [{"evidence_id": "ev-1"}]
+        reviews = [
+            {
+                "review_id": "r1",
+                "fact_table": "work_relations.csv",
+                "fact_id": "wr-1",
+                "previous_verification_status": "source_verified",
+                "new_verification_status": "source_verified",
+                "review_action": "verified_rechecked",
+                "evidence_ids": "ev-1",
+            }
+        ]
+        issues = validate_reviews(tables, evidence, reviews)
+        self.assertEqual(issues, [])
+
     def test_queue_is_deterministic_and_prioritizes_high_impact_then_high_degree(self):
         from scripts.library_v5.content_audit import build_review_queue
 
