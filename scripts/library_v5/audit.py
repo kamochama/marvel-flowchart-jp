@@ -15,9 +15,16 @@ FACT_ID_COLUMNS = {
     "chronology_assertions.csv": "chronology_assertion_id",
     "work_continuities.csv": "work_continuity_id",
     "continuities.csv": "continuity_id",
+    "events.csv": "event_id",
+    "event_occurrences.csv": "event_occurrence_id",
+    "event_participants.csv": "event_participant_id",
+    "event_relations.csv": "event_relation_id",
+    "multiverse_transitions.csv": "transition_id",
+    "transition_participants.csv": "transition_participant_id",
 }
 QUALIFYING_EVIDENCE_ROLES = {"primary", "supporting"}
 RAW_SQLITE_PATH = "data/derived/db/marvel.sqlite"
+_DIRECTIONAL_TRANSITION_KINDS = {"physical_crossing", "summoning", "spell_displacement", "tva_transfer"}
 
 
 def sha256_file(path: Path) -> str:
@@ -81,6 +88,39 @@ def check_evidence_coverage(tables: dict[str, list[dict[str, str]]]) -> list[dic
             fact_id = (row.get(id_column) or "").strip()
             if (table_name, fact_id) not in evidence_pairs:
                 issues.append(_issue("source_verified_without_evidence", f"source_verified {table_name} fact lacks qualifying primary/supporting evidence", table=table_name, fact_id=fact_id))
+    return issues
+
+
+def check_transition_semantics(tables: dict[str, list[dict[str, str]]]) -> list[dict[str, str]]:
+    events = {
+        (row.get("event_id") or "").strip(): row
+        for row in tables.get("events.csv", [])
+        if (row.get("event_id") or "").strip()
+    }
+    issues: list[dict[str, str]] = []
+    for index, row in enumerate(tables.get("multiverse_transitions.csv", []), start=2):
+        transition_id = (row.get("transition_id") or "").strip()
+        event = events.get(transition_id)
+        if event is not None and (event.get("event_kind") or "").strip() != "multiverse_transition":
+            issues.append(_issue(
+                "transition_event_kind_mismatch",
+                f"multiverse transition {transition_id} must reference an events.csv row with event_kind=multiverse_transition",
+                table="multiverse_transitions.csv",
+                row=str(index),
+                transition_id=transition_id,
+            ))
+        source = (row.get("source_continuity_id") or "").strip()
+        destination = (row.get("destination_continuity_id") or "").strip()
+        transition_kind = (row.get("transition_kind") or "").strip()
+        if source and destination and source == destination and transition_kind in _DIRECTIONAL_TRANSITION_KINDS:
+            issues.append(_issue(
+                "transition_same_continuity",
+                f"{transition_kind} transition {transition_id} cannot use the same known source and destination continuity",
+                table="multiverse_transitions.csv",
+                row=str(index),
+                transition_id=transition_id,
+                continuity_id=source,
+            ))
     return issues
 
 
@@ -148,7 +188,7 @@ def build_manifest(repo_root: Path) -> dict[str, object]:
             generated_outputs[path.relative_to(repo_root).as_posix()] = sha256_file(path)
     files = {**canonical_inputs, **persistent_inputs, **generated_outputs}
     return {
-        "schema_version": "5.0",
+        "schema_version": "5.1",
         "hash_algorithm": "sha256",
         "canonical_inputs": canonical_inputs,
         "persistent_inputs": persistent_inputs,
@@ -194,6 +234,7 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
             issues.extend(check_primary_keys(table_name, rows, str(primary_key)))
 
     issues.extend(check_foreign_keys(tables, table_schemas))
+    issues.extend(check_transition_semantics(tables))
     issues.extend(check_evidence_coverage(tables))
 
     fact_indexes: dict[str, set[str]] = {}
@@ -242,7 +283,7 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
         issues.extend(check_primary_keys(rel, _read_csv(repo_root / rel), pk))
 
     return {
-        "schema_version": "5.0",
+        "schema_version": "5.1",
         "ok": not any(issue.get("severity") == "error" for issue in issues),
         "issues": sorted(issues, key=lambda i: (i.get("code", ""), i.get("table", ""), i.get("row", ""), i.get("message", ""))),
         "observed_counts": {
