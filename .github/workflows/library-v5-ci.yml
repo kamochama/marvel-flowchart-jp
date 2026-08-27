@@ -31,3 +31,25 @@ jobs:
         run: python -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
       - name: Ordinary canonical read-only build
         run: python -m scripts.library_v5.build --repo-root .
+      - name: Reconstruct bootstrap candidate
+        run: python -m scripts.library_v5.bootstrap --repo-root .
+      - name: Verify initial canonical equals bootstrap candidate
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from scripts.library_v5.bootstrap import candidate_manifest
+          from scripts.library_v5.canonical_guard import canonical_hashes
+          root = Path('.')
+          candidate = candidate_manifest(root)
+          current = canonical_hashes(root)
+          if candidate != current:
+              missing = sorted(set(candidate) ^ set(current))
+              changed = sorted(k for k in set(candidate) & set(current) if candidate[k] != current[k])
+              raise SystemExit(f'bootstrap candidate mismatch: missing={missing} changed={changed}')
+          print(f'bootstrap candidate matches {len(current)} canonical files')
+          PY
+      - name: Verify bootstrap determinism
+        run: |
+          cp data/migration/bootstrap/candidate_manifest.json /tmp/bootstrap-manifest-first.json
+          python -m scripts.library_v5.bootstrap --repo-root .
+          cmp /tmp/bootstrap-manifest-first.json data/migration/bootstrap/candidate_manifest.json
