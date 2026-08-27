@@ -54,6 +54,39 @@ class LibraryV5IdsAndSchemaTests(unittest.TestCase):
         self.assertIn("unknown_role", schema["enums"]["portrayal_kind"])
         self.assertIn("entity_id", portrayal["nullable_columns"])
 
+    def test_schema_uses_design_spec_verification_and_certainty_vocab(self):
+        schema = json.loads(
+            (ROOT / "data" / "library" / "schema.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            schema["enums"]["verification_status"],
+            ["legacy_seed", "source_verified", "conflicted", "superseded"],
+        )
+        self.assertEqual(
+            schema["enums"]["certainty"],
+            ["confirmed", "probable", "uncertain", "unknown"],
+        )
+
+    def test_source_auditable_fact_tables_have_verification_status(self):
+        schema = json.loads(
+            (ROOT / "data" / "library" / "schema.json").read_text(encoding="utf-8")
+        )
+        fact_tables = {
+            "entity_relations.csv",
+            "appearances.csv",
+            "portrayals.csv",
+            "continuities.csv",
+            "work_continuities.csv",
+            "chronology_assertions.csv",
+            "work_relations.csv",
+        }
+        for table_name in fact_tables:
+            with self.subTest(table=table_name):
+                self.assertIn(
+                    "verification_status",
+                    schema["tables"][table_name]["required_columns"],
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
