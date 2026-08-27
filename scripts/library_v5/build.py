@@ -6,7 +6,11 @@ import shutil
 from pathlib import Path
 
 from .audit import write_audit_outputs
-from .canonical_guard import assert_canonical_unchanged, canonical_hashes
+from .canonical_guard import (
+    assert_protected_inputs_unchanged,
+    canonical_hashes,
+    protected_input_hashes,
+)
 from .content_audit import write_content_audit_outputs
 from .db_compile import compile_database
 from .db_export import export_work_graph
@@ -40,7 +44,7 @@ def clean_generated(repo_root: Path) -> None:
 
 def build(repo_root: Path, *, clean: bool = True) -> dict[str, object]:
     repo_root = repo_root.resolve()
-    before = canonical_hashes(repo_root)
+    protected_before = protected_input_hashes(repo_root)
     if clean:
         clean_generated(repo_root)
 
@@ -63,9 +67,9 @@ def build(repo_root: Path, *, clean: bool = True) -> dict[str, object]:
     }
     audit = write_audit_outputs(repo_root)
 
-    after = canonical_hashes(repo_root)
-    assert_canonical_unchanged(before, after)
-    result["canonical_files"] = len(after)
+    protected_after = protected_input_hashes(repo_root)
+    assert_protected_inputs_unchanged(protected_before, protected_after)
+    result["canonical_files"] = len(canonical_hashes(repo_root))
     result["audit_ok"] = audit["ok"] and not content_audit["issues"]
     result["audit_issue_count"] = len(audit["issues"]) + len(content_audit["issues"])
     return result
