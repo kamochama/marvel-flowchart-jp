@@ -7,8 +7,8 @@ from scripts.library_v5.db_schema import DB_SCHEMA_VERSION, canonical_table_name
 
 
 class LibraryDbSchemaTests(unittest.TestCase):
-    def test_phase1_schema_has_current_canonical_tables_and_reviews(self) -> None:
-        self.assertEqual(DB_SCHEMA_VERSION, "1.0-phase1")
+    def test_schema_tracks_current_phase2_canonical_tables_and_reviews(self) -> None:
+        self.assertEqual(DB_SCHEMA_VERSION, "1.1-phase2-events")
         self.assertEqual(
             canonical_table_names(),
             (
@@ -22,6 +22,12 @@ class LibraryDbSchemaTests(unittest.TestCase):
                 "work_continuities",
                 "chronology_assertions",
                 "work_relations",
+                "events",
+                "event_occurrences",
+                "event_participants",
+                "event_relations",
+                "multiverse_transitions",
+                "transition_participants",
                 "sources",
                 "evidence",
                 "reviews",
@@ -48,6 +54,15 @@ class LibraryDbSchemaTests(unittest.TestCase):
             connection.execute(
                 "INSERT INTO appearances(appearance_id,work_id,entity_id,appearance_kind,certainty,verification_status,notes) VALUES(?,?,?,?,?,?,?)",
                 ("appearance-a", "work-a", "entity-a", "onscreen", "confirmed", "not-a-status", ""),
+            )
+
+    def test_phase2_event_and_transition_enums_are_sql_constraints(self) -> None:
+        connection = sqlite3.connect(":memory:")
+        create_schema(connection)
+        with self.assertRaises(sqlite3.IntegrityError):
+            connection.execute(
+                "INSERT INTO events(event_id,name_ja,name_en,event_kind,primary_continuity_id,certainty,verification_status,notes) VALUES(?,?,?,?,?,?,?,?)",
+                ("event-a", "イベント", "Event", "not-an-event-kind", None, "confirmed", "legacy_seed", ""),
             )
 
 
