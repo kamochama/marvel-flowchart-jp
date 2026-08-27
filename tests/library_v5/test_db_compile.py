@@ -21,6 +21,12 @@ HEADERS = {
     "work_continuities.csv": ["work_continuity_id", "work_id", "continuity_id", "relation_to_continuity", "certainty", "verification_status", "notes"],
     "chronology_assertions.csv": ["chronology_assertion_id", "continuity_id", "earlier_work_id", "later_work_id", "certainty", "verification_status", "notes"],
     "work_relations.csv": ["work_relation_id", "source_work_id", "target_work_id", "relation_kind", "relation_scope", "directness", "continuity_scope", "certainty", "verification_status", "notes"],
+    "events.csv": ["event_id", "name_ja", "name_en", "event_kind", "primary_continuity_id", "certainty", "verification_status", "notes"],
+    "event_occurrences.csv": ["event_occurrence_id", "event_id", "work_id", "occurrence_kind", "certainty", "verification_status", "notes"],
+    "event_participants.csv": ["event_participant_id", "event_id", "entity_id", "participant_role", "certainty", "verification_status", "notes"],
+    "event_relations.csv": ["event_relation_id", "source_event_id", "relation_kind", "target_event_id", "certainty", "verification_status", "notes"],
+    "multiverse_transitions.csv": ["transition_id", "source_continuity_id", "destination_continuity_id", "transition_kind", "direction_certainty", "verification_status", "notes"],
+    "transition_participants.csv": ["transition_participant_id", "transition_id", "entity_id", "participant_role", "identity_certainty", "verification_status", "notes"],
     "sources.csv": ["source_id", "purpose", "official_source", "checked_point", "url"],
     "evidence.csv": ["evidence_id", "fact_table", "fact_id", "source_id", "evidence_role", "quoted_or_paraphrased_note", "verified_at"],
 }
@@ -66,6 +72,8 @@ class LibraryDbCompileTests(unittest.TestCase):
             self.assertTrue(result.db_path.exists())
             self.assertEqual(result.table_counts["works"], 2)
             self.assertEqual(result.table_counts["appearances"], 1)
+            self.assertEqual(result.table_counts["events"], 0)
+            self.assertEqual(result.table_counts["multiverse_transitions"], 0)
 
             connection = open_query_connection(result.db_path)
             self.assertEqual(connection.execute("SELECT count(*) FROM works").fetchone()[0], 2)
