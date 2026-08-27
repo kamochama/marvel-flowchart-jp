@@ -125,7 +125,7 @@ def _hash_tree(repo_root: Path, root_name: str, excluded: set[str]) -> dict[str,
     result: dict[str, str] = {}
     for path in sorted(p for p in root.rglob("*") if p.is_file()):
         rel = path.relative_to(repo_root).as_posix()
-        if rel in excluded:
+        if rel in excluded or rel.startswith("data/migration/bootstrap/"):
             continue
         result[rel] = sha256_file(path)
     return result
