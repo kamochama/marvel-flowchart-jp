@@ -112,23 +112,50 @@ def _csv_header(path: Path) -> list[str]:
         return next(reader, [])
 
 
-def build_manifest(repo_root: Path) -> dict[str, object]:
-    excluded = {
-        "data/library/manifest.json",
-        "data/migration/audit.json",
-        "data/migration/MIGRATION_AUDIT.md",
-    }
-    files: dict[str, str] = {}
-    for root_name in ("data/library", "data/derived", "data/migration", "views/flowchart"):
-        root = repo_root / root_name
-        if not root.exists():
+def manifest_output_path(repo_root: Path) -> Path:
+    return repo_root / "data" / "derived" / "library_manifest.json"
+
+
+def _hash_tree(repo_root: Path, root_name: str, excluded: set[str]) -> dict[str, str]:
+    root = repo_root / root_name
+    if not root.exists():
+        return {}
+    result: dict[str, str] = {}
+    for path in sorted(p for p in root.rglob("*") if p.is_file()):
+        rel = path.relative_to(repo_root).as_posix()
+        if rel in excluded:
             continue
-        for path in sorted(p for p in root.rglob("*") if p.is_file()):
-            rel = path.relative_to(repo_root).as_posix()
-            if rel in excluded:
-                continue
-            files[rel] = sha256_file(path)
-    return {"schema_version": "5.0", "hash_algorithm": "sha256", "files": files}
+        result[rel] = sha256_file(path)
+    return result
+
+
+def build_manifest(repo_root: Path) -> dict[str, object]:
+    repo_root = repo_root.resolve()
+    excluded = {
+        "data/library/manifest.json",  # legacy generated file; removed at freeze point
+        "data/derived/library_manifest.json",
+    }
+    canonical_inputs = _hash_tree(repo_root, "data/library", excluded)
+    persistent_inputs = _hash_tree(repo_root, "data/migration", excluded)
+    reviews = repo_root / "data" / "content_audit" / "reviews.csv"
+    if reviews.exists():
+        persistent_inputs[reviews.relative_to(repo_root).as_posix()] = sha256_file(reviews)
+    generated_outputs: dict[str, str] = {}
+    for root_name in ("data/derived", "views/flowchart"):
+        generated_outputs.update(_hash_tree(repo_root, root_name, excluded))
+    for name in ("queue.csv", "CONTENT_AUDIT.md"):
+        path = repo_root / "data" / "content_audit" / name
+        if path.exists():
+            generated_outputs[path.relative_to(repo_root).as_posix()] = sha256_file(path)
+    files = {**canonical_inputs, **persistent_inputs, **generated_outputs}
+    return {
+        "schema_version": "5.0",
+        "hash_algorithm": "sha256",
+        "canonical_inputs": canonical_inputs,
+        "persistent_inputs": persistent_inputs,
+        "generated_outputs": generated_outputs,
+        "files": dict(sorted(files.items())),
+    }
 
 
 def _verification_status_counts(tables: dict[str, list[dict[str, str]]]) -> dict[str, dict[str, int]]:
@@ -236,13 +263,11 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
 
 
 def write_audit_outputs(repo_root: Path) -> dict[str, object]:
-    migration = repo_root / "data" / "migration"
-    library = repo_root / "data" / "library"
-    migration.mkdir(parents=True, exist_ok=True)
-    library.mkdir(parents=True, exist_ok=True)
+    derived = repo_root / "data" / "derived"
+    derived.mkdir(parents=True, exist_ok=True)
 
     audit = audit_repository(repo_root)
-    (migration / "audit.json").write_text(json.dumps(audit, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (derived / "audit.json").write_text(json.dumps(audit, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     counts = audit["observed_counts"]
     issue_lines = [f"- [{i['code']}] {i['message']}" for i in audit["issues"]] or ["- none"]
@@ -254,15 +279,15 @@ def write_audit_outputs(repo_root: Path) -> dict[str, object]:
         verification_lines = ["- none"]
 
     md = "\n".join([
-        "# Marvel Library v5 Migration Audit",
+        "# Marvel Library v5 Audit",
         "",
         f"Status: {'PASS' if audit['ok'] else 'FAIL'}",
         "",
         "## Principle",
         "",
-        "Counts below are observations, not correctness targets. Completeness is measured by migration coverage, referential integrity, evidence state, and deterministic derivation.",
+        "Canonical facts are read-only build inputs. Counts below are observations, not correctness targets.",
         "",
-        "## Legacy input coverage",
+        "## Frozen migration coverage",
         "",
         *(f"- {k}: {v}" for k, v in counts["legacy_inputs"].items()),
         "",
@@ -279,8 +304,8 @@ def write_audit_outputs(repo_root: Path) -> dict[str, object]:
         *issue_lines,
         "",
     ])
-    (migration / "MIGRATION_AUDIT.md").write_text(md, encoding="utf-8")
+    (derived / "LIBRARY_AUDIT.md").write_text(md, encoding="utf-8")
 
     manifest = build_manifest(repo_root)
-    (library / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    manifest_output_path(repo_root).write_text(json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return audit
