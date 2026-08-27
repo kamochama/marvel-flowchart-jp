@@ -46,7 +46,13 @@ def install_internal_helpers(connection: sqlite3.Connection) -> None:
 
 
 def install_public_views(connection: sqlite3.Connection) -> None:
-    for view_name in (*PUBLIC_VIEW_NAMES, "_v_entity_work_pairs", "_v_entity_work_presence", "_v_resolved_appearances"):
+    for view_name in (
+        *PUBLIC_VIEW_NAMES,
+        "_v_base_work_connection_reasons",
+        "_v_entity_work_pairs",
+        "_v_entity_work_presence",
+        "_v_resolved_appearances",
+    ):
         connection.execute(f"DROP VIEW IF EXISTS {view_name}")
 
     connection.execute(
@@ -246,13 +252,19 @@ def install_public_views(connection: sqlite3.Connection) -> None:
 
     connection.execute(
         """
-        CREATE VIEW v_work_connection_reasons AS
+        CREATE VIEW _v_base_work_connection_reasons AS
         SELECT
             p.source_work_id,
             p.target_work_id,
             'shared_entity' AS reason_kind,
             p.canonical_entity_id,
             '' AS relation_id,
+            '' AS transition_id,
+            '' AS event_id,
+            '' AS event_occurrence_id,
+            '' AS source_continuity_id,
+            '' AS destination_continuity_id,
+            '' AS participant_fact_ids,
             (
                 SELECT group_concat(value, '|')
                 FROM (
@@ -308,6 +320,12 @@ def install_public_views(connection: sqlite3.Connection) -> None:
             'explicit_relation' AS reason_kind,
             '' AS canonical_entity_id,
             r.work_relation_id AS relation_id,
+            '' AS transition_id,
+            '' AS event_id,
+            '' AS event_occurrence_id,
+            '' AS source_continuity_id,
+            '' AS destination_continuity_id,
+            '' AS participant_fact_ids,
             r.work_relation_id AS support_fact_ids,
             '' AS appearance_kinds,
             r.verification_status AS verification_statuses,
@@ -319,6 +337,139 @@ def install_public_views(connection: sqlite3.Connection) -> None:
           AND TRIM(r.source_work_id) <> ''
           AND TRIM(r.target_work_id) <> ''
           AND r.source_work_id <> r.target_work_id
+        """
+    )
+
+    connection.execute(
+        """
+        CREATE VIEW v_work_connection_reasons AS
+        SELECT * FROM _v_base_work_connection_reasons
+
+        UNION ALL
+
+        SELECT
+            b.source_work_id,
+            b.target_work_id,
+            'multiverse_transition' AS reason_kind,
+            '' AS canonical_entity_id,
+            '' AS relation_id,
+            mt.transition_id,
+            mt.transition_id AS event_id,
+            eo.event_occurrence_id,
+            COALESCE(mt.source_continuity_id, '') AS source_continuity_id,
+            COALESCE(mt.destination_continuity_id, '') AS destination_continuity_id,
+            COALESCE((
+                SELECT group_concat(value, '|')
+                FROM (
+                    SELECT tp2.transition_participant_id AS value
+                    FROM transition_participants AS tp2
+                    WHERE tp2.transition_id = mt.transition_id
+                      AND tp2.verification_status <> 'superseded'
+                    ORDER BY value
+                )
+            ), '') AS participant_fact_ids,
+            COALESCE((
+                SELECT group_concat(value, '|')
+                FROM (
+                    SELECT mt.transition_id AS value
+                    UNION
+                    SELECT eo.event_occurrence_id AS value
+                    UNION
+                    SELECT wc2.work_continuity_id AS value
+                    FROM work_continuities AS wc2
+                    WHERE wc2.work_id = CASE
+                              WHEN eo.work_id = b.source_work_id THEN b.target_work_id
+                              ELSE b.source_work_id
+                          END
+                      AND wc2.verification_status <> 'superseded'
+                      AND wc2.continuity_id IN (mt.source_continuity_id, mt.destination_continuity_id)
+                    UNION
+                    SELECT tp2.transition_participant_id AS value
+                    FROM transition_participants AS tp2
+                    WHERE tp2.transition_id = mt.transition_id
+                      AND tp2.verification_status <> 'superseded'
+                    ORDER BY value
+                )
+            ), '') AS support_fact_ids,
+            '' AS appearance_kinds,
+            COALESCE((
+                SELECT group_concat(value, '|')
+                FROM (
+                    SELECT e.verification_status AS value
+                    UNION
+                    SELECT mt.verification_status AS value
+                    UNION
+                    SELECT eo.verification_status AS value
+                    UNION
+                    SELECT wc2.verification_status AS value
+                    FROM work_continuities AS wc2
+                    WHERE wc2.work_id = CASE
+                              WHEN eo.work_id = b.source_work_id THEN b.target_work_id
+                              ELSE b.source_work_id
+                          END
+                      AND wc2.verification_status <> 'superseded'
+                      AND wc2.continuity_id IN (mt.source_continuity_id, mt.destination_continuity_id)
+                    UNION
+                    SELECT tp2.verification_status AS value
+                    FROM transition_participants AS tp2
+                    WHERE tp2.transition_id = mt.transition_id
+                      AND tp2.verification_status <> 'superseded'
+                    ORDER BY value
+                )
+            ), '') AS verification_statuses,
+            COALESCE((
+                SELECT group_concat(value, '|')
+                FROM (
+                    SELECT e.certainty AS value
+                    UNION
+                    SELECT mt.direction_certainty AS value
+                    UNION
+                    SELECT eo.certainty AS value
+                    UNION
+                    SELECT wc2.certainty AS value
+                    FROM work_continuities AS wc2
+                    WHERE wc2.work_id = CASE
+                              WHEN eo.work_id = b.source_work_id THEN b.target_work_id
+                              ELSE b.source_work_id
+                          END
+                      AND wc2.verification_status <> 'superseded'
+                      AND wc2.continuity_id IN (mt.source_continuity_id, mt.destination_continuity_id)
+                    UNION
+                    SELECT tp2.identity_certainty AS value
+                    FROM transition_participants AS tp2
+                    WHERE tp2.transition_id = mt.transition_id
+                      AND tp2.verification_status <> 'superseded'
+                    ORDER BY value
+                )
+            ), '') AS certainty_values,
+            mt.transition_kind
+              || '; source=' || COALESCE(mt.source_continuity_id, 'unknown')
+              || '; destination=' || COALESCE(mt.destination_continuity_id, 'unknown')
+              || '; occurrence=' || eo.event_occurrence_id AS notes,
+            mt.transition_id || ':' || eo.event_occurrence_id AS reason_discriminator
+        FROM (
+            SELECT DISTINCT source_work_id, target_work_id
+            FROM _v_base_work_connection_reasons
+        ) AS b
+        JOIN event_occurrences AS eo
+          ON eo.work_id IN (b.source_work_id, b.target_work_id)
+         AND eo.verification_status <> 'superseded'
+        JOIN multiverse_transitions AS mt
+          ON mt.transition_id = eo.event_id
+         AND mt.verification_status <> 'superseded'
+        JOIN events AS e
+          ON e.event_id = mt.transition_id
+         AND e.verification_status <> 'superseded'
+        WHERE EXISTS (
+            SELECT 1
+            FROM work_continuities AS wc
+            WHERE wc.work_id = CASE
+                      WHEN eo.work_id = b.source_work_id THEN b.target_work_id
+                      ELSE b.source_work_id
+                  END
+              AND wc.verification_status <> 'superseded'
+              AND wc.continuity_id IN (mt.source_continuity_id, mt.destination_continuity_id)
+        )
         """
     )
 
