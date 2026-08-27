@@ -1,5 +1,5 @@
 {
-  "schema_version": "5.0",
+  "schema_version": "5.1",
   "canonical_root": "data/library",
   "derived_root": "data/derived",
   "migration_root": "data/migration",
@@ -12,7 +12,7 @@
     "performer_identity_does_not_imply_character_identity": true
   },
   "enums": {
-    "entity_type": ["character", "organization", "artifact", "place", "species", "event", "concept"],
+    "entity_type": ["character", "organization", "artifact", "place", "species", "event", "concept", "vehicle"],
     "entity_relation_kind": ["variant_of", "identity_of", "successor_identity_of", "member_of"],
     "appearance_kind": ["onscreen", "voice", "post_credit", "archive", "mention", "photo_or_recording", "unknown"],
     "portrayal_kind": ["same_character", "variant", "voice", "archive", "unknown_role"],
@@ -22,7 +22,13 @@
     "relation_scope": ["story", "character", "crossover", "world_lore", "promotion", "variant_meta"],
     "directness": ["direct", "strong", "indirect", "proxy", "promotional"],
     "continuity_scope": ["same_or_intended", "multiverse", "variant", "promotional", "uncertain_legacy_tv", "uncertain_return_continuity"],
-    "work_relation_kind": ["sequel", "spinoff", "lead_in", "aftermath", "crossover", "world_lore", "promotion", "variant_callback", "story_link"]
+    "work_relation_kind": ["sequel", "spinoff", "lead_in", "aftermath", "crossover", "world_lore", "promotion", "variant_callback", "story_link"],
+    "event_kind": ["multiverse_transition", "battle", "disaster", "spell", "tva_intervention", "incursion", "other"],
+    "event_occurrence_kind": ["depicted", "post_credit", "referenced", "flashback", "caused", "aftermath"],
+    "event_participant_role": ["participant", "traveler", "vehicle", "summoner", "carrier", "affected", "observer", "other"],
+    "event_relation_kind": ["causes", "enables", "prevents", "aftermath_of", "part_of", "precedes"],
+    "transition_kind": ["physical_crossing", "summoning", "portal", "spell_displacement", "tva_transfer", "incursion_contact", "universe_exchange", "unknown"],
+    "transition_participant_role": ["traveler", "vehicle", "summoner", "carrier", "affected", "other"]
   },
   "tables": {
     "works.csv": {"primary_key": "work_id", "required_columns": ["work_id", "title_ja", "title_en", "format", "status", "release_sort_date", "release_display_date"]},
@@ -35,6 +41,12 @@
     "work_continuities.csv": {"primary_key": "work_continuity_id", "required_columns": ["work_continuity_id", "work_id", "continuity_id", "relation_to_continuity", "certainty", "verification_status", "notes"], "foreign_keys": {"work_id": "works.work_id", "continuity_id": "continuities.continuity_id"}},
     "chronology_assertions.csv": {"primary_key": "chronology_assertion_id", "required_columns": ["chronology_assertion_id", "continuity_id", "earlier_work_id", "later_work_id", "certainty", "verification_status", "notes"], "foreign_keys": {"continuity_id": "continuities.continuity_id", "earlier_work_id": "works.work_id", "later_work_id": "works.work_id"}},
     "work_relations.csv": {"primary_key": "work_relation_id", "required_columns": ["work_relation_id", "source_work_id", "target_work_id", "relation_kind", "relation_scope", "directness", "continuity_scope", "certainty", "verification_status", "notes"], "foreign_keys": {"source_work_id": "works.work_id", "target_work_id": "works.work_id"}},
+    "events.csv": {"primary_key": "event_id", "required_columns": ["event_id", "name_ja", "name_en", "event_kind", "primary_continuity_id", "certainty", "verification_status", "notes"], "nullable_columns": ["primary_continuity_id"], "foreign_keys": {"primary_continuity_id": "continuities.continuity_id"}},
+    "event_occurrences.csv": {"primary_key": "event_occurrence_id", "required_columns": ["event_occurrence_id", "event_id", "work_id", "occurrence_kind", "certainty", "verification_status", "notes"], "foreign_keys": {"event_id": "events.event_id", "work_id": "works.work_id"}},
+    "event_participants.csv": {"primary_key": "event_participant_id", "required_columns": ["event_participant_id", "event_id", "entity_id", "participant_role", "certainty", "verification_status", "notes"], "foreign_keys": {"event_id": "events.event_id", "entity_id": "entities.entity_id"}},
+    "event_relations.csv": {"primary_key": "event_relation_id", "required_columns": ["event_relation_id", "source_event_id", "relation_kind", "target_event_id", "certainty", "verification_status", "notes"], "foreign_keys": {"source_event_id": "events.event_id", "target_event_id": "events.event_id"}},
+    "multiverse_transitions.csv": {"primary_key": "transition_id", "required_columns": ["transition_id", "source_continuity_id", "destination_continuity_id", "transition_kind", "direction_certainty", "verification_status", "notes"], "nullable_columns": ["source_continuity_id", "destination_continuity_id"], "foreign_keys": {"transition_id": "events.event_id", "source_continuity_id": "continuities.continuity_id", "destination_continuity_id": "continuities.continuity_id"}},
+    "transition_participants.csv": {"primary_key": "transition_participant_id", "required_columns": ["transition_participant_id", "transition_id", "entity_id", "participant_role", "identity_certainty", "verification_status", "notes"], "foreign_keys": {"transition_id": "events.event_id", "entity_id": "entities.entity_id"}},
     "sources.csv": {"primary_key": "source_id", "required_columns": ["source_id"]},
     "evidence.csv": {"primary_key": "evidence_id", "required_columns": ["evidence_id", "fact_table", "fact_id", "source_id", "evidence_role", "quoted_or_paraphrased_note", "verified_at"], "foreign_keys": {"source_id": "sources.source_id"}}
   }
