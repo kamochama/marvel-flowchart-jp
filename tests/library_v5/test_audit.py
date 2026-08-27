@@ -36,7 +36,7 @@ class LibraryAuditTests(unittest.TestCase):
         issues = check_foreign_keys(tables, schemas)
         self.assertEqual([i["column"] for i in issues], ["work_id"])
 
-    def test_source_verified_fact_without_evidence_is_reported_legacy_seed_is_not(self):
+    def test_source_verified_fact_without_qualifying_evidence_is_reported_legacy_seed_is_not(self):
         from scripts.library_v5.audit import check_evidence_coverage
 
         tables = {
@@ -44,7 +44,9 @@ class LibraryAuditTests(unittest.TestCase):
                 {"appearance_id": "ap-verified", "verification_status": "source_verified"},
                 {"appearance_id": "ap-seed", "verification_status": "legacy_seed"},
             ],
-            "evidence.csv": [],
+            "evidence.csv": [
+                {"fact_table": "appearances.csv", "fact_id": "ap-verified", "evidence_role": "legacy_seed"},
+            ],
         }
         issues = check_evidence_coverage(tables)
         self.assertEqual(len(issues), 1)
@@ -60,20 +62,22 @@ class LibraryAuditTests(unittest.TestCase):
         self.assertEqual(len(issues), 1)
         self.assertEqual(issues[0]["dataset"], "entity_returns")
 
-    def test_manifest_hashes_are_deterministic_and_exclude_manifest_itself(self):
+    def test_manifest_hashes_are_deterministic_and_exclude_generated_bootstrap_and_manifest(self):
         from scripts.library_v5.audit import build_manifest
 
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "data/library").mkdir(parents=True)
             (root / "data/derived").mkdir(parents=True)
-            (root / "data/migration").mkdir(parents=True)
+            (root / "data/migration/bootstrap/library").mkdir(parents=True)
             (root / "data/library/entities.csv").write_text("entity_id\ne1\n", encoding="utf-8")
             (root / "data/library/manifest.json").write_text("old", encoding="utf-8")
+            (root / "data/migration/bootstrap/library/entities.csv").write_text("candidate", encoding="utf-8")
             first = build_manifest(root)
             second = build_manifest(root)
             self.assertEqual(first, second)
             self.assertNotIn("data/library/manifest.json", first["files"])
+            self.assertNotIn("data/migration/bootstrap/library/entities.csv", first["files"])
 
     def test_full_build_is_byte_deterministic_on_fixture(self):
         from scripts.library_v5.audit import sha256_file
