@@ -26,7 +26,7 @@ class LibraryV5IdsAndSchemaTests(unittest.TestCase):
         schema_path = ROOT / "data" / "library" / "schema.json"
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
 
-        self.assertEqual(schema["schema_version"], "5.0")
+        self.assertEqual(schema["schema_version"], "5.1")
         expected_tables = {
             "works.csv",
             "entities.csv",
@@ -38,6 +38,12 @@ class LibraryV5IdsAndSchemaTests(unittest.TestCase):
             "work_continuities.csv",
             "chronology_assertions.csv",
             "work_relations.csv",
+            "events.csv",
+            "event_occurrences.csv",
+            "event_participants.csv",
+            "event_relations.csv",
+            "multiverse_transitions.csv",
+            "transition_participants.csv",
             "sources.csv",
             "evidence.csv",
         }
@@ -79,6 +85,12 @@ class LibraryV5IdsAndSchemaTests(unittest.TestCase):
             "work_continuities.csv",
             "chronology_assertions.csv",
             "work_relations.csv",
+            "events.csv",
+            "event_occurrences.csv",
+            "event_participants.csv",
+            "event_relations.csv",
+            "multiverse_transitions.csv",
+            "transition_participants.csv",
         }
         for table_name in fact_tables:
             with self.subTest(table=table_name):
