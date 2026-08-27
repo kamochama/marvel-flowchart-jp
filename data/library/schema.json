@@ -34,7 +34,7 @@
     "continuities.csv": {"primary_key": "continuity_id", "required_columns": ["continuity_id", "label_ja", "label_en", "continuity_kind", "certainty", "notes"]},
     "work_continuities.csv": {"primary_key": "work_continuity_id", "required_columns": ["work_continuity_id", "work_id", "continuity_id", "relation_to_continuity", "certainty", "notes"], "foreign_keys": {"work_id": "works.work_id", "continuity_id": "continuities.continuity_id"}},
     "chronology_assertions.csv": {"primary_key": "chronology_assertion_id", "required_columns": ["chronology_assertion_id", "continuity_id", "earlier_work_id", "later_work_id", "certainty", "notes"], "foreign_keys": {"continuity_id": "continuities.continuity_id", "earlier_work_id": "works.work_id", "later_work_id": "works.work_id"}},
-    "work_relations.csv": {"primary_key": "work_relation_id", "required_columns": ["work_relation_id", "source_work_id", "target_work_id", "relation_kind", "relation_scope", "directness", "continuity_scope", "certainty", "notes"], "foreign_keys": {"source_work_id": "works.work_id", "target_work_id": "works.work_id"}},
+    "work_relations.csv": {"primary_key": "work_relation_id", "required_columns": ["work_relation_id", "source_work_id", "target_work_id", "relation_kind", "relation_scope", "directness", "continuity_scope", "certainty", "verification_status", "notes"], "foreign_keys": {"source_work_id": "works.work_id", "target_work_id": "works.work_id"}},
     "sources.csv": {"primary_key": "source_id", "required_columns": ["source_id"]},
     "evidence.csv": {"primary_key": "evidence_id", "required_columns": ["evidence_id", "fact_table", "fact_id", "source_id", "evidence_role", "quoted_or_paraphrased_note", "verified_at"], "foreign_keys": {"source_id": "sources.source_id"}}
   }
