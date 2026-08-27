@@ -17,6 +17,14 @@ class CompileResult:
     table_counts: dict[str, int]
 
 
+_NULLABLE_COLUMNS = {
+    ("portrayals", "entity_id"),
+    ("events", "primary_continuity_id"),
+    ("multiverse_transitions", "source_continuity_id"),
+    ("multiverse_transitions", "destination_continuity_id"),
+}
+
+
 def _read_csv_rows(path: Path, spec: TableSpec) -> list[dict[str, str]]:
     if not path.exists():
         raise FileNotFoundError(path)
@@ -32,7 +40,7 @@ def _row_values(spec: TableSpec, row: dict[str, str]) -> tuple[object, ...]:
     values: list[object] = []
     for column in spec.columns:
         value: object = row.get(column, "")
-        if spec.name == "portrayals" and column == "entity_id" and value == "":
+        if (spec.name, column) in _NULLABLE_COLUMNS and value == "":
             value = None
         values.append(value)
     return tuple(values)
@@ -45,7 +53,22 @@ def _insert_rows(connection: sqlite3.Connection, spec: TableSpec, rows: list[dic
     connection.executemany(statement, (_row_values(spec, row) for row in rows))
 
 
+def _run_phase2_semantic_checks(connection: sqlite3.Connection) -> None:
+    mismatches = connection.execute(
+        """
+        SELECT mt.transition_id, e.event_kind
+        FROM multiverse_transitions AS mt
+        JOIN events AS e ON e.event_id = mt.transition_id
+        WHERE e.event_kind <> 'multiverse_transition'
+        ORDER BY mt.transition_id
+        """
+    ).fetchall()
+    if mismatches:
+        raise sqlite3.IntegrityError(f"transition_event_kind_mismatch:{mismatches!r}")
+
+
 def _run_integrity_checks(connection: sqlite3.Connection) -> None:
+    _run_phase2_semantic_checks(connection)
     foreign_key_issues = connection.execute("PRAGMA foreign_key_check").fetchall()
     if foreign_key_issues:
         raise sqlite3.IntegrityError(f"foreign_key_check_failed:{foreign_key_issues!r}")
