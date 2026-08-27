@@ -74,18 +74,14 @@ def _extract_json_array_after_marker(text: str, marker: str) -> list[dict[str, o
 def extract_char_links(html: str) -> list[dict[str, str]]:
     raw_rows = _extract_json_array_after_marker(html, "CHAR_LINKS")
     result: list[dict[str, str]] = []
-    seen: set[tuple[str, ...]] = set()
     for index, raw in enumerate(raw_rows, start=1):
         missing = [field for field in _CHAR_REQUIRED if not str(raw.get(field, "")).strip()]
         if missing:
             raise LegacyExtractionError(
                 f"CHAR_LINKS row {index} missing required fields: {', '.join(missing)}"
             )
-        key = tuple(str(raw[field]).strip() for field in _CHAR_REQUIRED)
-        if key in seen:
-            continue
-        seen.add(key)
         row = {field: str(raw[field]).strip() for field in _CHAR_REQUIRED}
+        row["legacy_row_id"] = f"charlink-{index:06d}"
         row["verification_status"] = "legacy_seed"
         row["legacy_source"] = "index.html:CHAR_LINKS"
         result.append(row)
@@ -98,10 +94,11 @@ def extract_entity_returns(csv_text: str) -> list[dict[str, str]]:
         raise LegacyExtractionError("entity_returns.csv has an unexpected header")
 
     result: list[dict[str, str]] = []
-    for index, raw in enumerate(reader, start=2):
+    for source_line, raw in enumerate(reader, start=2):
         row = {field: str(raw.get(field, "") or "").strip() for field in _RETURN_REQUIRED}
         if not row["target_work_id"] or not row["entity"]:
-            raise LegacyExtractionError(f"entity_returns.csv row {index} lacks target/entity")
+            raise LegacyExtractionError(f"entity_returns.csv row {source_line} lacks target/entity")
+        row["legacy_row_id"] = f"entity-return-{source_line - 1:06d}"
         row["verification_status"] = "legacy_seed"
         row["legacy_source"] = "data/entity_returns.csv"
         result.append(row)
@@ -126,12 +123,12 @@ def write_legacy_seeds(repo_root: Path) -> dict[str, int]:
     _write_csv(
         migration / "legacy_char_links.csv",
         char_rows,
-        list(_CHAR_REQUIRED) + ["verification_status", "legacy_source"],
+        list(_CHAR_REQUIRED) + ["legacy_row_id", "verification_status", "legacy_source"],
     )
     _write_csv(
         migration / "legacy_entity_returns.csv",
         return_rows,
-        list(_RETURN_REQUIRED) + ["verification_status", "legacy_source"],
+        list(_RETURN_REQUIRED) + ["legacy_row_id", "verification_status", "legacy_source"],
     )
     summary = {
         "legacy_char_links_rows": len(char_rows),
