@@ -52,6 +52,7 @@ class LibraryV5IdsAndSchemaTests(unittest.TestCase):
         self.assertIn("entity_id", portrayal["required_columns"])
         self.assertIn("work_id", portrayal["required_columns"])
         self.assertIn("unknown_role", schema["enums"]["portrayal_kind"])
+        self.assertIn("entity_id", portrayal["nullable_columns"])
 
 
 if __name__ == "__main__":
