@@ -8,8 +8,10 @@ from pathlib import Path
 from .audit import write_audit_outputs
 from .canonical_guard import assert_canonical_unchanged, canonical_hashes
 from .content_audit import write_content_audit_outputs
+from .db_compile import compile_database
+from .db_export import export_work_graph
+from .db_fingerprint import write_db_manifest
 from .derive_compat import write_compatibility_outputs
-from .derive_edges import write_derived_edges
 
 
 GENERATED_PATHS = [
@@ -43,7 +45,14 @@ def build(repo_root: Path, *, clean: bool = True) -> dict[str, object]:
         clean_generated(repo_root)
 
     result: dict[str, object] = {}
-    result["derived_edges"] = write_derived_edges(repo_root, mode="combined_all_pairs")
+    db_result = compile_database(repo_root)
+    db_manifest = write_db_manifest(repo_root, db_result.db_path)
+    result["database"] = {
+        "path": db_result.db_path.relative_to(repo_root).as_posix(),
+        "manifest_path": db_manifest.relative_to(repo_root).as_posix(),
+        "table_counts": db_result.table_counts,
+    }
+    result["derived_edges"] = export_work_graph(db_result.db_path, repo_root / "data" / "derived")
     result["compatibility"] = write_compatibility_outputs(repo_root)
     content_audit = write_content_audit_outputs(repo_root)
     result["content_audit"] = {
@@ -63,7 +72,7 @@ def build(repo_root: Path, *, clean: bool = True) -> dict[str, object]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build and audit downstream products from frozen Marvel Library v5 canonical facts.")
+    parser = argparse.ArgumentParser(description="Build and audit downstream products from frozen Marvel Library v5 canonical facts through SQLite.")
     parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--no-clean", action="store_true")
     args = parser.parse_args()
