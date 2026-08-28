@@ -9,7 +9,17 @@ from scripts.library_v5.db_views import install_internal_helpers, install_public
 
 
 class Phase2Pr9ReconciliationTests(unittest.TestCase):
-    """Lock the PR #9 transition-isolation contract into the PR #10 line."""
+    """Lock PR #9 semantic guards into the PR #10 forward line."""
+
+    def test_phase2_event_kind_enum_is_a_sqlite_constraint(self) -> None:
+        db = sqlite3.connect(":memory:")
+        create_schema(db)
+        with self.assertRaises(sqlite3.IntegrityError):
+            db.execute(
+                "INSERT INTO events(event_id,name_ja,name_en,event_kind,primary_continuity_id,certainty,verification_status,notes) VALUES(?,?,?,?,?,?,?,?)",
+                ("event-invalid", "不正イベント", "Invalid Event", "not-an-event-kind", None, "confirmed", "legacy_seed", ""),
+            )
+        db.close()
 
     def test_unrelated_active_multiverse_relation_does_not_receive_transition_reason(self) -> None:
         db = sqlite3.connect(":memory:")
