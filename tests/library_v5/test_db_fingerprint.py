@@ -57,15 +57,20 @@ class LibraryDbFingerprintTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "repo"
             shutil.copytree(ROOT / "data", root / "data")
-            db_path = compile_database(root, Path(tmp) / "marvel.sqlite").db_path
-            before = logical_fingerprint(db_path, repo_root=root)["equivalence"]
+            before_db_path = compile_database(root, Path(tmp) / "before.sqlite").db_path
+            before = logical_fingerprint(before_db_path, repo_root=root)
 
             releases_path = root / "data/library/releases.csv"
             original = releases_path.read_text(encoding="utf-8")
             releases_path.write_text(original.replace("legacy seed; evidence-backed release audit remains pending.", "changed content", 1), encoding="utf-8")
 
-            after = logical_fingerprint(db_path, repo_root=root)["equivalence"]
-            self.assertNotEqual(before, after)
+            after_db_path = compile_database(root, Path(tmp) / "after.sqlite").db_path
+            after = logical_fingerprint(after_db_path, repo_root=root)
+            self.assertNotEqual(
+                before["tables"]["releases"]["content_sha256"],
+                after["tables"]["releases"]["content_sha256"],
+            )
+            self.assertNotEqual(before["equivalence"], after["equivalence"])
 
 
 if __name__ == "__main__":
