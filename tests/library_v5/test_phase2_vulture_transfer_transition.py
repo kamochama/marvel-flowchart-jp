@@ -10,7 +10,8 @@ from scripts.library_v5.db_compile import compile_database, open_query_connectio
 
 ROOT = Path(__file__).resolve().parents[2]
 LIB = ROOT / "data" / "library"
-HOMEcoming = "spider-man-homecoming-2017"
+REVIEWS = ROOT / "data" / "content_audit" / "reviews.csv"
+HOMECOMING = "spider-man-homecoming-2017"
 NWH = "spider-man-no-way-home-2021"
 MORBIUS = "morbius-2022"
 EARTH_616 = "continuity-earth-616"
@@ -21,9 +22,21 @@ OCCURRENCE = "event-occurrence-morbius-adrian-toomes-ssu-arrival"
 PARTICIPANT = "transition-participant-morbius-adrian-toomes"
 CAUSAL_RELATION = "work-relation-spider-man-no-way-home-2021-morbius-2022-crossover"
 
+REVIEW_FACTS = {
+    "review-2026-08-28-vulture-transfer-event": ("events.csv", EVENT),
+    "review-2026-08-28-vulture-transfer-occurrence": ("event_occurrences.csv", OCCURRENCE),
+    "review-2026-08-28-vulture-transfer-transition": ("multiverse_transitions.csv", EVENT),
+    "review-2026-08-28-vulture-transfer-participant": ("transition_participants.csv", PARTICIPANT),
+}
+
 
 def _read(name: str) -> list[dict[str, str]]:
     with (LIB / name).open("r", encoding="utf-8-sig", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def _read_path(path: Path) -> list[dict[str, str]]:
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
 
 
@@ -96,7 +109,7 @@ class VultureTransferTransitionTests(unittest.TestCase):
             connection.close()
 
         self.assertEqual(len(rows), 1)
-        self.assertEqual(tuple(rows[0][:2]), (HOMEcoming, MORBIUS))
+        self.assertEqual(tuple(rows[0][:2]), (HOMECOMING, MORBIUS))
         support = set(rows[0][2].split("|"))
         self.assertIn("appearance-spider-man-homecoming-2017-entity-adrian-toomes-vulture", support)
         self.assertIn(PARTICIPANT, support)
@@ -125,6 +138,24 @@ class VultureTransferTransitionTests(unittest.TestCase):
             connection.close()
 
         self.assertEqual(rows, [])
+
+    def test_new_transition_facts_have_primary_evidence_and_created_reviews(self) -> None:
+        evidence = _read("evidence.csv")
+        primary_by_fact = {
+            (row["fact_table"], row["fact_id"])
+            for row in evidence
+            if row["evidence_role"] == "primary"
+        }
+        reviews = {row["review_id"]: row for row in _read_path(REVIEWS)}
+
+        for review_id, fact in REVIEW_FACTS.items():
+            self.assertIn(fact, primary_by_fact)
+            review = reviews[review_id]
+            self.assertEqual((review["fact_table"], review["fact_id"]), fact)
+            self.assertEqual(review["previous_verification_status"], "")
+            self.assertEqual(review["new_verification_status"], "source_verified")
+            self.assertEqual(review["review_action"], "created_verified")
+            self.assertTrue(review["evidence_ids"])
 
 
 if __name__ == "__main__":
