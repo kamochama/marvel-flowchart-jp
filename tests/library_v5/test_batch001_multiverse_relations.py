@@ -45,12 +45,31 @@ class MultiverseRelationAuditTests(unittest.TestCase):
         ):
             self.assertEqual(relation(fact_id)["verification_status"], "superseded")
 
-    def test_venom_crossing_into_no_way_home_is_verified(self) -> None:
-        row = relation("work-relation-venom-let-there-be-carnage-2021-spider-man-no-way-home-2021-crossover")
-        self.assertEqual(row["directness"], "direct")
-        self.assertEqual(row["continuity_scope"], "multiverse")
-        self.assertEqual(row["certainty"], "confirmed")
-        self.assertEqual(row["verification_status"], "source_verified")
+    def test_venom_crossing_into_no_way_home_is_verified_as_first_class_round_trip(self) -> None:
+        transitions = {row["transition_id"]: row for row in rows("multiverse_transitions.csv")}
+        participants = {row["transition_id"]: row for row in rows("transition_participants.csv")}
+        expected = {
+            "event-ltbc-eddie-brock-earth616-arrival": ("continuity-ssu", "continuity-earth-616"),
+            "event-nwh-eddie-brock-ssu-return": ("continuity-earth-616", "continuity-ssu"),
+        }
+        for transition_id, (source_continuity, destination_continuity) in expected.items():
+            transition = transitions[transition_id]
+            self.assertEqual(transition["source_continuity_id"], source_continuity)
+            self.assertEqual(transition["destination_continuity_id"], destination_continuity)
+            self.assertEqual(transition["transition_kind"], "unknown")
+            self.assertEqual(transition["direction_certainty"], "confirmed")
+            self.assertEqual(transition["verification_status"], "source_verified")
+            participant = participants[transition_id]
+            self.assertEqual(participant["entity_id"], "entity-eddie-brock-sony")
+            self.assertEqual(participant["participant_role"], "traveler")
+            self.assertEqual(participant["identity_certainty"], "confirmed")
+            self.assertEqual(participant["verification_status"], "source_verified")
+
+        proxy = relation("work-relation-venom-let-there-be-carnage-2021-spider-man-no-way-home-2021-crossover")
+        self.assertEqual(proxy["directness"], "direct")
+        self.assertEqual(proxy["continuity_scope"], "multiverse")
+        self.assertEqual(proxy["certainty"], "confirmed")
+        self.assertEqual(proxy["verification_status"], "superseded")
 
     def test_no_way_home_to_multiverse_of_madness_is_verified_fallout(self) -> None:
         row = relation("work-relation-spider-man-no-way-home-2021-doctor-strange-in-the-multiverse-of-madness-2022-crossover")
