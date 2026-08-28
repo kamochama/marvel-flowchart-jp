@@ -46,6 +46,10 @@ SAME_STATUS_REVIEW_ACTIONS = {
     "conflict_rechecked",
     "superseded_rechecked",
 }
+LEGACY_METADATA_QUEUE_REASONS = {
+    "releases.csv": "legacy_release_fact",
+    "production_status_assertions.csv": "legacy_production_status_fact",
+}
 
 
 def _issue(code: str, message: str, **extra: str) -> dict[str, str]:
@@ -171,6 +175,9 @@ def build_review_queue(
             elif table_name in {"appearances.csv", "portrayals.csv"}:
                 priority = 50
                 reason = "legacy_entity_fact"
+            elif table_name in LEGACY_METADATA_QUEUE_REASONS:
+                priority = 60
+                reason = LEGACY_METADATA_QUEUE_REASONS[table_name]
             else:
                 priority = 60
                 reason = "legacy_continuity_or_identity_fact"

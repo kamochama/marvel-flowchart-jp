@@ -33,6 +33,8 @@ class LibraryDbFingerprintTests(unittest.TestCase):
             self.assertIn("works", fingerprint["tables"])
             self.assertIn("releases", fingerprint["tables"])
             self.assertIn("production_status_assertions", fingerprint["tables"])
+            self.assertGreater(fingerprint["tables"]["releases"]["row_count"], 0)
+            self.assertGreater(fingerprint["tables"]["production_status_assertions"]["row_count"], 0)
             self.assertIn("reviews", fingerprint["tables"])
             self.assertIn("events", fingerprint["tables"])
             self.assertIn("multiverse_transitions", fingerprint["tables"])

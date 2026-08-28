@@ -78,6 +78,19 @@ class LibraryAuditTests(unittest.TestCase):
         self.assertEqual(issues[0]["code"], "source_verified_without_evidence")
         self.assertEqual(issues[0]["fact_id"], "release-a")
 
+    def test_legacy_release_status_facts_are_not_mistaken_for_verified_facts(self):
+        from scripts.library_v5.audit import check_evidence_coverage
+
+        tables = {
+            "releases.csv": [{"release_id": "release-seed", "verification_status": "legacy_seed"}],
+            "production_status_assertions.csv": [{
+                "production_status_assertion_id": "status-seed",
+                "verification_status": "legacy_seed",
+            }],
+            "evidence.csv": [],
+        }
+        self.assertEqual(check_evidence_coverage(tables), [])
+
     def test_migration_coverage_compares_inputs_to_dispositions_not_fixed_counts(self):
         from scripts.library_v5.audit import check_migration_coverage
 
