@@ -1,0 +1,57 @@
+{
+  "patch_id": "2026-08-28-nwh-proxy-relation-retirement-phase2",
+  "operations": [
+    {
+      "table": "work_relations.csv",
+      "action": "update",
+      "key_column": "work_relation_id",
+      "key": "work-relation-spider-man-3-2007-spider-man-no-way-home-2021-crossover",
+      "set": {
+        "verification_status": "superseded"
+      }
+    },
+    {
+      "table": "work_relations.csv",
+      "action": "update",
+      "key_column": "work_relation_id",
+      "key": "work-relation-the-amazing-spider-man-2-2014-spider-man-no-way-home-2021-crossover",
+      "set": {
+        "verification_status": "superseded"
+      }
+    },
+    {
+      "table": "reviews.csv",
+      "action": "insert",
+      "key_column": "review_id",
+      "key": "review-2026-08-28-nwh-raimi-proxy-relation-retired",
+      "values": {
+        "review_id": "review-2026-08-28-nwh-raimi-proxy-relation-retired",
+        "fact_table": "work_relations.csv",
+        "fact_id": "work-relation-spider-man-3-2007-spider-man-no-way-home-2021-crossover",
+        "previous_verification_status": "source_verified",
+        "new_verification_status": "superseded",
+        "review_action": "superseded_proxy",
+        "evidence_ids": "evidence-nwh-raimi-transition-sony-spell-2021|evidence-nwh-raimi-transition-marvel-2023",
+        "reviewed_at": "2026-08-28",
+        "notes": "Superseded the work-to-work crossover proxy after the first-class Raimi Peter transition independently reproduced the Spider-Man 3 to No Way Home connection. No separate editorial or story relation is retained."
+      }
+    },
+    {
+      "table": "reviews.csv",
+      "action": "insert",
+      "key_column": "review_id",
+      "key": "review-2026-08-28-nwh-webb-proxy-relation-retired",
+      "values": {
+        "review_id": "review-2026-08-28-nwh-webb-proxy-relation-retired",
+        "fact_table": "work_relations.csv",
+        "fact_id": "work-relation-the-amazing-spider-man-2-2014-spider-man-no-way-home-2021-crossover",
+        "previous_verification_status": "source_verified",
+        "new_verification_status": "superseded",
+        "review_action": "superseded_proxy",
+        "evidence_ids": "evidence-nwh-webb-transition-sony-spell-2021|evidence-nwh-webb-transition-marvel-2023",
+        "reviewed_at": "2026-08-28",
+        "notes": "Superseded the work-to-work crossover proxy after the first-class Webb Peter transition independently reproduced the Amazing Spider-Man 2 to No Way Home connection. No separate editorial or story relation is retained."
+      }
+    }
+  ]
+}
