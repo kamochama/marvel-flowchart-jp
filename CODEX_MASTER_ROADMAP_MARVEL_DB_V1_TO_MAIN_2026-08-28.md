@@ -417,3 +417,13 @@ Only after later separately approved work also completes:
 - public viewer remains performant and deterministic.
 
 Do not collapse B, C, and D into one milestone. Finishing the current Phase 2 PR does not automatically authorize later architecture phases, and finishing a feature branch does not automatically authorize production merge.
+
+## 12. Separate normalized release/status boundary — Task 6 audit (2026-08-29)
+
+The approved plan `docs/superpowers/plans/2026-08-28-marvel-library-db-v1-releases-production-status.md` defines a separate normalized release/status subproject after the Events & Multiverse execution boundary. Its Task 6 review is recorded in `docs/superpowers/reviews/2026-08-28-marvel-library-db-v1-releases-production-status-review.md`.
+
+Fresh verification was run on branch `codex/db-v1-releases-status` at implementation HEAD `f0ab2ece382555f9c979f491a7bf72f162174e96`, with fresh `origin/main=2410ea482d9fe6c9063a23b80b9b766e2bb9daac` as the integration base. The bundled-Python full suite ran `194` tests and exited `0`; the ordinary build exited `0`; audit issues, content-audit/review-integrity issues, and SQLite foreign-key issues were all `0`, while SQLite `integrity_check` was `ok`.
+
+The normalized migration observes `131` works, `138` releases (`131` primary + `7` JP), and `131` production-status assertions. All `269` new release/status facts remain `legacy_seed`; no evidence-backed promotion is claimed. The DB schema is `1.2-normalized-releases-status` with logical fingerprint `80f345416dd37ea81dcc9a89b128020132440a9538506820764382d6b20c6825`. The legacy compatibility outputs remain unchanged: `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, and `83/83` story paths reproduced. Strict CSV shape scan covered `46` files with `0` malformed rows, and protected canonical/review inputs were unchanged.
+
+This boundary does not modify `index.html`, the existing graph policy, or the semantic status of the completed Events & Multiverse plan. Evidence-backed promotion of the seed rows, remaining normalized domains (credits, aliases, memberships, possessions), broader multiverse work, and the HTML DB-export milestone each remain separately approved future work. The branch is review-ready for the primary agent's full-PR/fresh-CI audit, but merge and production publication still require explicit user authorization.

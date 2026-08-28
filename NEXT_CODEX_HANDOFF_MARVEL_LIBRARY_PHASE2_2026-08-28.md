@@ -437,3 +437,18 @@ The user wants the DB redesign to prevent bad arrows and accidental semantic fan
 Bias toward **fewer, better-supported relations** rather than maximizing connectivity.
 
 When the user says `進めて`, continue autonomously under `AGENTS.md` without asking routine questions. Report meaningful RED/GREEN findings and semantic boundaries in Japanese.
+
+## 11. Separate normalized release/status subproject — Task 6 audit
+
+The normalized `releases` / `production_status_assertions` work is a separately approved subproject recorded in:
+
+- plan: `docs/superpowers/plans/2026-08-28-marvel-library-db-v1-releases-production-status.md`;
+- review: `docs/superpowers/reviews/2026-08-28-marvel-library-db-v1-releases-production-status-review.md`.
+
+It is not a continuation of the already completed Events & Multiverse Task 7/8 audit, and it does not start the later HTML DB-export milestone.
+
+Task 6 was verified on `codex/db-v1-releases-status` at implementation HEAD `f0ab2ece382555f9c979f491a7bf72f162174e96`, against fresh `origin/main=2410ea482d9fe6c9063a23b80b9b766e2bb9daac` (the merge base is the same). The exact bundled-Python full suite ran `194` tests with exit code `0`; the ordinary build exited `0` with `audit_issue_count=0`, content-audit/review-integrity issues `0`, SQLite foreign-key rows `0`, and `integrity_check=ok`.
+
+The normalized migration contains `131` primary release rows, `7` separate Japanese-date release rows, and `131` production-status snapshot rows for `131` works. All `269` release/status facts remain `legacy_seed`; no evidence or review rows were added. Evidence-backed promotion is a later separately approved audit batch. The DB schema version is `1.2-normalized-releases-status`, the logical fingerprint is `80f345416dd37ea81dcc9a89b128020132440a9538506820764382d6b20c6825`, and legacy graph compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, story paths `83/83`.
+
+The release/status public views join only to `works` and do not feed graph derivation. `index.html`, the existing graph policy, and production `main` remain unchanged. The next boundary is (a) a separately planned evidence-promotion audit for these legacy seeds and (b) later normalized domains/HTML DB-export work under their own approval; do not begin either automatically. The branch is at the PR review/authorization gate: do not merge or publish without explicit user approval.
