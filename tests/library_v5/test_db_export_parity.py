@@ -33,6 +33,11 @@ TRANSITION_REASON_FIELDS = (
     "destination_continuity_id",
     "participant_fact_ids",
 )
+LEGACY_EDGE_STABLE_FIELDS = (
+    "edge_id",
+    "source_work_id",
+    "target_work_id",
+)
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -86,6 +91,13 @@ def _db_legacy_semantic_rows(connection) -> set[tuple[str, ...]]:
 
 def _edge_pairs(rows: list[dict[str, str]]) -> set[tuple[str, str]]:
     return {(row["source_work_id"], row["target_work_id"]) for row in rows}
+
+
+def _stable_edge_projection(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    return [
+        {field: row[field] for field in LEGACY_EDGE_STABLE_FIELDS}
+        for row in rows
+    ]
 
 
 class DbWorkConnectionParityTests(unittest.TestCase):
@@ -148,9 +160,11 @@ class DbWorkConnectionParityTests(unittest.TestCase):
         )
 
         # Phase 2 may add new reasons to an already-supported pair, but the
-        # pilot migration must not create or remove graph pairs.
+        # migration must not create/remove graph pairs or change stable edge
+        # identity and row ordering inherited from the Phase 1 exporter.
         self.assertEqual(_edge_pairs(exported_edges), _edge_pairs(oracle_edges))
         self.assertEqual(len(exported_edges), len(oracle_edges))
+        self.assertEqual(_stable_edge_projection(exported_edges), _stable_edge_projection(oracle_edges))
         self.assertEqual(
             counts,
             {"work_pair_reasons": len(exported_reasons), "work_edges_all": len(exported_edges)},
