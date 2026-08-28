@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .db_rollup import install_work_connection_rollup
 from .db_schema import TABLE_SPECS, TableSpec, create_schema
+from .db_transition_support import install_transition_work_reasons
 from .db_views import install_internal_helpers, install_public_views
 
 
@@ -103,6 +104,7 @@ def compile_database(repo_root: Path, output_path: Path | None = None) -> Compil
                 table_counts[spec.name] = len(rows)
             install_internal_helpers(connection)
             install_public_views(connection)
+            install_transition_work_reasons(connection)
             install_work_connection_rollup(connection)
             _run_integrity_checks(connection)
         connection.close()
