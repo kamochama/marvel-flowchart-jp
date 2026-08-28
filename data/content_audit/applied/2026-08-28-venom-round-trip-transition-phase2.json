@@ -1,0 +1,30 @@
+{
+  "patch_id": "2026-08-28-venom-round-trip-transition-phase2",
+  "research_refreshed": true,
+  "operations": [
+    {"table":"entities.csv","action":"insert","key_column":"entity_id","key":"entity-eddie-brock-sony"},
+    {"table":"appearances.csv","action":"insert","key_column":"appearance_id","key":"appearance-venom-let-there-be-carnage-2021-entity-eddie-brock-sony"},
+    {"table":"appearances.csv","action":"insert","key_column":"appearance_id","key":"appearance-spider-man-no-way-home-2021-entity-eddie-brock-sony"},
+    {"table":"events.csv","action":"insert","key_column":"event_id","key":"event-ltbc-eddie-brock-earth616-arrival"},
+    {"table":"events.csv","action":"insert","key_column":"event_id","key":"event-nwh-eddie-brock-ssu-return"},
+    {"table":"event_occurrences.csv","action":"insert","key_column":"event_occurrence_id","key":"event-occurrence-ltbc-eddie-brock-earth616-arrival"},
+    {"table":"event_occurrences.csv","action":"insert","key_column":"event_occurrence_id","key":"event-occurrence-nwh-eddie-brock-ssu-return"},
+    {"table":"multiverse_transitions.csv","action":"insert","key_column":"transition_id","key":"event-ltbc-eddie-brock-earth616-arrival"},
+    {"table":"multiverse_transitions.csv","action":"insert","key_column":"transition_id","key":"event-nwh-eddie-brock-ssu-return"},
+    {"table":"transition_participants.csv","action":"insert","key_column":"transition_participant_id","key":"transition-participant-ltbc-eddie-brock"},
+    {"table":"transition_participants.csv","action":"insert","key_column":"transition_participant_id","key":"transition-participant-nwh-eddie-brock-return"},
+    {"table":"work_relations.csv","action":"update","key_column":"work_relation_id","key":"work-relation-venom-let-there-be-carnage-2021-spider-man-no-way-home-2021-crossover","set":{"verification_status":"superseded"}},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-eddie-ltbc-appearance"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-eddie-nwh-appearance"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-arrival-event"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-return-event"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-arrival-occurrence"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-return-occurrence"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-arrival-transition"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-return-transition"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-arrival-participant"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-return-participant"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-venom-nwh-proxy-relation-retired"}
+  ],
+  "notes": "Task 7 Eddie Brock/Venom pilot: model Eddie Brock as a distinct canonical character with source-verified appearances in Let There Be Carnage and No Way Home, represent SSU -> Earth-616 and Earth-616 -> SSU as two first-class transitions with unknown transport mechanism, prefer verified traveler appearance anchors over generic continuity propagation, and retire the old LTBC -> No Way Home work-relation proxy only after graph parity is independently preserved. No numbered SSU Earth and no separate Venom-symbiote traveler identity are invented."
+}
