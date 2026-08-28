@@ -20,6 +20,8 @@ _INTERNAL_TABLE_PRIMARY_KEYS = {
 _VIEW_ORDER_KEYS = {
     "v_entity_work_history": ("work_id", "canonical_entity_id", "raw_entity_id", "appearance_id"),
     "v_continuity_works": ("continuity_id", "work_id", "work_continuity_id"),
+    "v_work_releases": ("release_id",),
+    "v_work_production_status": ("production_status_assertion_id",),
     "v_work_connection_reasons": ("source_work_id", "target_work_id", "reason_kind", "canonical_entity_id", "relation_id", "reason_discriminator"),
     "v_work_connections_all": ("source_work_id", "target_work_id"),
     "v_flowchart_nodes": ("work_id",),
