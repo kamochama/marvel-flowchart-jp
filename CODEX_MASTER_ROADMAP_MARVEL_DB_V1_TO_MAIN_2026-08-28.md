@@ -132,13 +132,14 @@ Documentation-only Codex setup commits followed. Always use fresh remote HEAD ra
 
 ### First action
 
-The Doctor Strange / Earth-838 first-class transition is implemented, evidenced, reviewed, tested, and GREEN. At handoff time its applied-patch bookkeeping record was still absent.
+The Doctor Strange / Earth-838 first-class transition is implemented, evidenced, reviewed, tested, and GREEN. The original transition record and the follow-up America Chavez participant audit now both have applied-patch bookkeeping records.
 
-Confirm whether this path exists at fresh HEAD:
+Confirm these paths exist at fresh HEAD:
 
 - `data/content_audit/applied/2026-08-28-mom-earth838-transition-phase2.json`
+- `data/content_audit/applied/2026-08-28-mom-america-earth838-participant-phase2.json`
 
-If still absent, add a **bookkeeping-only** applied patch record following the Monica/Vulture/Venom examples. Do not alter canonical semantic rows merely to create the record. Then rerun full CI.
+If either path is absent, restore the corresponding bookkeeping-only applied patch record following the Monica/Vulture/Venom examples. Do not alter canonical semantic rows merely to create a record. Then rerun full CI.
 
 ---
 
@@ -151,11 +152,11 @@ Already completed:
 1. Eddie Brock / Venom round trip;
 2. Adrian Toomes / Vulture transfer;
 3. Monica Rambeau / The Marvels alternate-universe arrival;
-4. Doctor Strange Earth-616 -> Earth-838 traversal sub-batch.
+4. Doctor Strange Earth-616 -> Earth-838 traversal and America Chavez participant audit.
 
 ### 5.1 Multiverse of Madness residual audit
 
-After Earth-838 bookkeeping, audit whether additional `Doctor Strange in the Multiverse of Madness` traversals deserve separately modeled first-class transitions.
+After the Earth-838 and America Chavez audit, verify whether any additional `Doctor Strange in the Multiverse of Madness` traversal deserves a separately modeled first-class transition.
 
 Requirements for each additional candidate:
 
@@ -171,11 +172,11 @@ Requirements for each additional candidate:
 
 Do **not** mechanically model every visual dimension jump.
 
-If no additional traversal meets the evidence/utility threshold, document the no-go/defer boundary and proceed rather than inventing facts.
+The current residual audit found no additional named traversal that clears the evidence/utility threshold; preserve this no-go boundary unless new qualifying evidence is found, and proceed rather than inventing facts.
 
 ### 5.2 Deadpool & Wolverine TVA / multiverse transfers
 
-After MoM residual audit, proceed to high-confidence `Deadpool & Wolverine` transfers.
+After MoM residual audit, proceed to high-confidence `Deadpool & Wolverine` transfers. The initial bounded transfer is now implemented: Wade Wilson's explicitly labeled Earth-10005 home setting to the TVA/outside-timeline context.
 
 Existing evidence to inspect first includes:
 
@@ -190,6 +191,8 @@ Preserve established distinctions:
 - Blade / Elektra / Human Torch legacy returns currently have uncertain exact old-film continuity and must not be upgraded without stronger evidence.
 
 Model only specific transfers whose direction, traveler identity, depiction, and continuity context are source-supported.
+
+The current Deadpool & Wolverine batch intentionally stops before the later TempPad jumps to individually distinct Wolverine variants: the available screenplay does not provide one stable destination continuity suitable for a conservative first-class row. Its applied record is `data/content_audit/applied/2026-08-28-deadpool-wade-tva-transfer-phase2.json`; no work relation or work-pair reason is added.
 
 ---
 
@@ -233,6 +236,8 @@ After Task 8 is GREEN:
 5. verify branch CI from fresh HEAD;
 6. summarize semantic changes, deferred cases, graph compatibility, audit status, and deployment implications;
 7. ask the user for **explicit final merge authorization**.
+
+The full-PR audit also found that the review-patch workflow still targeted the former `library-v5-canonical-freeze` branch. The current local follow-up commit retargets checkout and push to `library-v5-phase2-db6`, adds a regression test, and adds strict CSV-shape rejection so pending audited patches can run safely on the forward line.
 
 ### If user authorizes merge
 

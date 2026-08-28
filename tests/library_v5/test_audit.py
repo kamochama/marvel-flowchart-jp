@@ -36,6 +36,20 @@ class LibraryAuditTests(unittest.TestCase):
         issues = check_foreign_keys(tables, schemas)
         self.assertEqual([i["column"] for i in issues], ["work_id"])
 
+    def test_malformed_csv_row_is_reported_instead_of_silently_truncated(self):
+        from scripts.library_v5.audit import check_csv_shape
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "entities.csv"
+            path.write_text("entity_id,notes\ne1,ok,unexpected\n", encoding="utf-8")
+            issues = check_csv_shape(path, "entities.csv")
+
+        self.assertEqual(len(issues), 1)
+        self.assertEqual(issues[0]["code"], "malformed_csv_row")
+        self.assertEqual(issues[0]["row"], "2")
+        self.assertEqual(issues[0]["expected_columns"], "2")
+        self.assertEqual(issues[0]["actual_columns"], "3")
+
     def test_source_verified_fact_without_qualifying_evidence_is_reported_legacy_seed_is_not(self):
         from scripts.library_v5.audit import check_evidence_coverage
 

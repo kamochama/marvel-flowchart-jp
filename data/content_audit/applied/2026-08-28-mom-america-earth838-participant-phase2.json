@@ -1,0 +1,21 @@
+{
+  "patch_id": "2026-08-28-mom-america-earth838-participant-phase2",
+  "research_refreshed": true,
+  "operations": [
+    {"table":"entities.csv","action":"insert","key_column":"entity_id","key":"entity-x-0ba895cd8f"},
+    {"table":"appearances.csv","action":"insert","key_column":"appearance_id","key":"appearance-doctor-strange-in-the-multiverse-of-madness-2022-entity-x-0ba895cd8f"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-mom-america-appearance-d23-2024"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-mom-america-participant-d23-2024"},
+    {"table":"transition_participants.csv","action":"insert","key_column":"transition_participant_id","key":"transition-participant-mom-america-chavez-earth838"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-america-appearance"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-america-participant"},
+    {"table":"events.csv","action":"update","key_column":"event_id","key":"event-mom-doctor-strange-earth838-arrival","set":{"notes":"D23 states that Doctor Strange and America Chavez accidentally teleport to Earth-838 and are treated there as visitors from another universe. Doctor Strange and America Chavez are represented as confirmed travelers; no additional universe identity is inferred for America."}},
+    {"table":"event_occurrences.csv","action":"update","key_column":"event_occurrence_id","key":"event-occurrence-mom-doctor-strange-earth838-arrival","set":{"notes":"Doctor Strange's Earth-838 arrival is depicted in the main story of Multiverse of Madness; America Chavez is also present and is represented as a canonical traveler participant in the same depicted occurrence."}},
+    {"table":"transition_participants.csv","action":"update","key_column":"transition_participant_id","key":"transition-participant-mom-doctor-strange-earth838","set":{"notes":"D23 explicitly names Doctor Strange as one of the people teleported to Earth-838 and identifies the source-side individual as 616 Steven Strange. America Chavez is represented by a separate canonical traveler participant in the same event."}},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-strange-earth838-event-america-recheck"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-strange-earth838-occurrence-america-recheck"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-strange-earth838-transition-america-recheck"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-strange-earth838-participant-america-recheck"}
+  ],
+  "notes": "Task 7 Multiverse of Madness Earth-838 residual audit: add America Chavez as a source-verified onscreen appearance and confirmed traveler participant in the existing Earth-616 -> Earth-838 event, based on the D23 scene description. Recheck the existing event, occurrence, transition, and Doctor Strange participant notes so the canonical rows no longer claim that America is deferred. This batch creates no new transition, continuity, work relation, or work-pair reason; it does not infer America's unsupported origin or variant continuity."
+}

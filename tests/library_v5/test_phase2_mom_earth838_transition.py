@@ -91,9 +91,9 @@ class MultiverseOfMadnessEarth838TransitionTests(unittest.TestCase):
                 SELECT source_continuity_id,destination_continuity_id,work_id,
                        occurrence_kind,participant_entity_id,participant_role
                 FROM v_multiverse_crossings
-                WHERE transition_id=?
+                WHERE transition_id=? AND participant_entity_id=?
                 """,
-                (EVENT,),
+                (EVENT, STRANGE),
             ).fetchall()
             connection.close()
 

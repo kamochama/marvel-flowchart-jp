@@ -148,6 +148,32 @@ def _csv_header(path: Path) -> list[str]:
         return next(csv.reader(handle), [])
 
 
+def check_csv_shape(path: Path, table_name: str) -> list[dict[str, str]]:
+    """Reject rows whose field count would be silently hidden by DictReader."""
+    if not path.exists():
+        return []
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        reader = csv.reader(handle)
+        header = next(reader, None)
+        if header is None:
+            return []
+        expected_columns = len(header)
+        issues: list[dict[str, str]] = []
+        for row_number, row in enumerate(reader, start=2):
+            actual_columns = len(row)
+            if actual_columns == expected_columns:
+                continue
+            issues.append(_issue(
+                "malformed_csv_row",
+                f"{table_name} row {row_number} has {actual_columns} columns; expected {expected_columns}",
+                table=table_name,
+                row=str(row_number),
+                expected_columns=str(expected_columns),
+                actual_columns=str(actual_columns),
+            ))
+        return issues
+
+
 def manifest_output_path(repo_root: Path) -> Path:
     return repo_root / "data" / "derived" / "library_manifest.json"
 
@@ -227,6 +253,7 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
         missing = [column for column in required if column not in header]
         if missing:
             issues.append(_issue("missing_required_columns", f"{table_name} missing columns: {', '.join(missing)}", table=table_name))
+        issues.extend(check_csv_shape(path, table_name))
         rows = _read_csv(path)
         tables[table_name] = rows
         primary_key = table_schema.get("primary_key")
@@ -236,6 +263,9 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
     issues.extend(check_foreign_keys(tables, table_schemas))
     issues.extend(check_transition_semantics(tables))
     issues.extend(check_evidence_coverage(tables))
+
+    reviews_path = repo_root / "data" / "content_audit" / "reviews.csv"
+    issues.extend(check_csv_shape(reviews_path, "data/content_audit/reviews.csv"))
 
     fact_indexes: dict[str, set[str]] = {}
     for table_name, table_schema in table_schemas.items():

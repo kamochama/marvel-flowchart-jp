@@ -306,7 +306,7 @@ Participant:
 - entity `entity-x-c8ead423cc`
 - role `traveler`
 
-America Chavez is explicitly acknowledged in notes/source as a co-traveler, but **no America Chavez canonical entity/participant was created in this batch**. Audit her separately if needed; do not invent/merge identity casually.
+America Chavez is represented by the separate canonical entity `entity-x-0ba895cd8f`, a source-verified onscreen appearance, and the confirmed traveler participant `transition-participant-mom-america-chavez-earth838`. This is a co-traveler addition to the existing event, not a new transition or a new work pair; her unsupported origin and variant continuity remain unasserted.
 
 ### Important negative contract
 
@@ -317,45 +317,28 @@ This Earth-838 transition must **not**:
 - equate Earth-838 with `continuity-fox-x-men`;
 - equate Earth-838 Black Bolt with the Inhumans-series individual.
 
-All five Earth-838 tests are GREEN at run #251.
+The Earth-838 tests, including the America Chavez participant audit, are GREEN in the current local run (165 tests overall, including the review-patch workflow branch guard and malformed-CSV regression).
 
-### Remaining bookkeeping — DO THIS FIRST
+### Applied bookkeeping — complete
 
-The canonical facts, evidence, and five `created_verified` reviews exist and are GREEN, but the corresponding applied-patch file was still absent when this handoff was prepared.
-
-Confirmed missing path:
+The canonical facts, evidence, and review history are present, and both bounded batches have applied-patch records:
 
 - `data/content_audit/applied/2026-08-28-mom-earth838-transition-phase2.json`
+- `data/content_audit/applied/2026-08-28-mom-america-earth838-participant-phase2.json`
 
-First Codex action after fresh-HEAD reconciliation:
-
-1. Confirm that this file is still absent at fresh HEAD.
-2. If absent, add a bookkeeping-only applied patch record for the five created verified facts:
-   - `continuity-earth-838`
-   - `event-mom-doctor-strange-earth838-arrival`
-   - `event-occurrence-mom-doctor-strange-earth838-arrival`
-   - transition `event-mom-doctor-strange-earth838-arrival`
-   - `transition-participant-mom-doctor-strange-earth838`
-3. Reference the five already-existing review IDs:
-   - `review-2026-08-28-mom-earth838-continuity`
-   - `review-2026-08-28-mom-strange-earth838-event`
-   - `review-2026-08-28-mom-strange-earth838-occurrence`
-   - `review-2026-08-28-mom-strange-earth838-transition`
-   - `review-2026-08-28-mom-strange-earth838-participant`
-4. Do **not** alter canonical CSV rows as part of this bookkeeping commit.
-5. Run full tests / CI and verify the semantic baseline remains unchanged.
+The first record covers the five original Earth-838 facts and their existing reviews. The second records the America Chavez appearance/participant addition plus the rechecks that remove the obsolete deferred wording. Neither batch retires a work relation or creates a work-pair reason.
 
 Suggested patch-record shape: follow nearby files in `data/content_audit/applied/`, especially the Monica/Vulture/Venom Phase 2 records. Record that no work relation is retired and no work reason is expected from this single-work traversal.
 
-## 7. After Earth-838 bookkeeping
+## 7. After Earth-838 and America Chavez audit
 
 The approved Task 7 order from the reconciled handoff was:
 
 1. Venom round trip — done;
 2. Vulture transfer — done;
 3. Monica transfer — done;
-4. Multiverse of Madness traversals — Earth-838 sub-batch done; inspect whether any additional traversal deserves a separately bounded migration;
-5. Deadpool & Wolverine TVA / multiverse transfers — not started as first-class transitions.
+4. Multiverse of Madness traversals — Earth-838 and America Chavez participant audit done; no additional named traversal has yet met the separately bounded migration threshold;
+5. Deadpool & Wolverine TVA / multiverse transfers — Wade's Earth-10005 -> TVA transfer is now modeled; later exact variant destinations remain unmodeled.
 
 Do not mechanically create every dimension jump in MoM. For each candidate require:
 
@@ -382,6 +365,22 @@ Existing semantics already distinguish:
 
 Do not promote old Blade/Elektra/Human Torch legacy relations to exact old-film timeline identity without stronger evidence; current audits deliberately keep those return continuities uncertain.
 
+### Deadpool & Wolverine bounded batch — complete for the identified TVA transfer
+
+The current bounded batch records:
+
+- `continuity-earth-10005` as the explicitly labeled source universe;
+- `continuity-tva-outside-timeline` as a descriptive TVA context, not a numbered universe;
+- `event-dw-wade-tva-recruitment` and its depicted occurrence in `deadpool-wolverine-2024`;
+- Wade Wilson (`entity-x-06b270750e`) as the confirmed traveler;
+- `tva_transfer` direction from Earth-10005 to the TVA context.
+
+Audit record:
+
+- `data/content_audit/applied/2026-08-28-deadpool-wade-tva-transfer-phase2.json`
+
+This batch creates no work relation or work-pair reason. The later TempPad jumps to individually distinct Wolverine variants are intentionally deferred because the available source does not provide a single stable destination continuity for a conservative first-class row.
+
 ## 8. Tests most relevant to current Phase 2 work
 
 Read these before changing transition semantics:
@@ -395,6 +394,10 @@ Read these before changing transition semantics:
 - `tests/library_v5/test_phase2_vulture_transfer_transition.py`
 - `tests/library_v5/test_phase2_the_marvels_monica_transition.py`
 - `tests/library_v5/test_phase2_mom_earth838_transition.py`
+- `tests/library_v5/test_phase2_mom_america_participant.py`
+- `tests/library_v5/test_phase2_deadpool_wade_tva_transfer.py`
+- `tests/library_v5/test_apply_review_workflow.py`
+- `tests/library_v5/test_audit.py` (strict CSV shape regression)
 - `tests/library_v5/test_db_export_parity.py`
 
 ## 9. Verification before claiming completion

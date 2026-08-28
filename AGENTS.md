@@ -35,6 +35,30 @@ Historical documents use overlapping phase names. When reporting status, identif
 - Do not claim completion without fresh verification output.
 - Prefer small, auditable commits. For large CSVs, verify the per-file diff after every write and immediately revert unrelated line changes.
 
+## Windows command execution and Python runtime
+
+- In Codex Desktop on this repository, do **not** assume that `python` resolves to a runnable interpreter. The system command may be missing, and a user-installed Python can fail with `Access is denied` in the sandbox.
+- Use the bundled Codex runtime explicitly from PowerShell. Set a task-specific variable and invoke it with the call operator (`&`):
+
+  ```powershell
+  $MarvelPython = 'C:\Users\ataka\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
+  if (-not (Test-Path -LiteralPath $MarvelPython)) { throw "Bundled Python runtime not found: $MarvelPython" }
+  & $MarvelPython -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
+  & $MarvelPython -m scripts.library_v5.build --repo-root .
+  ```
+
+- Keep the `&` before a quoted executable path; without it PowerShell treats the path as text rather than launching it. Prefer repository modules (`-m ...`) over ad-hoc inline scripts. If the bundled path changes, resolve the current workspace runtime before substituting a new path; do not silently fall back to a different Python.
+- For final verification, run the exact commands above from the repository root. The build may create transient audit/DB outputs under `data/content_audit/` and `data/derived/`; inspect the result first, then remove only the known generated paths when the workflow requires a clean working tree. Never delete canonical CSVs or `data/content_audit/reviews.csv`.
+- Run strict CSV shape checks when editing CSV notes that contain commas. `csv.DictReader` can hide an extra field, so every row must have exactly the header column count; quote the complete notes field when it contains commas.
+- `git fetch origin` is the safe freshness check before editing. If `.git/FETCH_HEAD` or `.git/index.lock` returns `Permission denied`, do not reset or overwrite the checkout; use GitHub Desktop/elevated local Git controls and then re-check `git rev-parse HEAD` against the relevant `origin/*` ref.
+
+## Subagent collaboration
+
+- Use subagents for bounded, independent work such as source/evidence audits, RED-test design, schema/CSV shape review, or read-only diff review. Do not have multiple agents edit the same canonical CSVs concurrently.
+- Route each requested high-quality subagent explicitly with the current allowlisted model and effort. For the current Phase 2 workflow, the preferred invocation is `model: gpt-5.6-luna`, `reasoning_effort: xhigh`, and `fork_turns: none` for a clean context. Set both model and effort on every spawn; never copy stale model names from an old handoff.
+- Give reviewers a read-only scope when possible. After a subagent reports, the primary agent must independently inspect the working-tree diff and rerun the relevant tests/build; a subagent report is evidence to investigate, not proof of completion.
+- For a fix round, send a follow-up to the existing agent with `followup_task` instead of spawning a duplicate implementer. While local work remains, continue local execution without busy-polling; wait on outstanding agents only when otherwise idle.
+
 ## Canonical data rules
 
 Canonical data lives under `data/library/`; persistent audit history lives under `data/content_audit/`.

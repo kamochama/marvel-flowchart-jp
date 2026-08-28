@@ -3,7 +3,7 @@ name: Library v5 apply review patch
 on:
   push:
     branches:
-      - library-v5-canonical-freeze
+      - library-v5-phase2-db6
     paths:
       - 'data/content_audit/pending/*.json'
 
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: library-v5-canonical-freeze
+          ref: library-v5-phase2-db6
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -37,4 +37,4 @@ jobs:
             exit 0
           fi
           git commit -m 'audit: apply approved multiverse review patch'
-          git push origin HEAD:library-v5-canonical-freeze
+          git push origin HEAD:library-v5-phase2-db6
