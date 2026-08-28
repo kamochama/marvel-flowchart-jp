@@ -206,6 +206,21 @@ def install_transition_work_reasons(connection: sqlite3.Connection) -> None:
                       AND wc.verification_status <> 'superseded'
                       AND wc.continuity_id IN (mt.source_continuity_id, mt.destination_continuity_id)
                 )
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM transition_participants AS tpa
+                    JOIN _entity_identity_map AS ima
+                      ON ima.raw_entity_id = tpa.entity_id
+                    JOIN _v_resolved_appearances AS raa
+                      ON raa.canonical_entity_id = ima.canonical_entity_id
+                    JOIN _v_supported_work_pairs AS sba
+                      ON (sba.source_work_id = raa.work_id AND sba.target_work_id = eo.work_id)
+                      OR (sba.target_work_id = raa.work_id AND sba.source_work_id = eo.work_id)
+                    WHERE tpa.transition_id = mt.transition_id
+                      AND tpa.verification_status <> 'superseded'
+                      AND raa.verification_status = 'source_verified'
+                      AND raa.work_id <> eo.work_id
+                )
                 AND (
                     NOT EXISTS (
                         SELECT 1
