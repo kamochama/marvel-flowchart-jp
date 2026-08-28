@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -22,11 +23,40 @@ RAIMI_OCCURRENCE = "event-occurrence-nwh-raimi-peter-arrival"
 WEBB_OCCURRENCE = "event-occurrence-nwh-webb-peter-arrival"
 RAIMI_PARTICIPANT = "transition-participant-nwh-raimi-peter"
 WEBB_PARTICIPANT = "transition-participant-nwh-webb-peter"
+RAIMI_PROXY_RELATION = "work-relation-spider-man-3-2007-spider-man-no-way-home-2021-crossover"
+WEBB_PROXY_RELATION = "work-relation-the-amazing-spider-man-2-2014-spider-man-no-way-home-2021-crossover"
 
 
 def _read(name: str) -> list[dict[str, str]]:
     with (LIB / name).open("r", encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
+
+
+def _write(path: Path, rows: list[dict[str, str]]) -> None:
+    if not rows:
+        raise ValueError("rows required")
+    fieldnames = list(rows[0])
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _fixture_with_nwh_proxy_relations_superseded(root: Path) -> Path:
+    shutil.copytree(ROOT / "data" / "library", root / "data" / "library")
+    reviews = root / "data" / "content_audit" / "reviews.csv"
+    reviews.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(ROOT / "data" / "content_audit" / "reviews.csv", reviews)
+
+    relations_path = root / "data" / "library" / "work_relations.csv"
+    with relations_path.open("r", encoding="utf-8-sig", newline="") as handle:
+        relations = list(csv.DictReader(handle))
+    proxy_ids = {RAIMI_PROXY_RELATION, WEBB_PROXY_RELATION}
+    for row in relations:
+        if row["work_relation_id"] in proxy_ids:
+            row["verification_status"] = "superseded"
+    _write(relations_path, relations)
+    return root
 
 
 class NoWayHomeLegacySpiderTransitionTests(unittest.TestCase):
@@ -123,14 +153,42 @@ class NoWayHomeLegacySpiderTransitionTests(unittest.TestCase):
             ("the-amazing-spider-man-2-2014", NWH, WEBB_EVENT),
         })
 
-    def test_existing_explicit_relations_are_retained_during_parity_stage(self) -> None:
-        active = {
-            row["work_relation_id"]: row
-            for row in _read("work_relations.csv")
-            if row["verification_status"] != "superseded"
-        }
-        self.assertIn("work-relation-spider-man-3-2007-spider-man-no-way-home-2021-crossover", active)
-        self.assertIn("work-relation-the-amazing-spider-man-2-2014-spider-man-no-way-home-2021-crossover", active)
+    def test_transition_reasons_survive_when_proxy_relations_are_superseded(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = _fixture_with_nwh_proxy_relations_superseded(Path(tmp))
+            db_path = compile_database(root).db_path
+            connection = open_query_connection(db_path)
+            transition_rows = connection.execute(
+                """
+                SELECT source_work_id,target_work_id,transition_id
+                FROM v_work_connection_reasons
+                WHERE reason_kind='multiverse_transition'
+                  AND transition_id IN (?,?)
+                ORDER BY transition_id
+                """,
+                (RAIMI_EVENT, WEBB_EVENT),
+            ).fetchall()
+            active_proxy_rows = connection.execute(
+                """
+                SELECT relation_id
+                FROM v_work_connection_reasons
+                WHERE reason_kind='explicit_relation'
+                  AND relation_id IN (?,?)
+                """,
+                (RAIMI_PROXY_RELATION, WEBB_PROXY_RELATION),
+            ).fetchall()
+            connection.close()
+
+        self.assertEqual({tuple(row) for row in transition_rows}, {
+            ("spider-man-3-2007", NWH, RAIMI_EVENT),
+            ("the-amazing-spider-man-2-2014", NWH, WEBB_EVENT),
+        })
+        self.assertEqual(active_proxy_rows, [])
+
+    def test_crossing_proxy_relations_are_superseded_after_parity(self) -> None:
+        relations = {row["work_relation_id"]: row for row in _read("work_relations.csv")}
+        self.assertEqual(relations[RAIMI_PROXY_RELATION]["verification_status"], "superseded")
+        self.assertEqual(relations[WEBB_PROXY_RELATION]["verification_status"], "superseded")
 
 
 if __name__ == "__main__":
