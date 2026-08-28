@@ -1,0 +1,45 @@
+entity_id,name_ja,name_en,entity_type,notes
+entity-x-5a2ee964f0,トニー・スターク／アイアンマン,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-f2dcf7c7cc,スティーブ・ロジャース／キャプテン・アメリカ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-7250204b23,ソー,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-927d19aa0b,ナターシャ・ロマノフ／ブラック・ウィドウ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-605a05a114,クリント・バートン／ホークアイ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-50a34df778,ブルース・バナー／ハルク,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-42251c0735,ワンダ・マキシモフ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-5d8d873f91,ヴィジョン,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-fd344cdc17,サム・ウィルソン／キャプテン・アメリカ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-bd73e23ab5,バッキー・バーンズ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-3cfb930336,イェレナ・ベロワ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-55e230260e,ロキ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-c8ead423cc,ドクター・ストレンジ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-mcu,ピーター・パーカー／スパイダーマン（MCU）,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-f162d4b4b2,ピーター・パーカー／スパイダーマン（ライミ版）,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-f8b1d323de,ピーター・パーカー／スパイダーマン（ウェブ版）,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-97f9d29354,マット・マードック／デアデビル,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-b42511d738,ウィルソン・フィスク／キングピン,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-cacda9afb6,フランク・キャッスル／パニッシャー,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-06b270750e,ウェイド・ウィルソン／デッドプール,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-680db112c0,ローガン／ウルヴァリン,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-a6764da9a6,キャロル・ダンヴァース／キャプテン・マーベル,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-b51df877f5,カマラ・カーン／ミズ・マーベル,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-06c4fa169e,モニカ・ランボー,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-6f5fa7e694,シュリ／ブラックパンサー,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-f8ae7d551d,リリ・ウィリアムズ／アイアンハート,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-513bb16625,ケイト・ビショップ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-de5650abae,アガサ・ハークネス,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-769f0c6132,リード・リチャーズ／ミスター・ファンタスティック,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-f1342534e0,スー・ストーム／インビジブル・ウーマン,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-0f36d6d903,ジョニー・ストーム／ヒューマン・トーチ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-23cb2517c1,ベン・グリム／ザ・シング,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-006fedbfc5,ペギー・カーター,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-5d862e63a7,サイクロップス,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-a07a9a5400,ビースト,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-a60eefc8ef,ミスティーク,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-a2369a66bb,シュリ,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-4cedb595b2,エムバク,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-fbf9e4f4cf,ネイモア,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-x-797ce92fcd,フランク・キャッスル,,character,Migrated as legacy seed; identity/variant reconciliation remains separately auditable.
+entity-adrian-toomes-vulture,エイドリアン・トゥームス／ヴァルチャー,Adrian Toomes / Vulture,character,Same MCU Adrian Toomes is transported into the Venom/Morbius universe; identity is supported by Morbius director Daniel Espinosa.
+entity-fantastic-four-excelsior,ファンタスティック・フォーの宇宙船エクセルシオール,Fantastic Four spacecraft Excelsior,vehicle,The Fantastic Four-marked spacecraft shown arriving in the Thunderbolts* post-credit scene; the Excelsior name is supported by Los Angeles Times reporting after First Steps release.
+entity-eddie-brock-sony,エディ・ブロック,Eddie Brock,character,Sony live-action Eddie Brock portrayed by Tom Hardy; modeled separately from the Venom symbiote so host identity and symbiote identity are not collapsed.
+entity-x-0ba895cd8f,アメリカ・チャベス,America Chavez,character,America Chavez is named as a confirmed co-traveler in the source-verified Earth-838 scene; this identity is scoped to the depicted Multiverse of Madness appearance and does not assert unsupported origin or variant continuity.

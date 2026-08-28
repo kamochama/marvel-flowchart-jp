@@ -1,0 +1,105 @@
+work_continuity_id,work_id,continuity_id,relation_to_continuity,certainty,verification_status,notes
+work-continuity-x-men-first-class-2011-continuity-fox-x-men,x-men-first-class-2011,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,分岐以前の共通起点として表示。
+work-continuity-x-men-origins-wolverine-2009-continuity-fox-x-men,x-men-origins-wolverine-2009,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,旧系列。絶対年代は表示しない。
+work-continuity-x-men-2000-continuity-fox-x-men,x-men-2000,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,旧系列。
+work-continuity-x2-x-men-united-2003-continuity-fox-x-men,x2-x-men-united-2003,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,旧系列。
+work-continuity-x-men-the-last-stand-2006-continuity-fox-x-men,x-men-the-last-stand-2006,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,旧系列。
+work-continuity-the-wolverine-2013-continuity-fox-x-men,the-wolverine-2013,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,旧系列。
+work-continuity-x-men-days-of-future-past-2014-continuity-fox-x-men,x-men-days-of-future-past-2014,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,過去改変を伴う分岐点として表示。
+work-continuity-x-men-apocalypse-2016-continuity-fox-x-men,x-men-apocalypse-2016,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,改変後系列。
+work-continuity-dark-phoenix-2019-continuity-fox-x-men,dark-phoenix-2019,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,改変後系列。
+work-continuity-deadpool-2016-continuity-fox-x-men,deadpool-2016,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,FOX X-MEN群の側線として表示し、厳密な合流点は固定しない。
+work-continuity-deadpool-2-2018-continuity-fox-x-men,deadpool-2-2018,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,FOX X-MEN群の側線として表示し、厳密な合流点は固定しない。
+work-continuity-logan-2017-continuity-fox-x-men,logan-2017,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,位置づけに解釈差があるため、枝へ強制接続しない。
+work-continuity-the-new-mutants-2020-continuity-fox-x-men,the-new-mutants-2020,continuity-fox-x-men,legacy_group_membership,unknown,legacy_seed,根拠のない直接リンクを作らず、位置づけ保留として表示。
+work-continuity-captain-america-the-first-avenger-2011-continuity-mcu,captain-america-the-first-avenger-2011,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-captain-marvel-2019-continuity-mcu,captain-marvel-2019,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-iron-man-2008-continuity-mcu,iron-man-2008,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-iron-man-2-2010-continuity-mcu,iron-man-2-2010,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-the-incredible-hulk-2008-continuity-mcu,the-incredible-hulk-2008,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-thor-2011-continuity-mcu,thor-2011,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-the-avengers-2012-continuity-mcu,the-avengers-2012,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-thor-the-dark-world-2013-continuity-mcu,thor-the-dark-world-2013,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-iron-man-3-2013-continuity-mcu,iron-man-3-2013,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-captain-america-the-winter-soldier-2014-continuity-mcu,captain-america-the-winter-soldier-2014,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-guardians-of-the-galaxy-2014-continuity-mcu,guardians-of-the-galaxy-2014,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-guardians-of-the-galaxy-vol-2-2017-continuity-mcu,guardians-of-the-galaxy-vol-2-2017,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-i-am-groot-s1-2022-continuity-mcu,i-am-groot-s1-2022,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-i-am-groot-s2-2023-continuity-mcu,i-am-groot-s2-2023,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-daredevil-s1-2015-continuity-mcu,daredevil-s1-2015,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-jessica-jones-s1-2015-continuity-mcu,jessica-jones-s1-2015,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-avengers-age-of-ultron-2015-continuity-mcu,avengers-age-of-ultron-2015,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-ant-man-2015-continuity-mcu,ant-man-2015,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-daredevil-s2-2016-continuity-mcu,daredevil-s2-2016,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-luke-cage-s1-2016-continuity-mcu,luke-cage-s1-2016,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-iron-fist-s1-2017-continuity-mcu,iron-fist-s1-2017,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-the-defenders-2017-continuity-mcu,the-defenders-2017,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-captain-america-civil-war-2016-continuity-mcu,captain-america-civil-war-2016,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-black-widow-2021-continuity-mcu,black-widow-2021,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-black-panther-2018-continuity-mcu,black-panther-2018,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-spider-man-homecoming-2017-continuity-mcu,spider-man-homecoming-2017,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-the-punisher-s1-2017-continuity-mcu,the-punisher-s1-2017,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-doctor-strange-2016-continuity-mcu,doctor-strange-2016,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-jessica-jones-s2-2018-continuity-mcu,jessica-jones-s2-2018,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-luke-cage-s2-2018-continuity-mcu,luke-cage-s2-2018,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-iron-fist-s2-2018-continuity-mcu,iron-fist-s2-2018,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-daredevil-s3-2018-continuity-mcu,daredevil-s3-2018,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-thor-ragnarok-2017-continuity-mcu,thor-ragnarok-2017,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-the-punisher-s2-2019-continuity-mcu,the-punisher-s2-2019,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-jessica-jones-s3-2019-continuity-mcu,jessica-jones-s3-2019,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-ant-man-and-the-wasp-2018-continuity-mcu,ant-man-and-the-wasp-2018,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-avengers-infinity-war-2018-continuity-mcu,avengers-infinity-war-2018,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-avengers-endgame-2019-continuity-mcu,avengers-endgame-2019,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-loki-s1-2021-continuity-mcu,loki-s1-2021,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-what-if-s1-2021-continuity-mcu,what-if-s1-2021,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-wandavision-2021-continuity-mcu,wandavision-2021,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-shang-chi-and-the-legend-of-the-ten-rings-2021-continuity-mcu,shang-chi-and-the-legend-of-the-ten-rings-2021,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-the-falcon-and-the-winter-soldier-2021-continuity-mcu,the-falcon-and-the-winter-soldier-2021,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-spider-man-far-from-home-2019-continuity-mcu,spider-man-far-from-home-2019,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-spider-man-no-way-home-2021-continuity-mcu,spider-man-no-way-home-2021,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Far From Home の直接続編。マルチバース横断として通常線から区別。
+work-continuity-eternals-2021-continuity-mcu,eternals-2021,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-doctor-strange-in-the-multiverse-of-madness-2022-continuity-mcu,doctor-strange-in-the-multiverse-of-madness-2022,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-hawkeye-2021-continuity-mcu,hawkeye-2021,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-moon-knight-2022-continuity-mcu,moon-knight-2022,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-black-panther-wakanda-forever-2022-continuity-mcu,black-panther-wakanda-forever-2022,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-echo-2024-continuity-mcu,echo-2024,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-she-hulk-attorney-at-law-2022-continuity-mcu,she-hulk-attorney-at-law-2022,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-ms-marvel-2022-continuity-mcu,ms-marvel-2022,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-thor-love-and-thunder-2022-continuity-mcu,thor-love-and-thunder-2022,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-werewolf-by-night-2022-continuity-mcu,werewolf-by-night-2022,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-the-guardians-of-the-galaxy-holiday-special-2022-continuity-mcu,the-guardians-of-the-galaxy-holiday-special-2022,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-ant-man-and-the-wasp-quantumania-2023-continuity-mcu,ant-man-and-the-wasp-quantumania-2023,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-guardians-of-the-galaxy-vol-3-2023-continuity-mcu,guardians-of-the-galaxy-vol-3-2023,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-secret-invasion-2023-continuity-mcu,secret-invasion-2023,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-the-marvels-2023-continuity-mcu,the-marvels-2023,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-loki-s2-2023-continuity-mcu,loki-s2-2023,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-what-if-s2-2023-continuity-mcu,what-if-s2-2023,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-deadpool-wolverine-2024-continuity-mcu,deadpool-wolverine-2024,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-agatha-all-along-2024-continuity-mcu,agatha-all-along-2024,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-what-if-s3-2024-continuity-mcu,what-if-s3-2024,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-daredevil-born-again-s1-2025-continuity-mcu,daredevil-born-again-s1-2025,continuity-mcu,legacy_group_membership,unknown,legacy_seed,Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。
+work-continuity-the-fantastic-four-first-steps-2025-continuity-mcu,the-fantastic-four-first-steps-2025,continuity-mcu,legacy_group_membership,confirmed,superseded,Legacy MCU display/franchise grouping is not a same-universe continuity claim; Marvel explicitly places First Steps in another universe Earth-828.
+work-continuity-the-fantastic-four-first-steps-2025-continuity-earth-828,the-fantastic-four-first-steps-2025,continuity-earth-828,setting_universe,confirmed,source_verified,Marvel official identifies The Fantastic Four: First Steps as set in another universe named Earth-828.
+work-continuity-captain-america-brave-new-world-2025-continuity-mcu,captain-america-brave-new-world-2025,continuity-mcu,legacy_group_membership,unknown,legacy_seed,収録済みだが、このStage Cでは相対位置を断定しない。
+work-continuity-thunderbolts-new-avengers-2025-continuity-mcu,thunderbolts-new-avengers-2025,continuity-mcu,legacy_group_membership,unknown,legacy_seed,収録済みだが、このStage Cでは相対位置を断定しない。
+work-continuity-ironheart-2025-continuity-mcu,ironheart-2025,continuity-mcu,legacy_group_membership,unknown,legacy_seed,収録済みだが、このStage Cでは相対位置を断定しない。
+work-continuity-wonder-man-s1-2026-continuity-mcu,wonder-man-s1-2026,continuity-mcu,legacy_group_membership,unknown,legacy_seed,収録済みだが、このStage Cでは相対位置を断定しない。
+work-continuity-daredevil-born-again-s2-2026-continuity-mcu,daredevil-born-again-s2-2026,continuity-mcu,legacy_group_membership,unknown,legacy_seed,収録済みだが、このStage Cでは相対位置を断定しない。
+work-continuity-the-punisher-one-last-kill-2026-05-12-continuity-mcu,the-punisher-one-last-kill-2026-05-12,continuity-mcu,legacy_group_membership,unknown,legacy_seed,収録済みだが、このStage Cでは相対位置を断定しない。
+work-continuity-visionquest-2026-10-14-continuity-mcu,visionquest-2026-10-14,continuity-mcu,legacy_group_membership,unknown,legacy_seed,収録済みだが、このStage Cでは相対位置を断定しない。
+work-continuity-daredevil-born-again-s3-tba-continuity-mcu,daredevil-born-again-s3-tba,continuity-mcu,legacy_group_membership,unknown,legacy_seed,収録済みだが、このStage Cでは相対位置を断定しない。
+work-continuity-blade-mcu-tba-tba-continuity-mcu,blade-mcu-tba-tba,continuity-mcu,legacy_group_membership,unknown,legacy_seed,収録済みだが、このStage Cでは相対位置を断定しない。
+work-continuity-spider-man-brand-new-day-2026-07-31-continuity-mcu,spider-man-brand-new-day-2026-07-31,continuity-mcu,legacy_group_membership,unknown,legacy_seed,公開日は別管理。作品内時系列は未確定として保留。
+work-continuity-avengers-doomsday-2026-12-18-continuity-mcu,avengers-doomsday-2026-12-18,continuity-mcu,legacy_group_membership,unknown,legacy_seed,公開日は別管理。作品内時系列は未確定として保留。
+work-continuity-avengers-secret-wars-2027-12-17-continuity-mcu,avengers-secret-wars-2027-12-17,continuity-mcu,legacy_group_membership,unknown,legacy_seed,公開日は別管理。作品内時系列は未確定として保留。
+work-continuity-venom-2018-continuity-ssu,venom-2018,continuity-ssu,legacy_group_membership,unknown,legacy_seed,Venom 三部作として連続表示。
+work-continuity-venom-let-there-be-carnage-2021-continuity-ssu,venom-let-there-be-carnage-2021,continuity-ssu,legacy_group_membership,unknown,legacy_seed,Venom 三部作として連続表示。
+work-continuity-venom-the-last-dance-2024-continuity-ssu,venom-the-last-dance-2024,continuity-ssu,legacy_group_membership,unknown,legacy_seed,Venom 三部作として連続表示。
+work-continuity-morbius-2022-continuity-ssu,morbius-2022,continuity-ssu,legacy_group_membership,unknown,legacy_seed,同一の一本線へ強制接続せず、独立作品枠として表示。
+work-continuity-madame-web-2024-continuity-ssu,madame-web-2024,continuity-ssu,legacy_group_membership,unknown,legacy_seed,同一の一本線へ強制接続せず、独立作品枠として表示。
+work-continuity-kraven-the-hunter-2024-continuity-ssu,kraven-the-hunter-2024,continuity-ssu,legacy_group_membership,unknown,legacy_seed,同一の一本線へ強制接続せず、独立作品枠として表示。
+work-continuity-the-amazing-spider-man-2012-continuity-spider-man-amazing,the-amazing-spider-man-2012,continuity-spider-man-amazing,legacy_group_membership,unknown,legacy_seed,二部作の続編関係のみを表示。
+work-continuity-the-amazing-spider-man-2-2014-continuity-spider-man-amazing,the-amazing-spider-man-2-2014,continuity-spider-man-amazing,legacy_group_membership,unknown,legacy_seed,二部作の続編関係のみを表示。
+work-continuity-spider-man-2002-continuity-spider-man-raimi,spider-man-2002,continuity-spider-man-raimi,legacy_group_membership,unknown,legacy_seed,三部作の続編関係のみを表示。
+work-continuity-spider-man-2-2004-continuity-spider-man-raimi,spider-man-2-2004,continuity-spider-man-raimi,legacy_group_membership,unknown,legacy_seed,三部作の続編関係のみを表示。
+work-continuity-spider-man-3-2007-continuity-spider-man-raimi,spider-man-3-2007,continuity-spider-man-raimi,legacy_group_membership,unknown,legacy_seed,三部作の続編関係のみを表示。

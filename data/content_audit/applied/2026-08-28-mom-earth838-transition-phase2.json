@@ -1,0 +1,17 @@
+{
+  "patch_id": "2026-08-28-mom-earth838-transition-phase2",
+  "research_refreshed": true,
+  "operations": [
+    {"table":"continuities.csv","action":"insert","key_column":"continuity_id","key":"continuity-earth-838"},
+    {"table":"events.csv","action":"insert","key_column":"event_id","key":"event-mom-doctor-strange-earth838-arrival"},
+    {"table":"event_occurrences.csv","action":"insert","key_column":"event_occurrence_id","key":"event-occurrence-mom-doctor-strange-earth838-arrival"},
+    {"table":"multiverse_transitions.csv","action":"insert","key_column":"transition_id","key":"event-mom-doctor-strange-earth838-arrival"},
+    {"table":"transition_participants.csv","action":"insert","key_column":"transition_participant_id","key":"transition-participant-mom-doctor-strange-earth838"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-earth838-continuity"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-strange-earth838-event"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-strange-earth838-occurrence"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-strange-earth838-transition"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-mom-strange-earth838-participant"}
+  ],
+  "notes": "Task 7 Doctor Strange in the Multiverse of Madness Earth-838 traversal: record the applied bookkeeping for the five already source-verified, reviewed facts representing Doctor Strange's Earth-616 -> Earth-838 traversal as a depicted event in Multiverse of Madness. America Chavez remains acknowledged as a co-traveler in the evidence/notes but is not asserted as a new canonical participant in this batch. No work relation is retired and no work-pair reason is expected from this single-work traversal; Earth-838 remains distinct from legacy X-Men contexts and no unsupported identity equivalence is inferred."
+}

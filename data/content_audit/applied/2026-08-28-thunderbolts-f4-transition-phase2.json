@@ -1,0 +1,17 @@
+{
+  "patch_id": "2026-08-28-thunderbolts-f4-transition-phase2",
+  "research_refreshed": true,
+  "preserve_legacy_pair_until_independent_derivation": true,
+  "operations": [
+    {"table":"continuities.csv","action":"insert","key_column":"continuity_id","key":"continuity-earth-616"},
+    {"table":"entities.csv","action":"insert","key_column":"entity_id","key":"entity-fantastic-four-excelsior"},
+    {"table":"events.csv","action":"insert","key_column":"event_id","key":"event-thunderbolts-f4-excelsior-arrival"},
+    {"table":"event_occurrences.csv","action":"insert","key_column":"event_occurrence_id","key":"event-occurrence-thunderbolts-f4-excelsior-arrival"},
+    {"table":"multiverse_transitions.csv","action":"insert","key_column":"transition_id","key":"event-thunderbolts-f4-excelsior-arrival"},
+    {"table":"transition_participants.csv","action":"insert","key_column":"transition_participant_id","key":"transition-participant-thunderbolts-f4-excelsior"},
+    {"table":"sources.csv","action":"insert","key_column":"source_id","key":"lat-first-steps-postcredits-2025"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-earth-616-deadpool-screenplay-2024"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-earth-616-continuity"}
+  ],
+  "notes": "Phase 2 pilot migration: model the Thunderbolts* post-credit Fantastic Four-marked spacecraft arrival as a first-class multiverse transition from Earth-828 to MCU Earth-616. Only the ship is a confirmed participant. The existing Thunderbolts* -> First Steps work relation remains active because the conservative Phase 2 transition derivation currently requires an independently supported work pair."
+}

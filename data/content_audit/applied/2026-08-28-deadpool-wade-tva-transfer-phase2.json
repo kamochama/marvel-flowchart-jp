@@ -1,0 +1,27 @@
+{
+  "patch_id": "2026-08-28-deadpool-wade-tva-transfer-phase2",
+  "research_refreshed": true,
+  "operations": [
+    {"table":"continuities.csv","action":"insert","key_column":"continuity_id","key":"continuity-earth-10005"},
+    {"table":"continuities.csv","action":"insert","key_column":"continuity_id","key":"continuity-tva-outside-timeline"},
+    {"table":"events.csv","action":"insert","key_column":"event_id","key":"event-dw-wade-tva-recruitment"},
+    {"table":"event_occurrences.csv","action":"insert","key_column":"event_occurrence_id","key":"event-occurrence-dw-wade-tva-recruitment"},
+    {"table":"multiverse_transitions.csv","action":"insert","key_column":"transition_id","key":"event-dw-wade-tva-recruitment"},
+    {"table":"transition_participants.csv","action":"insert","key_column":"transition_participant_id","key":"transition-participant-dw-wade-tva"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-dw-earth10005-screenplay-2024"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-dw-tva-screenplay-2024"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-dw-wade-tva-event-screenplay-2024"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-dw-wade-tva-event-d23-2024"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-dw-wade-tva-occurrence-screenplay-2024"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-dw-wade-tva-transition-screenplay-2024"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-dw-wade-tva-participant-screenplay-2024"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-dw-wade-tva-participant-d23-2024"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-dw-earth10005-continuity"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-dw-tva-continuity"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-dw-wade-tva-event"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-dw-wade-tva-occurrence"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-dw-wade-tva-transition"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-dw-wade-tva-participant"}
+  ],
+  "notes": "Task 7 Deadpool & Wolverine bounded transfer: model Wade Wilson's source-verified transfer from the explicitly labeled Earth-10005 home setting into the TVA/outside-timeline context. The batch does not infer a transport mechanism beyond tva_transfer, does not identify later Wolverine variant destinations, and creates no work relation or work-pair reason from this single-work event. Existing TVA/Loki and Logan story relations remain independent."
+}

@@ -1,0 +1,40 @@
+name: Library v5 apply review patch
+
+on:
+  push:
+    branches:
+      - library-v5-phase2-db6
+    paths:
+      - 'data/content_audit/pending/*.json'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: library-v5-phase2-db6
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply pending review patches
+        run: python -m scripts.library_v5.apply_review_patch --repo-root . --all-pending
+      - name: Unit tests after canonical patch
+        run: python -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
+      - name: Ordinary read-only build after canonical patch
+        run: python -m scripts.library_v5.build --repo-root .
+      - name: Commit audited canonical patch
+        run: |
+          git config user.name 'marvel-library-audit-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add data/library data/content_audit/reviews.csv data/content_audit/pending data/content_audit/applied
+          if git diff --cached --quiet; then
+            echo 'No canonical patch changes to commit.'
+            exit 0
+          fi
+          git commit -m 'audit: apply approved multiverse review patch'
+          git push origin HEAD:library-v5-phase2-db6

@@ -1,0 +1,20 @@
+{
+  "patch_id": "2026-08-28-vulture-transfer-transition-phase2",
+  "research_refreshed": true,
+  "operations": [
+    {"table":"events.csv","action":"insert","key_column":"event_id","key":"event-morbius-adrian-toomes-ssu-arrival"},
+    {"table":"event_occurrences.csv","action":"insert","key_column":"event_occurrence_id","key":"event-occurrence-morbius-adrian-toomes-ssu-arrival"},
+    {"table":"multiverse_transitions.csv","action":"insert","key_column":"transition_id","key":"event-morbius-adrian-toomes-ssu-arrival"},
+    {"table":"transition_participants.csv","action":"insert","key_column":"transition_participant_id","key":"transition-participant-morbius-adrian-toomes"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-vulture-transfer-event-director-2022"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-vulture-transfer-occurrence-director-2022"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-vulture-transfer-transition-director-2022"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-vulture-transfer-transition-earth616-screenplay-2024"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-vulture-transfer-participant-director-2022"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-vulture-transfer-event"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-vulture-transfer-occurrence"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-vulture-transfer-transition"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-vulture-transfer-participant"}
+  ],
+  "notes": "Task 7 Adrian Toomes/Vulture pilot: model the same source-verified MCU Adrian Toomes as a first-class traveler from Earth-616 into the existing SSU continuity context, with Morbius post-credit as the depiction occurrence and transport mechanism left unknown. Preserve the separately source-verified No Way Home -> Morbius causal work relation because the director attributes the transfer to No Way Home events; the transition reason enriches the independently supported Homecoming -> Morbius same-character pair rather than creating a new No Way Home pair. No numbered Sony-side Earth and no Vulture variant identity are invented."
+}

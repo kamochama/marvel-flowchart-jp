@@ -1,0 +1,149 @@
+{
+  "patch_id": "2026-08-27-multiverse-legacy-returns-batch002",
+  "operations": [
+    {
+      "table": "sources.csv", "action": "insert", "key_column": "source_id", "key": "homecoming-film-vulture-2017",
+      "values": {"source_id": "homecoming-film-vulture-2017", "purpose": "Spider-Man: Homecoming Vulture identity", "official_source": "Marvel Studios released film / Marvel", "checked_point": "Homecoming establishes Adrian Toomes/Vulture as Peter Parker's antagonist; released-film credits identify Michael Keaton in the role.", "url": "https://www.marvel.com/amp/articles/movies/the-essential-marvel-cinematic-universe-watch-guide"}
+    },
+    {
+      "table": "sources.csv", "action": "insert", "key_column": "source_id", "key": "morbius-vulture-director-2022",
+      "values": {"source_id": "morbius-vulture-director-2022", "purpose": "Morbius Vulture multiverse transfer", "official_source": "CinemaBlend interview with director Daniel Espinosa", "checked_point": "Espinosa explicitly says Morbius shares Venom's universe and the events of No Way Home transferred Venom and Vulture between the MCU and Venom universe; he identifies the Vulture as the same Adrian Toomes.", "url": "https://www.cinemablend.com/superheroes/spider-man/heres-how-spider-man-venom-and-the-multiverse-will-factor-into-jared-letos-morbius-movie"}
+    },
+    {
+      "table": "sources.csv", "action": "insert", "key_column": "source_id", "key": "marvel-inhumans-black-bolt-2017",
+      "values": {"source_id": "marvel-inhumans-black-bolt-2017", "purpose": "Inhumans Black Bolt portrayal", "official_source": "Marvel", "checked_point": "Marvel's Inhumans official materials identify Anson Mount as Black Bolt.", "url": "https://www.marvel.com/tv-shows/marvel-s-inhumans/1/"}
+    },
+    {
+      "table": "sources.csv", "action": "insert", "key_column": "source_id", "key": "mom-earth838-black-bolt-2022",
+      "values": {"source_id": "mom-earth838-black-bolt-2022", "purpose": "Multiverse of Madness Earth-838 Black Bolt", "official_source": "Marvel Studios released film; SYFY costume-designer interview as supporting documentation", "checked_point": "The film places the Illuminati on Earth-838; Black Bolt is portrayed by Anson Mount. This is a multiversal variant and not the Inhumans-series individual.", "url": "https://www.syfy.com/syfy-wire/doctor-strange-multiverse-of-madness-costume-designer-interview"}
+    },
+    {
+      "table": "sources.csv", "action": "insert", "key_column": "source_id", "key": "dwp-legacy-cameos-2024",
+      "values": {"source_id": "dwp-legacy-cameos-2024", "purpose": "Deadpool & Wolverine legacy hero cameos", "official_source": "Motion Picture Association / screenwriter interview", "checked_point": "Screenwriters identify Wesley Snipes as Blade, Jennifer Garner as Elektra and Chris Evans as Johnny Storm among Fox-era legacy heroes; this supports the character callbacks but not a precise old-film timeline identity for each Void resident.", "url": "https://www.motionpictures.org/2024/08/deadpool-wolverine-screenwriters-rhett-reese-paul-wernick-on-resurrecting-wolverine/"}
+    },
+
+    {
+      "table": "entities.csv", "action": "insert", "key_column": "entity_id", "key": "entity-adrian-toomes-vulture",
+      "values": {"entity_id": "entity-adrian-toomes-vulture", "name_ja": "エイドリアン・トゥームス／ヴァルチャー", "name_en": "Adrian Toomes / Vulture", "entity_type": "character", "notes": "Same MCU Adrian Toomes is transported into the Venom/Morbius universe; identity is supported by Morbius director Daniel Espinosa."}
+    },
+    {
+      "table": "people.csv", "action": "insert", "key_column": "person_id", "key": "person-michael-keaton",
+      "values": {"person_id": "person-michael-keaton", "name": "Michael Keaton", "notes": "Added during multiverse audit for Adrian Toomes/Vulture continuity."}
+    },
+    {
+      "table": "appearances.csv", "action": "insert", "key_column": "appearance_id", "key": "appearance-spider-man-homecoming-2017-entity-adrian-toomes-vulture",
+      "values": {"appearance_id": "appearance-spider-man-homecoming-2017-entity-adrian-toomes-vulture", "work_id": "spider-man-homecoming-2017", "entity_id": "entity-adrian-toomes-vulture", "appearance_kind": "onscreen", "certainty": "confirmed", "verification_status": "source_verified", "notes": "Homecoming establishes Adrian Toomes/Vulture as the film's villain."}
+    },
+    {
+      "table": "appearances.csv", "action": "insert", "key_column": "appearance_id", "key": "appearance-morbius-2022-entity-adrian-toomes-vulture",
+      "values": {"appearance_id": "appearance-morbius-2022-entity-adrian-toomes-vulture", "work_id": "morbius-2022", "entity_id": "entity-adrian-toomes-vulture", "appearance_kind": "post_credit", "certainty": "confirmed", "verification_status": "source_verified", "notes": "Morbius post-credit shows the same MCU Adrian Toomes after a multiverse transfer into the Venom/Morbius universe."}
+    },
+    {
+      "table": "portrayals.csv", "action": "insert", "key_column": "portrayal_id", "key": "portrayal-spider-man-homecoming-2017-person-michael-keaton-entity-adrian-toomes-vulture",
+      "values": {"portrayal_id": "portrayal-spider-man-homecoming-2017-person-michael-keaton-entity-adrian-toomes-vulture", "work_id": "spider-man-homecoming-2017", "person_id": "person-michael-keaton", "entity_id": "entity-adrian-toomes-vulture", "portrayal_kind": "same_character", "certainty": "confirmed", "verification_status": "source_verified", "notes": "Michael Keaton portrays Adrian Toomes/Vulture in Homecoming."}
+    },
+    {
+      "table": "portrayals.csv", "action": "insert", "key_column": "portrayal_id", "key": "portrayal-morbius-2022-person-michael-keaton-entity-adrian-toomes-vulture",
+      "values": {"portrayal_id": "portrayal-morbius-2022-person-michael-keaton-entity-adrian-toomes-vulture", "work_id": "morbius-2022", "person_id": "person-michael-keaton", "entity_id": "entity-adrian-toomes-vulture", "portrayal_kind": "same_character", "certainty": "confirmed", "verification_status": "source_verified", "notes": "Director Daniel Espinosa confirms Michael Keaton's Vulture is the same Adrian Toomes from the MCU, not a variant."}
+    },
+
+    {
+      "table": "work_relations.csv", "action": "update", "key_column": "work_relation_id", "key": "work-relation-spider-man-no-way-home-2021-morbius-2022-crossover",
+      "set": {"directness": "direct", "certainty": "confirmed", "verification_status": "source_verified", "notes": "Morbius shows the same MCU Adrian Toomes/Vulture materializing in the Venom/Morbius universe. Director Daniel Espinosa explicitly attributes Vulture's transfer to the events of No Way Home."}
+    },
+    {
+      "table": "work_relations.csv", "action": "update", "key_column": "work_relation_id", "key": "work-relation-blade-trinity-2004-deadpool-wolverine-2024-crossover",
+      "set": {"continuity_scope": "uncertain_return_continuity", "notes": "Deadpool & Wolverine physically features Wesley Snipes as Blade in the Void and deliberately invokes the legacy film era. Current evidence does not require treating this Void Blade as the exact Blade: Trinity timeline individual, so exact return continuity remains unresolved."}
+    },
+    {
+      "table": "work_relations.csv", "action": "update", "key_column": "work_relation_id", "key": "work-relation-elektra-2005-deadpool-wolverine-2024-crossover",
+      "set": {"continuity_scope": "uncertain_return_continuity", "notes": "Deadpool & Wolverine physically features Jennifer Garner as Elektra in the Void and deliberately invokes the legacy film era. Exact identity with the Elektra (2005) timeline individual is not independently established, so exact return continuity remains unresolved."}
+    },
+    {
+      "table": "work_relations.csv", "action": "update", "key_column": "work_relation_id", "key": "work-relation-fantastic-four-rise-of-the-silver-surfer-2007-deadpool-wolverine-2024-crossover",
+      "set": {"continuity_scope": "uncertain_return_continuity", "notes": "Deadpool & Wolverine physically features Chris Evans as Johnny Storm/Human Torch in the Void and invokes the Fox Fantastic Four legacy. Exact identity with the Rise of the Silver Surfer timeline individual is not independently established, so exact return continuity remains unresolved."}
+    },
+    {
+      "table": "work_relations.csv", "action": "update", "key_column": "work_relation_id", "key": "work-relation-inhumans-2017-doctor-strange-in-the-multiverse-of-madness-2022-variant-callback",
+      "set": {"certainty": "confirmed", "verification_status": "source_verified", "notes": "Anson Mount played Black Bolt in Marvel's Inhumans and returns as Black Bolt among the Earth-838 Illuminati in Multiverse of Madness. This is explicitly treated as a multiversal variant callback, not identity continuity with the Inhumans-series individual."}
+    },
+
+    {
+      "table": "evidence.csv", "action": "insert", "key_column": "evidence_id", "key": "evidence-homecoming-vulture-appearance-2017",
+      "values": {"evidence_id": "evidence-homecoming-vulture-appearance-2017", "fact_table": "appearances.csv", "fact_id": "appearance-spider-man-homecoming-2017-entity-adrian-toomes-vulture", "source_id": "homecoming-film-vulture-2017", "evidence_role": "primary", "quoted_or_paraphrased_note": "Marvel's Homecoming description identifies Vulture as the film's villain; the released film establishes Adrian Toomes in that role.", "verified_at": "2026-08-27"}
+    },
+    {
+      "table": "evidence.csv", "action": "insert", "key_column": "evidence_id", "key": "evidence-homecoming-vulture-portrayal-2017",
+      "values": {"evidence_id": "evidence-homecoming-vulture-portrayal-2017", "fact_table": "portrayals.csv", "fact_id": "portrayal-spider-man-homecoming-2017-person-michael-keaton-entity-adrian-toomes-vulture", "source_id": "homecoming-film-vulture-2017", "evidence_role": "primary", "quoted_or_paraphrased_note": "Released-film credits establish Michael Keaton as Adrian Toomes/Vulture.", "verified_at": "2026-08-27"}
+    },
+    {
+      "table": "evidence.csv", "action": "insert", "key_column": "evidence_id", "key": "evidence-morbius-vulture-appearance-2022",
+      "values": {"evidence_id": "evidence-morbius-vulture-appearance-2022", "fact_table": "appearances.csv", "fact_id": "appearance-morbius-2022-entity-adrian-toomes-vulture", "source_id": "morbius-vulture-director-2022", "evidence_role": "primary", "quoted_or_paraphrased_note": "Director Daniel Espinosa confirms Vulture is transferred from the MCU into Morbius/Venom's universe by the No Way Home events.", "verified_at": "2026-08-27"}
+    },
+    {
+      "table": "evidence.csv", "action": "insert", "key_column": "evidence_id", "key": "evidence-morbius-vulture-portrayal-2022",
+      "values": {"evidence_id": "evidence-morbius-vulture-portrayal-2022", "fact_table": "portrayals.csv", "fact_id": "portrayal-morbius-2022-person-michael-keaton-entity-adrian-toomes-vulture", "source_id": "morbius-vulture-director-2022", "evidence_role": "primary", "quoted_or_paraphrased_note": "Espinosa identifies Michael Keaton's Vulture in Morbius as the same MCU Adrian Toomes rather than a variant.", "verified_at": "2026-08-27"}
+    },
+    {
+      "table": "evidence.csv", "action": "insert", "key_column": "evidence_id", "key": "evidence-nwh-morbius-vulture-transfer-2022",
+      "values": {"evidence_id": "evidence-nwh-morbius-vulture-transfer-2022", "fact_table": "work_relations.csv", "fact_id": "work-relation-spider-man-no-way-home-2021-morbius-2022-crossover", "source_id": "morbius-vulture-director-2022", "evidence_role": "primary", "quoted_or_paraphrased_note": "Espinosa directly states that the events of No Way Home transferred Vulture between the MCU and the Venom universe.", "verified_at": "2026-08-27"}
+    },
+    {
+      "table": "evidence.csv", "action": "insert", "key_column": "evidence_id", "key": "evidence-inhumans-mom-black-bolt-variant-2022",
+      "values": {"evidence_id": "evidence-inhumans-mom-black-bolt-variant-2022", "fact_table": "work_relations.csv", "fact_id": "work-relation-inhumans-2017-doctor-strange-in-the-multiverse-of-madness-2022-variant-callback", "source_id": "mom-earth838-black-bolt-2022", "evidence_role": "primary", "quoted_or_paraphrased_note": "Multiverse of Madness presents Anson Mount's Black Bolt as an Earth-838 Illuminati member; the Earth-838 framing makes this a variant callback rather than identity continuity.", "verified_at": "2026-08-27"}
+    },
+    {
+      "table": "evidence.csv", "action": "insert", "key_column": "evidence_id", "key": "evidence-inhumans-black-bolt-role-2017",
+      "values": {"evidence_id": "evidence-inhumans-black-bolt-role-2017", "fact_table": "work_relations.csv", "fact_id": "work-relation-inhumans-2017-doctor-strange-in-the-multiverse-of-madness-2022-variant-callback", "source_id": "marvel-inhumans-black-bolt-2017", "evidence_role": "supporting", "quoted_or_paraphrased_note": "Marvel's Inhumans official page establishes Anson Mount as Black Bolt in the 2017 series, supporting the performer/character callback comparison.", "verified_at": "2026-08-27"}
+    },
+    {
+      "table": "evidence.csv", "action": "insert", "key_column": "evidence_id", "key": "evidence-dw-blade-legacy-2024",
+      "values": {"evidence_id": "evidence-dw-blade-legacy-2024", "fact_table": "work_relations.csv", "fact_id": "work-relation-blade-trinity-2004-deadpool-wolverine-2024-crossover", "source_id": "dwp-legacy-cameos-2024", "evidence_role": "supporting", "quoted_or_paraphrased_note": "D&W screenwriters explicitly discuss Wesley Snipes as Blade among the legacy heroes; exact old-film timeline identity is not established by the interview.", "verified_at": "2026-08-27"}
+    },
+    {
+      "table": "evidence.csv", "action": "insert", "key_column": "evidence_id", "key": "evidence-dw-elektra-legacy-2024",
+      "values": {"evidence_id": "evidence-dw-elektra-legacy-2024", "fact_table": "work_relations.csv", "fact_id": "work-relation-elektra-2005-deadpool-wolverine-2024-crossover", "source_id": "dwp-legacy-cameos-2024", "evidence_role": "supporting", "quoted_or_paraphrased_note": "D&W screenwriters explicitly discuss Jennifer Garner's Elektra among the legacy heroes; exact old-film timeline identity is not established by the interview.", "verified_at": "2026-08-27"}
+    },
+    {
+      "table": "evidence.csv", "action": "insert", "key_column": "evidence_id", "key": "evidence-dw-human-torch-legacy-2024",
+      "values": {"evidence_id": "evidence-dw-human-torch-legacy-2024", "fact_table": "work_relations.csv", "fact_id": "work-relation-fantastic-four-rise-of-the-silver-surfer-2007-deadpool-wolverine-2024-crossover", "source_id": "dwp-legacy-cameos-2024", "evidence_role": "supporting", "quoted_or_paraphrased_note": "D&W screenwriters explicitly identify Chris Evans as Johnny Storm; exact old-Fantastic-Four timeline identity is not independently established.", "verified_at": "2026-08-27"}
+    },
+
+    {
+      "table": "reviews.csv", "action": "insert", "key_column": "review_id", "key": "review-2026-08-27-homecoming-vulture-appearance",
+      "values": {"review_id": "review-2026-08-27-homecoming-vulture-appearance", "fact_table": "appearances.csv", "fact_id": "appearance-spider-man-homecoming-2017-entity-adrian-toomes-vulture", "previous_verification_status": "", "new_verification_status": "source_verified", "review_action": "created_verified", "evidence_ids": "evidence-homecoming-vulture-appearance-2017", "reviewed_at": "2026-08-27", "notes": "Created canonical Vulture appearance as the origin side of the later confirmed multiverse transfer."}
+    },
+    {
+      "table": "reviews.csv", "action": "insert", "key_column": "review_id", "key": "review-2026-08-27-homecoming-vulture-portrayal",
+      "values": {"review_id": "review-2026-08-27-homecoming-vulture-portrayal", "fact_table": "portrayals.csv", "fact_id": "portrayal-spider-man-homecoming-2017-person-michael-keaton-entity-adrian-toomes-vulture", "previous_verification_status": "", "new_verification_status": "source_verified", "review_action": "created_verified", "evidence_ids": "evidence-homecoming-vulture-portrayal-2017", "reviewed_at": "2026-08-27", "notes": "Created Michael Keaton portrayal fact for Adrian Toomes/Vulture in Homecoming."}
+    },
+    {
+      "table": "reviews.csv", "action": "insert", "key_column": "review_id", "key": "review-2026-08-27-morbius-vulture-appearance",
+      "values": {"review_id": "review-2026-08-27-morbius-vulture-appearance", "fact_table": "appearances.csv", "fact_id": "appearance-morbius-2022-entity-adrian-toomes-vulture", "previous_verification_status": "", "new_verification_status": "source_verified", "review_action": "created_verified", "evidence_ids": "evidence-morbius-vulture-appearance-2022", "reviewed_at": "2026-08-27", "notes": "Created because Morbius shows the same MCU Adrian Toomes in its post-credit sequence."}
+    },
+    {
+      "table": "reviews.csv", "action": "insert", "key_column": "review_id", "key": "review-2026-08-27-morbius-vulture-portrayal",
+      "values": {"review_id": "review-2026-08-27-morbius-vulture-portrayal", "fact_table": "portrayals.csv", "fact_id": "portrayal-morbius-2022-person-michael-keaton-entity-adrian-toomes-vulture", "previous_verification_status": "", "new_verification_status": "source_verified", "review_action": "created_verified", "evidence_ids": "evidence-morbius-vulture-portrayal-2022", "reviewed_at": "2026-08-27", "notes": "Created as the same-character Michael Keaton portrayal after director confirmation that this is MCU Adrian Toomes, not a variant."}
+    },
+    {
+      "table": "reviews.csv", "action": "insert", "key_column": "review_id", "key": "review-2026-08-27-nwh-morbius-vulture-transfer",
+      "values": {"review_id": "review-2026-08-27-nwh-morbius-vulture-transfer", "fact_table": "work_relations.csv", "fact_id": "work-relation-spider-man-no-way-home-2021-morbius-2022-crossover", "previous_verification_status": "legacy_seed", "new_verification_status": "source_verified", "review_action": "verified_source", "evidence_ids": "evidence-nwh-morbius-vulture-transfer-2022", "reviewed_at": "2026-08-27", "notes": "Promoted because the Morbius director explicitly attributes the same MCU Vulture's universe transfer to No Way Home events."}
+    },
+    {
+      "table": "reviews.csv", "action": "insert", "key_column": "review_id", "key": "review-2026-08-27-inhumans-mom-black-bolt-variant",
+      "values": {"review_id": "review-2026-08-27-inhumans-mom-black-bolt-variant", "fact_table": "work_relations.csv", "fact_id": "work-relation-inhumans-2017-doctor-strange-in-the-multiverse-of-madness-2022-variant-callback", "previous_verification_status": "legacy_seed", "new_verification_status": "source_verified", "review_action": "verified_source", "evidence_ids": "evidence-inhumans-mom-black-bolt-variant-2022|evidence-inhumans-black-bolt-role-2017", "reviewed_at": "2026-08-27", "notes": "Promoted specifically as a variant callback; this review does not identify Earth-838 Black Bolt with the Inhumans-series individual."}
+    },
+    {
+      "table": "reviews.csv", "action": "insert", "key_column": "review_id", "key": "review-2026-08-27-dw-blade-retained-seed",
+      "values": {"review_id": "review-2026-08-27-dw-blade-retained-seed", "fact_table": "work_relations.csv", "fact_id": "work-relation-blade-trinity-2004-deadpool-wolverine-2024-crossover", "previous_verification_status": "legacy_seed", "new_verification_status": "legacy_seed", "review_action": "retained_seed", "evidence_ids": "evidence-dw-blade-legacy-2024", "reviewed_at": "2026-08-27", "notes": "Retained the legacy bridge but changed continuity scope to uncertain_return_continuity because exact Blade-trilogy individual continuity is not proven."}
+    },
+    {
+      "table": "reviews.csv", "action": "insert", "key_column": "review_id", "key": "review-2026-08-27-dw-elektra-retained-seed",
+      "values": {"review_id": "review-2026-08-27-dw-elektra-retained-seed", "fact_table": "work_relations.csv", "fact_id": "work-relation-elektra-2005-deadpool-wolverine-2024-crossover", "previous_verification_status": "legacy_seed", "new_verification_status": "legacy_seed", "review_action": "retained_seed", "evidence_ids": "evidence-dw-elektra-legacy-2024", "reviewed_at": "2026-08-27", "notes": "Retained the legacy bridge but changed continuity scope to uncertain_return_continuity because exact Elektra-film individual continuity is not proven."}
+    },
+    {
+      "table": "reviews.csv", "action": "insert", "key_column": "review_id", "key": "review-2026-08-27-dw-human-torch-retained-seed",
+      "values": {"review_id": "review-2026-08-27-dw-human-torch-retained-seed", "fact_table": "work_relations.csv", "fact_id": "work-relation-fantastic-four-rise-of-the-silver-surfer-2007-deadpool-wolverine-2024-crossover", "previous_verification_status": "legacy_seed", "new_verification_status": "legacy_seed", "review_action": "retained_seed", "evidence_ids": "evidence-dw-human-torch-legacy-2024", "reviewed_at": "2026-08-27", "notes": "Retained the legacy bridge but changed continuity scope to uncertain_return_continuity because exact Fox-F4 individual continuity is not proven."}
+    }
+  ]
+}

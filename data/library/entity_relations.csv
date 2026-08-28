@@ -1,0 +1,2 @@
+entity_relation_id,source_entity_id,relation_kind,target_entity_id,certainty,verification_status,notes
+entity-relation-frank-castle-brand-new-day-alias-identity,entity-x-797ce92fcd,identity_of,entity-x-cacda9afb6,confirmed,source_verified,"Legacy entity_returns normalization created a second Frank Castle entity for Brand New Day. Official Marvel identifies Jon Bernthal as Frank Castle, and the Brand New Day creator interview identifies Punisher; retain the legacy alias for migration traceability but resolve it to the canonical Punisher entity."

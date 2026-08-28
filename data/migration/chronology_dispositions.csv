@@ -1,0 +1,104 @@
+legacy_row_id,work_id,world_group,lane,track,legacy_order,disposition,migration_note
+chronology-000001,x-men-first-class-2011,FOX X-MEN,fox-xmen,shared-origin,10,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000002,x-men-origins-wolverine-2009,FOX X-MEN,fox-xmen,original,20,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000003,x-men-2000,FOX X-MEN,fox-xmen,original,30,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000004,x2-x-men-united-2003,FOX X-MEN,fox-xmen,original,40,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000005,x-men-the-last-stand-2006,FOX X-MEN,fox-xmen,original,50,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000006,the-wolverine-2013,FOX X-MEN,fox-xmen,original,60,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000007,x-men-days-of-future-past-2014,FOX X-MEN,fox-xmen,pivot,70,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000008,x-men-apocalypse-2016,FOX X-MEN,fox-xmen,revised,80,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000009,dark-phoenix-2019,FOX X-MEN,fox-xmen,revised,90,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000010,deadpool-2016,FOX X-MEN,fox-xmen,revised-side,100,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000011,deadpool-2-2018,FOX X-MEN,fox-xmen,revised-side,110,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000012,logan-2017,FOX X-MEN,fox-xmen,ambiguous,120,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000013,the-new-mutants-2020,FOX X-MEN,fox-xmen,ambiguous,130,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000014,captain-america-the-first-avenger-2011,MCU,mcu-main,main,10,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000015,captain-marvel-2019,MCU,mcu-main,main,20,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000016,iron-man-2008,MCU,mcu-main,main,30,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000017,iron-man-2-2010,MCU,mcu-main,main,40,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000018,the-incredible-hulk-2008,MCU,mcu-main,main,50,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000019,thor-2011,MCU,mcu-main,main,60,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000020,the-avengers-2012,MCU,mcu-main,main,70,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000021,thor-the-dark-world-2013,MCU,mcu-main,main,80,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000022,iron-man-3-2013,MCU,mcu-main,main,90,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000023,captain-america-the-winter-soldier-2014,MCU,mcu-main,main,100,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000024,guardians-of-the-galaxy-2014,MCU,mcu-main,main,110,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000025,guardians-of-the-galaxy-vol-2-2017,MCU,mcu-main,main,120,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000026,i-am-groot-s1-2022,MCU,mcu-main,main,130,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000027,i-am-groot-s2-2023,MCU,mcu-main,main,140,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000028,daredevil-s1-2015,MCU,mcu-main,main,150,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000029,jessica-jones-s1-2015,MCU,mcu-main,main,160,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000030,avengers-age-of-ultron-2015,MCU,mcu-main,main,170,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000031,ant-man-2015,MCU,mcu-main,main,180,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000032,daredevil-s2-2016,MCU,mcu-main,main,190,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000033,luke-cage-s1-2016,MCU,mcu-main,main,200,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000034,iron-fist-s1-2017,MCU,mcu-main,main,210,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000035,the-defenders-2017,MCU,mcu-main,main,220,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000036,captain-america-civil-war-2016,MCU,mcu-main,main,230,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000037,black-widow-2021,MCU,mcu-main,main,240,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000038,black-panther-2018,MCU,mcu-main,main,250,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000039,spider-man-homecoming-2017,MCU,mcu-main,main,260,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000040,the-punisher-s1-2017,MCU,mcu-main,main,270,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000041,doctor-strange-2016,MCU,mcu-main,main,280,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000042,jessica-jones-s2-2018,MCU,mcu-main,main,290,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000043,luke-cage-s2-2018,MCU,mcu-main,main,300,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000044,iron-fist-s2-2018,MCU,mcu-main,main,310,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000045,daredevil-s3-2018,MCU,mcu-main,main,320,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000046,thor-ragnarok-2017,MCU,mcu-main,main,330,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000047,the-punisher-s2-2019,MCU,mcu-main,main,340,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000048,jessica-jones-s3-2019,MCU,mcu-main,main,350,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000049,ant-man-and-the-wasp-2018,MCU,mcu-main,main,360,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000050,avengers-infinity-war-2018,MCU,mcu-main,main,370,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000051,avengers-endgame-2019,MCU,mcu-main,main,380,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000052,loki-s1-2021,MCU,mcu-main,time-crossing,390,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000053,what-if-s1-2021,MCU,mcu-main,multiverse,400,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000054,wandavision-2021,MCU,mcu-main,main,410,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000055,shang-chi-and-the-legend-of-the-ten-rings-2021,MCU,mcu-main,main,420,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000056,the-falcon-and-the-winter-soldier-2021,MCU,mcu-main,main,430,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000057,spider-man-far-from-home-2019,MCU,mcu-main,main,440,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000058,spider-man-no-way-home-2021,MCU,mcu-main,time-crossing,445,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000059,eternals-2021,MCU,mcu-main,main,450,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000060,doctor-strange-in-the-multiverse-of-madness-2022,MCU,mcu-main,main,460,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000061,hawkeye-2021,MCU,mcu-main,main,470,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000062,moon-knight-2022,MCU,mcu-main,main,480,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000063,black-panther-wakanda-forever-2022,MCU,mcu-main,main,490,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000064,echo-2024,MCU,mcu-main,main,500,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000065,she-hulk-attorney-at-law-2022,MCU,mcu-main,main,510,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000066,ms-marvel-2022,MCU,mcu-main,main,520,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000067,thor-love-and-thunder-2022,MCU,mcu-main,main,530,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000068,werewolf-by-night-2022,MCU,mcu-main,main,540,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000069,the-guardians-of-the-galaxy-holiday-special-2022,MCU,mcu-main,main,550,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000070,ant-man-and-the-wasp-quantumania-2023,MCU,mcu-main,main,560,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000071,guardians-of-the-galaxy-vol-3-2023,MCU,mcu-main,main,570,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000072,secret-invasion-2023,MCU,mcu-main,main,580,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000073,the-marvels-2023,MCU,mcu-main,main,590,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000074,loki-s2-2023,MCU,mcu-main,time-crossing,600,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000075,what-if-s2-2023,MCU,mcu-main,multiverse,610,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000076,deadpool-wolverine-2024,MCU,mcu-main,time-crossing,620,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000077,agatha-all-along-2024,MCU,mcu-main,main,630,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000078,what-if-s3-2024,MCU,mcu-main,multiverse,640,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000079,daredevil-born-again-s1-2025,MCU,mcu-main,main,650,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000080,the-fantastic-four-first-steps-2025,MCU,mcu-main,multiverse,8500,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000081,captain-america-brave-new-world-2025,MCU,mcu-main,unplaced,9000,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000082,thunderbolts-new-avengers-2025,MCU,mcu-main,unplaced,9010,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000083,ironheart-2025,MCU,mcu-main,unplaced,9020,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000084,wonder-man-s1-2026,MCU,mcu-main,unplaced,9030,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000085,daredevil-born-again-s2-2026,MCU,mcu-main,unplaced,9040,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000086,the-punisher-one-last-kill-2026-05-12,MCU,mcu-main,unplaced,9050,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000087,visionquest-2026-10-14,MCU,mcu-main,unplaced,9060,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000088,daredevil-born-again-s3-tba,MCU,mcu-main,unplaced,9070,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000089,blade-mcu-tba-tba,MCU,mcu-main,unplaced,9080,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000090,spider-man-brand-new-day-2026-07-31,MCU,mcu-main,unplaced,9900,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000091,avengers-doomsday-2026-12-18,MCU,mcu-main,unplaced,9910,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000092,avengers-secret-wars-2027-12-17,MCU,mcu-main,unplaced,9920,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000093,venom-2018,SSU,ssu,venom-line,10,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000094,venom-let-there-be-carnage-2021,SSU,ssu,venom-line,20,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000095,venom-the-last-dance-2024,SSU,ssu,venom-line,30,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000096,morbius-2022,SSU,ssu,standalone,200,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000097,madame-web-2024,SSU,ssu,standalone,210,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000098,kraven-the-hunter-2024,SSU,ssu,standalone,220,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000099,the-amazing-spider-man-2012,Spider-Man / Amazing,amazing,main,10,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000100,the-amazing-spider-man-2-2014,Spider-Man / Amazing,amazing,main,20,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000101,spider-man-2002,Spider-Man / Raimi,raimi,main,10,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000102,spider-man-2-2004,Spider-Man / Raimi,raimi,main,20,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.
+chronology-000103,spider-man-3-2007,Spider-Man / Raimi,raimi,main,30,legacy_display_placement_seed,lane/order/track are not promoted to source-backed chronology assertions without evidence audit.

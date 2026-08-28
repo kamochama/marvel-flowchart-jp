@@ -1,0 +1,23 @@
+{
+  "patch_id": "2026-08-28-the-marvels-monica-transition-phase2",
+  "research_refreshed": true,
+  "operations": [
+    {"table":"continuities.csv","action":"insert","key_column":"continuity_id","key":"continuity-the-marvels-alternate-xmen-context"},
+    {"table":"events.csv","action":"insert","key_column":"event_id","key":"event-the-marvels-monica-alternate-universe-arrival"},
+    {"table":"event_occurrences.csv","action":"insert","key_column":"event_occurrence_id","key":"event-occurrence-the-marvels-monica-alternate-universe-arrival"},
+    {"table":"multiverse_transitions.csv","action":"insert","key_column":"transition_id","key":"event-the-marvels-monica-alternate-universe-arrival"},
+    {"table":"transition_participants.csv","action":"insert","key_column":"transition_participant_id","key":"transition-participant-the-marvels-monica"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-the-marvels-monica-destination-ew-2023"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-the-marvels-monica-event-ew-2023"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-the-marvels-monica-occurrence-ew-2023"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-the-marvels-monica-transition-ew-2023"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-the-marvels-monica-transition-earth616-screenplay-2024"},
+    {"table":"evidence.csv","action":"insert","key_column":"evidence_id","key":"evidence-the-marvels-monica-participant-ew-2023"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-the-marvels-monica-destination-continuity"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-the-marvels-monica-transition-event"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-the-marvels-monica-transition-occurrence"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-the-marvels-monica-transition"},
+    {"table":"reviews.csv","action":"insert","key_column":"review_id","key":"review-2026-08-28-the-marvels-monica-transition-participant"}
+  ],
+  "notes": "Task 7 Monica Rambeau pilot: model The Marvels post-credit arrival as a first-class transition from Earth-616 to a deliberately descriptive alternate X-Men-linked universe context. The evidence supports an alternate universe/new dimension with Binary and Beast but supplies no Earth number, so no numbered Earth is invented and the destination is not equated with legacy FOX X-MEN or Avengers: Doomsday return continuity. The mechanism remains unknown. Under the conservative transition derivation rule this event intentionally produces no work-pair reason because there is no independently supported destination-work pair; the existing The Marvels -> Doomsday legacy relation remains unchanged and uncertain_return_continuity."
+}

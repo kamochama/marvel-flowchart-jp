@@ -1,0 +1,33 @@
+{
+  "patch_id": "2026-08-27-first-steps-doomsday-continuity-scope-fix",
+  "retry_after_db_views": true,
+  "operations": [
+    {
+      "table": "work_relations.csv",
+      "action": "update",
+      "key_column": "work_relation_id",
+      "key": "work-relation-the-fantastic-four-first-steps-2025-avengers-doomsday-2026-12-18-lead-in",
+      "set": {
+        "continuity_scope": "multiverse",
+        "notes": "Kevin Feige explicitly says First Steps directly leads into Doomsday. First Steps is established in Earth-828, so the lead-in crosses continuity contexts; relation_scope remains story while continuity_scope is multiverse."
+      }
+    },
+    {
+      "table": "reviews.csv",
+      "action": "insert",
+      "key_column": "review_id",
+      "key": "review-2026-08-27-first-steps-doomsday-continuity-scope-recheck",
+      "values": {
+        "review_id": "review-2026-08-27-first-steps-doomsday-continuity-scope-recheck",
+        "fact_table": "work_relations.csv",
+        "fact_id": "work-relation-the-fantastic-four-first-steps-2025-avengers-doomsday-2026-12-18-lead-in",
+        "previous_verification_status": "source_verified",
+        "new_verification_status": "source_verified",
+        "review_action": "verified_rechecked",
+        "evidence_ids": "evidence-first-steps-doomsday-lead-in-marvel-2025|evidence-first-steps-earth-828-membership-marvel-2025",
+        "reviewed_at": "2026-08-27",
+        "notes": "Corrected continuity_scope from the invalid relation-scope token crossover to multiverse. The direct lead-in remains source verified, and Earth-828 remains the verified origin continuity for First Steps."
+      }
+    }
+  ]
+}
