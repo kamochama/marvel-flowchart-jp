@@ -28,8 +28,10 @@ class LibraryDbFingerprintTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             db_path = compile_database(ROOT, Path(tmp) / "marvel.sqlite").db_path
             fingerprint = logical_fingerprint(db_path, repo_root=ROOT)
-            self.assertEqual(fingerprint["db_schema_version"], "1.1-phase2-events")
+            self.assertEqual(fingerprint["db_schema_version"], "1.2-normalized-releases-status")
             self.assertIn("works", fingerprint["tables"])
+            self.assertIn("releases", fingerprint["tables"])
+            self.assertIn("production_status_assertions", fingerprint["tables"])
             self.assertIn("reviews", fingerprint["tables"])
             self.assertIn("events", fingerprint["tables"])
             self.assertIn("multiverse_transitions", fingerprint["tables"])

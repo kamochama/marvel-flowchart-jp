@@ -8,11 +8,13 @@ from scripts.library_v5.db_schema import DB_SCHEMA_VERSION, canonical_table_name
 
 class LibraryDbSchemaTests(unittest.TestCase):
     def test_phase2_schema_has_current_canonical_tables_and_reviews(self) -> None:
-        self.assertEqual(DB_SCHEMA_VERSION, "1.1-phase2-events")
+        self.assertEqual(DB_SCHEMA_VERSION, "1.2-normalized-releases-status")
         self.assertEqual(
             canonical_table_names(),
             (
                 "works",
+                "releases",
+                "production_status_assertions",
                 "entities",
                 "entity_relations",
                 "appearances",
@@ -55,6 +57,15 @@ class LibraryDbSchemaTests(unittest.TestCase):
                 "INSERT INTO appearances(appearance_id,work_id,entity_id,appearance_kind,certainty,verification_status,notes) VALUES(?,?,?,?,?,?,?)",
                 ("appearance-a", "work-a", "entity-a", "onscreen", "confirmed", "not-a-status", ""),
             )
+
+    def test_normalized_release_tables_have_fk_and_enum_checks(self):
+        connection = sqlite3.connect(":memory:")
+        create_schema(connection)
+        connection.execute("INSERT INTO works(work_id) VALUES('work-a')")
+        with self.assertRaises(sqlite3.IntegrityError):
+            connection.execute("INSERT INTO releases(release_id,work_id,territory,release_kind,release_date,release_precision,status,certainty,verification_status,notes) VALUES(?,?,?,?,?,?,?,?,?,?)", ("r1", "missing", "unknown", "theatrical", "", "none", "unknown", "unknown", "legacy_seed", ""))
+        with self.assertRaises(sqlite3.IntegrityError):
+            connection.execute("INSERT INTO releases(release_id,work_id,territory,release_kind,release_date,release_precision,status,certainty,verification_status,notes) VALUES(?,?,?,?,?,?,?,?,?,?)", ("r1", "work-a", "unknown", "not-a-kind", "", "none", "unknown", "unknown", "legacy_seed", ""))
 
 
 if __name__ == "__main__":

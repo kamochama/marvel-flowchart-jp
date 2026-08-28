@@ -12,6 +12,8 @@ from scripts.library_v5.db_compile import compile_database, open_query_connectio
 
 HEADERS = {
     "works.csv": ["work_id", "title_ja", "title_en", "title_official", "release", "release_raw", "format", "status", "classification", "ja_status", "japan_date", "japan_type", "source_url", "source_note", "notes", "release_sort_date", "release_display_date", "release_kind", "release_certainty", "release_precision", "release_source_note", "aliases_ja", "title_audit_status", "title_audit_source_url", "title_last_verified", "title_management_note", "stable_id_note"],
+    "releases.csv": ["release_id", "work_id", "territory", "release_kind", "release_date", "release_precision", "status", "certainty", "verification_status", "notes"],
+    "production_status_assertions.csv": ["production_status_assertion_id", "work_id", "status", "asserted_at", "certainty", "verification_status", "notes"],
     "entities.csv": ["entity_id", "name_ja", "name_en", "entity_type", "notes"],
     "entity_relations.csv": ["entity_relation_id", "source_entity_id", "relation_kind", "target_entity_id", "certainty", "verification_status", "notes"],
     "appearances.csv": ["appearance_id", "work_id", "entity_id", "appearance_kind", "certainty", "verification_status", "notes"],
