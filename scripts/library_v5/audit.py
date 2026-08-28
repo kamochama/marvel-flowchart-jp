@@ -150,6 +150,13 @@ def _csv_header(path: Path) -> list[str]:
         return next(csv.reader(handle), [])
 
 
+def _load_schema(repo_root: Path, *, required: bool = True) -> dict[str, object]:
+    schema_path = repo_root.resolve() / "data" / "library" / "schema.json"
+    if not schema_path.exists() and not required:
+        return {}
+    return json.loads(schema_path.read_text(encoding="utf-8"))
+
+
 def check_csv_shape(path: Path, table_name: str) -> list[dict[str, str]]:
     """Reject rows whose field count would be silently hidden by DictReader."""
     if not path.exists():
@@ -195,6 +202,7 @@ def _hash_tree(repo_root: Path, root_name: str, excluded: set[str]) -> dict[str,
 
 def build_manifest(repo_root: Path) -> dict[str, object]:
     repo_root = repo_root.resolve()
+    schema = _load_schema(repo_root, required=False)
     excluded = {
         "data/library/manifest.json",
         "data/derived/library_manifest.json",
@@ -216,7 +224,7 @@ def build_manifest(repo_root: Path) -> dict[str, object]:
             generated_outputs[path.relative_to(repo_root).as_posix()] = sha256_file(path)
     files = {**canonical_inputs, **persistent_inputs, **generated_outputs}
     return {
-        "schema_version": "5.1",
+        "schema_version": schema.get("schema_version", ""),
         "hash_algorithm": "sha256",
         "canonical_inputs": canonical_inputs,
         "persistent_inputs": persistent_inputs,
@@ -238,8 +246,8 @@ def _verification_status_counts(tables: dict[str, list[dict[str, str]]]) -> dict
 def audit_repository(repo_root: Path) -> dict[str, object]:
     from .content_audit import review_issues_from_repo
 
-    schema_path = repo_root / "data" / "library" / "schema.json"
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    repo_root = repo_root.resolve()
+    schema = _load_schema(repo_root)
     table_schemas = schema["tables"]
     tables: dict[str, list[dict[str, str]]] = {}
     issues: list[dict[str, str]] = []
@@ -315,7 +323,7 @@ def audit_repository(repo_root: Path) -> dict[str, object]:
         issues.extend(check_primary_keys(rel, _read_csv(repo_root / rel), pk))
 
     return {
-        "schema_version": "5.1",
+        "schema_version": schema["schema_version"],
         "ok": not any(issue.get("severity") == "error" for issue in issues),
         "issues": sorted(issues, key=lambda i: (i.get("code", ""), i.get("table", ""), i.get("row", ""), i.get("message", ""))),
         "observed_counts": {

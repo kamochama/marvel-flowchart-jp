@@ -1,6 +1,11 @@
+import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 class LibraryAuditTests(unittest.TestCase):
@@ -121,6 +126,25 @@ class LibraryAuditTests(unittest.TestCase):
             self.assertNotIn("data/migration/bootstrap/library/entities.csv", first["files"])
             self.assertNotIn("data/derived/db/marvel.sqlite", first["files"])
             self.assertIn("data/derived/db/library_db_manifest.json", first["files"])
+
+    def test_audit_and_manifest_versions_follow_canonical_schema(self):
+        from scripts.library_v5.audit import write_audit_outputs
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repo"
+            shutil.copytree(ROOT / "data", root / "data")
+            schema_version = json.loads(
+                (root / "data/library/schema.json").read_text(encoding="utf-8")
+            )["schema_version"]
+
+            write_audit_outputs(root)
+            audit = json.loads((root / "data/derived/audit.json").read_text(encoding="utf-8"))
+            manifest = json.loads(
+                (root / "data/derived/library_manifest.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(audit["schema_version"], schema_version)
+        self.assertEqual(manifest["schema_version"], schema_version)
 
     def test_full_build_is_byte_deterministic_on_fixture(self):
         from scripts.library_v5.audit import sha256_file
