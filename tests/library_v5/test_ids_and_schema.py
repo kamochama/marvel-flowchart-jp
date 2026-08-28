@@ -26,7 +26,7 @@ class LibraryV5IdsAndSchemaTests(unittest.TestCase):
         schema_path = ROOT / "data" / "library" / "schema.json"
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
 
-        self.assertEqual(schema["schema_version"], "5.1")
+        self.assertEqual(schema["schema_version"], "5.2")
         expected_tables = {
             "works.csv",
             "entities.csv",
@@ -78,6 +78,8 @@ class LibraryV5IdsAndSchemaTests(unittest.TestCase):
             (ROOT / "data" / "library" / "schema.json").read_text(encoding="utf-8")
         )
         fact_tables = {
+            "releases.csv",
+            "production_status_assertions.csv",
             "entity_relations.csv",
             "appearances.csv",
             "portrayals.csv",
@@ -98,6 +100,66 @@ class LibraryV5IdsAndSchemaTests(unittest.TestCase):
                     "verification_status",
                     schema["tables"][table_name]["required_columns"],
                 )
+
+    def test_release_and_production_status_tables_are_declared(self):
+        schema = json.loads(
+            (ROOT / "data" / "library" / "schema.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            schema["tables"]["releases.csv"]["required_columns"],
+            [
+                "release_id", "work_id", "territory", "release_kind", "release_date",
+                "release_precision", "status", "certainty", "verification_status", "notes",
+            ],
+        )
+        self.assertEqual(
+            schema["tables"]["production_status_assertions.csv"]["required_columns"],
+            [
+                "production_status_assertion_id", "work_id", "status", "asserted_at",
+                "certainty", "verification_status", "notes",
+            ],
+        )
+        self.assertEqual(schema["tables"]["releases.csv"]["primary_key"], "release_id")
+        self.assertEqual(
+            schema["tables"]["releases.csv"]["foreign_keys"],
+            {"work_id": "works.work_id"},
+        )
+        self.assertEqual(
+            schema["tables"]["production_status_assertions.csv"]["primary_key"],
+            "production_status_assertion_id",
+        )
+        self.assertEqual(
+            schema["tables"]["production_status_assertions.csv"]["foreign_keys"],
+            {"work_id": "works.work_id"},
+        )
+        self.assertEqual(
+            schema["enums"]["release_kind"],
+            [
+                "theatrical", "streaming", "broadcast", "festival", "re_release",
+                "home_video", "special", "series_start", "imax_series_start", "undated", "other",
+            ],
+        )
+        self.assertEqual(schema["enums"]["release_precision"], ["day", "month", "year", "none"])
+        self.assertEqual(
+            schema["enums"]["release_status"],
+            ["released", "announced", "delayed", "cancelled", "unknown"],
+        )
+        self.assertEqual(
+            schema["enums"]["production_status"],
+            ["announced", "in_development", "filming", "completed", "delayed", "cancelled", "released", "unknown"],
+        )
+
+    def test_release_status_facts_are_indexed_for_evidence_and_review(self):
+        from scripts.library_v5.audit import FACT_ID_COLUMNS as AUDIT_FACT_ID_COLUMNS
+        from scripts.library_v5.content_audit import FACT_ID_COLUMNS as REVIEW_FACT_ID_COLUMNS
+
+        expected = {
+            "releases.csv": "release_id",
+            "production_status_assertions.csv": "production_status_assertion_id",
+        }
+        for table_name, id_column in expected.items():
+            self.assertEqual(AUDIT_FACT_ID_COLUMNS[table_name], id_column)
+            self.assertEqual(REVIEW_FACT_ID_COLUMNS[table_name], id_column)
 
 
 if __name__ == "__main__":

@@ -8,6 +8,8 @@ from pathlib import Path
 
 
 FACT_ID_COLUMNS = {
+    "releases.csv": "release_id",
+    "production_status_assertions.csv": "production_status_assertion_id",
     "appearances.csv": "appearance_id",
     "portrayals.csv": "portrayal_id",
     "work_relations.csv": "work_relation_id",

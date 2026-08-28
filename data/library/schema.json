@@ -1,5 +1,5 @@
 {
-  "schema_version": "5.1",
+  "schema_version": "5.2",
   "canonical_root": "data/library",
   "derived_root": "data/derived",
   "migration_root": "data/migration",
@@ -28,10 +28,16 @@
     "event_participant_role": ["participant", "traveler", "vehicle", "summoner", "carrier", "affected", "observer", "other"],
     "event_relation_kind": ["causes", "enables", "prevents", "aftermath_of", "part_of", "precedes"],
     "transition_kind": ["physical_crossing", "summoning", "portal", "spell_displacement", "tva_transfer", "incursion_contact", "universe_exchange", "unknown"],
-    "transition_participant_role": ["traveler", "vehicle", "summoner", "carrier", "affected", "other"]
+    "transition_participant_role": ["traveler", "vehicle", "summoner", "carrier", "affected", "other"],
+    "release_kind": ["theatrical", "streaming", "broadcast", "festival", "re_release", "home_video", "special", "series_start", "imax_series_start", "undated", "other"],
+    "release_precision": ["day", "month", "year", "none"],
+    "release_status": ["released", "announced", "delayed", "cancelled", "unknown"],
+    "production_status": ["announced", "in_development", "filming", "completed", "delayed", "cancelled", "released", "unknown"]
   },
   "tables": {
     "works.csv": {"primary_key": "work_id", "required_columns": ["work_id", "title_ja", "title_en", "format", "status", "release_sort_date", "release_display_date"]},
+    "releases.csv": {"primary_key": "release_id", "required_columns": ["release_id", "work_id", "territory", "release_kind", "release_date", "release_precision", "status", "certainty", "verification_status", "notes"], "foreign_keys": {"work_id": "works.work_id"}},
+    "production_status_assertions.csv": {"primary_key": "production_status_assertion_id", "required_columns": ["production_status_assertion_id", "work_id", "status", "asserted_at", "certainty", "verification_status", "notes"], "foreign_keys": {"work_id": "works.work_id"}},
     "entities.csv": {"primary_key": "entity_id", "required_columns": ["entity_id", "name_ja", "name_en", "entity_type", "notes"]},
     "entity_relations.csv": {"primary_key": "entity_relation_id", "required_columns": ["entity_relation_id", "source_entity_id", "relation_kind", "target_entity_id", "certainty", "verification_status", "notes"], "foreign_keys": {"source_entity_id": "entities.entity_id", "target_entity_id": "entities.entity_id"}},
     "appearances.csv": {"primary_key": "appearance_id", "required_columns": ["appearance_id", "work_id", "entity_id", "appearance_kind", "certainty", "verification_status", "notes"], "foreign_keys": {"work_id": "works.work_id", "entity_id": "entities.entity_id"}},
