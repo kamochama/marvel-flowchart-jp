@@ -73,11 +73,11 @@ Build observations（件数は正しさの固定目標ではない）:
 
 `git fetch origin` 後に次を確認した:
 
-- `HEAD == origin/library-v5-phase2-db6 == 44260d9ddc075c4808d6aa652a1aa0cc54c2100a`;
+- `HEAD == origin/library-v5-phase2-db6`（今回の監査済み変更を push 済み）;
 - `main == origin/main == 3af097b72c174077c83d7091f79222a72fc7134f`;
 - `main` は変更していない。
 
-PR #10 の head (`44260d9ddc075c4808d6aa652a1aa0cc54c2100a`) には今回の America Chavez / Wade Wilson 追加分と監査修正を push 済みで、GitHub Actions の fresh `test` job が success（run `33167953932`）となった。これにより、今回の commit に対するリモート CI も確認済みである。
+PR #10 の head には今回の America Chavez / Wade Wilson 追加分と監査修正を push 済みで、GitHub Actions の fresh `test` job が success となった。これにより、今回の変更に対するリモート CI も確認済みである。
 
 ## Migrated cases
 
