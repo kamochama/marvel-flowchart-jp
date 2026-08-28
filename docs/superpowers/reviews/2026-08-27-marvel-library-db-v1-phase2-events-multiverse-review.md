@@ -73,11 +73,11 @@ Build observations（件数は正しさの固定目標ではない）:
 
 `git fetch origin` 後に次を確認した:
 
-- `HEAD == origin/library-v5-phase2-db6 == abe9bdbb29cd3a55869a153a8e2713091a09b5be`;
+- `HEAD == origin/library-v5-phase2-db6 == 44260d9ddc075c4808d6aa652a1aa0cc54c2100a`;
 - `main == origin/main == 3af097b72c174077c83d7091f79222a72fc7134f`;
 - `main` は変更していない。
 
-PR #10 のリモート head (`abe9bdbb29cd3a55869a153a8e2713091a09b5be`) については、GitHub Actions の `test` job が success（run `33162901492`）であることを確認した。今回の America Chavez / Wade Wilson 追加分と監査修正はローカルの今回のコミットに含めたが、まだ push していないため、その commit に対する fresh run は存在しない。CI は push 後の PR 実行を最終 execution surface とする。
+PR #10 の head (`44260d9ddc075c4808d6aa652a1aa0cc54c2100a`) には今回の America Chavez / Wade Wilson 追加分と監査修正を push 済みで、GitHub Actions の fresh `test` job が success（run `33167953932`）となった。これにより、今回の commit に対するリモート CI も確認済みである。
 
 ## Migrated cases
 
@@ -120,4 +120,4 @@ Task 5–7 の evidence-backed first-class facts:
 
 ## Next boundary
 
-この監査で現行 Events & Multiverse plan の Task 7/8 はローカル上 PASS とした。次はユーザー確認後に今回のローカルコミットを PR #10 の forward branch へ push し、その commit の全体 CI を確認する段階である。`main` への最終 merge / publish は、別途ユーザーが明示的に承認するまで行わない。
+この監査で現行 Events & Multiverse plan の Task 7/8 はローカルおよび PR CI 上 PASS とした。次は PR 全体を確認したうえで、ユーザーから `main` への最終 merge / publish の明示承認を得る段階である。承認がない限り production は変更しない。
