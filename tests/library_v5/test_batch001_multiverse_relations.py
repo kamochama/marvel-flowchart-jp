@@ -20,16 +20,30 @@ def relation(fact_id: str) -> dict[str, str]:
 
 class MultiverseRelationAuditTests(unittest.TestCase):
     def test_no_way_home_legacy_spider_men_are_verified_cross_universe_arrivals(self) -> None:
+        transitions = {row["transition_id"]: row for row in rows("multiverse_transitions.csv")}
+        participants = {row["transition_id"]: row for row in rows("transition_participants.csv")}
+        expected = {
+            "event-nwh-raimi-peter-arrival": ("continuity-spider-man-raimi", "entity-x-f162d4b4b2"),
+            "event-nwh-webb-peter-arrival": ("continuity-spider-man-amazing", "entity-x-f8b1d323de"),
+        }
+        for transition_id, (source_continuity, entity_id) in expected.items():
+            transition = transitions[transition_id]
+            self.assertEqual(transition["source_continuity_id"], source_continuity)
+            self.assertEqual(transition["destination_continuity_id"], "continuity-earth-616")
+            self.assertEqual(transition["transition_kind"], "spell_displacement")
+            self.assertEqual(transition["direction_certainty"], "confirmed")
+            self.assertEqual(transition["verification_status"], "source_verified")
+            participant = participants[transition_id]
+            self.assertEqual(participant["entity_id"], entity_id)
+            self.assertEqual(participant["participant_role"], "traveler")
+            self.assertEqual(participant["identity_certainty"], "confirmed")
+            self.assertEqual(participant["verification_status"], "source_verified")
+
         for fact_id in (
             "work-relation-spider-man-3-2007-spider-man-no-way-home-2021-crossover",
             "work-relation-the-amazing-spider-man-2-2014-spider-man-no-way-home-2021-crossover",
         ):
-            row = relation(fact_id)
-            self.assertEqual(row["relation_kind"], "crossover")
-            self.assertEqual(row["directness"], "direct")
-            self.assertEqual(row["continuity_scope"], "multiverse")
-            self.assertEqual(row["certainty"], "confirmed")
-            self.assertEqual(row["verification_status"], "source_verified")
+            self.assertEqual(relation(fact_id)["verification_status"], "superseded")
 
     def test_venom_crossing_into_no_way_home_is_verified(self) -> None:
         row = relation("work-relation-venom-let-there-be-carnage-2021-spider-man-no-way-home-2021-crossover")
