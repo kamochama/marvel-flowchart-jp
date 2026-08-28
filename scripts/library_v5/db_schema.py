@@ -118,7 +118,7 @@ DDL: tuple[str, ...] = (
     """,
     f"""
     CREATE TABLE releases (
-        release_id TEXT PRIMARY KEY CHECK(length(trim(release_id)) > 0),
+        release_id TEXT PRIMARY KEY NOT NULL CHECK(length(trim(release_id)) > 0),
         work_id TEXT NOT NULL REFERENCES works(work_id),
         territory TEXT NOT NULL DEFAULT '',
         release_kind TEXT NOT NULL {_in_check('release_kind', RELEASE_KINDS)},
@@ -132,7 +132,7 @@ DDL: tuple[str, ...] = (
     """,
     f"""
     CREATE TABLE production_status_assertions (
-        production_status_assertion_id TEXT PRIMARY KEY CHECK(length(trim(production_status_assertion_id)) > 0),
+        production_status_assertion_id TEXT PRIMARY KEY NOT NULL CHECK(length(trim(production_status_assertion_id)) > 0),
         work_id TEXT NOT NULL REFERENCES works(work_id),
         status TEXT NOT NULL {_in_check('status', PRODUCTION_STATUSES)},
         asserted_at TEXT NOT NULL DEFAULT '',

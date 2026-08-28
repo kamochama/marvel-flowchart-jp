@@ -67,6 +67,15 @@ class LibraryDbSchemaTests(unittest.TestCase):
         with self.assertRaises(sqlite3.IntegrityError):
             connection.execute("INSERT INTO releases(release_id,work_id,territory,release_kind,release_date,release_precision,status,certainty,verification_status,notes) VALUES(?,?,?,?,?,?,?,?,?,?)", ("r1", "work-a", "unknown", "not-a-kind", "", "none", "unknown", "unknown", "legacy_seed", ""))
 
+    def test_normalized_release_tables_reject_null_primary_keys(self):
+        connection = sqlite3.connect(":memory:")
+        create_schema(connection)
+        connection.execute("INSERT INTO works(work_id) VALUES('work-a')")
+        with self.assertRaises(sqlite3.IntegrityError):
+            connection.execute("INSERT INTO releases(release_id,work_id,territory,release_kind,release_date,release_precision,status,certainty,verification_status,notes) VALUES(?,?,?,?,?,?,?,?,?,?)", (None, "work-a", "unknown", "theatrical", "", "none", "unknown", "unknown", "legacy_seed", ""))
+        with self.assertRaises(sqlite3.IntegrityError):
+            connection.execute("INSERT INTO production_status_assertions(production_status_assertion_id,work_id,status,asserted_at,certainty,verification_status,notes) VALUES(?,?,?,?,?,?,?)", (None, "work-a", "unknown", "", "unknown", "legacy_seed", ""))
+
 
 if __name__ == "__main__":
     unittest.main()

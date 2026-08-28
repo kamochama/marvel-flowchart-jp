@@ -96,6 +96,86 @@ class LibraryDbCompileTests(unittest.TestCase):
             self.assertFalse(output.exists())
             self.assertFalse(output.with_suffix(".sqlite.tmp").exists())
 
+    def test_compile_loads_release_and_production_status_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_minimal_repo(Path(tmp))
+            _write_csv(root / "data/library/releases.csv", HEADERS["releases.csv"], [{
+                "release_id": "release-work-a-primary",
+                "work_id": "work-a",
+                "territory": "US",
+                "release_kind": "theatrical",
+                "release_date": "2020-01-01",
+                "release_precision": "day",
+                "status": "released",
+                "certainty": "confirmed",
+                "verification_status": "source_verified",
+                "notes": "",
+            }])
+            _write_csv(root / "data/library/production_status_assertions.csv", HEADERS["production_status_assertions.csv"], [{
+                "production_status_assertion_id": "production-status-work-a-snapshot",
+                "work_id": "work-a",
+                "status": "released",
+                "asserted_at": "2026-08-28",
+                "certainty": "confirmed",
+                "verification_status": "source_verified",
+                "notes": "",
+            }])
+
+            result = compile_database(root)
+            connection = open_query_connection(result.db_path)
+            release = connection.execute(
+                "SELECT release_id,work_id,release_kind,release_date,status FROM releases"
+            ).fetchone()
+            production_status = connection.execute(
+                "SELECT production_status_assertion_id,work_id,status,asserted_at FROM production_status_assertions"
+            ).fetchone()
+            connection.close()
+
+            self.assertEqual(result.table_counts["releases"], 1)
+            self.assertEqual(result.table_counts["production_status_assertions"], 1)
+            self.assertEqual(release, ("release-work-a-primary", "work-a", "theatrical", "2020-01-01", "released"))
+            self.assertEqual(production_status, ("production-status-work-a-snapshot", "work-a", "released", "2026-08-28"))
+
+    def test_compile_is_atomic_on_production_status_foreign_key_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_minimal_repo(Path(tmp))
+            _write_csv(root / "data/library/production_status_assertions.csv", HEADERS["production_status_assertions.csv"], [{
+                "production_status_assertion_id": "production-status-missing-work",
+                "work_id": "missing-work",
+                "status": "released",
+                "asserted_at": "2026-08-28",
+                "certainty": "confirmed",
+                "verification_status": "source_verified",
+                "notes": "",
+            }])
+            output = root / "data/derived/db/marvel.sqlite"
+
+            with self.assertRaises(sqlite3.IntegrityError):
+                compile_database(root, output)
+
+            self.assertFalse(output.exists())
+            self.assertFalse(output.with_suffix(".sqlite.tmp").exists())
+
+    def test_compile_is_atomic_on_production_status_enum_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_minimal_repo(Path(tmp))
+            _write_csv(root / "data/library/production_status_assertions.csv", HEADERS["production_status_assertions.csv"], [{
+                "production_status_assertion_id": "production-status-invalid",
+                "work_id": "work-a",
+                "status": "not-a-production-status",
+                "asserted_at": "2026-08-28",
+                "certainty": "confirmed",
+                "verification_status": "source_verified",
+                "notes": "",
+            }])
+            output = root / "data/derived/db/marvel.sqlite"
+
+            with self.assertRaises(sqlite3.IntegrityError):
+                compile_database(root, output)
+
+            self.assertFalse(output.exists())
+            self.assertFalse(output.with_suffix(".sqlite.tmp").exists())
+
 
 if __name__ == "__main__":
     unittest.main()
