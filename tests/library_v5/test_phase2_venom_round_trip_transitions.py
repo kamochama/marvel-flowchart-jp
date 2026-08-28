@@ -161,6 +161,32 @@ class VenomRoundTripTransitionTests(unittest.TestCase):
         self.assertIn(ARRIVAL_PARTICIPANT, by_id[ARRIVAL_EVENT])
         self.assertIn(RETURN_PARTICIPANT, by_id[RETURN_EVENT])
 
+    def test_venom_transitions_do_not_spread_to_other_supported_pairs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = compile_database(ROOT, Path(tmp) / "marvel.sqlite").db_path
+            connection = open_query_connection(db_path)
+            rows = connection.execute(
+                """
+                SELECT transition_id,source_work_id,target_work_id
+                FROM v_work_connection_reasons
+                WHERE reason_kind='multiverse_transition'
+                  AND transition_id IN (?,?)
+                ORDER BY transition_id,source_work_id,target_work_id
+                """,
+                (ARRIVAL_EVENT, RETURN_EVENT),
+            ).fetchall()
+            connection.close()
+
+        self.assertEqual(
+            [tuple(row) for row in rows],
+            sorted(
+                [
+                    (ARRIVAL_EVENT, LTBC, NWH),
+                    (RETURN_EVENT, LTBC, NWH),
+                ]
+            ),
+        )
+
     def test_round_trip_semantics_survive_when_the_old_proxy_relation_is_removed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = _fixture_with_proxy_superseded(Path(tmp))
