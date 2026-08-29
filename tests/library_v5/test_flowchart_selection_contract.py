@@ -101,6 +101,12 @@ class FlowchartSelectionContractTests(unittest.TestCase):
             "the visual-only filter contract should observe the exported edge collection",
         )
 
+    def test_mobile_canvas_normalizes_stable_edge_ids_to_directed_pair_keys(self) -> None:
+        body = function_body(self.source, "canvasPrimitive")
+        self.assertIn("rawEdgeKey=overlayGroup.dataset?.edgeKey", body)
+        self.assertIn("window.marvelEdgeKeyFromGroup(overlayGroup)", body)
+        self.assertIn("overlayEdgeKey=typeof window.marvelEdgeKeyFromGroup", body)
+
 
 if __name__ == "__main__":
     unittest.main()

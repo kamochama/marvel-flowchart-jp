@@ -4418,7 +4418,8 @@ function canvasPrimitive(svg,el){
     if(overlayGroup.matches('g.node'))overlayNodeId=gt(overlayGroup)||'';
     else{
       overlayIsEdge=true;overlayDynamic=overlayGroup.classList.contains('dynamic-edge-overlay');
-      overlayEdgeKey=overlayGroup.dataset?.edgeKey||(typeof window.marvelEdgeKeyFromGroup==='function'?window.marvelEdgeKeyFromGroup(overlayGroup):'');
+      const rawEdgeKey=overlayGroup.dataset?.edgeKey||'';
+      overlayEdgeKey=typeof window.marvelEdgeKeyFromGroup==='function'?(window.marvelEdgeKeyFromGroup(overlayGroup)||rawEdgeKey):rawEdgeKey;
     }
   }
   return {el,tag,m,bbox,geom,style:null,overlayNodeId,overlayEdgeKey,overlayIsEdge,overlayDynamic};
