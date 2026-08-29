@@ -70,6 +70,21 @@ class FlowchartViewMetadataExtractionTests(unittest.TestCase):
         with self.assertRaises(ViewMetadataError):
             extract_view_metadata(_html(nodes='{"id":"work-a"}'), {"work-a"})
 
+    def test_rejects_leading_malformed_duplicate_marker_instead_of_guessing_later_payload(self) -> None:
+        text = "const NODES=not-json;\n" + _html()
+        with self.assertRaises(ViewMetadataError):
+            extract_view_metadata(text, {"work-a"})
+
+    def test_rejects_duplicate_valid_marker(self) -> None:
+        text = "const NODES=[{\"id\":\"work-a\",\"branch\":\"枝A\",\"branch_en\":\"Branch A\",\"priority\":\"MAIN\"}];\n" + _html()
+        with self.assertRaises(ViewMetadataError):
+            extract_view_metadata(text, {"work-a"})
+
+    def test_rejects_comment_marker_instead_of_treating_it_as_authoritative(self) -> None:
+        text = "// const NODES=[{\"id\":\"work-a\",\"branch\":\"枝A\",\"branch_en\":\"Branch A\",\"priority\":\"MAIN\"}];\n" + _html()
+        with self.assertRaises(ViewMetadataError):
+            extract_view_metadata(text, {"work-a"})
+
     def test_rejects_duplicate_and_unknown_work_ids(self) -> None:
         duplicate_nodes = _html(
             nodes='[{"id":"work-a","branch":"A","branch_en":"A","priority":"MAIN"},{"id":"work-a","branch":"B","branch_en":"B","priority":"MAIN"}]'

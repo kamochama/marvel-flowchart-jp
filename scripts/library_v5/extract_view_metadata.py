@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from collections.abc import Collection, Iterable
 from pathlib import Path
 
@@ -33,20 +34,105 @@ def _pairs_without_duplicates(pairs: list[tuple[str, object]]) -> dict[str, obje
     return result
 
 
+def _mask_js_non_code(text: str) -> str:
+    """Mask comments and quoted literals while retaining source positions."""
+    chars = list(text)
+    state: str | None = None
+    escaped = False
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if state == "line_comment":
+            if char == "\n":
+                state = None
+            else:
+                chars[index] = " "
+            index += 1
+            continue
+        if state == "block_comment":
+            if text.startswith("*/", index):
+                chars[index] = chars[index + 1] = " "
+                index += 2
+                state = None
+            else:
+                if char != "\n":
+                    chars[index] = " "
+                index += 1
+            continue
+        if state in {"'", '"', "`"}:
+            chars[index] = " "
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == state:
+                state = None
+            index += 1
+            continue
+        if text.startswith("//", index):
+            chars[index] = chars[index + 1] = " "
+            index += 2
+            state = "line_comment"
+            continue
+        if text.startswith("/*", index):
+            chars[index] = chars[index + 1] = " "
+            index += 2
+            state = "block_comment"
+            continue
+        if char in {"'", '"', "`"}:
+            chars[index] = " "
+            state = char
+        index += 1
+    return "".join(chars)
+
+
+def _marker_pattern(marker: str) -> re.Pattern[str]:
+    if marker.startswith("const "):
+        name = marker.split(None, 1)[1]
+        return re.compile(rf"\bconst\s+{re.escape(name)}\s*=")
+    if marker == "window.WORK_DETAILS=Object.freeze(":
+        return re.compile(r"\bwindow\s*\.\s*WORK_DETAILS\s*=")
+    raise ViewMetadataError(f"unsupported marker: {marker}")
+
+
+def _skip_whitespace(text: str, index: int) -> int:
+    while index < len(text) and text[index].isspace():
+        index += 1
+    return index
+
+
+def _object_freeze_open(text: str, index: int) -> int | None:
+    match = re.match(r"Object\s*\.\s*freeze\s*\(", text[index:])
+    return index + match.end() if match else None
+
+
 def _marked_json(text: str, marker: str, *, expected: str) -> object:
-    marker_index = text.find(marker)
-    if marker_index < 0:
+    marker_pattern = _marker_pattern(marker)
+    all_matches = list(marker_pattern.finditer(text))
+    if not all_matches:
         raise ViewMetadataError(f"missing marker: {marker}")
-    if marker.endswith("("):
-        equal_index = marker_index + len(marker) - 1
-    else:
-        equal_index = text.find("=", marker_index + len(marker))
-        if equal_index < 0:
-            raise ViewMetadataError(f"missing assignment after marker: {marker}")
+    if len(all_matches) != 1:
+        raise ViewMetadataError(f"duplicate marker: {marker}")
+    code_matches = list(marker_pattern.finditer(_mask_js_non_code(text)))
+    if not code_matches:
+        raise ViewMetadataError(f"marker is inside a comment or quoted literal: {marker}")
+    if len(code_matches) != 1:
+        raise ViewMetadataError(f"duplicate executable marker: {marker}")
+
+    assignment = code_matches[0]
+    cursor = _skip_whitespace(text, assignment.end())
+    requires_freeze = marker != "const NODES"
+    if requires_freeze:
+        frozen_cursor = _object_freeze_open(text, cursor)
+        if frozen_cursor is None:
+            raise ViewMetadataError(f"expected Object.freeze assignment after marker: {marker}")
+        cursor = _skip_whitespace(text, frozen_cursor)
+    elif _object_freeze_open(text, cursor) is not None:
+        cursor = _skip_whitespace(text, _object_freeze_open(text, cursor) or cursor)
     opener = "[" if expected == "array" else "{"
-    start = text.find(opener, equal_index + 1)
-    if start < 0:
-        raise ViewMetadataError(f"{marker} is not assigned a JSON {expected}")
+    if cursor >= len(text) or text[cursor] != opener:
+        raise ViewMetadataError(f"{marker} payload must begin with JSON {expected} after its assignment")
+    start = cursor
 
     stack: list[str] = []
     in_string = False
@@ -76,7 +162,7 @@ def _marked_json(text: str, marker: str, *, expected: str) -> object:
                 break
     if end is None or in_string or stack:
         raise ViewMetadataError(f"unterminated JSON {expected} for {marker}")
-    if marker.endswith("(") and not text[end:].lstrip().startswith(")"):
+    if requires_freeze and not text[end:].lstrip().startswith(")"):
         raise ViewMetadataError(f"malformed Object.freeze wrapper for {marker}")
 
     try:
