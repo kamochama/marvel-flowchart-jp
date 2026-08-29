@@ -8,10 +8,12 @@
 この監査は、別承認された `docs/superpowers/plans/2026-08-28-marvel-library-db-v1-releases-production-status.md` の normalized release/status subproject（Task 6）だけを対象とする。
 
 - 対象ブランチ: `codex/db-v1-releases-status`
-- 実装確認 HEAD（文書変更前）: `f0ab2ece382555f9c979f491a7bf72f162174e96` (`fix: derive audit versions from canonical schema`)
+- 最終検証 HEAD: `dd56f321eb58569be1b6f386f4421cd2f10235bf` (`test: normalize graph fixture newlines for compatibility`)
 - fresh `origin/main`: `2410ea482d9fe6c9063a23b80b9b766e2bb9daac`
 - `git merge-base HEAD origin/main`: `2410ea482d9fe6c9063a23b80b9b766e2bb9daac`
 - `main` は変更していない。今回の作業で merge、publish、push は行っていない。
+
+最終 HEAD の `dd56f321` は Task 5 の cross-platform test fix のみである。graph fixture の CRLF/LF checkout 差を比較前に LF へ正規化し、同じ回帰を検出する小さなテストを追加した。production implementation、canonical data、graph policy の意味は変更していない。
 
 Events & Multiverse の Task 7/8 は既存の `2026-08-27-marvel-library-db-v1-phase2-events-multiverse-review.md` に記録済みの別実行境界である。この文書はその完了判定を変更せず、release/status の正規化だけを監査する。`index.html` と既存の graph policy も変更していない。
 
@@ -59,7 +61,7 @@ if (-not (Test-Path -LiteralPath $MarvelPython)) { throw "Bundled Python runtime
 & $MarvelPython -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
 ```
 
-exit code `0`; `Ran 194 tests in 12.328s`; `OK`。
+exit code `0`; `Ran 195 tests in 11.974s`; `OK`。追加の 1 test は上記 CRLF/LF graph fixture comparison の cross-platform regression test である。
 
 ### Ordinary build / audit
 
