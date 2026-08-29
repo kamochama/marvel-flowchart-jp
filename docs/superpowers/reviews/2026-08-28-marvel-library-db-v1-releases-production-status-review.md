@@ -3,7 +3,7 @@
 監査日: 2026-08-29
 対象リポジトリ: `kamochama/marvel-flowchart-jp`
 
-> **Historical review notice (updated 2026-08-30):** This review records the normalized release/status seed boundary before evidence promotions. Its `main` and all-`legacy_seed` statements are historical. The current production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`; PR #22 subsequently promoted the X-Men '97 Season 2 primary release and released-status snapshot, as recorded in the current Codex handoff and roadmap.
+> **Historical review notice (updated 2026-08-30):** This review records the normalized release/status seed boundary before evidence promotions. Its `main` and all-`legacy_seed` statements are historical. The latest semantic production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`; PR #22 subsequently promoted the X-Men '97 Season 2 primary release and released-status snapshot, as recorded in the current Codex handoff and roadmap. Later documentation-only commits do not alter code/data.
 
 ## 対象と実行境界
 

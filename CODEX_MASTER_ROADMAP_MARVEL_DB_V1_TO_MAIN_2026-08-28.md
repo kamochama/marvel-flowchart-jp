@@ -9,7 +9,7 @@ This file is the long-range execution roadmap for Codex and other coding agents.
 
 If this roadmap conflicts with a newer explicit user instruction, the newer user instruction wins. If a SHA becomes stale, reconcile against fresh remote HEAD; never reset implementation to an older documentation checkpoint.
 
-> **Current production note (2026-08-30):** The historical PR #10/PR #11 gate described below has completed. PR #10 (Events & Multiverse), PR #11 (releases/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), and PR #22 (X-Men '97 release/status evidence promotion batch005) are merged into `main`; the current production HEAD is `19134e187d40e808f926fd32607b0a2deebac8f1`. The post-merge baseline and the next separately bounded work are recorded in §13.
+> **Current semantic production note (2026-08-30):** The historical PR #10/PR #11 gate described below has completed. PR #10 (Events & Multiverse), PR #11 (releases/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), and PR #22 (X-Men '97 release/status evidence promotion batch005) are merged into `main`; the latest semantic baseline is `19134e187d40e808f926fd32607b0a2deebac8f1`. Later documentation-only commits do not change code/data. The post-merge baseline and the next separately bounded work are recorded in §13.
 
 ---
 
@@ -440,7 +440,7 @@ After batch005, the normalized tables contain 138 releases (6 `source_verified`,
 
 ## 13. Post-integration baseline and next execution boundary (2026-08-29)
 
-The current production `main` is `19134e187d40e808f926fd32607b0a2deebac8f1`. The static Pages viewer loads the committed DB-derived `data/derived/flowchart.json`; Pages deployment run #46 succeeded. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups. GitHub Actions run #272 is GREEN; the full bundled-Python baseline is 265 library-v5 tests passing with audit issue count 0, review-integrity issues 0, SQLite foreign-key rows 0, and SQLite `integrity_check=ok`.
+The latest semantic production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`; later documentation-only commits do not alter this code/data baseline. The static Pages viewer loads the committed DB-derived `data/derived/flowchart.json`; Pages deployment run #46 succeeded. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups. GitHub Actions run #272 is GREEN; the full bundled-Python baseline is 265 library-v5 tests passing with audit issue count 0, review-integrity issues 0, SQLite foreign-key rows 0, and SQLite `integrity_check=ok`.
 
 PR #22 batch005 promoted the X-Men '97 Season 2 primary release and released-status snapshot with exact evidence/review rows. The normalized tables now contain 138 releases (6 `source_verified`, 132 `legacy_seed`) and 131 production-status assertions (2 `source_verified`, 129 `legacy_seed`); sources/evidence/reviews are 44/111/86. Compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, prewatch edges `199`, and story paths `83/83`. The Japanese release row remains unverified with a blank date, and release/status facts do not derive graph edges.
 
