@@ -4446,7 +4446,8 @@ function canvasShadowFor(classes){
 }
 function rebuildMobileCanvas(wrap,geometry=true,preserveOverlay=false){
   const st=mobileCanvasStates.get(wrap); if(!st) return;
-  const svg=st.svg,keepState=preserveOverlay&&st.overlayActive?(st.overlayState||selectionStateCache||window.__marvelLastSelectionState||null):null;
+  const cachedSelectionState=window.__marvelLastSelectionState||null;
+  const svg=st.svg,keepState=preserveOverlay&&st.overlayActive?(st.overlayState||cachedSelectionState):null;
   if(geometry){
     st.primitives=[...svg.querySelectorAll('path,polygon,polyline,rect,text')].filter(el=>!el.closest('defs')).map(el=>canvasPrimitive(svg,el)).filter(Boolean);
     st.nodeBoxes=[...svg.querySelectorAll('g.node')].map(g=>({id:gt(g),box:canvasRootBBox(svg,g)})).filter(x=>x.id&&x.box);
@@ -4750,13 +4751,13 @@ function drawMobileSelectionGestureFrame(wrap){
 }
 function restoreMobileSelectionOverlay(wrap,state=null){
   const cs=mobileCanvasStates.get(wrap);if(!cs)return false;
-  const next=state||selectionStateCache||window.__marvelLastSelectionState||null;
+  const next=state||window.__marvelLastSelectionState||null;
   if(!selectedIds.size||!next){cs.overlayActive=false;cs.overlayState=null;cs.overlayCamera=null;cs.overlay.style.transform='none';clearMobileSelectionOverlay(wrap);return false;}
   cs.overlayActive=true;cs.overlayState=next;return drawMobileSelectionOverlay(wrap,next);
 }
 function restoreMobileSelectionOverlayIfNeeded(wrap=activeWrap()){
   if(!wrap||!mobileChartMotion.matches||!isMobileCanvasWrap(wrap)||!selectedIds.size)return false;
-  initMobileCanvas(wrap);return restoreMobileSelectionOverlay(wrap,selectionStateCache||window.__marvelLastSelectionState||null);
+  initMobileCanvas(wrap);return restoreMobileSelectionOverlay(wrap,window.__marvelLastSelectionState||null);
 }
 window.restoreMobileSelectionOverlayIfNeeded=restoreMobileSelectionOverlayIfNeeded;
 
@@ -5100,7 +5101,7 @@ function clearSvg(){
   document.querySelectorAll('.panel.active .svg-wrap svg').forEach(s=>{
     s.classList.remove('dim');
     s.querySelectorAll('.dynamic-edge-overlay').forEach(x=>x.remove());
-    s.querySelectorAll('.hl,.focus,.backhl,.forwardhl,.bothhl,.contexthl,.pathhl,.goal-node,.current-goal').forEach(x=>x.classList.remove('hl','focus','backhl','forwardhl','bothhl','contexthl','pathhl','goal-node','current-goal'));
+    s.querySelectorAll('.hl,.focus,.detail-focus,.backhl,.forwardhl,.bothhl,.contexthl,.pathhl,.goal-node,.current-goal').forEach(x=>x.classList.remove('hl','focus','detail-focus','backhl','forwardhl','bothhl','contexthl','pathhl','goal-node','current-goal'));
   });
   applyCharacterHighlight();
 }
@@ -6794,6 +6795,8 @@ if(flowchartReady)render();
       if(mobileSelectRafB){cancelAnimationFrame(mobileSelectRafB);mobileSelectRafB=0;}
       mobileFullRefreshPending=false;
       window.__marvelLastSelectionState=null;
+      updatePreparationPlan();
+      updatePathExplanation();
       markMobileSelectionUiDirty();
     }else refreshSelection(false);
     const undo=ensureMobileFocusShell()?.querySelector('#mobileGoalUndo'); if(!undo) return;
@@ -8462,6 +8465,31 @@ window.initializeFlowchartData=initializeFlowchartData;
 window.loadFlowchartData=loadFlowchartData;
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{void loadFlowchartData();},{once:true});
 else void loadFlowchartData();
+</script>
+
+<script>
+// Keep the desktop detail panel above an expanded sticky header.
+function syncDesktopSidePanelLayer(){
+  const right=document.getElementById('right');
+  const advanced=document.querySelector('.advanced-controls');
+  const advancedOpen=!!advanced?.open;
+  if(!right)return;
+  if(window.matchMedia('(min-width:981px)').matches){
+    if(advancedOpen){
+      right.style.zIndex='21';
+    }else{
+      right.style.removeProperty('top');
+      right.style.removeProperty('z-index');
+    }
+  }else{
+    right.style.removeProperty('top');
+    right.style.removeProperty('z-index');
+  }
+}
+const desktopAdvancedControls=document.querySelector('.advanced-controls');
+desktopAdvancedControls?.addEventListener('toggle',syncDesktopSidePanelLayer);
+window.addEventListener('resize',syncDesktopSidePanelLayer);
+syncDesktopSidePanelLayer();
 </script>
 
 </body></html>
