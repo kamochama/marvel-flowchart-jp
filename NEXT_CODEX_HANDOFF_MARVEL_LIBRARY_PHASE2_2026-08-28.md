@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- current HEAD: `8234cfa04edf5fb6dd851d335107d606b9011731`
+- current HEAD: `19134e187d40e808f926fd32607b0a2deebac8f1`
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -19,6 +19,8 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #11 releases/status normalization: merged as `d5c878d5763b2bd91940c31052db6e35a3e69d0a`
 - PR #12 HTML DB export: merged as `00a7e703616821eec0e4b081cfc656d7fd0ec167`
 - PR #13 Pages artifact fix: merged as `8234cfa04edf5fb6dd851d335107d606b9011731`
+- PR #21 mobile touch-target contract: merged (mobile interaction regression fix)
+- PR #22 X-Men '97 release/status evidence promotion batch005: merged as `19134e187d40e808f926fd32607b0a2deebac8f1`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -49,7 +51,28 @@ git log -5 --oneline
 
 If the working tree is not clean or remote HEAD differs unexpectedly, reconcile first; do not discard user/local changes blindly.
 
-## 0.1 Production baseline after the 2026-08-29 integration
+## 0.1 Production baseline after the 2026-08-30 integration
+
+The current production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`. PR #21 fixed the mobile touch-target/undo contract, and PR #22 completed release/status evidence promotion batch005 for X-Men '97 Season 2.
+
+Fresh verification for the batch005-integrated baseline:
+
+- GitHub Actions run #272: GREEN;
+- GitHub Pages deployment run #46: GREEN;
+- 265 / 265 library-v5 tests PASS;
+- audit issues, review-integrity issues, and SQLite foreign-key rows: `0`;
+- SQLite `integrity_check`: `ok`;
+- releases: `138` rows (`6` `source_verified`, `132` `legacy_seed`);
+- production-status assertions: `131` rows (`2` `source_verified`, `129` `legacy_seed`);
+- sources / evidence / reviews: `44` / `111` / `86`;
+- DB-derived artifact: `131` nodes, `361` directed edges, `569` traceable reasons, `42` character groups;
+- compatibility: prewatch edges `199`, story paths `83/83`.
+
+Batch005 promotes only the X-Men '97 Season 2 primary streaming release and released-status snapshot. The Japanese release row remains `territory=JP`, blank `release_date`, and `legacy_seed`; no graph edge or work-pair reason is derived from release/status facts. The applied record is `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch005.json`.
+
+The remaining normalized release/status rows are intentionally still seeds (`132` release rows and `129` status rows). The next semantic batch requires its own bounded plan, RED contract, qualifying evidence, review transition, and full verification.
+
+## 0.2 Historical production baseline after the 2026-08-29 integration
 
 The static viewer now consumes the committed DB-derived artifact `data/derived/flowchart.json`; the browser does not open SQLite. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups, with all eligible edges visible by default and selection limited to presentation styling.
 
@@ -57,7 +80,7 @@ The post-merge Pages deployment (run #37) succeeded, and the public page was smo
 
 The current local verification baseline for the integrated HTML export is 232 library-v5 tests passing and an ordinary bundled-Python build with audit issue count 0. These counts are observations, not frozen correctness targets.
 
-The next semantic work is not implicitly authorized by the completed export. Candidate boundaries are an evidence-backed promotion audit for a small subset of the 269 `legacy_seed` release/status facts, or a separately planned normalized domain (`credits`, `entity_aliases`, `entity_memberships`, or `entity_possessions`). Do not change canonical data until one bounded plan and its RED contract are selected.
+The next semantic work is not implicitly authorized by the completed export. At this historical snapshot, the candidate boundary was an evidence-backed promotion audit for a small subset of the 269 `legacy_seed` release/status facts, or a separately planned normalized domain (`credits`, `entity_aliases`, `entity_memberships`, or `entity_possessions`). Batch005 has since completed; do not change canonical data until one new bounded plan and its RED contract are selected.
 
 ## 1. Required context
 
