@@ -4,7 +4,7 @@ import sqlite3
 from dataclasses import dataclass
 
 
-DB_SCHEMA_VERSION = "1.1-phase2-events"
+DB_SCHEMA_VERSION = "1.2-normalized-releases-status"
 
 VERIFICATION_STATUSES = ("legacy_seed", "source_verified", "conflicted", "superseded")
 CERTAINTIES = ("confirmed", "probable", "uncertain", "unknown")
@@ -24,6 +24,10 @@ EVENT_RELATION_KINDS = ("causes", "enables", "prevents", "aftermath_of", "part_o
 TRANSITION_KINDS = ("physical_crossing", "summoning", "portal", "spell_displacement", "tva_transfer", "incursion_contact", "universe_exchange", "unknown")
 TRANSITION_PARTICIPANT_ROLES = ("traveler", "vehicle", "summoner", "carrier", "affected", "other")
 DIRECTIONAL_TRANSITION_KINDS = ("physical_crossing", "summoning", "spell_displacement", "tva_transfer")
+RELEASE_KINDS = ("theatrical", "streaming", "broadcast", "festival", "re_release", "home_video", "special", "series_start", "imax_series_start", "undated", "other")
+RELEASE_PRECISIONS = ("day", "month", "year", "none")
+RELEASE_STATUSES = ("released", "announced", "delayed", "cancelled", "unknown")
+PRODUCTION_STATUSES = ("announced", "in_development", "filming", "completed", "delayed", "cancelled", "released", "unknown")
 
 
 def _in_check(column: str, values: tuple[str, ...]) -> str:
@@ -53,6 +57,8 @@ TABLE_SPECS: tuple[TableSpec, ...] = (
             "title_management_note", "stable_id_note",
         ),
     ),
+    TableSpec("releases", "data/library/releases.csv", "release_id", ("release_id", "work_id", "territory", "release_kind", "release_date", "release_precision", "status", "certainty", "verification_status", "notes")),
+    TableSpec("production_status_assertions", "data/library/production_status_assertions.csv", "production_status_assertion_id", ("production_status_assertion_id", "work_id", "status", "asserted_at", "certainty", "verification_status", "notes")),
     TableSpec("entities", "data/library/entities.csv", "entity_id", ("entity_id", "name_ja", "name_en", "entity_type", "notes")),
     TableSpec("entity_relations", "data/library/entity_relations.csv", "entity_relation_id", ("entity_relation_id", "source_entity_id", "relation_kind", "target_entity_id", "certainty", "verification_status", "notes")),
     TableSpec("appearances", "data/library/appearances.csv", "appearance_id", ("appearance_id", "work_id", "entity_id", "appearance_kind", "certainty", "verification_status", "notes")),
@@ -108,6 +114,31 @@ DDL: tuple[str, ...] = (
         title_last_verified TEXT NOT NULL DEFAULT '',
         title_management_note TEXT NOT NULL DEFAULT '',
         stable_id_note TEXT NOT NULL DEFAULT ''
+    )
+    """,
+    f"""
+    CREATE TABLE releases (
+        release_id TEXT PRIMARY KEY NOT NULL CHECK(length(trim(release_id)) > 0),
+        work_id TEXT NOT NULL REFERENCES works(work_id),
+        territory TEXT NOT NULL DEFAULT '',
+        release_kind TEXT NOT NULL {_in_check('release_kind', RELEASE_KINDS)},
+        release_date TEXT NOT NULL DEFAULT '',
+        release_precision TEXT NOT NULL {_in_check('release_precision', RELEASE_PRECISIONS)},
+        status TEXT NOT NULL {_in_check('status', RELEASE_STATUSES)},
+        certainty TEXT NOT NULL {_in_check('certainty', CERTAINTIES)},
+        verification_status TEXT NOT NULL {_in_check('verification_status', VERIFICATION_STATUSES)},
+        notes TEXT NOT NULL DEFAULT ''
+    )
+    """,
+    f"""
+    CREATE TABLE production_status_assertions (
+        production_status_assertion_id TEXT PRIMARY KEY NOT NULL CHECK(length(trim(production_status_assertion_id)) > 0),
+        work_id TEXT NOT NULL REFERENCES works(work_id),
+        status TEXT NOT NULL {_in_check('status', PRODUCTION_STATUSES)},
+        asserted_at TEXT NOT NULL DEFAULT '',
+        certainty TEXT NOT NULL {_in_check('certainty', CERTAINTIES)},
+        verification_status TEXT NOT NULL {_in_check('verification_status', VERIFICATION_STATUSES)},
+        notes TEXT NOT NULL DEFAULT ''
     )
     """,
     f"""

@@ -1,0 +1,43 @@
+{
+  "patch_id": "2026-08-28-normalized-releases-status-seed",
+  "hash_algorithm": "sha256",
+  "source_file_hashes": {
+    "data/library/works.csv": "e48c8169c8d5476f89eb6ac9b52bf8a1e4e780ee6ef1a1694e4d1732b4b17b44"
+  },
+  "candidate_file_hashes": {
+    "data/migration/normalized-releases-status/releases.csv": "de2c3eebcdea1f84e40cbf24b819834b37fa837a89e58010047b1774d073b4cd",
+    "data/migration/normalized-releases-status/production_status_assertions.csv": "a3d9dba46daca8921a4374894a10fbad618a1c0b11ebca15d63f5c2ee3900905"
+  },
+  "generated_row_counts": {
+    "works": 131,
+    "releases": 138,
+    "releases_primary": 131,
+    "releases_jp": 7,
+    "production_status_assertions": 131
+  },
+  "operations": [
+    {
+      "table": "releases.csv",
+      "action": "insert_legacy_seed_rows",
+      "row_count": 138,
+      "primary_row_count": 131,
+      "japanese_row_count": 7
+    },
+    {
+      "table": "production_status_assertions.csv",
+      "action": "insert_legacy_seed_snapshot_rows",
+      "row_count": 131,
+      "snapshot_date": "2026-08-28"
+    }
+  ],
+  "mapping_rules": [
+    "One primary release row and one current production-status snapshot are generated for every work.",
+    "A non-empty japan_date generates a separate JP release row; only ISO YYYY-MM-DD, YYYY-MM, or YYYY dates are copied.",
+    "Status values beginning with released or announced map to the corresponding enum; all others map to unknown with the original text in notes.",
+    "home-video, imax-series-start, and series-start map to home_video, imax_series_start, and series_start; unknown release kinds map to other with the original value in notes.",
+    "US territory is assigned only when release_source_note explicitly contains U.S. or US; all other primary rows use unknown.",
+    "Every imported fact remains legacy_seed pending a later evidence-backed audit and promotion batch."
+  ],
+  "deferred_promotion_scope": "No evidence.csv or reviews.csv rows are added by this seed. Evidence-backed promotion from legacy_seed to source_verified is a later, separately audited batch.",
+  "notes": "Task 2 deterministic releases/status seed. Canonical rows were copied from reviewed candidate CSVs; works.csv, reviews.csv, index.html, and graph derivation were not changed. asserted_at=2026-08-28 records the current status snapshot review date, not a historical production milestone."
+}

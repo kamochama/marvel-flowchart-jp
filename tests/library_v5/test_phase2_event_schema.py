@@ -28,7 +28,7 @@ class Phase2EventCanonicalSchemaTests(unittest.TestCase):
         self.schema = json.loads((LIB / "schema.json").read_text(encoding="utf-8"))
 
     def test_schema_version_and_new_tables(self) -> None:
-        self.assertEqual(self.schema["schema_version"], "5.1")
+        self.assertEqual(self.schema["schema_version"], "5.2")
         for table_name, columns in EXPECTED.items():
             with self.subTest(table=table_name):
                 self.assertEqual(self.schema["tables"][table_name]["required_columns"], columns)

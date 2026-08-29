@@ -8,6 +8,8 @@ from pathlib import Path
 
 ALLOWED_PATHS = {
     "works.csv": Path("data/library/works.csv"),
+    "releases.csv": Path("data/library/releases.csv"),
+    "production_status_assertions.csv": Path("data/library/production_status_assertions.csv"),
     "entities.csv": Path("data/library/entities.csv"),
     "entity_relations.csv": Path("data/library/entity_relations.csv"),
     "appearances.csv": Path("data/library/appearances.csv"),

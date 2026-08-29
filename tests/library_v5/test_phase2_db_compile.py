@@ -53,8 +53,10 @@ def _first_continuity_id(root: Path) -> str:
 
 class Phase2DbCompileTests(unittest.TestCase):
     def test_phase2_schema_version_and_tables_are_compiled(self) -> None:
-        self.assertEqual(DB_SCHEMA_VERSION, "1.1-phase2-events")
+        self.assertEqual(DB_SCHEMA_VERSION, "1.2-normalized-releases-status")
         expected_tables = {
+            "releases",
+            "production_status_assertions",
             "events",
             "event_occurrences",
             "event_participants",
@@ -80,7 +82,7 @@ class Phase2DbCompileTests(unittest.TestCase):
             self.assertTrue(expected_tables <= actual_tables)
 
             fingerprint = logical_fingerprint(result.db_path, repo_root=root)
-            self.assertEqual(fingerprint["db_schema_version"], "1.1-phase2-events")
+            self.assertEqual(fingerprint["db_schema_version"], "1.2-normalized-releases-status")
             self.assertTrue(expected_tables <= set(fingerprint["tables"]))
 
     def test_blank_transition_endpoints_compile_as_sql_null(self) -> None:

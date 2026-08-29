@@ -90,6 +90,72 @@ class ContentAuditTests(unittest.TestCase):
         queue = build_review_queue(tables)
         self.assertEqual([row["fact_id"] for row in queue], ["ap-seed"])
 
+    def test_release_status_facts_are_reviewable(self):
+        from scripts.library_v5.content_audit import build_review_queue
+
+        tables = {
+            "releases.csv": [{
+                "release_id": "release-seed",
+                "work_id": "iron-man-2008",
+                "verification_status": "legacy_seed",
+                "certainty": "unknown",
+            }],
+            "production_status_assertions.csv": [{
+                "production_status_assertion_id": "production-status-seed",
+                "work_id": "iron-man-2008",
+                "verification_status": "legacy_seed",
+                "certainty": "unknown",
+            }],
+        }
+        queue = build_review_queue(tables)
+        self.assertEqual(
+            [row["queue_id"] for row in queue],
+            ["production_status_assertions.csv:production-status-seed", "releases.csv:release-seed"],
+        )
+        self.assertEqual(
+            [
+                (row["fact_table"], row["priority"], row["priority_reason"], row["verification_status"])
+                for row in queue
+            ],
+            [
+                ("production_status_assertions.csv", "60", "legacy_production_status_fact", "legacy_seed"),
+                ("releases.csv", "60", "legacy_release_fact", "legacy_seed"),
+            ],
+        )
+
+    def test_release_status_queue_priority_is_input_order_independent_and_never_verified(self):
+        from scripts.library_v5.content_audit import build_review_queue
+
+        tables = {
+            "releases.csv": [
+                {
+                    "release_id": "release-b",
+                    "work_id": "work-b",
+                    "verification_status": "legacy_seed",
+                    "certainty": "probable",
+                },
+                {
+                    "release_id": "release-a",
+                    "work_id": "work-a",
+                    "verification_status": "legacy_seed",
+                    "certainty": "unknown",
+                },
+            ],
+            "production_status_assertions.csv": [{
+                "production_status_assertion_id": "status-a",
+                "work_id": "work-a",
+                "verification_status": "legacy_seed",
+                "certainty": "unknown",
+            }],
+        }
+        reversed_tables = {
+            key: list(reversed(rows)) for key, rows in tables.items()
+        }
+        first = build_review_queue(tables)
+        second = build_review_queue(reversed_tables)
+        self.assertEqual(first, second)
+        self.assertTrue(all(row["verification_status"] == "legacy_seed" for row in first))
+
     def test_ordinary_content_audit_refuses_to_create_persistent_review_ledger(self):
         from scripts.library_v5.content_audit import write_content_audit_outputs
 
