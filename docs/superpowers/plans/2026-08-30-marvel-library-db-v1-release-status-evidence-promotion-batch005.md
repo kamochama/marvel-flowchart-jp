@@ -47,4 +47,3 @@
 - [x] Run focused tests, the exact full bundled-Python suite, deterministic build, strict CSV shape scan, and `git diff --check`.
 - [x] Confirm compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, prewatch edges `199`, and story paths `83/83`.
 - [ ] Commit, push/open a PR against `main`, wait for CI, merge under the standing user authorization, confirm main and Pages, and rerun the clean post-merge verification.
-
