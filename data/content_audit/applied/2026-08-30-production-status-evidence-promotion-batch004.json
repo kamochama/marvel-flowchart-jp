@@ -1,0 +1,28 @@
+{
+  "batch_id": "2026-08-30-production-status-evidence-promotion-batch004",
+  "evidence_ids": [
+    "evidence-production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"
+  ],
+  "fact_table": "production_status_assertions.csv",
+  "post_write_sha256": {
+    "data/content_audit/reviews.csv": "c882ad97340b2d15a8c61ecf9ebf759db40886aed6b67ad760dd6c35f61a2290",
+    "data/library/evidence.csv": "fdb76a8a27ebbb163cb33bdbb8b81ce583505fefda3988354868a5b12f55a6cd",
+    "data/library/production_status_assertions.csv": "e7b74d2fe2da7be60ab3e6752423592a92887667bcfa3eabde26f68dac70bf42",
+    "data/library/sources.csv": "04652efba734a0d79a522157297c60089cadd2010dd7e4f68886fd1a52d6a339"
+  },
+  "production_status_row_count_after": 131,
+  "production_status_row_count_before": 131,
+  "promoted_fact_ids": [
+    "production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"
+  ],
+  "release_row_count": 138,
+  "review_ids": [
+    "review-2026-08-30-production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"
+  ],
+  "source_ids": [
+    "sony-bnd-current-2026-08"
+  ],
+  "source_row_count_after": 43,
+  "source_row_count_before": 43,
+  "verification_scope": "Only the Brand New Day production-status snapshot is source_verified in this batch; its release rows and all other release/status facts retain their prior verification status."
+}

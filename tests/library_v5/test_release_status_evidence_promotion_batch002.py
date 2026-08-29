@@ -57,7 +57,7 @@ class ReleaseStatusEvidencePromotionBatch002Tests(unittest.TestCase):
         self.assertEqual(review["review_action"], "verified_source")
         self.assertEqual(review["evidence_ids"], EVIDENCE_ID)
 
-    def test_japanese_release_and_status_snapshot_remain_legacy_seed(self):
+    def test_japanese_release_remains_legacy_seed_and_status_snapshot_is_verified(self):
         releases = {row["release_id"]: row for row in _rows("data/library/releases.csv")}
         statuses = {
             row["production_status_assertion_id"]: row
@@ -67,7 +67,7 @@ class ReleaseStatusEvidencePromotionBatch002Tests(unittest.TestCase):
         self.assertEqual(jp["verification_status"], "legacy_seed")
         self.assertEqual(jp["release_date"], "")
         snapshot = statuses["production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"]
-        self.assertEqual(snapshot["verification_status"], "legacy_seed")
+        self.assertEqual(snapshot["verification_status"], "source_verified")
 
 
 if __name__ == "__main__":
