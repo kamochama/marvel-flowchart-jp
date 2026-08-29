@@ -338,10 +338,13 @@ def export_flowchart(
     }
     output_path = output_path.resolve()
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n",
-        encoding="utf-8",
-    )
+    serialized = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ) + "\n"
+    output_path.write_bytes(serialized.encode("utf-8"))
     return {
         "nodes": len(nodes),
         "edges": len(edges),

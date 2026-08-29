@@ -162,6 +162,18 @@ class FlowchartExportContractTests(unittest.TestCase):
         self.assertEqual(actual, expected)
         self.assertTrue(all(fact_id not in serialized_reasons for fact_id in release_ids | status_ids))
 
+    def test_export_uses_lf_for_cross_platform_byte_determinism(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            temp = Path(tmp)
+            db_path, manifest = self._compile(temp)
+            output_path = temp / "flowchart.json"
+            export_flowchart(ROOT, db_path, output_path, db_manifest=manifest)
+            output = output_path.read_bytes()
+
+        self.assertTrue(output.endswith(b"\n"))
+        self.assertFalse(output.endswith(b"\r\n"))
+        self.assertNotIn(b"\r\n", output)
+
     def test_policy_has_all_edge_defaults_and_conservative_reason_kind_rules(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             temp = Path(tmp)
