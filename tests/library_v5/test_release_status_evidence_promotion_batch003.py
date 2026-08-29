@@ -15,7 +15,7 @@ def _rows(relative_path):
 
 
 class ReleaseEvidencePromotionBatch003Tests(unittest.TestCase):
-    def test_only_secret_wars_primary_is_added_to_promoted_release_set(self):
+    def test_cumulative_promoted_release_set_is_preserved(self):
         releases = {row["release_id"]: row for row in _rows("data/library/releases.csv")}
         promoted = {
             release_id
@@ -27,6 +27,7 @@ class ReleaseEvidencePromotionBatch003Tests(unittest.TestCase):
             "release-spider-man-beyond-the-spider-verse-tba-primary",
             "release-visionquest-2026-10-14-primary",
             "release-spider-man-brand-new-day-2026-07-31-primary",
+            "release-x-men-97-s2-2026-07-01-primary",
         }
         self.assertEqual(promoted, expected_existing | {TARGET})
         self.assertEqual(releases[TARGET]["territory"], "US")

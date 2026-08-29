@@ -22,9 +22,11 @@ TARGETS = {
 }
 BATCH002_TARGET = "release-spider-man-brand-new-day-2026-07-31-primary"
 BATCH003_TARGET = "release-avengers-secret-wars-2027-12-17-primary"
-EXPECTED_PROMOTED_RELEASES = set(TARGETS) | {BATCH002_TARGET, BATCH003_TARGET}
+BATCH005_TARGET = "release-x-men-97-s2-2026-07-01-primary"
+EXPECTED_PROMOTED_RELEASES = set(TARGETS) | {BATCH002_TARGET, BATCH003_TARGET, BATCH005_TARGET}
 EXPECTED_PROMOTED_STATUS_IDS = {
     "production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28",
+    "production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28",
 }
 
 
