@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Promote exactly three already-seeded primary release facts to `source_verified` using existing official source records, while leaving all production-status assertions, Japanese release rows, graph derivation, and other seed rows unchanged.
+**Goal:** Promote exactly three already-seeded primary release facts to `source_verified` using newly recorded, independently checked official source evidence, while leaving all production-status assertions, Japanese release rows, graph derivation, and other seed rows unchanged.
 
 **Architecture:** The batch adds one primary evidence row and one `verified_source` review transition for each selected `releases.csv` fact. The existing release rows keep their stable IDs and dates; only `verification_status`, `evidence.csv`, and `reviews.csv` gain the audited promotion. The SQLite compiler and HTML export consume the same release data as before, and a regression test proves that no release/status row outside the three named facts changes and no work-pair output is manufactured.
 
@@ -19,10 +19,10 @@
 - Do not infer a territory, exact date, production milestone, or historical status date when the source does not establish it.
 - Ordinary builds must not mutate canonical CSVs or `data/content_audit/reviews.csv`; generated audit/DB outputs are disposable.
 - Use TDD: write the failing regression test, run it RED, make the smallest data/audit change, then run it GREEN and execute the full verification surface.
-- The batch is limited to these three existing primary release facts:
-  - `release-avengers-doomsday-2026-12-18-primary` — source `doomsday-jp`.
-  - `release-spider-man-brand-new-day-2026-07-31-primary` — source `sony-bnd-2026-07-03`.
+- The batch is limited to these three existing primary release facts. None has pre-existing release-specific evidence; each is promoted only after a new evidence row and review transition are added:
+  - `release-avengers-doomsday-2026-12-18-primary` — source `marvel-movies-current-v4`.
   - `release-spider-man-beyond-the-spider-verse-tba-primary` — source `sony-beyond-2026`.
+  - `release-visionquest-2026-10-14-primary` — source `visionquest`.
 - Do not promote the matching `production_status_assertions.csv` snapshots, any `-jp` release rows, or any other `legacy_seed` row in this batch.
 - Do not add or remove a `work_relation`, event, transition, appearance, alias, membership, possession, or credit.
 
@@ -37,7 +37,7 @@
 - The test reads repository CSVs with `csv.DictReader` and asserts the exact target IDs, evidence IDs, and review IDs listed below.
 - The test must not call the network or mutate canonical files.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
   Add this complete test module:
 
@@ -50,18 +50,18 @@
   TARGETS = {
       "release-avengers-doomsday-2026-12-18-primary": {
           "evidence_id": "evidence-release-avengers-doomsday-2026-12-18-primary",
-          "source_id": "doomsday-jp",
+          "source_id": "marvel-movies-current-v4",
           "review_id": "review-2026-08-29-release-avengers-doomsday-2026-12-18-primary",
-      },
-      "release-spider-man-brand-new-day-2026-07-31-primary": {
-          "evidence_id": "evidence-release-spider-man-brand-new-day-2026-07-31-primary",
-          "source_id": "sony-bnd-2026-07-03",
-          "review_id": "review-2026-08-29-release-spider-man-brand-new-day-2026-07-31-primary",
       },
       "release-spider-man-beyond-the-spider-verse-tba-primary": {
           "evidence_id": "evidence-release-spider-man-beyond-the-spider-verse-tba-primary",
           "source_id": "sony-beyond-2026",
           "review_id": "review-2026-08-29-release-spider-man-beyond-the-spider-verse-tba-primary",
+      },
+      "release-visionquest-2026-10-14-primary": {
+          "evidence_id": "evidence-release-visionquest-2026-10-14-primary",
+          "source_id": "visionquest",
+          "review_id": "review-2026-08-29-release-visionquest-2026-10-14-primary",
       },
   }
 
@@ -116,7 +116,7 @@
       unittest.main()
   ```
 
-- [ ] **Step 2: Run the focused test and verify the intended RED result**
+- [x] **Step 2: Run the focused test and verify the intended RED result**
 
   Run from the repository root:
 
@@ -137,44 +137,54 @@
 - Create: `data/content_audit/applied/2026-08-29-release-status-evidence-promotion-batch001.json`
 
 **Interfaces:**
-- The three existing release rows retain all fields except `verification_status`, which changes from `legacy_seed` to `source_verified`.
+- The three existing release rows retain their IDs, work IDs, territories, kinds, dates, precision, status, and certainty. Their `verification_status` changes from `legacy_seed` to `source_verified`, and their notes are rewritten to describe the audited source instead of claiming that review is pending.
 - Each new evidence row uses `fact_table=releases.csv`, the exact target `fact_id`, `evidence_role=primary`, and the existing source ID shown in Task 1.
 - Each new review row records `previous_verification_status=legacy_seed`, `new_verification_status=source_verified`, `review_action=verified_source`, and exactly one evidence ID.
 - The applied record is a JSON audit artifact containing the batch ID, target fact IDs, evidence/review IDs, source IDs, pre/post row counts, and SHA-256 hashes of the three canonical inputs after the write.
 
-- [ ] **Step 1: Update only the target release statuses**
+- [x] **Step 1: Update only the target release statuses**
 
   Change only these three `verification_status` cells in `data/library/releases.csv`:
 
   ```text
   release-avengers-doomsday-2026-12-18-primary -> source_verified
-  release-spider-man-brand-new-day-2026-07-31-primary -> source_verified
   release-spider-man-beyond-the-spider-verse-tba-primary -> source_verified
+  release-visionquest-2026-10-14-primary -> source_verified
   ```
 
-  Do not alter release dates, kinds, territories, certainty, notes, the `-jp` rows, or any other row.
+  Do not alter release dates, kinds, territories, certainty, the `-jp` rows, or any other row. Update only the three target notes as specified in Task 2 Step 2.
 
-- [ ] **Step 2: Append the exact evidence rows**
+- [x] **Step 2: Replace the three target notes with audited descriptions**
+
+  Use these exact notes in the target rows:
+
+  ```text
+  release-avengers-doomsday-2026-12-18-primary: U.S. theatrical release date verified against Marvel's official movie listing; migrated release fields and day precision retained.
+  release-spider-man-beyond-the-spider-verse-tba-primary: U.S. theatrical release date verified against Sony Group's official release-schedule record; migrated release fields and day precision retained.
+  release-visionquest-2026-10-14-primary: Disney+ premiere date verified against Marvel Television's official announcement; territory remains unknown and day precision retained.
+  ```
+
+- [x] **Step 3: Append the exact evidence rows**
 
   Append these UTF-8 CSV records; the complete notes fields are quoted because they contain commas:
 
   ```text
-  evidence-release-avengers-doomsday-2026-12-18-primary,releases.csv,release-avengers-doomsday-2026-12-18-primary,doomsday-jp,primary,"Marvel Japan's official Avengers: Doomsday page lists the U.S. theatrical opening date as 2026-12-18.",2026-08-29
-  evidence-release-spider-man-brand-new-day-2026-07-31-primary,releases.csv,release-spider-man-brand-new-day-2026-07-31-primary,sony-bnd-2026-07-03,primary,"Sony Pictures Japan's official press record lists the U.S. theatrical opening date as 2026-07-31.",2026-08-29
+  evidence-release-avengers-doomsday-2026-12-18-primary,releases.csv,release-avengers-doomsday-2026-12-18-primary,marvel-movies-current-v4,primary,"Marvel's official movie listing states that Avengers: Doomsday will be released on 2026-12-18.",2026-08-29
   evidence-release-spider-man-beyond-the-spider-verse-tba-primary,releases.csv,release-spider-man-beyond-the-spider-verse-tba-primary,sony-beyond-2026,primary,"Sony Group's official release-schedule record lists the U.S. theatrical release date as 2027-06-18.",2026-08-29
+  evidence-release-visionquest-2026-10-14-primary,releases.csv,release-visionquest-2026-10-14-primary,visionquest,primary,"Marvel Television's official announcement states that VisionQuest will premiere on Disney+ on 2026-10-14.",2026-08-29
   ```
 
-- [ ] **Step 3: Append the exact review rows**
+- [x] **Step 4: Append the exact review rows**
 
   Append these records to `data/content_audit/reviews.csv`; quote each complete notes field because it contains commas:
 
   ```text
-  review-2026-08-29-release-avengers-doomsday-2026-12-18-primary,releases.csv,release-avengers-doomsday-2026-12-18-primary,legacy_seed,source_verified,verified_source,evidence-release-avengers-doomsday-2026-12-18-primary,2026-08-29,"Promotes the existing U.S. theatrical release fact from legacy_seed after checking the official Marvel Japan release record; no Japanese release row or production-status snapshot is changed."
-  review-2026-08-29-release-spider-man-brand-new-day-2026-07-31-primary,releases.csv,release-spider-man-brand-new-day-2026-07-31-primary,legacy_seed,source_verified,verified_source,evidence-release-spider-man-brand-new-day-2026-07-31-primary,2026-08-29,"Promotes the existing U.S. theatrical release fact from legacy_seed after checking the official Sony Pictures Japan release record; no Japanese release row or production-status snapshot is changed."
+  review-2026-08-29-release-avengers-doomsday-2026-12-18-primary,releases.csv,release-avengers-doomsday-2026-12-18-primary,legacy_seed,source_verified,verified_source,evidence-release-avengers-doomsday-2026-12-18-primary,2026-08-29,"Promotes the existing U.S. theatrical release fact from legacy_seed after checking Marvel's official movie listing; no Japanese release row or production-status snapshot is changed."
   review-2026-08-29-release-spider-man-beyond-the-spider-verse-tba-primary,releases.csv,release-spider-man-beyond-the-spider-verse-tba-primary,legacy_seed,source_verified,verified_source,evidence-release-spider-man-beyond-the-spider-verse-tba-primary,2026-08-29,"Promotes the existing U.S. theatrical release fact from legacy_seed after checking the official Sony Group release-schedule record; the date precision remains day and no production-status snapshot is changed."
+  review-2026-08-29-release-visionquest-2026-10-14-primary,releases.csv,release-visionquest-2026-10-14-primary,legacy_seed,source_verified,verified_source,evidence-release-visionquest-2026-10-14-primary,2026-08-29,"Promotes the existing Disney+ release fact from legacy_seed after checking Marvel Television's official announcement; territory remains unknown and no production-status snapshot is changed."
   ```
 
-- [ ] **Step 4: Record the applied batch and run strict shape checks**
+- [x] **Step 5: Record the applied batch and run strict shape checks**
 
   Write `data/content_audit/applied/2026-08-29-release-status-evidence-promotion-batch001.json` from the following deterministic Python construction, so the hashes are the actual post-write SHA-256 digests:
 
@@ -184,20 +194,20 @@
     "fact_table": "releases.csv",
     "promoted_fact_ids": [
       "release-avengers-doomsday-2026-12-18-primary",
-      "release-spider-man-brand-new-day-2026-07-31-primary",
-      "release-spider-man-beyond-the-spider-verse-tba-primary"
+      "release-spider-man-beyond-the-spider-verse-tba-primary",
+      "release-visionquest-2026-10-14-primary"
     ],
     "evidence_ids": [
       "evidence-release-avengers-doomsday-2026-12-18-primary",
-      "evidence-release-spider-man-brand-new-day-2026-07-31-primary",
-      "evidence-release-spider-man-beyond-the-spider-verse-tba-primary"
+      "evidence-release-spider-man-beyond-the-spider-verse-tba-primary",
+      "evidence-release-visionquest-2026-10-14-primary"
     ],
     "review_ids": [
       "review-2026-08-29-release-avengers-doomsday-2026-12-18-primary",
-      "review-2026-08-29-release-spider-man-brand-new-day-2026-07-31-primary",
-      "review-2026-08-29-release-spider-man-beyond-the-spider-verse-tba-primary"
+      "review-2026-08-29-release-spider-man-beyond-the-spider-verse-tba-primary",
+      "review-2026-08-29-release-visionquest-2026-10-14-primary"
     ],
-    "source_ids": ["doomsday-jp", "sony-bnd-2026-07-03", "sony-beyond-2026"],
+    "source_ids": ["marvel-movies-current-v4", "sony-beyond-2026", "visionquest"],
     "release_row_count_before": 138,
     "release_row_count_after": 138,
     "production_status_row_count": 131,
@@ -238,7 +248,7 @@
 - Audit must report zero issues, including no `source_verified_without_evidence` and no review-integrity issue.
 - The graph compatibility contract is unchanged: `work_edges_all`, `work_pair_reasons`, `prewatch_edges`, and reproduced story paths must equal the pre-batch values.
 
-- [ ] **Step 1: Run the focused test and verify GREEN**
+- [x] **Step 1: Run the focused test and verify GREEN**
 
   ```powershell
   & $MarvelPython -m unittest tests.library_v5.test_release_status_evidence_promotion_batch001 -v
@@ -246,7 +256,7 @@
 
   Expected: all three tests pass.
 
-- [ ] **Step 2: Run the full bundled-Python suite**
+- [x] **Step 2: Run the full bundled-Python suite**
 
   ```powershell
   & $MarvelPython -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
@@ -254,7 +264,7 @@
 
   Expected: zero failures, with the test count reported by the current checkout.
 
-- [ ] **Step 3: Run the ordinary build and inspect the audit summary**
+- [x] **Step 3: Run the ordinary build and inspect the audit summary**
 
   ```powershell
   & $MarvelPython -m scripts.library_v5.build --repo-root .
@@ -262,7 +272,7 @@
 
   Confirm `audit_ok:true`, `audit_issue_count:0`, review-integrity issues `0`, SQLite foreign-key rows `0`, and SQLite `integrity_check` equal to `ok`. Confirm the graph compatibility observations remain `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, and `83/83` story paths reproduced.
 
-- [ ] **Step 4: Inspect the diff and clean generated outputs**
+- [x] **Step 4: Inspect the diff and clean generated outputs**
 
   Run `git diff --check` and inspect `git diff -- data/library/releases.csv data/library/evidence.csv data/content_audit/reviews.csv`. Remove only known disposable build outputs and Python `__pycache__` directories; never remove canonical CSVs or `data/content_audit/reviews.csv`.
 
@@ -271,7 +281,7 @@
 **Files:**
 - Commit: the test, three canonical/audit CSV changes, and the applied record.
 
-- [ ] **Step 1: Commit the verified batch**
+- [x] **Step 1: Commit the verified batch**
 
   ```powershell
   git add tests/library_v5/test_release_status_evidence_promotion_batch001.py data/library/releases.csv data/library/evidence.csv data/content_audit/reviews.csv data/content_audit/applied/2026-08-29-release-status-evidence-promotion-batch001.json
@@ -279,7 +289,7 @@
   git commit -m "audit: promote selected release facts"
   ```
 
-- [ ] **Step 2: Re-run status and record the handoff**
+- [x] **Step 2: Re-run status and record the handoff**
 
   Run `git status --short --branch` and record the commit SHA, test count, build audit summary, and the fact that all non-target release/status rows remain `legacy_seed`. Push a new PR only after the full local verification is green; stop before merging until the user explicitly approves the production integration.
 

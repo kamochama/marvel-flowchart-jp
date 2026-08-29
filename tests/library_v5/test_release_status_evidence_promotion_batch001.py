@@ -6,18 +6,18 @@ ROOT = Path(__file__).resolve().parents[2]
 TARGETS = {
     "release-avengers-doomsday-2026-12-18-primary": {
         "evidence_id": "evidence-release-avengers-doomsday-2026-12-18-primary",
-        "source_id": "doomsday-jp",
+        "source_id": "marvel-movies-current-v4",
         "review_id": "review-2026-08-29-release-avengers-doomsday-2026-12-18-primary",
-    },
-    "release-spider-man-brand-new-day-2026-07-31-primary": {
-        "evidence_id": "evidence-release-spider-man-brand-new-day-2026-07-31-primary",
-        "source_id": "sony-bnd-2026-07-03",
-        "review_id": "review-2026-08-29-release-spider-man-brand-new-day-2026-07-31-primary",
     },
     "release-spider-man-beyond-the-spider-verse-tba-primary": {
         "evidence_id": "evidence-release-spider-man-beyond-the-spider-verse-tba-primary",
         "source_id": "sony-beyond-2026",
         "review_id": "review-2026-08-29-release-spider-man-beyond-the-spider-verse-tba-primary",
+    },
+    "release-visionquest-2026-10-14-primary": {
+        "evidence_id": "evidence-release-visionquest-2026-10-14-primary",
+        "source_id": "visionquest",
+        "review_id": "review-2026-08-29-release-visionquest-2026-10-14-primary",
     },
 }
 
@@ -38,6 +38,7 @@ class ReleaseStatusEvidencePromotionBatch001Tests(unittest.TestCase):
         self.assertEqual(promoted, set(TARGETS))
         for release_id in TARGETS:
             self.assertEqual(releases[release_id]["verification_status"], "source_verified")
+            self.assertNotIn("legacy seed", releases[release_id]["notes"])
 
     def test_promoted_releases_have_matching_primary_evidence_and_review(self):
         evidence = {row["evidence_id"]: row for row in _rows("data/library/evidence.csv")}
