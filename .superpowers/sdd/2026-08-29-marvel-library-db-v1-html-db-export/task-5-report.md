@@ -6,7 +6,7 @@ Complete locally. The HTML runtime now bootstraps from the relative static artif
 
 `feat: load flowchart data from static DB export`
 
-The final commit SHA is `319b8fc` (`319b8fc2b5ae4cf1d1a0b8e298cc3b85cf095d0a`).
+The final commit contains the requested message; its hash is available from `git log` after this report is committed.
 
 ## Implemented
 
