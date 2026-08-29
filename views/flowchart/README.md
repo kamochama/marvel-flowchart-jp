@@ -2,6 +2,19 @@
 
 This directory contains presentation policy only. Canonical Marvel facts live under `data/library/`.
 
+`node_view.json` and `details.json` are tracked presentation inputs keyed by
+stable `work_id`. They preserve branch filters, priority, chronology lane/order
+metadata, and Japanese synopsis/map-role descriptions from the pre-cutover
+HTML. They do not define titles, release dates, production status, edges, or
+any other canonical fact. The DB export remains authoritative for those
+fields.
+
+`scripts.library_v5.extract_view_metadata` is a one-shot migration utility that
+may read the checked-in `index.html` to regenerate these files. Ordinary builds
+load only these JSON inputs, and therefore continue to export when
+`index.html` is absent. Do not add canonical facts or promote `legacy_seed`
+rows through this directory.
+
 - User-facing lane and region labels are Japanese.
 - Edge visibility, opacity, glow, dimming, bundling, crossings, and geometry are view concerns.
 - Hiding or dimming an edge never deletes the underlying canonical fact.

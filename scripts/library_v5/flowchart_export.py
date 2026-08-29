@@ -8,6 +8,7 @@ from typing import Any
 from .db_compile import open_query_connection
 from .db_export import reason_rows
 from .derive_compat import default_flowchart_policy
+from .extract_view_metadata import load_view_metadata
 from .ids import slug_id
 
 
@@ -286,7 +287,13 @@ def export_flowchart(
     repo_root = repo_root.resolve()
     nodes = _node_rows(db_path)
     reasons = sorted(reason_rows(db_path), key=lambda row: row["reason_id"])
-    view_policy = _load_view_policy(repo_root)
+    # Presentation metadata is loaded only from tracked JSON inputs.  In
+    # particular, an ordinary export must remain valid while index.html is
+    # absent (the HTML reader is a one-shot migration utility only).
+    view_policy = _merge_dicts(
+        _load_view_policy(repo_root),
+        load_view_metadata(repo_root, {row["work_id"] for row in nodes}),
+    )
     reasons_by_pair: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
     reasons_by_id = {row["reason_id"]: row for row in reasons}
     for row in reasons:

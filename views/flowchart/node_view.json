@@ -1,0 +1,1441 @@
+{
+  "chronology_lanes": [
+    {
+      "id": "mcu-main",
+      "label": "MCU",
+      "sub": "Marvel Studios / Defenders を含む公式時系列を基準",
+      "tone": "#38bdf8"
+    },
+    {
+      "id": "raimi",
+      "label": "Raimi Spider-Man",
+      "sub": "3部作の続編順",
+      "tone": "#ef4444"
+    },
+    {
+      "id": "amazing",
+      "label": "Amazing Spider-Man",
+      "sub": "2部作の続編順",
+      "tone": "#60a5fa"
+    },
+    {
+      "id": "ssu",
+      "label": "Sony Spider-Man Universe",
+      "sub": "Venom 系列と独立作品を分離",
+      "tone": "#a78bfa"
+    },
+    {
+      "id": "fox-xmen",
+      "label": "FOX X-MEN / Deadpool",
+      "sub": "Days of Future Past を分岐点として表示",
+      "tone": "#f59e0b"
+    }
+  ],
+  "node_metadata": {
+    "a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011": {
+      "branch": "マーベル・ワンショット",
+      "branch_en": "Marvel One-Shots",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    },
+    "agatha-all-along-2024": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 630,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "agent-carter-one-shot-2013": {
+      "branch": "マーベル・ワンショット",
+      "branch_en": "Marvel One-Shots",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    },
+    "agents-of-s-h-i-e-l-d-20132020": {
+      "branch": "旧マーベル・テレビジョン（ABC／Hulu）",
+      "branch_en": "ABC/Hulu-era Marvel Television",
+      "chronology": null,
+      "priority": "APPENDIX"
+    },
+    "all-hail-the-king-2014": {
+      "branch": "マーベル・ワンショット",
+      "branch_en": "Marvel One-Shots",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    },
+    "ant-man-2015": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 180,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "ant-man-and-the-wasp-2018": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 360,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "ant-man-and-the-wasp-quantumania-2023": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 560,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "avengers-age-of-ultron-2015": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 170,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "avengers-doomsday-2026-12-18": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "unknown",
+        "lane": "mcu-main",
+        "note": "公開日は別管理。作品内時系列は未確定として保留。",
+        "order": 9910,
+        "track": "unplaced"
+      },
+      "priority": "MAIN"
+    },
+    "avengers-endgame-2019": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 380,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "avengers-infinity-war-2018": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 370,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "avengers-secret-wars-2027-12-17": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "unknown",
+        "lane": "mcu-main",
+        "note": "公開日は別管理。作品内時系列は未確定として保留。",
+        "order": 9920,
+        "track": "unplaced"
+      },
+      "priority": "MAIN"
+    },
+    "black-panther-2018": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 250,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "black-panther-wakanda-forever-2022": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 490,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "black-widow-2021": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 240,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "blade-1998-1998": {
+      "branch": "旧ブレイド",
+      "branch_en": "Blade legacy",
+      "chronology": null,
+      "priority": "LEGACY-SUPPLEMENT"
+    },
+    "blade-ii-2002": {
+      "branch": "旧ブレイド",
+      "branch_en": "Blade legacy",
+      "chronology": null,
+      "priority": "LEGACY-SUPPLEMENT"
+    },
+    "blade-mcu-tba-tba": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "partial",
+        "lane": "mcu-main",
+        "note": "収録済みだが、このStage Cでは相対位置を断定しない。",
+        "order": 9080,
+        "track": "unplaced"
+      },
+      "priority": "SUPPLEMENT"
+    },
+    "blade-trinity-2004": {
+      "branch": "旧ブレイド",
+      "branch_en": "Blade legacy",
+      "chronology": null,
+      "priority": "LEGACY-SUPPLEMENT"
+    },
+    "captain-america-brave-new-world-2025": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "partial",
+        "lane": "mcu-main",
+        "note": "収録済みだが、このStage Cでは相対位置を断定しない。",
+        "order": 9000,
+        "track": "unplaced"
+      },
+      "priority": "MAIN"
+    },
+    "captain-america-civil-war-2016": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 230,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "captain-america-the-first-avenger-2011": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 10,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "captain-america-the-winter-soldier-2014": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 100,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "captain-marvel-2019": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 20,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "cloak-dagger-20182019": {
+      "branch": "旧マーベル・テレビジョン（ABC／Hulu）",
+      "branch_en": "ABC/Hulu-era Marvel Television",
+      "chronology": null,
+      "priority": "APPENDIX"
+    },
+    "daredevil-2003": {
+      "branch": "旧デアデビル／エレクトラ",
+      "branch_en": "Fox/Regency Daredevil-Elektra",
+      "chronology": null,
+      "priority": "LEGACY-SUPPLEMENT"
+    },
+    "daredevil-born-again-s1-2025": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 650,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "daredevil-born-again-s2-2026": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "partial",
+        "lane": "mcu-main",
+        "note": "収録済みだが、このStage Cでは相対位置を断定しない。",
+        "order": 9040,
+        "track": "unplaced"
+      },
+      "priority": "MAIN"
+    },
+    "daredevil-born-again-s3-tba": {
+      "branch": "Disney+／マーベル・テレビジョン",
+      "branch_en": "Disney+ / Marvel Television",
+      "chronology": {
+        "certainty": "partial",
+        "lane": "mcu-main",
+        "note": "収録済みだが、このStage Cでは相対位置を断定しない。",
+        "order": 9070,
+        "track": "unplaced"
+      },
+      "priority": "SUPPLEMENT"
+    },
+    "daredevil-s1-2015": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 150,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "daredevil-s2-2016": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 190,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "daredevil-s3-2018": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 320,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "dark-phoenix-2019": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "fox-xmen",
+        "note": "改変後系列。",
+        "order": 90,
+        "track": "revised"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "deadpool-2-2018": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "ambiguous",
+        "lane": "fox-xmen",
+        "note": "FOX X-MEN群の側線として表示し、厳密な合流点は固定しない。",
+        "order": 110,
+        "track": "revised-side"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "deadpool-2016": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "ambiguous",
+        "lane": "fox-xmen",
+        "note": "FOX X-MEN群の側線として表示し、厳密な合流点は固定しない。",
+        "order": 100,
+        "track": "revised-side"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "deadpool-wolverine-2024": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 620,
+        "track": "time-crossing"
+      },
+      "priority": "MAIN"
+    },
+    "doctor-strange-2016": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 280,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "doctor-strange-in-the-multiverse-of-madness-2022": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 460,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "echo-2024": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 500,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "elektra-2005": {
+      "branch": "旧デアデビル／エレクトラ",
+      "branch_en": "Fox/Regency Daredevil-Elektra",
+      "chronology": null,
+      "priority": "LEGACY-SUPPLEMENT"
+    },
+    "eternals-2021": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 450,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "eyes-of-wakanda-2025": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    },
+    "fantastic-four-2005": {
+      "branch": "旧ファンタスティック・フォー",
+      "branch_en": "Fox Fantastic Four",
+      "chronology": null,
+      "priority": "LEGACY-SUPPLEMENT"
+    },
+    "fantastic-four-rise-of-the-silver-surfer-2007": {
+      "branch": "旧ファンタスティック・フォー",
+      "branch_en": "Fox Fantastic Four",
+      "chronology": null,
+      "priority": "LEGACY-SUPPLEMENT"
+    },
+    "guardians-of-the-galaxy-2014": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 110,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "guardians-of-the-galaxy-vol-2-2017": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 120,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "guardians-of-the-galaxy-vol-3-2023": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 570,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "hawkeye-2021": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 470,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "i-am-groot-s1-2022": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 130,
+        "track": "main"
+      },
+      "priority": "SUPPLEMENT"
+    },
+    "i-am-groot-s2-2023": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 140,
+        "track": "main"
+      },
+      "priority": "SUPPLEMENT"
+    },
+    "inhumans-2017": {
+      "branch": "旧マーベル・テレビジョン（ABC／Hulu）",
+      "branch_en": "ABC/Hulu-era Marvel Television",
+      "chronology": null,
+      "priority": "APPENDIX"
+    },
+    "iron-fist-s1-2017": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 210,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "iron-fist-s2-2018": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 310,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "iron-man-2-2010": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 40,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "iron-man-2008": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 30,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "iron-man-3-2013": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 90,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "ironheart-2025": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "partial",
+        "lane": "mcu-main",
+        "note": "収録済みだが、このStage Cでは相対位置を断定しない。",
+        "order": 9020,
+        "track": "unplaced"
+      },
+      "priority": "MAIN"
+    },
+    "item-47-2012": {
+      "branch": "マーベル・ワンショット",
+      "branch_en": "Marvel One-Shots",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    },
+    "jessica-jones-s1-2015": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 160,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "jessica-jones-s2-2018": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 290,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "jessica-jones-s3-2019": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 350,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "kraven-the-hunter-2024": {
+      "branch": "ソニー・スパイダーマン・ユニバース",
+      "branch_en": "Sony's Spider-Man Universe",
+      "chronology": {
+        "certainty": "ambiguous",
+        "lane": "ssu",
+        "note": "同一の一本線へ強制接続せず、独立作品枠として表示。",
+        "order": 220,
+        "track": "standalone"
+      },
+      "priority": "OPTIONAL"
+    },
+    "logan-2017": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "ambiguous",
+        "lane": "fox-xmen",
+        "note": "位置づけに解釈差があるため、枝へ強制接続しない。",
+        "order": 120,
+        "track": "ambiguous"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "loki-s1-2021": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 390,
+        "track": "time-crossing"
+      },
+      "priority": "MAIN"
+    },
+    "loki-s2-2023": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 600,
+        "track": "time-crossing"
+      },
+      "priority": "MAIN"
+    },
+    "luke-cage-s1-2016": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 200,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "luke-cage-s2-2018": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 300,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "madame-web-2024": {
+      "branch": "ソニー・スパイダーマン・ユニバース",
+      "branch_en": "Sony's Spider-Man Universe",
+      "chronology": {
+        "certainty": "ambiguous",
+        "lane": "ssu",
+        "note": "同一の一本線へ強制接続せず、独立作品枠として表示。",
+        "order": 210,
+        "track": "standalone"
+      },
+      "priority": "OPTIONAL"
+    },
+    "marvel-s-agent-carter-series-20152016": {
+      "branch": "旧マーベル・テレビジョン（ABC／Hulu）",
+      "branch_en": "ABC/Hulu-era Marvel Television",
+      "chronology": null,
+      "priority": "LEGACY-MAIN"
+    },
+    "marvel-zombies-s1-2025": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": null,
+      "priority": "MAIN"
+    },
+    "moon-knight-2022": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 480,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "morbius-2022": {
+      "branch": "ソニー・スパイダーマン・ユニバース",
+      "branch_en": "Sony's Spider-Man Universe",
+      "chronology": {
+        "certainty": "ambiguous",
+        "lane": "ssu",
+        "note": "同一の一本線へ強制接続せず、独立作品枠として表示。",
+        "order": 200,
+        "track": "standalone"
+      },
+      "priority": "OPTIONAL"
+    },
+    "ms-marvel-2022": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 520,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "runaways-20172019": {
+      "branch": "旧マーベル・テレビジョン（ABC／Hulu）",
+      "branch_en": "ABC/Hulu-era Marvel Television",
+      "chronology": null,
+      "priority": "APPENDIX"
+    },
+    "secret-invasion-2023": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 580,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "shang-chi-and-the-legend-of-the-ten-rings-2021": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 420,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "she-hulk-attorney-at-law-2022": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 510,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "spider-man-2-2004": {
+      "branch": "ライミ版スパイダーマン",
+      "branch_en": "Raimi Spider-Man",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "raimi",
+        "note": "三部作の続編関係のみを表示。",
+        "order": 20,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "spider-man-2002": {
+      "branch": "ライミ版スパイダーマン",
+      "branch_en": "Raimi Spider-Man",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "raimi",
+        "note": "三部作の続編関係のみを表示。",
+        "order": 10,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "spider-man-3-2007": {
+      "branch": "ライミ版スパイダーマン",
+      "branch_en": "Raimi Spider-Man",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "raimi",
+        "note": "三部作の続編関係のみを表示。",
+        "order": 30,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "spider-man-across-the-spider-verse-2023": {
+      "branch": "スパイダーバース・アニメーション",
+      "branch_en": "Spider-Verse animation",
+      "chronology": null,
+      "priority": "OPTIONAL"
+    },
+    "spider-man-beyond-the-spider-verse-tba": {
+      "branch": "スパイダーバース・アニメーション",
+      "branch_en": "Spider-Verse animation",
+      "chronology": null,
+      "priority": "OPTIONAL"
+    },
+    "spider-man-brand-new-day-2026-07-31": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "unknown",
+        "lane": "mcu-main",
+        "note": "公開日は別管理。作品内時系列は未確定として保留。",
+        "order": 9900,
+        "track": "unplaced"
+      },
+      "priority": "MAIN"
+    },
+    "spider-man-far-from-home-2019": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 440,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "spider-man-homecoming-2017": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 260,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "spider-man-into-the-spider-verse-2018": {
+      "branch": "スパイダーバース・アニメーション",
+      "branch_en": "Spider-Verse animation",
+      "chronology": null,
+      "priority": "OPTIONAL"
+    },
+    "spider-man-no-way-home-2021": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Far From Home の直接続編。マルチバース横断として通常線から区別。",
+        "order": 445,
+        "track": "time-crossing"
+      },
+      "priority": "MAIN"
+    },
+    "the-amazing-spider-man-2-2014": {
+      "branch": "アメイジング・スパイダーマン",
+      "branch_en": "Webb Amazing Spider-Man",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "amazing",
+        "note": "二部作の続編関係のみを表示。",
+        "order": 20,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "the-amazing-spider-man-2012": {
+      "branch": "アメイジング・スパイダーマン",
+      "branch_en": "Webb Amazing Spider-Man",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "amazing",
+        "note": "二部作の続編関係のみを表示。",
+        "order": 10,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "the-avengers-2012": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 70,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "the-consultant-2011": {
+      "branch": "マーベル・ワンショット",
+      "branch_en": "Marvel One-Shots",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    },
+    "the-defenders-2017": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 220,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "the-falcon-and-the-winter-soldier-2021": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 430,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "the-fantastic-four-first-steps-2025": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Marvel公式が別宇宙・1960年代風世界として説明。",
+        "order": 8500,
+        "track": "multiverse"
+      },
+      "priority": "MAIN"
+    },
+    "the-guardians-of-the-galaxy-holiday-special-2022": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 550,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "the-incredible-hulk-2008": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 50,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "the-marvels-2023": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 590,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "the-new-mutants-2020": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "ambiguous",
+        "lane": "fox-xmen",
+        "note": "根拠のない直接リンクを作らず、位置づけ保留として表示。",
+        "order": 130,
+        "track": "ambiguous"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "the-punisher-one-last-kill-2026-05-12": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "partial",
+        "lane": "mcu-main",
+        "note": "収録済みだが、このStage Cでは相対位置を断定しない。",
+        "order": 9050,
+        "track": "unplaced"
+      },
+      "priority": "MAIN"
+    },
+    "the-punisher-s1-2017": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 270,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "the-punisher-s2-2019": {
+      "branch": "ディフェンダーズ・サーガ",
+      "branch_en": "Defenders Saga",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 340,
+        "track": "main"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "the-wolverine-2013": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "fox-xmen",
+        "note": "旧系列。",
+        "order": 60,
+        "track": "original"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "thor-2011": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 60,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "thor-love-and-thunder-2022": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 530,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "thor-ragnarok-2017": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 330,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "thor-the-dark-world-2013": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 80,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "thunderbolts-new-avengers-2025": {
+      "branch": "マーベル・スタジオ映画",
+      "branch_en": "Marvel Studios films",
+      "chronology": {
+        "certainty": "partial",
+        "lane": "mcu-main",
+        "note": "収録済みだが、このStage Cでは相対位置を断定しない。",
+        "order": 9010,
+        "track": "unplaced"
+      },
+      "priority": "MAIN"
+    },
+    "venom-2018": {
+      "branch": "ソニー・スパイダーマン・ユニバース",
+      "branch_en": "Sony's Spider-Man Universe",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "ssu",
+        "note": "Venom 三部作として連続表示。",
+        "order": 10,
+        "track": "venom-line"
+      },
+      "priority": "OPTIONAL"
+    },
+    "venom-let-there-be-carnage-2021": {
+      "branch": "ソニー・スパイダーマン・ユニバース",
+      "branch_en": "Sony's Spider-Man Universe",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "ssu",
+        "note": "Venom 三部作として連続表示。",
+        "order": 20,
+        "track": "venom-line"
+      },
+      "priority": "OPTIONAL"
+    },
+    "venom-the-last-dance-2024": {
+      "branch": "ソニー・スパイダーマン・ユニバース",
+      "branch_en": "Sony's Spider-Man Universe",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "ssu",
+        "note": "Venom 三部作として連続表示。",
+        "order": 30,
+        "track": "venom-line"
+      },
+      "priority": "OPTIONAL"
+    },
+    "visionquest-2026-10-14": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "partial",
+        "lane": "mcu-main",
+        "note": "収録済みだが、このStage Cでは相対位置を断定しない。",
+        "order": 9060,
+        "track": "unplaced"
+      },
+      "priority": "MAIN"
+    },
+    "wandavision-2021": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 410,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "werewolf-by-night-2022": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 540,
+        "track": "main"
+      },
+      "priority": "MAIN"
+    },
+    "what-if-s1-2021": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 400,
+        "track": "multiverse"
+      },
+      "priority": "MAIN"
+    },
+    "what-if-s2-2023": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 610,
+        "track": "multiverse"
+      },
+      "priority": "MAIN"
+    },
+    "what-if-s3-2024": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "mcu-main",
+        "note": "Disney+「MCUコンプリート 時系列順」（2025-03-31）を基準。",
+        "order": 640,
+        "track": "multiverse"
+      },
+      "priority": "MAIN"
+    },
+    "wonder-man-s1-2026": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": {
+        "certainty": "partial",
+        "lane": "mcu-main",
+        "note": "収録済みだが、このStage Cでは相対位置を断定しない。",
+        "order": 9030,
+        "track": "unplaced"
+      },
+      "priority": "MAIN"
+    },
+    "wonder-man-s2-tba": {
+      "branch": "Disney+／マーベル・テレビジョン",
+      "branch_en": "Disney+ / Marvel Television",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    },
+    "x-men-2000": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "fox-xmen",
+        "note": "旧系列。",
+        "order": 30,
+        "track": "original"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "x-men-97-s1-2024": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    },
+    "x-men-97-s2-2026-07-01": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    },
+    "x-men-apocalypse-2016": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "fox-xmen",
+        "note": "改変後系列。",
+        "order": 80,
+        "track": "revised"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "x-men-days-of-future-past-2014": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "fox-xmen",
+        "note": "過去改変を伴う分岐点として表示。",
+        "order": 70,
+        "track": "pivot"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "x-men-first-class-2011": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "fox-xmen",
+        "note": "分岐以前の共通起点として表示。",
+        "order": 10,
+        "track": "shared-origin"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "x-men-origins-wolverine-2009": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "fox-xmen",
+        "note": "旧系列。絶対年代は表示しない。",
+        "order": 20,
+        "track": "original"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "x-men-the-animated-series-19921997": {
+      "branch": "X-MEN アニメ系",
+      "branch_en": "X-Men animated continuity",
+      "chronology": null,
+      "priority": "LEGACY-MAIN"
+    },
+    "x-men-the-last-stand-2006": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "fox-xmen",
+        "note": "旧系列。",
+        "order": 50,
+        "track": "original"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "x2-x-men-united-2003": {
+      "branch": "20世紀FOX X-MEN／デッドプール",
+      "branch_en": "Fox X-Men / Deadpool",
+      "chronology": {
+        "certainty": "confirmed",
+        "lane": "fox-xmen",
+        "note": "旧系列。",
+        "order": 40,
+        "track": "original"
+      },
+      "priority": "LEGACY-MAIN"
+    },
+    "your-friendly-neighborhood-spider-man-s1-2025": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    },
+    "your-friendly-neighborhood-spider-man-s2-2026": {
+      "branch": "Disney+／マーベル・テレビジョン／マーベル・アニメーション",
+      "branch_en": "Disney+ / Marvel Television / Marvel Animation",
+      "chronology": null,
+      "priority": "SUPPLEMENT"
+    }
+  },
+  "schema_version": "1"
+}
