@@ -20,6 +20,8 @@ TARGETS = {
         "review_id": "review-2026-08-29-release-visionquest-2026-10-14-primary",
     },
 }
+BATCH002_TARGET = "release-spider-man-brand-new-day-2026-07-31-primary"
+EXPECTED_PROMOTED_RELEASES = set(TARGETS) | {BATCH002_TARGET}
 
 
 def _rows(relative_path):
@@ -28,14 +30,14 @@ def _rows(relative_path):
 
 
 class ReleaseStatusEvidencePromotionBatch001Tests(unittest.TestCase):
-    def test_only_three_named_primary_releases_are_promoted(self):
+    def test_only_named_primary_releases_are_promoted(self):
         releases = {row["release_id"]: row for row in _rows("data/library/releases.csv")}
         promoted = {
             release_id
             for release_id, row in releases.items()
             if row["verification_status"] == "source_verified"
         }
-        self.assertEqual(promoted, set(TARGETS))
+        self.assertEqual(promoted, EXPECTED_PROMOTED_RELEASES)
         for release_id in TARGETS:
             self.assertEqual(releases[release_id]["verification_status"], "source_verified")
             self.assertNotIn("legacy seed", releases[release_id]["notes"])
@@ -65,7 +67,7 @@ class ReleaseStatusEvidencePromotionBatch001Tests(unittest.TestCase):
             all(
                 row["verification_status"] == "legacy_seed"
                 for row in releases
-                if row["release_id"] not in TARGETS
+                if row["release_id"] not in EXPECTED_PROMOTED_RELEASES
             )
         )
 

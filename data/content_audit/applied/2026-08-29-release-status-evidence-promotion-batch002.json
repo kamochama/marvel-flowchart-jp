@@ -1,0 +1,25 @@
+{
+  "batch_id": "2026-08-29-release-status-evidence-promotion-batch002",
+  "evidence_ids": [
+    "evidence-release-spider-man-brand-new-day-2026-07-31-primary"
+  ],
+  "fact_table": "releases.csv",
+  "post_write_sha256": {
+    "data/content_audit/reviews.csv": "892c085bbfeba27253b800d4d6bf5a6c60dabe2c7fd39421bc5206f96108483f",
+    "data/library/evidence.csv": "f23b601d8d949e867bec3b206214bb280b20d70c76cc228597d55bb53ca19999",
+    "data/library/releases.csv": "5f6fcc43f557efe4db44eac902b84e4e1ac7feb4bb3be5ed9c67c842aefc3348"
+  },
+  "production_status_row_count": 131,
+  "promoted_fact_ids": [
+    "release-spider-man-brand-new-day-2026-07-31-primary"
+  ],
+  "release_row_count_after": 138,
+  "release_row_count_before": 138,
+  "review_ids": [
+    "review-2026-08-29-release-spider-man-brand-new-day-2026-07-31-primary"
+  ],
+  "source_ids": [
+    "sony-bnd-2026-07-03"
+  ],
+  "verification_scope": "Only the Brand New Day U.S. primary release fact is source_verified in this batch; all other release/status facts remain at their prior verification status."
+}
