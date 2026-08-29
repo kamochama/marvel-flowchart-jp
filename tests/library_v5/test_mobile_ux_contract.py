@@ -65,6 +65,33 @@ class MobileUxContractTests(unittest.TestCase):
         self.assertRegex(self.source, r'<div id="flowchartControls" class="controls"')
         self.assertRegex(self.source, r'id="mobileAreaButton"[^>]*aria-controls="mobileAreaSheet"')
 
+    def test_mobile_primary_controls_have_44px_touch_targets(self) -> None:
+        match = re.search(
+            r'<style id="mobile-touch-target-contract">(?P<body>[\s\S]*?)</style>',
+            self.source,
+        )
+        self.assertIsNotNone(match)
+        body = match.group("body") if match else ""
+        for selector in (
+            ".mobile-primary-nav input",
+            ".mobile-primary-nav #q",
+            ".mobile-primary-nav button",
+            ".featured-route-control button",
+            "#mobileFocusShell button",
+            ".mobile-graph-actions button",
+            ".mobile-sheet-head button",
+            "#right .mobile-sheet-head button",
+            ".side-tab-btn",
+            "#right .side-tab-btn",
+            "#flowchartControls input",
+            "#flowchartControls select",
+            "#flowchartControls button",
+            ".watch-workspace button",
+            ".watch-workspace select",
+        ):
+            self.assertIn(selector, body)
+        self.assertRegex(body, r"min-height\s*:\s*44px")
+
     def test_mobile_area_menu_traps_and_restores_focus(self) -> None:
         open_body = function_body(self.source, "openMobileAreaMenu")
         close_body = function_body(self.source, "closeMobileAreaMenu")
@@ -128,3 +155,4 @@ class MobileUxContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
