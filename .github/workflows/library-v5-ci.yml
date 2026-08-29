@@ -87,6 +87,35 @@ jobs:
           test -s data/derived/flowchart.json
           cmp /tmp/flowchart-with-index.json data/derived/flowchart.json
           mv /tmp/index.html.legacy index.html
+      - name: Verify static flowchart artifact contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(Path('data/derived/flowchart.json').read_text(encoding='utf-8'))
+          assert payload['schema_version'] == '1'
+          assert payload['view_policy']['default_edge_visibility'] == 'all'
+          assert payload['view_policy']['default_importance_mode'] == 'reference'
+          node_ids = {row['work_id'] for row in payload['nodes']}
+          reason_by_id = {row['reason_id']: row for row in payload['reasons']}
+          assert node_ids and reason_by_id and payload['edges']
+          for edge in payload['edges']:
+              assert edge['source_work_id'] in node_ids
+              assert edge['target_work_id'] in node_ids
+              for reason_id in edge['reason_ids']:
+                  reason = reason_by_id[reason_id]
+                  assert reason['source_work_id'] == edge['source_work_id']
+                  assert reason['target_work_id'] == edge['target_work_id']
+          print(json.dumps({
+              'schema_version': payload['schema_version'],
+              'nodes': len(payload['nodes']),
+              'edges': len(payload['edges']),
+              'reasons': len(payload['reasons']),
+              'default_edge_visibility': payload['view_policy']['default_edge_visibility'],
+              'default_importance_mode': payload['view_policy']['default_importance_mode'],
+          }, ensure_ascii=False, sort_keys=True))
+          PY
       - name: Verify ordinary build determinism
         run: |
           cp data/derived/library_manifest.json /tmp/library-manifest-first.json

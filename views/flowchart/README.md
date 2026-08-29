@@ -15,6 +15,13 @@ load only these JSON inputs, and therefore continue to export when
 `index.html` is absent. Do not add canonical facts or promote `legacy_seed`
 rows through this directory.
 
+The ordinary build writes the browser-facing artifact to
+`data/derived/flowchart.json`. Its `view_policy` defaults to
+`default_edge_visibility: "all"` and `default_importance_mode: "reference"`;
+the HTML materializes those exported edges once and lets selection/PATH/filter
+state change only their visual classes or opacity. The artifact is static JSON;
+the browser never opens the SQLite database.
+
 - User-facing lane and region labels are Japanese.
 - Edge visibility, opacity, glow, dimming, bundling, crossings, and geometry are view concerns.
 - Hiding or dimming an edge never deletes the underlying canonical fact.

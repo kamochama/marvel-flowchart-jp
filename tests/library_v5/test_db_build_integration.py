@@ -151,6 +151,21 @@ class DbBackedBuildIntegrationTests(unittest.TestCase):
             self.assertEqual(compatibility_before, canonical_hashes(repo))
             self.assertEqual(reviews_before, (repo / "data/content_audit/reviews.csv").read_bytes())
 
+    def test_flowchart_export_is_index_independent(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = self._repo_fixture(Path(tmp))
+            self.assertFalse((repo / "index.html").exists())
+            first = build_module.build(repo)
+            first_flowchart = (repo / "data/derived/flowchart.json").read_bytes()
+            first_edges = (repo / "data/derived/work_edges_all.csv").read_bytes()
+            self.assertTrue(first["audit_ok"])
+            self.assertGreater(first["flowchart_export"]["edges"], 0)
+
+            second = build_module.build(repo)
+            self.assertTrue(second["audit_ok"])
+            self.assertEqual(first_flowchart, (repo / "data/derived/flowchart.json").read_bytes())
+            self.assertEqual(first_edges, (repo / "data/derived/work_edges_all.csv").read_bytes())
+
     def test_clean_generated_preserves_tracked_flowchart_view_inputs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "repo"
