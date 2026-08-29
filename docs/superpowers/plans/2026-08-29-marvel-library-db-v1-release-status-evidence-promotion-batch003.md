@@ -188,7 +188,7 @@ The suite must pass without deleting or weakening existing regression coverage.
 
 Confirm audit issues and content-audit issues are zero, SQLite integrity/FK checks are clean, and compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, and story paths `83/83`. The tracked `flowchart.json` may change only in `generated_from.logical_fingerprint`; its nodes, edges, reasons, and characters payload must remain identical. Remove only known generated audit/DB/cache outputs after inspection.
 
-- [ ] **Step 4: Inspect, commit, push, and open the PR**
+- [x] **Step 4: Inspect, commit, push, and open the PR**
 
 ```powershell
 git diff --check
