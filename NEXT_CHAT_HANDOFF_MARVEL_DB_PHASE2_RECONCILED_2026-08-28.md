@@ -1,6 +1,6 @@
 # Marvel Library DB v1 Phase 2 — reconciled handoff (2026-08-28)
 
-> **Historical snapshot notice (updated 2026-08-30):** This file records the pre-integration reconciliation of PR #9/#10. The latest semantic production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`; later docs-only commits do not alter code/data. PR #10, #11, #12, #13, #21, and #22 are now merged. For current execution state, use `NEXT_CODEX_HANDOFF_MARVEL_LIBRARY_PHASE2_2026-08-28.md` and `AGENTS.md`. The statements below that say production `main` is untouched or that PR #10 must not be merged are historical instructions from that earlier gate.
+> **Historical snapshot notice (updated 2026-08-30):** This file records the pre-integration reconciliation of PR #9/#10. The latest semantic production baseline is `main` at `230d49e21383121fe1ac6cead117ee12bbb5ef48`; later docs-only commits do not alter code/data. PR #10, #11, #12, #13, #21, #22, and #26 are now merged. For current execution state, use `NEXT_CODEX_HANDOFF_MARVEL_LIBRARY_PHASE2_2026-08-28.md` and `AGENTS.md`. The statements below that say production `main` is untouched or that PR #10 must not be merged are historical instructions from that earlier gate.
 
 ## Canonical forward line
 
