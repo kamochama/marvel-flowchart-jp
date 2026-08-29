@@ -15,11 +15,26 @@ from scripts.library_v5.canonical_guard import canonical_hashes, protected_input
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def _normalized_graph_bytes(path: Path) -> bytes:
+    """Compare graph text independent of checkout newline conversion."""
+    return path.read_bytes().replace(b"\r\n", b"\n")
+
+
 class DbBackedBuildIntegrationTests(unittest.TestCase):
     def _repo_fixture(self, temp: Path) -> Path:
         repo = temp / "repo"
         shutil.copytree(ROOT / "data", repo / "data")
         return repo
+
+    def test_graph_fixture_comparison_normalizes_platform_newlines(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            graph = Path(tmp) / "graph.csv"
+            graph.write_bytes(b"source,target\r\niron-man,spider-man\r\n")
+
+            self.assertEqual(
+                _normalized_graph_bytes(graph),
+                b"source,target\niron-man,spider-man\n",
+            )
 
     def test_ordinary_build_no_longer_calls_legacy_edge_writer(self) -> None:
         source = inspect.getsource(build_module.build)
@@ -34,7 +49,7 @@ class DbBackedBuildIntegrationTests(unittest.TestCase):
             protected_before = protected_input_hashes(repo)
             reviews_before = (repo / "data/content_audit/reviews.csv").read_bytes()
             legacy_graph_fixture = {
-                name: (repo / "data" / "derived" / name).read_bytes()
+                name: _normalized_graph_bytes(repo / "data" / "derived" / name)
                 for name in ("work_edges_all.csv", "prewatch_edges.csv", "story_paths.csv")
             }
 
@@ -65,7 +80,7 @@ class DbBackedBuildIntegrationTests(unittest.TestCase):
             self.assertEqual(
                 legacy_graph_fixture,
                 {
-                    name: (repo / "data" / "derived" / name).read_bytes()
+                    name: _normalized_graph_bytes(repo / "data" / "derived" / name)
                     for name in legacy_graph_fixture
                 },
             )
@@ -78,7 +93,7 @@ class DbBackedBuildIntegrationTests(unittest.TestCase):
             repo = self._repo_fixture(Path(tmp))
             baseline = build_module.build(repo)
             baseline_graph = {
-                name: (repo / "data" / "derived" / name).read_bytes()
+                name: _normalized_graph_bytes(repo / "data" / "derived" / name)
                 for name in ("work_edges_all.csv", "prewatch_edges.csv", "story_paths.csv")
             }
 
@@ -97,7 +112,7 @@ class DbBackedBuildIntegrationTests(unittest.TestCase):
             self.assertEqual(
                 baseline_graph,
                 {
-                    name: (repo / "data" / "derived" / name).read_bytes()
+                    name: _normalized_graph_bytes(repo / "data" / "derived" / name)
                     for name in baseline_graph
                 },
             )
