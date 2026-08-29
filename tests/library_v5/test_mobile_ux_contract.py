@@ -79,6 +79,9 @@ class MobileUxContractTests(unittest.TestCase):
         body = function_body(self.source, "setDetails")
         self.assertIn("aria-hidden", body)
         self.assertIn("aria-expanded", body)
+        self.assertIn("role", body)
+        self.assertIn("aria-modal", body)
+        self.assertIn("mobileDetailsTitle", self.source)
         self.assertIn("detailsReturnFocus", body)
         self.assertIn("detailsOpen", self.source)
         self.assertIn("e.key!=='Tab'", self.source)
@@ -120,6 +123,7 @@ class MobileUxContractTests(unittest.TestCase):
         self.assertIn("drawMobileSelectionOverlay", undo_body)
         self.assertIn("window.__marvelLastSelectionState", undo_body)
         self.assertRegex(self.source, r"function\s+invalidateMobileUndo\s*\(")
+        self.assertRegex(self.source, r"getElementById\(['\"]clear['\"]\)\.onclick[\s\S]{0,260}invalidateMobileUndo")
 
 
 if __name__ == "__main__":
