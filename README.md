@@ -405,7 +405,7 @@
 - スワイプ中は同じ全地図点灯Canvasを背景と同じviewBox式で切り出し、部分パッチやCSS transformへの切替を行いません。
 - 作品・接続・人物・詳細データと関係地図配置は変更していません。
 
-## v5.18.0 — JSON接続線の全件表示と根拠パネル
+## DB v1 Stage C — JSON接続線の全件表示と根拠パネル
 
 - 初期表示の関係地図では、静的JSON export に含まれる eligible edge を `master-edge-overlay` として一度だけ補完し、選択なしでも全件を確認できます。
 - `view_policy.default_edge_visibility=all` と `default_importance_mode=reference` を初期設定として適用します。接続 tier を切り替えた場合だけ、従来どおり重要度の表示・非表示を変更します。
