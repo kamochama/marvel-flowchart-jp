@@ -231,9 +231,13 @@ def write_compatibility_outputs(repo_root: Path) -> dict[str, int]:
     _write_csv(derived / "prewatch_edges.csv", prewatch, ["prewatch_edge_id", "source_work_id", "target_work_id", "tier", "reason", "basis"])
 
     view.mkdir(parents=True, exist_ok=True)
-    (view / "policy.json").write_text(json.dumps(default_flowchart_policy(), ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    policy_path = view / "policy.json"
+    if not policy_path.exists():
+        policy_path.write_text(json.dumps(default_flowchart_policy(), ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     readme = """# Flowchart view configuration\n\nThis directory contains presentation policy only. Canonical Marvel facts live under `data/library/`.\n\n- User-facing lane and region labels are Japanese.\n- Edge visibility, opacity, glow, dimming, bundling, crossings, and geometry are view concerns.\n- Hiding or dimming an edge never deletes the underlying canonical fact.\n"""
-    (view / "README.md").write_text(readme, encoding="utf-8")
+    readme_path = view / "README.md"
+    if not readme_path.exists():
+        readme_path.write_text(readme, encoding="utf-8")
 
     return {
         "story_paths_reproduced": len(compat["story_paths"]),

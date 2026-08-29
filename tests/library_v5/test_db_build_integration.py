@@ -172,6 +172,35 @@ class DbBackedBuildIntegrationTests(unittest.TestCase):
             )
             self.assertFalse((repo / "data/derived").exists())
 
+    def test_complete_build_preserves_custom_view_policy_and_repeats_export(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = self._repo_fixture(Path(tmp))
+            view = repo / "views" / "flowchart"
+            view.mkdir(parents=True)
+            custom_policy = '{"custom_marker":"task3-review-policy"}\n'
+            custom_readme = "custom tracked flowchart metadata\n"
+            (view / "policy.json").write_text(custom_policy, encoding="utf-8")
+            (view / "README.md").write_text(custom_readme, encoding="utf-8")
+
+            first = build_module.build(repo)
+            first_flowchart = (repo / "data/derived/flowchart.json").read_bytes()
+            first_payload = json.loads(first_flowchart.decode("utf-8"))
+
+            second = build_module.build(repo)
+            second_flowchart = (repo / "data/derived/flowchart.json").read_bytes()
+            second_payload = json.loads(second_flowchart.decode("utf-8"))
+
+            self.assertTrue(first["audit_ok"])
+            self.assertTrue(second["audit_ok"])
+            self.assertEqual(first_flowchart, second_flowchart)
+            self.assertEqual(
+                _flowchart_graph_projection(first_payload),
+                _flowchart_graph_projection(second_payload),
+            )
+            self.assertEqual(first_payload["view_policy"]["custom_marker"], "task3-review-policy")
+            self.assertEqual((view / "policy.json").read_text(encoding="utf-8"), custom_policy)
+            self.assertEqual((view / "README.md").read_text(encoding="utf-8"), custom_readme)
+
     def test_ordinary_build_rejects_persistent_review_mutation(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             repo = self._repo_fixture(Path(tmp))
