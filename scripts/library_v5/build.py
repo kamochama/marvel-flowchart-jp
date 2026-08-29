@@ -16,11 +16,11 @@ from .db_compile import compile_database
 from .db_export import export_work_graph
 from .db_fingerprint import write_db_manifest
 from .derive_compat import write_compatibility_outputs
+from .flowchart_export import export_flowchart
 
 
 GENERATED_PATHS = [
     "data/derived",
-    "views/flowchart",
 ]
 GENERATED_CONTENT_AUDIT_FILES = [
     "queue.csv",
@@ -48,13 +48,34 @@ def build(repo_root: Path, *, clean: bool = True) -> dict[str, object]:
     if clean:
         clean_generated(repo_root)
 
+    # Keep the two tracked presentation inputs atomic.  The exporter performs
+    # the DB-ID and shape validation after compilation; this early check makes
+    # a half-installed view overlay fail before any generated products are
+    # consumed and never falls back to index.html.
+    view_root = repo_root / "views" / "flowchart"
+    view_inputs = (view_root / "node_view.json", view_root / "details.json")
+    if any(path.exists() for path in view_inputs) and not all(path.exists() for path in view_inputs):
+        raise ValueError("flowchart view metadata requires node_view.json and details.json")
+
     result: dict[str, object] = {}
     db_result = compile_database(repo_root)
     db_manifest = write_db_manifest(repo_root, db_result.db_path)
+    manifest_payload = json.loads(db_manifest.read_text(encoding="utf-8"))
+    flowchart_path = repo_root / "data" / "derived" / "flowchart.json"
+    flowchart_counts = export_flowchart(
+        repo_root,
+        db_result.db_path,
+        flowchart_path,
+        db_manifest=manifest_payload,
+    )
     result["database"] = {
         "path": db_result.db_path.relative_to(repo_root).as_posix(),
         "manifest_path": db_manifest.relative_to(repo_root).as_posix(),
         "table_counts": db_result.table_counts,
+    }
+    result["flowchart_export"] = {
+        "path": flowchart_path.relative_to(repo_root).as_posix(),
+        **flowchart_counts,
     }
     result["derived_edges"] = export_work_graph(db_result.db_path, repo_root / "data" / "derived")
     result["compatibility"] = write_compatibility_outputs(repo_root)

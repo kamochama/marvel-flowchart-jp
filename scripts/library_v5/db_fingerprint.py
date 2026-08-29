@@ -24,6 +24,7 @@ _VIEW_ORDER_KEYS = {
     "v_work_production_status": ("production_status_assertion_id",),
     "v_work_connection_reasons": ("source_work_id", "target_work_id", "reason_kind", "canonical_entity_id", "relation_id", "reason_discriminator"),
     "v_work_connections_all": ("source_work_id", "target_work_id"),
+    # Flowchart-facing views use the stable IDs that define their export rows.
     "v_flowchart_nodes": ("work_id",),
     "v_flowchart_edge_candidates": ("source_work_id", "target_work_id"),
     "v_event_history": ("event_id", "event_occurrence_id", "event_participant_id"),

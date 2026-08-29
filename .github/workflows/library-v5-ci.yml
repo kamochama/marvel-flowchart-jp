@@ -37,6 +37,12 @@ jobs:
           from scripts.library_v5.canonical_guard import canonical_hashes
           print(json.dumps(canonical_hashes(Path('.')), sort_keys=True, indent=2))
           PY
+          python - <<'PY' > /tmp/protected-before.json
+          import json
+          from pathlib import Path
+          from scripts.library_v5.canonical_guard import protected_input_hashes
+          print(json.dumps(protected_input_hashes(Path('.')), sort_keys=True, indent=2))
+          PY
       - name: Ordinary DB-backed canonical read-only build
         run: python -m scripts.library_v5.build --repo-root .
       - name: Verify canonical inputs unchanged
@@ -53,19 +59,63 @@ jobs:
           cp data/derived/db/library_db_manifest.json /tmp/db-manifest-first.json
           cp data/derived/work_pair_reasons.csv /tmp/db-reasons-first.csv
           cp data/derived/work_edges_all.csv /tmp/db-edges-first.csv
+          cp data/derived/flowchart.json /tmp/flowchart-first.json
           python -m scripts.library_v5.build --repo-root .
           cmp /tmp/db-manifest-first.json data/derived/db/library_db_manifest.json
           cmp /tmp/db-reasons-first.csv data/derived/work_pair_reasons.csv
           cmp /tmp/db-edges-first.csv data/derived/work_edges_all.csv
+          cmp /tmp/flowchart-first.json data/derived/flowchart.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          def semantic_projection(path):
+              payload = json.loads(path.read_text(encoding='utf-8'))
+              return {key: payload[key] for key in ('schema_version', 'nodes', 'edges', 'reasons', 'characters', 'view_policy')}
+
+          assert semantic_projection(Path('/tmp/flowchart-first.json')) == semantic_projection(Path('data/derived/flowchart.json'))
+          PY
       - name: Verify DB graph regeneration without index HTML
         run: |
           cp data/derived/work_pair_reasons.csv /tmp/work_pair_reasons.csv
           cp data/derived/work_edges_all.csv /tmp/work_edges_all.csv
+          cp data/derived/flowchart.json /tmp/flowchart-with-index.json
           mv index.html /tmp/index.html.legacy
           python -m scripts.library_v5.build --repo-root .
           cmp /tmp/work_pair_reasons.csv data/derived/work_pair_reasons.csv
           cmp /tmp/work_edges_all.csv data/derived/work_edges_all.csv
+          test -s data/derived/flowchart.json
+          cmp /tmp/flowchart-with-index.json data/derived/flowchart.json
           mv /tmp/index.html.legacy index.html
+      - name: Verify static flowchart artifact contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(Path('data/derived/flowchart.json').read_text(encoding='utf-8'))
+          assert payload['schema_version'] == '1'
+          assert payload['view_policy']['default_edge_visibility'] == 'all'
+          assert payload['view_policy']['default_importance_mode'] == 'reference'
+          node_ids = {row['work_id'] for row in payload['nodes']}
+          reason_by_id = {row['reason_id']: row for row in payload['reasons']}
+          assert node_ids and reason_by_id and payload['edges']
+          for edge in payload['edges']:
+              assert edge['source_work_id'] in node_ids
+              assert edge['target_work_id'] in node_ids
+              for reason_id in edge['reason_ids']:
+                  reason = reason_by_id[reason_id]
+                  assert reason['source_work_id'] == edge['source_work_id']
+                  assert reason['target_work_id'] == edge['target_work_id']
+          print(json.dumps({
+              'schema_version': payload['schema_version'],
+              'nodes': len(payload['nodes']),
+              'edges': len(payload['edges']),
+              'reasons': len(payload['reasons']),
+              'default_edge_visibility': payload['view_policy']['default_edge_visibility'],
+              'default_importance_mode': payload['view_policy']['default_importance_mode'],
+          }, ensure_ascii=False, sort_keys=True))
+          PY
       - name: Verify ordinary build determinism
         run: |
           cp data/derived/library_manifest.json /tmp/library-manifest-first.json
@@ -80,6 +130,13 @@ jobs:
           print(json.dumps(canonical_hashes(Path('.')), sort_keys=True, indent=2))
           PY
           cmp /tmp/canonical-before.json /tmp/canonical-after-second.json
+          python - <<'PY' > /tmp/protected-after-second.json
+          import json
+          from pathlib import Path
+          from scripts.library_v5.canonical_guard import protected_input_hashes
+          print(json.dumps(protected_input_hashes(Path('.')), sort_keys=True, indent=2))
+          PY
+          cmp /tmp/protected-before.json /tmp/protected-after-second.json
       - name: Verify SQLite integrity and print Phase 1 summary
         run: |
           python - <<'PY'
@@ -129,6 +186,13 @@ jobs:
           print(json.dumps(canonical_hashes(Path('.')), sort_keys=True, indent=2))
           PY
           cmp /tmp/canonical-before.json /tmp/canonical-after-bootstrap.json
+          python - <<'PY' > /tmp/protected-after-bootstrap.json
+          import json
+          from pathlib import Path
+          from scripts.library_v5.canonical_guard import protected_input_hashes
+          print(json.dumps(protected_input_hashes(Path('.')), sort_keys=True, indent=2))
+          PY
+          cmp /tmp/protected-before.json /tmp/protected-after-bootstrap.json
       - name: Print content audit queue head
         run: |
           echo '--- CONTENT_AUDIT.md ---'

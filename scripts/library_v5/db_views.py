@@ -623,13 +623,29 @@ def install_public_views(connection: sqlite3.Connection) -> None:
             title_ja,
             title_en,
             title_official,
+            release,
+            release_raw,
             format,
             status,
             classification,
+            ja_status,
+            japan_date,
+            japan_type,
+            source_url,
+            source_note,
+            notes,
             release_sort_date,
             release_display_date,
             release_kind,
-            release_certainty
+            release_certainty,
+            release_precision,
+            release_source_note,
+            aliases_ja,
+            title_audit_status,
+            title_audit_source_url,
+            title_last_verified,
+            title_management_note,
+            stable_id_note
         FROM works
         """
     )
