@@ -6,9 +6,10 @@ This file defines persistent working rules for Codex and other coding agents ope
 
 - Repository: `kamochama/marvel-flowchart-jp`.
 - Production branch: `main`.
-- Current forward development branch for Marvel Library DB v1 Phase 2: `library-v5-phase2-db6`.
-- Draft PR: #10, base `main`, head `library-v5-phase2-db6`.
-- During development, **do not merge PR #10, commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
+- Current production HEAD (after the completed Phase 2, release/status, and HTML export integrations): `8234cfa04edf5fb6dd851d335107d606b9011731`.
+- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), and PR #13 (Pages artifact fix) are merged into `main`.
+- There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
+- During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
 - `main` is **not permanently frozen**. It is the intended final integration target after the current work is complete, fully audited, and the user explicitly approves the final merge.
 - At the start of every session, run/fetch a fresh HEAD check. If local HEAD differs from origin, reconcile before editing; never overwrite a newer remote state blindly.
 - The former PR #9 / `library-v5-canonical-freeze` history was already reconciled into the forward line. Do not merge it again.
@@ -144,7 +145,7 @@ After Task 8 is GREEN:
 
 If the user explicitly authorizes final integration:
 
-- merge PR #10 into `main` through the normal PR path;
+- merge the explicitly approved PR into `main` through the normal PR path;
 - do not force-update or rewrite `main`;
 - verify fresh `main` HEAD and CI;
 - verify GitHub Pages/public behavior and expected generated artifacts;
@@ -152,7 +153,7 @@ If the user explicitly authorizes final integration:
 
 If authorization is not given, leave production unchanged. Do not interpret “finish the branch” as permission to publish.
 
-Later DB-v1 phases are architecturally intended but require their own approved execution boundary. See `CODEX_MASTER_ROADMAP_MARVEL_DB_V1_TO_MAIN_2026-08-28.md`.
+Later DB-v1 phases remain architecturally intended but require their own approved execution boundary. The current integrated HTML export is production baseline; see `NEXT_CODEX_HANDOFF_MARVEL_LIBRARY_PHASE2_2026-08-28.md` and `CODEX_MASTER_ROADMAP_MARVEL_DB_V1_TO_MAIN_2026-08-28.md` for the next-boundary candidates.
 
 ## Verification commands
 
@@ -186,7 +187,7 @@ The approved DB-v1 architecture ultimately intends to:
 - preserve Pixel-6/mobile performance while the HTML data source changes;
 - continue the broader 131-work content audit using the richer semantic model.
 
-Do not start these later phases automatically after the current Task 8. They require a separately approved plan/boundary.
+Do not start new semantic phases automatically after the integrated HTML export. They require a separately approved plan/boundary and a RED contract before canonical changes.
 
 ## Public site packaging constraint
 
