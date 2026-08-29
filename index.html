@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="マーベル映像作品131作・199の有向接続を、日本公式邦題でたどれる非公式ファン制作のインタラクティブ相関図。作品を選ぶと前史・後続・予習ルートを表示し、視聴済みチェックと残り視聴時間も管理できます。">
+<meta name="description" content="マーベル映像作品を静的JSONの有向接続で、日本公式邦題でたどれる非公式ファン制作のインタラクティブ相関図。作品を選ぶと前史・後続・予習ルートを表示し、視聴済みチェックと残り視聴時間も管理できます。">
 <meta name="theme-color" content="#070b16">
 <meta name="color-scheme" content="dark">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:title" content="マーベル作品相関図 日本版">
-<meta property="og:description" content="見たい作品から、前史と後続を矢印でたどる。131作品・199接続のインタラクティブ相関図。">
+<meta property="og:description" content="見たい作品から、前史と後続を矢印でたどる。131作品のインタラクティブ相関図。">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="マーベル作品相関図 日本版">
 <meta name="twitter:description" content="見たい作品から、前史と後続を矢印でたどるインタラクティブ相関図。">
@@ -143,7 +143,7 @@ g.edge.fan-verified[data-render="dotted"] path{stroke-dasharray:2 5}
 g.edge.fan-verified.fan-hidden{display:none}
 .fan-edge-key{font-size:11px;color:#cbd5e1;display:inline-flex;gap:6px;align-items:center}.fan-edge-swatch{display:inline-block;width:12px;height:3px;border-radius:2px;background:#fb7185}
 
-/* v5.8.1: regenerated graph tabs from the 199-edge snapshot; final master overlays may add audited references. */
+/* v5.8.1: regenerated graph tabs from the compatibility snapshot; final master overlays may add audited references. */
 .flow-tabs-note{background:#0b1020}
 
 /* v5.8.1: viewing-importance layer, independent of factual strength */
@@ -753,7 +753,7 @@ body.public-watch-view main{display:none!important}body.public-watch-view #watch
       <div class="sub">見たい作品から矢印を逆にたどれば前史、先へたどれば後続。日本公式邦題を主表示。</div>
     </div>
     <div class="brand-meta" aria-label="サイト情報">
-      <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
+      <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>全</b> 有向接続</span>
       <span class="stat-chip public-release">PUBLIC v5.20.5</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
@@ -4253,7 +4253,7 @@ body.public-watch-view main{display:none!important}body.public-watch-view #watch
 2026年10月14日：『VisionQuest』Marvel公式日付（日本配信日は未確認）<br/>
 2026年12月18日：『アベンジャーズ／ドゥームズデイ』日米同時公開<br/>
 2027年12月17日：『Avengers: Secret Wars』Marvel公式予定（日本公開日は未確認）
-</div></div><div class="card info-card"><h3>キャラクター索引</h3><div class="muted" id="charinfo">上部のキャラクター欄から選ぶと、主要出演・物語接続作品だけに絞り込みます。</div></div><div class="card info-card"><h3>接続重要度</h3><div class="importance-summary"><b>中核 91本</b>：本筋として有向に再帰追跡<br/><b>推奨 75本</b>：選択作品へ直接1段だけ付加<br/><b>参照 33本</b>：客演・設定・別宇宙など。「全線」で表示<br/><span class="muted">※ strength（事実上の接続強度）とは別軸です。</span></div></div><div class="card info-card"><h3>日本版ルール</h3><div class="muted">日本の公式邦題を優先。邦題が確認できない未公開作は英題＋「邦題未発表」。英題は検索・監査用に保持しています。日本公開・配信日は公式ソースで確認できたものから順次追加します。作品を選ぶと、関連全体／1段階／2段階の範囲で関連作品だけが点灯します。接続は事実上の強さとは別に「中核／推奨／参照」の視聴重要度を持ち、既定は全199接続を確認できる「全線」です。関連全体では中核のみを有向に再帰し、推奨は選択作品への直接接続だけ付加、参照は直接補助に限定します。複数ゴールでは OR（どれか）／AND（共通）／PATH（ゴール間の有向経路だけ）を切り替えられます。複数のゴールを選ぶと、必要な予習作品を重複除去して1本の視聴順に統合します。v5.7.1では接続を再監査し、120行（119ユニーク矢印）の骨格接続を整理し、66本を追加。追加線は物語・人物・旧映像宇宙・Doomsday公式帰還を区別し、Doomsdayの出演確認線は「直接前日譚」を意味しません。</div></div></details>
+</div></div><div class="card info-card"><h3>キャラクター索引</h3><div class="muted" id="charinfo">上部のキャラクター欄から選ぶと、主要出演・物語接続作品だけに絞り込みます。</div></div><div class="card info-card"><h3>接続重要度</h3><div class="importance-summary"><b>中核 91本</b>：本筋として有向に再帰追跡<br/><b>推奨 75本</b>：選択作品へ直接1段だけ付加<br/><b>参照 33本</b>：客演・設定・別宇宙など。「全線」で表示<br/><span class="muted">※ strength（事実上の接続強度）とは別軸です。</span></div></div><div class="card info-card"><h3>日本版ルール</h3><div class="muted">日本の公式邦題を優先。邦題が確認できない未公開作は英題＋「邦題未発表」。英題は検索・監査用に保持しています。日本公開・配信日は公式ソースで確認できたものから順次追加します。作品を選ぶと、関連全体／1段階／2段階の範囲で関連作品だけが点灯します。接続は事実上の強さとは別に「中核／推奨／参照」の視聴重要度を持ち、既定の「全線」は生成JSONに含まれる全接続を表示し、互換性観測値199本を含みます。関連全体では中核のみを有向に再帰し、推奨は選択作品への直接接続だけ付加、参照は直接補助に限定します。複数ゴールでは OR（どれか）／AND（共通）／PATH（ゴール間の有向経路だけ）を切り替えられます。複数のゴールを選ぶと、必要な予習作品を重複除去して1本の視聴順に統合します。v5.7.1では接続を再監査し、120行（119ユニーク矢印）の骨格接続を整理し、66本を追加。追加線は物語・人物・旧映像宇宙・Doomsday公式帰還を区別し、Doomsdayの出演確認線は「直接前日譚」を意味しません。</div></div></details>
 <div id="mobileBackdrop" class="mobile-backdrop" aria-hidden="true"></div><div class="mobile-graph-actions" aria-label="グラフ操作"><button id="mobileFitBtn" type="button" title="全体表示">全体</button><button id="mobileSelectedBtn" type="button" title="選択作品へ">選択へ</button><button id="mobileDetailsFloat" type="button" title="詳細を開く">詳細</button></div>
 <script>
 let NODES=[]; let EDGES=[]; let CHAR_LINKS=[]; let RELEASE_META={}; let CHRONOLOGY_LANES=[]; let CHRONOLOGY_META={};
@@ -6770,7 +6770,7 @@ if(flowchartReady)render();
       t.textContent=`${nm[e.source]?.title||e.source} → ${nm[e.target]?.title||e.target}\n接続：${displayEdgeType(e)} / 重要度：${impJa[importanceOf(e)]||importanceOf(e)} / 強さ：${e.strength||''}${reason}`;
     });
   }
-  window.marvelRefreshFlowchartPresentation=()=>{tagEdgeImportance();enhanceEdgeTooltips();};
+  window.marvelRefreshFlowchartPresentation=()=>{materializeMissingMasterEdges();tagEdgeImportance();enhanceEdgeTooltips();if(typeof window.marvelRefreshFanEdgeSummary==='function')window.marvelRefreshFanEdgeSummary();};
   // Exactly one graph click path: click -> select state -> compute -> render.
   document.addEventListener('click',e=>{
     const canvas=e.target?.closest?.('canvas[data-marvel-mobile-canvas]');
@@ -7078,13 +7078,20 @@ if(flowchartReady)render();
 <script>
 // v5.8.1 — fan-verified edges are already in regenerated Graphviz SVGs; toggle only.
 (function(){
-  let visible=true; const fanEdges=EDGES.filter(e=>e.audit_added==='v5.7.2'&&e.fan_verified);
+  let visible=true; let fanEdges=[];
+  function refreshFanEdgeSummary(){
+    fanEdges=EDGES.filter(e=>e.audit_added==='v5.7.2'&&e.fan_verified);
+    const label=document.querySelector('.fan-edge-key b');
+    if(label)label.textContent='ファン図起点・裏取り済み '+fanEdges.length+'本：';
+  }
   function addControls(){
     const controls=document.querySelector('header .controls');if(!controls||document.getElementById('toggleFanVerifiedEdges'))return;
     const key=document.createElement('span');key.className='fan-edge-key';key.innerHTML='<b>ファン図起点・裏取り済み '+fanEdges.length+'本：</b><span class="fan-edge-swatch"></span>検証採用';controls.appendChild(key);
     const btn=document.createElement('button');btn.id='toggleFanVerifiedEdges';btn.className='active';btn.textContent='ファン検証線 ON';btn.title='ファン作成相関図から候補化し、独立検証できた接続を表示／非表示';
     btn.addEventListener('click',()=>{visible=!visible;document.querySelectorAll('g.edge.fan-verified').forEach(g=>g.classList.toggle('fan-hidden',!visible));btn.classList.toggle('active',visible);btn.textContent=visible?'ファン検証線 ON':'ファン検証線 OFF';if(typeof updateSelectionHighlight==='function')updateSelectionHighlight();});controls.appendChild(btn);
+    refreshFanEdgeSummary();
   }
+  window.marvelRefreshFanEdgeSummary=refreshFanEdgeSummary;
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addControls,{once:true});else addControls();
 })();
 </script>
@@ -8292,15 +8299,22 @@ function validateFlowchartPayload(payload){
     nodeIds.add(row.work_id);
   }
   const reasonIds=new Set();
+  const reasonsByPayloadId=new Map();
   for(const row of payload.reasons){
     if(!row || typeof row!=='object' || typeof row.reason_id!=='string' || !row.reason_id || reasonIds.has(row.reason_id)) throw new Error('接続根拠の ID または形が不正です。');
     if(typeof row.source_work_id!=='string'||typeof row.target_work_id!=='string'||!nodeIds.has(row.source_work_id)||!nodeIds.has(row.target_work_id)) throw new Error('接続根拠の端点が不正です。');
     reasonIds.add(row.reason_id);
+    reasonsByPayloadId.set(row.reason_id,row);
   }
+  const edgeIds=new Set();
   for(const row of payload.edges){
-    if(!row || typeof row!=='object' || typeof row.edge_id!=='string' || !row.edge_id || typeof row.source_work_id!=='string' || typeof row.target_work_id!=='string') throw new Error('接続データの形が不正です。');
+    if(!row || typeof row!=='object' || typeof row.edge_id!=='string' || !row.edge_id || edgeIds.has(row.edge_id) || typeof row.source_work_id!=='string' || typeof row.target_work_id!=='string') throw new Error('接続データの ID または形が不正です。');
     if(!nodeIds.has(row.source_work_id)||!nodeIds.has(row.target_work_id)||!Array.isArray(row.reason_ids)||row.reason_count!==row.reason_ids.length) throw new Error('接続データの端点または根拠が不正です。');
-    if(row.reason_ids.some(id=>typeof id!=='string'||!reasonIds.has(id))) throw new Error('接続データの根拠 ID が不正です。');
+    for(const reasonId of row.reason_ids){
+      const reason=reasonsByPayloadId.get(reasonId);
+      if(typeof reasonId!=='string'||!reasonIds.has(reasonId)||!reason||reason.source_work_id!==row.source_work_id||reason.target_work_id!==row.target_work_id) throw new Error('接続データの根拠端点が不正です。');
+    }
+    edgeIds.add(row.edge_id);
   }
   const policy=payload.view_policy;
   if(!policy || typeof policy!=='object'||Array.isArray(policy)) throw new Error('表示ポリシーが不正です。');

@@ -79,6 +79,32 @@ class IndexDbExportContractTests(unittest.TestCase):
         )
         self.assertRegex(self.source, r"if\s*\(flowchartReady\)initSvgInteraction\s*\(\)")
 
+    def test_payload_rejects_duplicate_edge_ids_and_mismatched_reason_endpoints(self) -> None:
+        for marker in (
+            "const edgeIds=new Set()",
+            "edgeIds.has(row.edge_id)",
+            "const reasonsByPayloadId=new Map()",
+            "reasonsByPayloadId.set(row.reason_id,row)",
+            "reason.source_work_id!==row.source_work_id",
+            "reason.target_work_id!==row.target_work_id",
+        ):
+            self.assertIn(marker, self.source, msg=f"missing payload validation marker: {marker}")
+
+    def test_post_bootstrap_refreshes_missing_edges_and_fan_summary(self) -> None:
+        self.assertRegex(
+            self.source,
+            r"window\.marvelRefreshFlowchartPresentation=\(\)=>\{materializeMissingMasterEdges\(\)",
+        )
+        self.assertRegex(self.source, r"let\s+fanEdges=\[\]")
+        self.assertRegex(self.source, r"window\.marvelRefreshFanEdgeSummary=refreshFanEdgeSummary")
+        init = self.source.index("function initializeFlowchartData")
+        ready = self.source.index("flowchartReady=true", init)
+        refresh = self.source.index("marvelRefreshFlowchartPresentation", ready)
+        self.assertLess(ready, refresh)
+        self.assertIn("生成JSONに含まれる全接続を表示し、互換性観測値199本を含みます。", self.source)
+        self.assertNotIn("生成JSONの全361接続", self.source)
+        self.assertNotIn("全199接続", self.source)
+
 
 if __name__ == "__main__":
     unittest.main()

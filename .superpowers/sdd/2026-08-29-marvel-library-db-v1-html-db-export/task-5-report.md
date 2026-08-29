@@ -70,3 +70,27 @@ Using the local static server and the in-app browser:
 - Browser loading requires an HTTP(S) static host; opening the HTML directly as `file://` is not the supported deployment path.
 - The required fresh `git fetch origin` check was attempted but the shared worktree Git metadata returned `Permission denied` for the fetch state file. No reset, overwrite, rebase, or remote mutation was performed; the starting HEAD remained `53e259d430df0f7556cb359af8f710d331a7be8d`.
 - This report records local verification only; remote CI, review, merge, and publication remain outside this task.
+
+## Review fix round
+
+The review fixes are included in the follow-up commit:
+
+`fix: validate and refresh flowchart bootstrap`
+
+- After JSON initialization marks the flowchart ready, the existing presentation refresh hook now re-runs `materializeMissingMasterEdges()`, then reapplies edge importance/tooltips and refreshes the fan-edge summary.
+- Payload validation now rejects duplicate `edge_id` values and rejects any edge whose referenced reason has source/target work IDs different from the enclosing edge.
+- The fan-edge marker is derived again from the loaded `EDGES`, so a pre-bootstrap empty/static count cannot remain stale after load.
+- The UI now describes the default view as all connections in the generated JSON and labels the 199-edge value as a compatibility observation. The meta description, stat chip, and snapshot comment no longer present 199 as the current default edge count; historical README observations remain unchanged.
+
+### Fix-round verification
+
+```powershell
+$MarvelPython = 'C:\Users\ataka\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
+& $MarvelPython -m unittest tests.library_v5.test_index_db_export_contract -v
+```
+
+Result: `Ran 6 tests in 0.059s — OK`, including duplicate-edge-ID, reason-endpoint-mismatch, post-bootstrap refresh, and dynamic fan-marker regressions.
+
+A bounded static HTTP smoke served the worktree and returned `200` for both `index.html` and `data/derived/flowchart.json`; the JSON response reported schema `1`, `131` nodes, `361` edges, `569` reasons, and `42` characters. The temporary server was stopped immediately. The in-app browser smoke was attempted with a bounded timeout but was unavailable in this run, so no browser-render claim is made for this fix round.
+
+The generated build/audit artifacts and Python caches were left out of the commit; canonical library and review-ledger inputs were not changed.
