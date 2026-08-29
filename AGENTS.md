@@ -6,8 +6,8 @@ This file defines persistent working rules for Codex and other coding agents ope
 
 - Repository: `kamochama/marvel-flowchart-jp`.
 - Production branch: `main`.
-- Latest semantic production baseline (PR #22; subsequent docs-only PRs do not change code/data): `19134e187d40e808f926fd32607b0a2deebac8f1`.
-- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), and PR #22 (X-Men '97 release/status evidence promotion batch005) are merged into `main`.
+- Latest semantic production baseline (PR #26; subsequent docs-only PRs do not change code/data): `230d49e21383121fe1ac6cead117ee12bbb5ef48`.
+- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), and PR #22 (X-Men '97 release/status evidence promotion batch005) and PR #26 (VisionQuest production-status evidence promotion batch006) are merged into `main`.
 - There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
 - During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
 - `main` is **not permanently frozen**. It is the intended final integration target after the current work is complete, fully audited, and the user explicitly approves the final merge.
@@ -114,21 +114,21 @@ Examples already established:
 
 ## Current compatibility invariants
 
-The latest semantic production baseline after PR #22 is:
+The latest semantic production baseline after PR #26 is:
 
-- `main` `19134e187d40e808f926fd32607b0a2deebac8f1`
-- GitHub Actions run #272: GREEN
-- GitHub Pages deployment run #46: GREEN
-- 265 / 265 library-v5 unit tests PASS
+- `main` `230d49e21383121fe1ac6cead117ee12bbb5ef48`
+- GitHub Actions run #273: GREEN
+- GitHub Pages deployment: triggered by the merge (the preceding confirmed deployment run #49 was GREEN)
+- 250 / 250 library-v5 unit tests PASS
 - audit issues: 0
 - review integrity issues: 0
 - FK check rows: 0
 - SQLite integrity: `ok`
 - releases: 138 rows (6 `source_verified`, 132 `legacy_seed`)
-- production-status assertions: 131 rows (2 `source_verified`, 129 `legacy_seed`)
+- production-status assertions: 131 rows (3 `source_verified`, 128 `legacy_seed`)
 - sources: 44
-- evidence: 111
-- reviews: 86
+- evidence: 112
+- reviews: 87
 - `work_edges_all`: 361
 - `work_pair_reasons`: 569
 - prewatch edges: 199
@@ -178,7 +178,7 @@ If local environment/network behavior is unreliable, use CI as the final executi
 
 The approved DB-v1 architecture ultimately intends to:
 
-- complete remaining normalized semantic domains such as credits, aliases, memberships, and possessions; releases and production-status assertions are present, with evidence-backed promotion still ongoing;
+- complete remaining normalized semantic domains such as credits, aliases, memberships, and possessions; releases and production-status assertions are present; batch006 verified the VisionQuest status and remaining seed rows require their own bounded audits;
 - continue evidence-backed multiverse decomposition;
 - switch `index.html` to DB-derived node/edge JSON rather than independent Marvel fact arrays;
 - preserve static GitHub Pages deployment;

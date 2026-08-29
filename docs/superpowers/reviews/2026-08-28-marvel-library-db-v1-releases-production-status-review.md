@@ -53,7 +53,7 @@ production_status_assertion_id,work_id,status,asserted_at,certainty,verification
 
 ## Follow-up after this historical boundary
 
-Evidence-promotion batches are intentionally separate from this seed migration. PR #22 (batch005, 2026-08-30) added qualifying evidence and review transitions for exactly two existing facts: X-Men '97 Season 2's primary streaming release and its released-status snapshot. The Japanese row remains unverified with a blank date. The post-batch production counts are 6 source-verified releases of 138 and 2 source-verified statuses of 131; remaining seeds require their own bounded audit and must not be inferred into graph connectivity.
+Evidence-promotion batches are intentionally separate from this seed migration. PR #22 (batch005, 2026-08-30) added qualifying evidence and review transitions for exactly two existing facts: X-Men '97 Season 2's primary streaming release and its released-status snapshot. The Japanese row remains unverified with a blank date. The post-batch005 counts were 6 source-verified releases of 138 and 2 source-verified statuses of 131; batch006 adds one source-verified VisionQuest status (3 of 131), and remaining seeds require their own bounded audit without graph inference.
 
 ## Full verification evidence
 
