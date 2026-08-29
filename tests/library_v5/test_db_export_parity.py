@@ -133,6 +133,33 @@ class DbWorkConnectionParityTests(unittest.TestCase):
             self.assertEqual(edge_count, reason_pairs)
             connection.close()
 
+    def test_flowchart_edge_candidates_have_one_row_per_work_pair(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = Path(tmp) / "marvel.sqlite"
+            compile_database(ROOT, db_path)
+            connection = open_query_connection(db_path)
+            duplicates = connection.execute(
+                """
+                SELECT source_work_id,target_work_id,count(*)
+                FROM v_flowchart_edge_candidates
+                GROUP BY source_work_id,target_work_id
+                HAVING count(*) > 1
+                """
+            ).fetchall()
+            candidate_count = connection.execute(
+                "SELECT count(*) FROM v_flowchart_edge_candidates"
+            ).fetchone()[0]
+            candidate_pairs = connection.execute(
+                """
+                SELECT count(DISTINCT source_work_id || char(0) || target_work_id)
+                FROM v_flowchart_edge_candidates
+                """
+            ).fetchone()[0]
+            connection.close()
+
+        self.assertEqual(duplicates, [])
+        self.assertEqual(candidate_count, candidate_pairs)
+
     def test_db_export_preserves_legacy_projection_and_pair_compatibility(self) -> None:
         oracle_reasons = _old_reason_rows()
         oracle_edges = collapse_reasons_to_edges(oracle_reasons)
@@ -189,6 +216,7 @@ class DbWorkConnectionParityTests(unittest.TestCase):
                     "_v_entity_work_pairs",
                     "v_work_connection_reasons",
                     "v_work_connections_all",
+                    "v_flowchart_nodes",
                     "v_flowchart_edge_candidates",
                 )
                 graph_view_sql = {
