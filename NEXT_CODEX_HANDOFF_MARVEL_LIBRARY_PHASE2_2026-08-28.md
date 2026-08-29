@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- current HEAD: `19134e187d40e808f926fd32607b0a2deebac8f1`
+- latest semantic baseline commit: `19134e187d40e808f926fd32607b0a2deebac8f1` (main may include later documentation-only commits)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -53,7 +53,7 @@ If the working tree is not clean or remote HEAD differs unexpectedly, reconcile 
 
 ## 0.1 Production baseline after the 2026-08-30 integration
 
-The current production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`. PR #21 fixed the mobile touch-target/undo contract, and PR #22 completed release/status evidence promotion batch005 for X-Men '97 Season 2.
+The latest semantic production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`; later documentation-only commits do not alter this code/data baseline. PR #21 fixed the mobile touch-target/undo contract, and PR #22 completed release/status evidence promotion batch005 for X-Men '97 Season 2.
 
 Fresh verification for the batch005-integrated baseline:
 
