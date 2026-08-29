@@ -6,6 +6,8 @@
 
 対象ブランチ: `library-v5-phase2-db6`
 
+> **Historical review notice (updated 2026-08-30):** This review is the Task 8 snapshot from 2026-08-28. Its `main`/PR #10 statements and counts are historical. The current production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`; later PR #11, #12, #13, #21, and #22 integrations are recorded in `NEXT_CODEX_HANDOFF_MARVEL_LIBRARY_PHASE2_2026-08-28.md` and the roadmap.
+
 実装前の基準 HEAD: `abe9bdbb29cd3a55869a153a8e2713091a09b5be`
 
 `main` / `origin/main`: `3af097b72c174077c83d7091f79222a72fc7134f`（不変）
