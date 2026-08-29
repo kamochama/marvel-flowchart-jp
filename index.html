@@ -161,7 +161,7 @@ g.edge.fan-verified.fan-hidden{display:none}
 .path-key i{display:inline-block;width:16px;height:3px;border-radius:3px;background:#c4b5fd;vertical-align:middle;margin:0 3px}
 .target-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.target-row select{min-width:0;flex:1 1 230px;background:#0f172a;color:#e5e7eb;border:1px solid #334155;border-radius:6px;padding:7px}.target-row button{white-space:nowrap}
 .target-status{margin-top:7px;font-size:12px;color:#cbd5e1}.target-status.locked{color:#fbbf24}.target-help{font-size:11px;color:#94a3b8;margin-top:5px;line-height:1.45}
-.edge-tooltip-note{font-size:11px;color:#94a3b8;margin-top:5px}.selection-mode-note.path-note{color:#ddd6fe}
+.edge-tooltip-note{font-size:11px;color:#94a3b8;margin-top:5px}.edge-reason-explain{margin-top:10px;padding:8px;border:1px solid var(--line);border-radius:8px;background:rgba(15,23,42,.7);font-size:12px}.edge-reason-explain:empty{display:none}.edge-reason-explain summary{cursor:pointer;color:#c4b5fd}.edge-reason-explain ul{margin:6px 0 0;padding-left:18px}.edge-reason-explain li{margin:3px 0}.selection-mode-note.path-note{color:#ddd6fe}
 
 /* v5.9.1: readable PATH explanation and reliable edge hover */
 .svg-wrap svg g.edge,.svg-wrap svg g.edge path,.svg-wrap svg g.edge polygon{pointer-events:visiblePainted}
@@ -4244,7 +4244,7 @@ body.public-watch-view main{display:none!important}body.public-watch-view #watch
 <div id="release" class="panel" data-lazy-view="release" data-lazy-initialized="0"><div class="stage-a-placeholder"><span class="stage-a-kicker">STAGE B</span><h2>公開順</h2><p>②を開くと131作品の公開順ビューを初回だけ生成します。</p><p class="muted">日付の確認精度を保持し、推測日では並べ替えません。</p></div></div>
 <div id="chronology" class="panel" data-lazy-view="chronology" data-lazy-initialized="0"><div class="stage-a-placeholder"><span class="stage-a-kicker">STAGE C</span><h2>世界線・時系列</h2><p>continuityごとのスイムレーンを、MCU / Raimi / Amazing / SSU / FOX X-MENから監査して追加します。</p><p class="muted">Stage Cで実装予定。Earth番号や絶対年代を推測で固定しません。</p></div></div>
 </section>
-<aside id="right"><button id="desktopSideToggle" class="desktop-side-toggle" type="button" aria-expanded="true" title="詳細パネルを折り畳む">詳細を隠す</button><div class="mobile-sheet-head"><div><b>作品・接続の詳細</b><div class="mobile-sheet-sub">現在のゴールと接続根拠</div></div><button aria-label="詳細を閉じる" id="mobileDetailsClose" type="button">閉じる</button></div><div aria-label="右パネル表示" class="side-tabs" role="tablist"><button aria-selected="true" class="side-tab-btn active" data-side-tab="works" role="tab" type="button">作品</button><button aria-selected="false" class="side-tab-btn" data-side-tab="links" role="tab" type="button">接続</button></div><div class="side-tab-panel side-tab-works active"><div class="card"><h3>作品一覧</h3><div class="muted" id="count"></div><div class="node-list" id="list"></div></div><div class="card"><h3>現在のゴール</h3><div class="muted" id="detail">作品を選ぶと前後の接続を表示します。</div></div></div><div class="side-tab-panel side-tab-links"><div class="card path-explain" id="pathExplainCard"><h3>🧭 ゴールを結ぶ経路</h3><div class="muted" id="pathExplain">PATHモードで2作品以上をゴールにすると、採用した有向経路を表示します。</div></div><div class="card"><h3>直接つながる作品</h3><div class="edge-tooltip-note">図の矢印にカーソルを置くと、接続種別・重要度・根拠を確認できます。</div><div id="edgewrap"><table><thead><tr><th>元</th><th>先</th><th>接続</th><th>強さ</th></tr></thead><tbody id="et"></tbody></table></div></div></div></aside></main>
+<aside id="right"><button id="desktopSideToggle" class="desktop-side-toggle" type="button" aria-expanded="true" title="詳細パネルを折り畳む">詳細を隠す</button><div class="mobile-sheet-head"><div><b>作品・接続の詳細</b><div class="mobile-sheet-sub">現在のゴールと接続根拠</div></div><button aria-label="詳細を閉じる" id="mobileDetailsClose" type="button">閉じる</button></div><div aria-label="右パネル表示" class="side-tabs" role="tablist"><button aria-selected="true" class="side-tab-btn active" data-side-tab="works" role="tab" type="button">作品</button><button aria-selected="false" class="side-tab-btn" data-side-tab="links" role="tab" type="button">接続</button></div><div class="side-tab-panel side-tab-works active"><div class="card"><h3>作品一覧</h3><div class="muted" id="count"></div><div class="node-list" id="list"></div></div><div class="card"><h3>現在のゴール</h3><div class="muted" id="detail">作品を選ぶと前後の接続を表示します。</div></div></div><div class="side-tab-panel side-tab-links"><div class="card path-explain" id="pathExplainCard"><h3>🧭 ゴールを結ぶ経路</h3><div class="muted" id="pathExplain">PATHモードで2作品以上をゴールにすると、採用した有向経路を表示します。</div></div><div class="card"><h3>直接つながる作品</h3><div class="edge-tooltip-note">図の矢印にカーソルを置くと、接続種別・重要度・根拠を確認できます。</div><div id="edgewrap"><table><thead><tr><th>元</th><th>先</th><th>接続</th><th>強さ</th></tr></thead><tbody id="et"></tbody></table></div><div id="edgeReasonExplain" class="edge-reason-explain" aria-live="polite"></div></div></div></aside></main>
 <section id="watchWorkspace" class="watch-workspace" aria-label="予習・視聴プラン"><div class="watch-workspace-head"><div><span class="eyebrow">WATCH PLAN</span><h2>予習・視聴プラン</h2><p>見たい作品を決めて、予習ルート・視聴済み・残り時間を広い画面でまとめて管理できます。</p></div><button id="watchBackToChart" class="watch-back-btn" type="button">↑ チャートへ戻る</button></div><div class="watch-workspace-grid"><div class="card overall-watch-card watch-card-progress"><div id="overallWatchProgress" class="overall-watch-progress" aria-live="polite"></div></div><div class="card watch-card-target" data-ui-role="empty-goal-hint"><span class="watch-target-icon">🎯</span><div><strong>見たい作品をチャートで選ぶ</strong><div class="muted">スマホはチャートの作品をタップするとゴールとして接続を表示します。PCは右クリックでもゴールを追加できます。</div></div></div><div class="card watch-card-plan"><h3>予習プラン</h3><div class="watch-share-tools"><button id="sharePlanImage" type="button">📷 画像で共有</button><button id="sharedRoomOpen" type="button">👥 一緒に見る</button></div><div id="sharedRoomBar" class="shared-room-bar" aria-live="polite"></div><div class="watch-tier-row"><label for="watchConnectionTier">つながり</label><select id="watchConnectionTier" class="connection-tier-select watch-tier-select" aria-label="予習プランとチャートのつながり"><option value="minimum">最低限</option><option value="recommended" selected>おすすめ</option><option value="complete">完全版</option></select></div><div class="muted" id="prepplan">見たい作品を選ぶと、予習した方がよい作品をおすすめ順に並べます。</div></div><details class="card watch-card-flow"><summary><span>見る順ナビ</span><small>前史・次に見る候補</small></summary><div class="muted" id="flow">作品を選ぶと、「前に見る候補」「次に見る候補」を表示します。</div></details></div></section>
 <dialog id="sharedRoomDialog"><div class="shared-room-dialog-body"><h3 id="sharedRoomDialogTitle">一緒に見る</h3><p id="sharedRoomDialogText">表示名だけで参加できます。メールアドレスやアカウント登録は不要です。</p><input id="sharedRoomName" maxlength="24" autocomplete="nickname" placeholder="表示名（例：たろう）"><div id="sharedRoomError" class="shared-room-error"></div><div class="shared-room-dialog-actions"><button id="sharedRoomCancel" type="button">キャンセル</button><button id="sharedRoomSubmit" type="button">ルームを作る</button></div></div></dialog>
 <details aria-label="相関図について" class="below-chart-info"><summary class="below-info-summary"><span>この相関図について</span><small>公開日・キャラクター索引・接続ルール</small></summary><div class="below-info-grid"><div class="card info-card"><h3>日本向け今後の注目日</h3>
@@ -5642,19 +5642,29 @@ if(flowchartReady)render();
   };
 
   function edgeKey(e){ return `${e.source}->${e.target}`; }
-  function edgeKeyFromSvgGroup(g){
-    if(!g) return '';
-    if(g.dataset?.edgeKey) return g.dataset.edgeKey;
-    const raw=(g.querySelector(':scope > title')?.textContent||'').replace(/\s+/g,'').trim();
-    if(raw.includes('->')){
-      const [a,b]=raw.split('->');
-      if(a&&b && EDGES.some(e=>e.source===a&&e.target===b)){
-        g.dataset.edgeKey=`${a}->${b}`;
-        return g.dataset.edgeKey;
-      }
+  function edgeRecordFromSvgGroup(g){
+    if(!g) return null;
+    const key=g.dataset?.edgeKey||'';
+    if(key){
+      const byId=EDGES.find(e=>e.edge_id===key);
+      if(byId) return byId;
+      const byPair=EDGES.find(e=>edgeKey(e)===key);
+      if(byPair) return byPair;
     }
-    return '';
+    const raw=(g.querySelector(':scope > title')?.textContent||'').replace(/\s+/g,'').trim();
+    if(!raw.includes('->')) return null;
+    const [a,b]=raw.split('->');
+    return a&&b ? (EDGES.find(e=>e.source===a&&e.target===b)||null) : null;
   }
+  function edgeKeyFromSvgGroup(g){
+    const edge=edgeRecordFromSvgGroup(g);
+    if(edge){
+      g.dataset.edgeKey=edge.edge_id;
+      return edgeKey(edge);
+    }
+    return g?.dataset?.edgeKey||'';
+  }
+  function edgeIdFromSvgGroup(g){ return edgeRecordFromSvgGroup(g)?.edge_id||''; }
   window.marvelEdgeKeyFromGroup=edgeKeyFromSvgGroup;
   document.querySelectorAll('.svg-wrap svg g.edge:not(.dynamic-edge-overlay)').forEach(edgeKeyFromSvgGroup);
 
@@ -5705,6 +5715,36 @@ if(flowchartReady)render();
       if(!importanceAllowed(fake)) g.classList.add('importance-hidden');
     });
   }
+
+  // The exported policy controls only the initial tier; later tier buttons keep
+  // their existing importance-hidden behavior so users can narrow the view.
+  function applyFlowchartPolicy(policy){
+    if(!policy || policy.default_edge_visibility!=='all') return false;
+    const defaultTier={core:'minimum',recommended:'recommended',reference:'complete'}[policy.default_importance_mode];
+    if(policy.default_importance_mode==='reference' && defaultTier!=='complete') return false;
+    if(defaultTier && typeof window.marvelSetConnectionTier==='function'){
+      window.marvelSetConnectionTier(defaultTier);
+      return true;
+    }
+    return false;
+  }
+  window.marvelApplyFlowchartPolicy=applyFlowchartPolicy;
+
+  function renderReasonExplanation(edges){
+    const box=document.getElementById('edgeReasonExplain');
+    if(!box) return;
+    const unique=[...new Map((edges||[]).filter(Boolean).map(edge=>[edge.edge_id||edgeKey(edge),edge])).values()];
+    const blocks=[];
+    for(const edge of unique){
+      const edgeId=edge.edge_id||edgeKey(edge);
+      const reason_ids=edge.reason_ids||[];
+      const reasons=reason_ids.map(id=>reasonsById[id]).filter(Boolean);
+      if(!reasons.length) continue;
+      blocks.push(`<details class="edge-reason" data-edge-id="${esc(edgeId)}" open><summary>${esc(nm[edge.source]?.title||edge.source)} → ${esc(nm[edge.target]?.title||edge.target)}</summary><ul>${reasons.map(reason=>`<li data-reason-id="${esc(reason.reason_id||'')}"><code>${esc(reason.reason_id||'')}</code> ${esc(reason.notes||reason.reason_kind||reason.type||'接続根拠')}</li>`).join('')}</ul></details>`);
+    }
+    box.innerHTML=blocks.length?`<b>接続根拠</b>${blocks.join('')}`:'';
+  }
+  window.marvelRenderReasonExplanation=renderReasonExplanation;
 
   // v5.7.7: compute two independent directed closures from the selected work.
   // Backward traversal only follows incoming arrows; forward traversal only
@@ -5917,8 +5957,9 @@ if(flowchartReady)render();
     const c1x=pts.start.x+dx*.34, c1y=pts.start.y+dy*.34-bend;
     const c2x=pts.start.x+dx*.68, c2y=pts.start.y+dy*.68-bend;
     const g=document.createElementNS(NS,'g'); g.classList.add('edge','master-edge-overlay');
-    g.dataset.edgeKey=`${edge.source}->${edge.target}`;
-    const title=document.createElementNS(NS,'title'); title.textContent=`${nm[edge.source]?.title||edge.source} → ${nm[edge.target]?.title||edge.target}：${edge.reason||''}`; g.appendChild(title);
+    g.dataset.edgeKey=edge.edge_id; g.setAttribute('data-master-edge-materialized','1');
+    const reasonIds=(edge.reason_ids||[]).join(', ');
+    const title=document.createElementNS(NS,'title'); title.textContent=`${nm[edge.source]?.title||edge.source} → ${nm[edge.target]?.title||edge.target}：${edge.reason||''}${reasonIds?`（根拠ID: ${reasonIds}）`:''}`; g.appendChild(title);
     const path=document.createElementNS(NS,'path'); path.setAttribute('d',`M ${pts.start.x} ${pts.start.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${pts.end.x} ${pts.end.y}`); g.appendChild(path);
     const len=Math.hypot(dx,dy)||1, ux=dx/len, uy=dy/len, px=-uy, py=ux, back=7.5, half=3.8;
     const bx=pts.end.x-ux*back, by=pts.end.y-uy*back;
@@ -5927,14 +5968,23 @@ if(flowchartReady)render();
     if(firstNode) parent.insertBefore(g,firstNode); else parent.appendChild(g);
   }
   function materializeMissingMasterEdges(){
-    document.querySelectorAll('.panel .svg-wrap svg').forEach(svg=>{
-      if(svg.closest('.panel')?.dataset.selectionScope==='independent') return;
-      const nodeMap=svgNodeMap(svg), visible=new Set(nodeMap.keys()), present=svgStaticEdgeKeys(svg);
-      for(const edge of EDGES){
-        const k=`${edge.source}->${edge.target}`;
-        if(visible.has(edge.source)&&visible.has(edge.target)&&!present.has(k)){ drawMasterOverlayEdge(svg,nodeMap,edge); present.add(k); }
-      }
+    if(!flowchartReady || !EDGES.length) return 0;
+    const svg=document.querySelector('#overview .svg-wrap svg');
+    if(!svg || svg.dataset.masterEdgeMaterialized==='1') return Number(svg?.dataset.masterEdgeCount||0);
+    const nodeMap=svgNodeMap(svg), visible=new Set(nodeMap.keys()), present=new Set();
+    svg.querySelectorAll('g.edge:not(.dynamic-edge-overlay)').forEach(g=>{
+      const edge=edgeRecordFromSvgGroup(g);
+      if(edge){ g.dataset.edgeKey=edge.edge_id; present.add(edge.edge_id); }
     });
+    for(const edge of EDGES){
+      if(visible.has(edge.source)&&visible.has(edge.target)&&!present.has(edge.edge_id)){
+        drawMasterOverlayEdge(svg,nodeMap,edge); present.add(edge.edge_id);
+      }
+    }
+    svg.dataset.masterEdgeMaterialized='1';
+    svg.dataset.masterEdgeCount=String(present.size);
+    svg.setAttribute('data-master-edge-materialized','1');
+    return present.size;
   }
 
   function compressedBridges(edgeSet,visible){
@@ -5987,7 +6037,6 @@ if(flowchartReady)render();
   // Unlike the old behavior, allow context to remain lit on a tab even if the
   // selected work itself is absent, as long as matching context nodes exist.
   function renderSelectionState(svg,state){
-    svg.querySelectorAll('.dynamic-edge-overlay').forEach(x=>x.remove());
     svg.querySelectorAll('.hl,.focus,.backhl,.forwardhl,.bothhl,.contexthl,.pathhl,.goal-node,.current-goal').forEach(x=>x.classList.remove('hl','focus','backhl','forwardhl','bothhl','contexthl','pathhl','goal-node','current-goal'));
     // Reference/curated charts (e.g. tab ⑥) are intentionally independent of
     // work selection made in the main graph. They must stay fully readable.
@@ -6020,7 +6069,6 @@ if(flowchartReady)render();
       if(state.forwardEdges.has(k)) g.classList.add('hl','forwardhl');
       if(state.contextEdges.has(k)) g.classList.add('hl','contexthl');
     }
-    addMissingDirectedEdges(svg,state);
   }
   window.renderSelectionState=renderSelectionState;
   window.marvelDirectedPartAll=directedPartAll;
@@ -6486,6 +6534,8 @@ if(flowchartReady)render();
     updatePathExplanation();
     // updatePreparationPlan() already reapplies watched dimming; avoid doing the same DOM pass twice.
     renderGoalBar();
+    const reasonKeys=new Set([...(selectionStateCache?.backEdges||[]),...(selectionStateCache?.forwardEdges||[]),...(selectionStateCache?.contextEdges||[]),...(selectionStateCache?.pathEdges||[])]);
+    if(typeof window.marvelRenderReasonExplanation==='function')window.marvelRenderReasonExplanation(EDGES.filter(edge=>reasonKeys.has(edgeKey(edge))));
     window.__marvelLastSelectionState=selectionStateCache;
   };
 
@@ -8158,6 +8208,7 @@ window.FEATURED_ROUTE=Object.freeze({
       if(part.forwardEdges?.has(k))g.classList.add('hl','forwardhl');
       if(part.contextEdges?.has(k))g.classList.add('hl','contexthl');
     }
+    if(typeof window.marvelRenderReasonExplanation==='function')window.marvelRenderReasonExplanation([...(inc[id]||[]),...(out[id]||[])]);
     if(typeof window.marvelRenderFocusedDetail==='function')window.marvelRenderFocusedDetail(id);
     else if(detail){
       const goals=activeGoalIds().length?`<div class="muted">ゴール${activeGoalIds().length}件は保持中</div>`:'';
@@ -8378,8 +8429,7 @@ function initializeFlowchartData(payload){
   bf.value=[...bf.options].some(option=>option.value===previousBranch)?previousBranch:'';
   cf.value=[...cf.options].some(option=>option.value===previousCharacter)?previousCharacter:'';
   flowchartReady=true;
-  const defaultTier={core:'minimum',recommended:'recommended',reference:'complete'}[policy.default_importance_mode];
-  if(defaultTier&&typeof window.marvelSetConnectionTier==='function')window.marvelSetConnectionTier(defaultTier);
+  if(typeof window.marvelApplyFlowchartPolicy==='function')window.marvelApplyFlowchartPolicy(policy);
   setFlowchartStatus(`データを読み込みました（${NODES.length}作品）。`,'ready');
   if(typeof initSvgInteraction==='function')initSvgInteraction();
   if(typeof window.marvelRefreshFlowchartPresentation==='function')window.marvelRefreshFlowchartPresentation();
