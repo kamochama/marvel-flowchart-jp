@@ -8,25 +8,21 @@ Repository:
 
 - `kamochama/marvel-flowchart-jp`
 
-Forward branch:
+Current production branch:
 
-- `library-v5-phase2-db6`
+- `main`
+- current HEAD: `8234cfa04edf5fb6dd851d335107d606b9011731`
 
-Draft PR:
+The previous forward line and its follow-up PRs are now integrated:
 
-- PR #10: `WIP: Marvel Library DB v1 Phase 2 events & multiverse`
-- base: `main`
-- head: `library-v5-phase2-db6`
-- draft: true
-- merged: false
+- PR #10 Events & Multiverse: merged as `2410ea482d9fe6c9063a23b80b9b766e2bb9daac`
+- PR #11 releases/status normalization: merged as `d5c878d5763b2bd91940c31052db6e35a3e69d0a`
+- PR #12 HTML DB export: merged as `00a7e703616821eec0e4b081cfc656d7fd0ec167`
+- PR #13 Pages artifact fix: merged as `8234cfa04edf5fb6dd851d335107d606b9011731`
 
-Production `main` checkpoint:
+There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
-- `3af097b72c174077c83d7091f79222a72fc7134f`
-
-**Do not merge PR #10 or change/publish `main` without explicit user approval.**
-
-At handoff preparation time, the last implementation checkpoint was:
+The last pre-integration implementation checkpoint was:
 
 - `ad9796b3a1833d49e044a4eef220ca9d49c3553d`
 - message: `audit: record Earth-838 transition reviews`
@@ -38,7 +34,7 @@ Then documentation-only Codex setup began:
 - message: `docs: add Codex project instructions`
 - adds `AGENTS.md`
 
-This handoff itself is a later documentation-only commit, so **always fetch the fresh remote HEAD before doing anything**. Do not reset the branch back to the implementation checkpoint merely because the SHA in this file is older than fresh HEAD.
+This handoff is historical context, not a checkout target. **Always check the fresh remote HEAD before doing anything** and reconcile documentation if it is stale; never reset code back to an older checkpoint.
 
 Suggested local startup:
 
@@ -46,12 +42,22 @@ Suggested local startup:
 git status
 git branch --show-current
 git fetch origin
-git checkout library-v5-phase2-db6
-git pull --ff-only origin library-v5-phase2-db6
+git checkout main
+git pull --ff-only origin main
 git log -5 --oneline
 ```
 
 If the working tree is not clean or remote HEAD differs unexpectedly, reconcile first; do not discard user/local changes blindly.
+
+## 0.1 Production baseline after the 2026-08-29 integration
+
+The static viewer now consumes the committed DB-derived artifact `data/derived/flowchart.json`; the browser does not open SQLite. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups, with all eligible edges visible by default and selection limited to presentation styling.
+
+The post-merge Pages deployment (run #37) succeeded, and the public page was smoke-tested at `https://kamochama.github.io/marvel-flowchart-jp/`: the status reached `データを読み込みました（131作品）。` with no browser console errors. The Pages 404 found immediately after PR #12 was fixed by PR #13, which versions the generated artifact and adds a regression test.
+
+The current local verification baseline for the integrated HTML export is 232 library-v5 tests passing and an ordinary bundled-Python build with audit issue count 0. These counts are observations, not frozen correctness targets.
+
+The next semantic work is not implicitly authorized by the completed export. Candidate boundaries are an evidence-backed promotion audit for a small subset of the 269 `legacy_seed` release/status facts, or a separately planned normalized domain (`credits`, `entity_aliases`, `entity_memberships`, or `entity_possessions`). Do not change canonical data until one bounded plan and its RED contract are selected.
 
 ## 1. Required context
 
@@ -97,7 +103,7 @@ Important implementation files include:
 
 `db_transition_support.py` contains the newer verified-traveler anchor rule used to prevent transition-reason fan-out.
 
-## 3. Current verified baseline
+## 3. Historical Events & Multiverse verified baseline
 
 Implementation checkpoint `ad9796b3...`, Actions run #251:
 
@@ -445,10 +451,10 @@ The normalized `releases` / `production_status_assertions` work is a separately 
 - plan: `docs/superpowers/plans/2026-08-28-marvel-library-db-v1-releases-production-status.md`;
 - review: `docs/superpowers/reviews/2026-08-28-marvel-library-db-v1-releases-production-status-review.md`.
 
-It is not a continuation of the already completed Events & Multiverse Task 7/8 audit, and it does not start the later HTML DB-export milestone.
+It was not a continuation of the already completed Events & Multiverse Task 7/8 audit. The subproject was subsequently merged as PR #11; it also does not imply evidence-backed promotion of the seed rows.
 
 Task 6 was finally verified on `codex/db-v1-releases-status` at HEAD `dd56f321eb58569be1b6f386f4421cd2f10235bf` (`test: normalize graph fixture newlines for compatibility`), against fresh `origin/main=2410ea482d9fe6c9063a23b80b9b766e2bb9daac` (the merge base is the same). The exact bundled-Python full suite ran `195` tests with exit code `0`; the ordinary build exited `0` with `audit_issue_count=0`, content-audit/review-integrity issues `0`, SQLite foreign-key rows `0`, and `integrity_check=ok`. The final test-only fix normalizes CRLF/LF graph fixture bytes before comparison and adds one cross-platform regression test; it does not change production implementation, canonical data, or graph policy.
 
 The normalized migration contains `131` primary release rows, `7` separate Japanese-date release rows, and `131` production-status snapshot rows for `131` works. All `269` release/status facts remain `legacy_seed`; no evidence or review rows were added. Evidence-backed promotion is a later separately approved audit batch. The DB schema version is `1.2-normalized-releases-status`, the logical fingerprint is `80f345416dd37ea81dcc9a89b128020132440a9538506820764382d6b20c6825`, and legacy graph compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, story paths `83/83`.
 
-The release/status public views join only to `works` and do not feed graph derivation. `index.html`, the existing graph policy, and production `main` remain unchanged. The next boundary is (a) a separately planned evidence-promotion audit for these legacy seeds and (b) later normalized domains/HTML DB-export work under their own approval; do not begin either automatically. The branch is at the PR review/authorization gate: do not merge or publish without explicit user approval.
+The release/status public views join only to `works` and do not feed graph derivation. The HTML DB-export milestone was later completed and merged as PR #12, with the committed `data/derived/flowchart.json` artifact repaired by PR #13 after the first public Pages check found a 404. The next boundary is (a) a separately planned evidence-promotion audit for a small subset of these legacy seeds or (b) one later normalized domain (`credits`, `entity_aliases`, `entity_memberships`, or `entity_possessions`); do not begin either without selecting a bounded plan and RED contract.

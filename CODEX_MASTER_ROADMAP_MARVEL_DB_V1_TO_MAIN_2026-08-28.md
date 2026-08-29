@@ -9,6 +9,8 @@ This file is the long-range execution roadmap for Codex and other coding agents.
 
 If this roadmap conflicts with a newer explicit user instruction, the newer user instruction wins. If a SHA becomes stale, reconcile against fresh remote HEAD; never reset implementation to an older documentation checkpoint.
 
+> **Current production note (2026-08-29):** The historical PR #10/PR #11 gate described below has completed. PR #10 (Events & Multiverse), PR #11 (releases/status normalization), PR #12 (HTML DB export), and PR #13 (Pages artifact fix) are merged into `main`; the current production HEAD is `8234cfa04edf5fb6dd851d335107d606b9011731`. The post-merge baseline and the next separately bounded work are recorded in §13.
+
 ---
 
 ## 1. End goal
@@ -84,6 +86,8 @@ Draft integration PR:
 - intentionally draft while development continues.
 
 Historical PR #9 / `library-v5-canonical-freeze` was already reconciled into this forward history. Do not merge it again.
+
+The branch and PR #10 labels in this section describe the pre-integration gate and are retained for historical traceability; all four current implementation PRs are closed and merged as summarized in §13.
 
 ### Main policy
 
@@ -253,6 +257,8 @@ The full-PR audit also found that the review-patch workflow still targeted the f
 
 Leave PR #10 draft/open or otherwise in the user-requested state and stop. Do not substitute your own release decision.
 
+This conditional describes the historical gate. It has been superseded by the completed production integration recorded in §13.
+
 ---
 
 ## 8. Broader DB-v1 roadmap after current PR
@@ -315,7 +321,7 @@ Performance requirement:
 - one-finger chart movement and whole-chart zoom behavior must not regress;
 - avoid payload/runtime changes that make the previously optimized mobile chart sluggish.
 
-This HTML migration is **not part of the current Events & Multiverse PR unless separately approved**.
+This HTML migration was later separately approved and completed through `docs/superpowers/plans/2026-08-29-marvel-library-db-v1-html-db-export.md`, then merged as PR #12 with the Pages artifact repair in PR #13. Any further viewer/data-source changes require their own bounded plan.
 
 ### 8.4 Broader 131-work content audit
 
@@ -426,4 +432,12 @@ Fresh verification was run on branch `codex/db-v1-releases-status` at final HEAD
 
 The normalized migration observes `131` works, `138` releases (`131` primary + `7` JP), and `131` production-status assertions. All `269` new release/status facts remain `legacy_seed`; no evidence-backed promotion is claimed. The DB schema is `1.2-normalized-releases-status` with logical fingerprint `80f345416dd37ea81dcc9a89b128020132440a9538506820764382d6b20c6825`. The legacy compatibility outputs remain unchanged: `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, and `83/83` story paths reproduced. Strict CSV shape scan covered `46` files with `0` malformed rows, and protected canonical/review inputs were unchanged.
 
-This boundary does not modify `index.html`, the existing graph policy, or the semantic status of the completed Events & Multiverse plan. Evidence-backed promotion of the seed rows, remaining normalized domains (credits, aliases, memberships, possessions), broader multiverse work, and the HTML DB-export milestone each remain separately approved future work. The branch is review-ready for the primary agent's full-PR/fresh-CI audit, but merge and production publication still require explicit user authorization.
+This boundary did not modify `index.html`, the existing graph policy, or the semantic status of the completed Events & Multiverse plan. It was merged as PR #11; evidence-backed promotion of the seed rows and the remaining normalized domains (credits, aliases, memberships, possessions) remain separately approved future work.
+
+## 13. Post-integration baseline and next execution boundary (2026-08-29)
+
+The current production `main` is `8234cfa04edf5fb6dd851d335107d606b9011731`. The static Pages viewer now loads the committed DB-derived `data/derived/flowchart.json`; Pages deployment run #37 succeeded, and the public smoke check reached `データを読み込みました（131作品）。` with no browser console errors. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups. The local integrated-export verification baseline is 232 library-v5 tests passing and an ordinary build with audit issue count 0.
+
+The release/status normalization and HTML DB-export milestones are complete, but they do not authorize later semantic changes automatically. All 269 release/status seed facts remain `legacy_seed` and have no release/status-specific evidence rows. The smallest next candidate is a separately planned, evidence-backed promotion audit for a small subset of those seeds; other candidates are independent plans for `credits`, `entity_aliases`, `entity_memberships`, or `entity_possessions`.
+
+Before changing canonical facts, select exactly one bounded candidate, write its execution plan, and add the RED contract first. Preserve the existing rules: evidence and review history are required for `source_verified`; release/status edits must not silently change graph pairs; aliases, memberships, possessions, or credits must not manufacture work edges; and uncertain continuity, identity, Earth numbers, or transport mechanisms remain unasserted.
