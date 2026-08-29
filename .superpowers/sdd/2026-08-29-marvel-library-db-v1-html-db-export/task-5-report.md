@@ -94,3 +94,7 @@ Result: `Ran 6 tests in 0.059s — OK`, including duplicate-edge-ID, reason-endp
 A bounded static HTTP smoke served the worktree and returned `200` for both `index.html` and `data/derived/flowchart.json`; the JSON response reported schema `1`, `131` nodes, `361` edges, `569` reasons, and `42` characters. The temporary server was stopped immediately. The in-app browser smoke was attempted with a bounded timeout but was unavailable in this run, so no browser-render claim is made for this fix round.
 
 The generated build/audit artifacts and Python caches were left out of the commit; canonical library and review-ledger inputs were not changed.
+
+## Review fix round 2
+
+The exported presentation policy is now validated for `default_edge_visibility: "all"` and an explicit importance mode. After bootstrap, that mode is translated through the existing connection-tier API before the presentation refresh, so `reference` edges are not hidden by the legacy `recommended` default. The contract suite covers the policy validation and mapping; the six focused tests remain GREEN. This round did not claim a browser smoke result.

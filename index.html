@@ -8321,6 +8321,8 @@ function validateFlowchartPayload(payload){
   if(!policy.node_metadata||typeof policy.node_metadata!=='object'||Array.isArray(policy.node_metadata)) throw new Error('表示ポリシーの作品メタデータが不正です。');
   if(!policy.details||typeof policy.details!=='object'||Array.isArray(policy.details)) throw new Error('表示ポリシーの詳細データが不正です。');
   if(!Array.isArray(policy.chronology_lanes)) throw new Error('表示ポリシーの時系列レーンが不正です。');
+  if(policy.default_edge_visibility!=='all') throw new Error('表示ポリシーの既定エッジ表示が不正です。');
+  if(!['core','recommended','reference'].includes(policy.default_importance_mode)) throw new Error('表示ポリシーの既定重要度が不正です。');
   for(const id of nodeIds){
     if(!policy.node_metadata[id]||!Object.prototype.hasOwnProperty.call(policy.details,id)) throw new Error('表示ポリシーの作品 ID が不足しています。');
   }
@@ -8376,6 +8378,8 @@ function initializeFlowchartData(payload){
   bf.value=[...bf.options].some(option=>option.value===previousBranch)?previousBranch:'';
   cf.value=[...cf.options].some(option=>option.value===previousCharacter)?previousCharacter:'';
   flowchartReady=true;
+  const defaultTier={core:'minimum',recommended:'recommended',reference:'complete'}[policy.default_importance_mode];
+  if(defaultTier&&typeof window.marvelSetConnectionTier==='function')window.marvelSetConnectionTier(defaultTier);
   setFlowchartStatus(`データを読み込みました（${NODES.length}作品）。`,'ready');
   if(typeof initSvgInteraction==='function')initSvgInteraction();
   if(typeof window.marvelRefreshFlowchartPresentation==='function')window.marvelRefreshFlowchartPresentation();
