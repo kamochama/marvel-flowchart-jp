@@ -5,6 +5,18 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 TARGET = "production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"
+EXPECTED_PROMOTED_STATUS_IDS = {
+    TARGET,
+    "production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28",
+}
+EXPECTED_PROMOTED_RELEASE_IDS = {
+    "release-avengers-doomsday-2026-12-18-primary",
+    "release-avengers-secret-wars-2027-12-17-primary",
+    "release-spider-man-beyond-the-spider-verse-tba-primary",
+    "release-spider-man-brand-new-day-2026-07-31-primary",
+    "release-visionquest-2026-10-14-primary",
+    "release-x-men-97-s2-2026-07-01-primary",
+}
 EVIDENCE_ID = "evidence-production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"
 REVIEW_ID = "review-2026-08-30-production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"
 
@@ -15,14 +27,14 @@ def _rows(relative_path):
 
 
 class ProductionStatusEvidencePromotionBatch004Tests(unittest.TestCase):
-    def test_only_brand_new_day_status_is_added_to_verified_status_set(self):
+    def test_expected_statuses_are_source_verified(self):
         statuses = {row["production_status_assertion_id"]: row for row in _rows("data/library/production_status_assertions.csv")}
         promoted = {
             status_id
             for status_id, row in statuses.items()
             if row["verification_status"] == "source_verified"
         }
-        self.assertEqual(promoted, {TARGET})
+        self.assertEqual(promoted, EXPECTED_PROMOTED_STATUS_IDS)
         self.assertEqual(statuses[TARGET]["status"], "released")
         self.assertEqual(statuses[TARGET]["asserted_at"], "2026-08-28")
         self.assertEqual(statuses[TARGET]["certainty"], "confirmed")
@@ -53,12 +65,16 @@ class ProductionStatusEvidencePromotionBatch004Tests(unittest.TestCase):
             all(
                 row["verification_status"] == "legacy_seed"
                 for row in statuses
-                if row["production_status_assertion_id"] != TARGET
+                if row["production_status_assertion_id"] not in EXPECTED_PROMOTED_STATUS_IDS
             )
         )
         self.assertEqual(
-            releases["release-spider-man-brand-new-day-2026-07-31-primary"]["verification_status"],
-            "source_verified",
+            {
+                release_id
+                for release_id, row in releases.items()
+                if row["verification_status"] == "source_verified"
+            },
+            EXPECTED_PROMOTED_RELEASE_IDS,
         )
         jp = releases["release-spider-man-brand-new-day-2026-07-31-jp"]
         self.assertEqual(jp["verification_status"], "legacy_seed")
@@ -67,3 +83,4 @@ class ProductionStatusEvidencePromotionBatch004Tests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

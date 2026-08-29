@@ -1,0 +1,39 @@
+{
+  "batch_id": "2026-08-30-release-status-evidence-promotion-batch005",
+  "evidence_ids": [
+    "evidence-release-x-men-97-s2-2026-07-01-primary",
+    "evidence-production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28"
+  ],
+  "fact_table": "releases.csv + production_status_assertions.csv",
+  "post_write_sha256": {
+    "data/content_audit/reviews.csv": "18a14ee678d4d8baf5c594f7b42b7f399f19783c1fd59bd376de4301daa4f8c7",
+    "data/library/evidence.csv": "01f30a2ae75a0915259e06d5525fd3fa20fd4112376fb8fbc970d23259900d71",
+    "data/library/production_status_assertions.csv": "470283a532617acbf9eae3863488e4d571a9c9f22adc6f8207196313e6ea1c35",
+    "data/library/releases.csv": "aaaf12cfdb17cd366ae2ae0a0e25a57d711b8b9131ba7dafe7ab4c29eef20180",
+    "data/library/sources.csv": "3b28c7d5951a4d0fd1641ec7d154f8979a8c107936fc5998fd74a6191ef47a3b"
+  },
+  "production_status_row_count_after": 131,
+  "production_status_row_count_before": 131,
+  "promoted_fact_ids": [
+    "production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28",
+    "release-x-men-97-s2-2026-07-01-primary"
+  ],
+  "release_row_count_after": 138,
+  "release_row_count_before": 138,
+  "review_ids": [
+    "review-2026-08-30-release-x-men-97-s2-2026-07-01-primary",
+    "review-2026-08-30-production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28"
+  ],
+  "source_ids": [
+    "xmen97-s2",
+    "xmen97-s2-current-2026-08"
+  ],
+  "source_row_count_after": 44,
+  "source_row_count_before": 43,
+  "evidence_row_count_after": 111,
+  "evidence_row_count_before": 109,
+  "review_row_count_after": 86,
+  "review_row_count_before": 84,
+  "verification_scope": "Only the X-Men '97 Season 2 primary streaming release and current released-status snapshot are source_verified in this batch; territory remains unknown, the Japanese release row retains its blank date and legacy_seed status, and graph derivation is unchanged."
+}
+
