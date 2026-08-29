@@ -87,11 +87,25 @@ def _mask_js_non_code(text: str) -> str:
 
 
 def _marker_pattern(marker: str) -> re.Pattern[str]:
+    """Match an executable assignment for the requested metadata marker."""
     if marker.startswith("const "):
         name = marker.split(None, 1)[1]
         return re.compile(rf"\bconst\s+{re.escape(name)}\s*=")
     if marker == "window.WORK_DETAILS=Object.freeze(":
         return re.compile(r"\bwindow\s*\.\s*WORK_DETAILS\s*=")
+    raise ViewMetadataError(f"unsupported marker: {marker}")
+
+
+def _declaration_pattern(marker: str) -> re.Pattern[str]:
+    """Match any source declaration, including one missing its assignment."""
+    if marker.startswith("const "):
+        name = marker.split(None, 1)[1]
+        return re.compile(rf"\bconst\s+{re.escape(name)}\b")
+    if marker == "window.WORK_DETAILS=Object.freeze(":
+        # Avoid the runtime's optional-chaining reads while still treating a
+        # standalone assignment/declaration (including a missing '=') as a
+        # marker occurrence.
+        return re.compile(r"\bwindow\s*\.\s*WORK_DETAILS\b(?=\s*(?:=|;|\r?$))")
     raise ViewMetadataError(f"unsupported marker: {marker}")
 
 
@@ -108,16 +122,23 @@ def _object_freeze_open(text: str, index: int) -> int | None:
 
 def _marked_json(text: str, marker: str, *, expected: str) -> object:
     marker_pattern = _marker_pattern(marker)
-    all_matches = list(marker_pattern.finditer(text))
+    declaration_pattern = _declaration_pattern(marker)
+    all_matches = list(declaration_pattern.finditer(text))
     if not all_matches:
         raise ViewMetadataError(f"missing marker: {marker}")
     if len(all_matches) != 1:
         raise ViewMetadataError(f"duplicate marker: {marker}")
-    code_matches = list(marker_pattern.finditer(_mask_js_non_code(text)))
-    if not code_matches:
+    masked_text = _mask_js_non_code(text)
+    code_declarations = list(declaration_pattern.finditer(masked_text))
+    if not code_declarations:
         raise ViewMetadataError(f"marker is inside a comment or quoted literal: {marker}")
-    if len(code_matches) != 1:
+    if len(code_declarations) != 1:
         raise ViewMetadataError(f"duplicate executable marker: {marker}")
+    code_matches = list(marker_pattern.finditer(masked_text))
+    if not code_matches:
+        raise ViewMetadataError(f"missing assignment after marker: {marker}")
+    if len(code_matches) != 1:
+        raise ViewMetadataError(f"duplicate executable assignment: {marker}")
 
     assignment = code_matches[0]
     cursor = _skip_whitespace(text, assignment.end())
