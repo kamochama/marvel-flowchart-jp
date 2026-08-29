@@ -1,0 +1,34 @@
+{
+  "batch_id": "2026-08-30-release-status-evidence-promotion-batch006",
+  "evidence_ids": [
+    "evidence-production-status-visionquest-2026-10-14-snapshot-2026-08-28"
+  ],
+  "fact_table": "production_status_assertions.csv",
+  "post_write_sha256": {
+    "data/content_audit/reviews.csv": "a36989def0fc8a57384cc0df99ad5378259e1ba9b389f18069445d523349e52e",
+    "data/library/evidence.csv": "85fdb75641a4cb5eb0f6b116fb3f62b8f0a27958a517953f57c30eba4d7ceb9a",
+    "data/library/production_status_assertions.csv": "4d5171067ed9cc83805c3449520458d196878d5f9c46b0867194b1c0fad030ff",
+    "data/library/releases.csv": "aaaf12cfdb17cd366ae2ae0a0e25a57d711b8b9131ba7dafe7ab4c29eef20180",
+    "data/library/sources.csv": "3b28c7d5951a4d0fd1641ec7d154f8979a8c107936fc5998fd74a6191ef47a3b"
+  },
+  "production_status_row_count_after": 131,
+  "production_status_row_count_before": 131,
+  "promoted_fact_ids": [
+    "production-status-visionquest-2026-10-14-snapshot-2026-08-28"
+  ],
+  "review_ids": [
+    "review-2026-08-30-production-status-visionquest-2026-10-14-snapshot-2026-08-28"
+  ],
+  "source_ids": [
+    "visionquest"
+  ],
+  "source_row_count_after": 44,
+  "source_row_count_before": 44,
+  "evidence_row_count_after": 112,
+  "evidence_row_count_before": 111,
+  "review_row_count_after": 87,
+  "review_row_count_before": 86,
+  "release_row_count_after": 138,
+  "release_row_count_before": 138,
+  "verification_scope": "Only the existing VisionQuest announced-status snapshot is source_verified in this batch; the announced status, asserted_at date, unknown release territory, and no-production-milestone boundary remain unchanged. No Japanese date or graph fact is inferred."
+}
