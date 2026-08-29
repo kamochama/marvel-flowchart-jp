@@ -21,7 +21,8 @@ TARGETS = {
     },
 }
 BATCH002_TARGET = "release-spider-man-brand-new-day-2026-07-31-primary"
-EXPECTED_PROMOTED_RELEASES = set(TARGETS) | {BATCH002_TARGET}
+BATCH003_TARGET = "release-avengers-secret-wars-2027-12-17-primary"
+EXPECTED_PROMOTED_RELEASES = set(TARGETS) | {BATCH002_TARGET, BATCH003_TARGET}
 
 
 def _rows(relative_path):
