@@ -6,7 +6,7 @@ This file defines persistent working rules for Codex and other coding agents ope
 
 - Repository: `kamochama/marvel-flowchart-jp`.
 - Production branch: `main`.
-- Current production HEAD (after the completed Phase 2, release/status, HTML export, mobile touch-target, and batch005 integrations): `19134e187d40e808f926fd32607b0a2deebac8f1`.
+- Latest semantic production baseline (PR #22; subsequent docs-only PRs do not change code/data): `19134e187d40e808f926fd32607b0a2deebac8f1`.
 - PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), and PR #22 (X-Men '97 release/status evidence promotion batch005) are merged into `main`.
 - There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
 - During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
@@ -114,7 +114,7 @@ Examples already established:
 
 ## Current compatibility invariants
 
-The latest production baseline after PR #22 is:
+The latest semantic production baseline after PR #22 is:
 
 - `main` `19134e187d40e808f926fd32607b0a2deebac8f1`
 - GitHub Actions run #272: GREEN
