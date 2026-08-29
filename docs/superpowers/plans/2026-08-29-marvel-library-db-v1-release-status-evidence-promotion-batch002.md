@@ -222,10 +222,10 @@ The cumulative regression contract in the existing batch001 test now expects the
 
 ### Task 4: Review and integration gate
 
-- [ ] **Step 1: Push the branch and request read-only review**
+- [x] **Step 1: Push the branch and request read-only review**
 
 Push `codex/release-status-audit`, then have a fresh Luna/xhigh reviewer check that only the target release fact was promoted, evidence/review links are exact, and no graph or Japanese-date inference was introduced.
 
-- [ ] **Step 2: Stop at the PR gate**
+- [x] **Step 2: Stop at the PR gate**
 
 Create a PR against `main`, wait for CI, and report the batch, evidence URL, tests, build counts, and any deferred candidates. Do not merge or publish without a new explicit merge authorization for this batch.
