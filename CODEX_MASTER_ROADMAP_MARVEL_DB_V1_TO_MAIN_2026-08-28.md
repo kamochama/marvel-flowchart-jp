@@ -9,7 +9,7 @@ This file is the long-range execution roadmap for Codex and other coding agents.
 
 If this roadmap conflicts with a newer explicit user instruction, the newer user instruction wins. If a SHA becomes stale, reconcile against fresh remote HEAD; never reset implementation to an older documentation checkpoint.
 
-> **Current production note (2026-08-29):** The historical PR #10/PR #11 gate described below has completed. PR #10 (Events & Multiverse), PR #11 (releases/status normalization), PR #12 (HTML DB export), and PR #13 (Pages artifact fix) are merged into `main`; the current production HEAD is `8234cfa04edf5fb6dd851d335107d606b9011731`. The post-merge baseline and the next separately bounded work are recorded in §13.
+> **Current production note (2026-08-30):** The historical PR #10/PR #11 gate described below has completed. PR #10 (Events & Multiverse), PR #11 (releases/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), and PR #22 (X-Men '97 release/status evidence promotion batch005) are merged into `main`; the current production HEAD is `19134e187d40e808f926fd32607b0a2deebac8f1`. The post-merge baseline and the next separately bounded work are recorded in §13.
 
 ---
 
@@ -68,7 +68,7 @@ The current Events & Multiverse execution work spans part of the broader normali
 
 ---
 
-## 3. Current branch and integration policy
+## 3. Historical branch and integration policy
 
 Repository:
 
@@ -87,9 +87,9 @@ Draft integration PR:
 
 Historical PR #9 / `library-v5-canonical-freeze` was already reconciled into this forward history. Do not merge it again.
 
-The branch and PR #10 labels in this section describe the pre-integration gate and are retained for historical traceability; all four current implementation PRs are closed and merged as summarized in §13.
+The branch and PR #10 labels in this section describe the pre-integration gate and are retained for historical traceability; the current production baseline and later integrations are summarized in §13.
 
-### Main policy
+### Main policy (historical PR #10 gate)
 
 During development:
 
@@ -113,11 +113,11 @@ If authorization has not been given, stop at the integration gate. “Do not tou
 
 ---
 
-## 4. Immediate execution boundary
+## 4. Historical execution boundary
 
 The detailed current state is in `NEXT_CODEX_HANDOFF_MARVEL_LIBRARY_PHASE2_2026-08-28.md`.
 
-Latest implementation checkpoint before Codex documentation commits:
+Latest implementation checkpoint before Codex documentation commits (historical):
 
 - `ad9796b3a1833d49e044a4eef220ca9d49c3553d`
 - GitHub Actions run #251: SUCCESS
@@ -134,7 +134,7 @@ Latest implementation checkpoint before Codex documentation commits:
 
 Documentation-only Codex setup commits followed. Always use fresh remote HEAD rather than resetting to the implementation SHA.
 
-### First action
+### First action (historical)
 
 The Doctor Strange / Earth-838 first-class transition is implemented, evidenced, reviewed, tested, and GREEN. The original transition record and the follow-up America Chavez participant audit now both have applied-patch bookkeeping records.
 
@@ -229,7 +229,7 @@ The approved current plan says to stop before releases/credits/memberships/posse
 
 ---
 
-## 7. PR #10 final review and production integration gate
+## 7. PR #10 final review and production integration gate (historical)
 
 After Task 8 is GREEN:
 
@@ -267,10 +267,8 @@ The DB-v1 design contains later work that is **architecturally intended but not 
 
 ### 8.1 Complete normalized canonical domains
 
-The broader design calls for normalized tables beyond the event/multiverse subset, including:
+The broader design calls for normalized tables beyond the event/multiverse subset. Releases and production-status assertions are now implemented; remaining domains include:
 
-- `releases`;
-- `production_status_assertions`;
 - `credits`;
 - `entity_aliases`;
 - `entity_memberships`;
@@ -396,7 +394,7 @@ Use this ladder when deciding what “done” means:
 - batch tests GREEN;
 - full CI GREEN.
 
-### B. Current Events & Multiverse execution plan complete
+### B. Current Events & Multiverse execution plan complete (historical gate)
 
 - all approved Task 7 candidates migrated or explicitly deferred;
 - Task 8 final review written;
@@ -407,7 +405,7 @@ Use this ladder when deciding what “done” means:
 ### C. Current work integrated to production
 
 - user explicitly approved merge;
-- PR #10 merged to `main`;
+- PR #10 and its reviewed follow-up integrations merged to `main`;
 - fresh main CI GREEN;
 - Pages/public behavior verified;
 - production baseline documented.
@@ -424,7 +422,7 @@ Only after later separately approved work also completes:
 
 Do not collapse B, C, and D into one milestone. Finishing the current Phase 2 PR does not automatically authorize later architecture phases, and finishing a feature branch does not automatically authorize production merge.
 
-## 12. Separate normalized release/status boundary — Task 6 audit (2026-08-29)
+## 12. Separate normalized release/status boundary — Task 6 audit (historical, 2026-08-29)
 
 The approved plan `docs/superpowers/plans/2026-08-28-marvel-library-db-v1-releases-production-status.md` defines a separate normalized release/status subproject after the Events & Multiverse execution boundary. Its Task 6 review is recorded in `docs/superpowers/reviews/2026-08-28-marvel-library-db-v1-releases-production-status-review.md`.
 
@@ -434,10 +432,18 @@ The normalized migration observes `131` works, `138` releases (`131` primary + `
 
 This boundary did not modify `index.html`, the existing graph policy, or the semantic status of the completed Events & Multiverse plan. It was merged as PR #11; evidence-backed promotion of the seed rows and the remaining normalized domains (credits, aliases, memberships, possessions) remain separately approved future work.
 
+### 12.1 Evidence-promotion follow-up (batch005, 2026-08-30)
+
+PR #22 promoted exactly two existing facts: the X-Men '97 Season 2 primary streaming release and its released-status snapshot. Each has a `primary` evidence row and an auditable `legacy_seed -> source_verified` review transition. The Japanese release row remains `legacy_seed` with a blank date, and no graph edge or work-pair reason is derived from these metadata facts. The applied record is `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch005.json`.
+
+After batch005, the normalized tables contain 138 releases (6 `source_verified`, 132 `legacy_seed`) and 131 production-status assertions (2 `source_verified`, 129 `legacy_seed`). Remaining seeds require separate evidence-backed batches; do not infer territory, Japanese dates, production milestones, or graph connectivity from the normalized metadata.
+
 ## 13. Post-integration baseline and next execution boundary (2026-08-29)
 
-The current production `main` is `8234cfa04edf5fb6dd851d335107d606b9011731`. The static Pages viewer now loads the committed DB-derived `data/derived/flowchart.json`; Pages deployment run #37 succeeded, and the public smoke check reached `データを読み込みました（131作品）。` with no browser console errors. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups. The local integrated-export verification baseline is 232 library-v5 tests passing and an ordinary build with audit issue count 0.
+The current production `main` is `19134e187d40e808f926fd32607b0a2deebac8f1`. The static Pages viewer loads the committed DB-derived `data/derived/flowchart.json`; Pages deployment run #46 succeeded. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups. GitHub Actions run #272 is GREEN; the full bundled-Python baseline is 265 library-v5 tests passing with audit issue count 0, review-integrity issues 0, SQLite foreign-key rows 0, and SQLite `integrity_check=ok`.
 
-The release/status normalization and HTML DB-export milestones are complete, but they do not authorize later semantic changes automatically. All 269 release/status seed facts remain `legacy_seed` and have no release/status-specific evidence rows. The smallest next candidate is a separately planned, evidence-backed promotion audit for a small subset of those seeds; other candidates are independent plans for `credits`, `entity_aliases`, `entity_memberships`, or `entity_possessions`.
+PR #22 batch005 promoted the X-Men '97 Season 2 primary release and released-status snapshot with exact evidence/review rows. The normalized tables now contain 138 releases (6 `source_verified`, 132 `legacy_seed`) and 131 production-status assertions (2 `source_verified`, 129 `legacy_seed`); sources/evidence/reviews are 44/111/86. Compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, prewatch edges `199`, and story paths `83/83`. The Japanese release row remains unverified with a blank date, and release/status facts do not derive graph edges.
+
+The next semantic work is not implicitly authorized by the completed integrations. Select one bounded candidate, write its plan, and add its RED contract before changing canonical data; remaining release/status seeds and the normalized domains (`credits`, `entity_aliases`, `entity_memberships`, `entity_possessions`) each require evidence/review and full verification.
 
 Before changing canonical facts, select exactly one bounded candidate, write its execution plan, and add the RED contract first. Preserve the existing rules: evidence and review history are required for `source_verified`; release/status edits must not silently change graph pairs; aliases, memberships, possessions, or credits must not manufacture work edges; and uncertain continuity, identity, Earth numbers, or transport mechanisms remain unasserted.
