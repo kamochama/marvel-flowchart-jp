@@ -77,6 +77,8 @@ def default_flowchart_policy() -> dict[str, object]:
         "left_labels_language": "ja",
         "internal_ids_language": "stable_ascii",
         "default_edge_mode": "combined_all_pairs",
+        "default_edge_visibility": "all",
+        "default_importance_mode": "reference",
         "view_only_properties": [
             "lane",
             "region",
@@ -93,6 +95,106 @@ def default_flowchart_policy() -> dict[str, object]:
             "view_may_not_delete_canonical_fact": True,
             "distinct_work_pairs_remain_distinct_logical_edges": True,
             "user_facing_lane_labels_are_japanese": True,
+        },
+        "reason_kind_rules": {
+            "explicit_relation": {
+                "label_ja": "明示的な作品関係",
+                "label_en": "explicit work relation",
+                "render_class": "solid",
+                "strength_thresholds": {
+                    "very strong": {
+                        "verification_statuses": ["source_verified"],
+                        "certainty_values": ["confirmed"],
+                        "notes_any": ["direct", "sequel", "crossover"],
+                    },
+                    "strong": {
+                        "verification_statuses": ["source_verified"],
+                        "certainty_values": ["confirmed", "probable"],
+                    },
+                    "moderate": {
+                        "verification_statuses": ["source_verified"],
+                        "certainty_values": ["uncertain", "unknown"],
+                    },
+                    "weak": {"verification_statuses": ["conflicted", "legacy_seed"]},
+                },
+                "importance_thresholds": {
+                    "core": {"strengths": ["very strong"], "notes_any": ["direct", "sequel"]},
+                    "recommended": {"strengths": ["strong"]},
+                    "reference": {"strengths": ["moderate", "weak"]},
+                },
+                "importance_ja": {
+                    "core": "中核",
+                    "recommended": "推奨",
+                    "reference": "参照",
+                },
+                "importance_notes_ja": {
+                    "core": "直接の続編・物語上の直接関係として中核となる接続。",
+                    "recommended": "根拠のある作品関係として視聴順の理解を助ける接続。",
+                    "reference": "補助的または不確実性を含む参照用の接続。",
+                },
+            },
+            "shared_entity": {
+                "label_ja": "共有キャラクター／エンティティ",
+                "label_en": "shared character/entity",
+                "render_class": "dashed",
+                "strength_thresholds": {
+                    "strong": {
+                        "verification_statuses": ["source_verified"],
+                        "certainty_values": ["confirmed"],
+                    },
+                    "moderate": {
+                        "verification_statuses": ["source_verified"],
+                        "certainty_values": ["probable", "uncertain", "unknown"],
+                    },
+                    "weak": {
+                        "verification_statuses": ["conflicted", "legacy_seed"],
+                        "certainty_values": ["unknown"],
+                    },
+                },
+                "importance_thresholds": {
+                    "recommended": {"strengths": ["strong"]},
+                    "reference": {"strengths": ["moderate", "weak"]},
+                },
+                "importance_ja": {"recommended": "推奨", "reference": "参照"},
+                "importance_notes_ja": {
+                    "recommended": "同一エンティティの確認済み出演に基づく補助接続。",
+                    "reference": "共有エンティティを示す参照用の接続。",
+                },
+            },
+            "multiverse_transition": {
+                "label_ja": "マルチバース遷移",
+                "label_en": "multiverse transition",
+                "render_class": "crossing",
+                "strength_thresholds": {
+                    "strong": {
+                        "verification_statuses": ["source_verified"],
+                        "certainty_values": ["confirmed", "probable"],
+                    },
+                    "moderate": {
+                        "verification_statuses": ["source_verified"],
+                        "certainty_values": ["uncertain", "unknown"],
+                    },
+                    "weak": {"verification_statuses": ["conflicted", "legacy_seed"]},
+                },
+                "importance_thresholds": {
+                    "recommended": {"strengths": ["strong"]},
+                    "reference": {"strengths": ["moderate", "weak"]},
+                },
+                "importance_ja": {"recommended": "推奨", "reference": "参照"},
+                "importance_notes_ja": {
+                    "recommended": "検証済みの遷移事実を示す接続。",
+                    "reference": "遷移の不確実性を保った参照用の接続。",
+                },
+            },
+            "fallback": {
+                "label_ja": "関連接続",
+                "label_en": "related connection",
+                "render_class": "dotted",
+                "strength_thresholds": {"weak": {}},
+                "importance_thresholds": {"reference": {"strengths": ["weak"]}},
+                "importance_ja": {"reference": "参照"},
+                "importance_notes_ja": {"reference": "保守的な参照用の接続。"},
+            },
         },
     }
 
