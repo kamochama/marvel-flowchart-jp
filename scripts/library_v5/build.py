@@ -16,11 +16,11 @@ from .db_compile import compile_database
 from .db_export import export_work_graph
 from .db_fingerprint import write_db_manifest
 from .derive_compat import write_compatibility_outputs
+from .flowchart_export import export_flowchart
 
 
 GENERATED_PATHS = [
     "data/derived",
-    "views/flowchart",
 ]
 GENERATED_CONTENT_AUDIT_FILES = [
     "queue.csv",
@@ -51,10 +51,22 @@ def build(repo_root: Path, *, clean: bool = True) -> dict[str, object]:
     result: dict[str, object] = {}
     db_result = compile_database(repo_root)
     db_manifest = write_db_manifest(repo_root, db_result.db_path)
+    manifest_payload = json.loads(db_manifest.read_text(encoding="utf-8"))
+    flowchart_path = repo_root / "data" / "derived" / "flowchart.json"
+    flowchart_counts = export_flowchart(
+        repo_root,
+        db_result.db_path,
+        flowchart_path,
+        db_manifest=manifest_payload,
+    )
     result["database"] = {
         "path": db_result.db_path.relative_to(repo_root).as_posix(),
         "manifest_path": db_manifest.relative_to(repo_root).as_posix(),
         "table_counts": db_result.table_counts,
+    }
+    result["flowchart_export"] = {
+        "path": flowchart_path.relative_to(repo_root).as_posix(),
+        **flowchart_counts,
     }
     result["derived_edges"] = export_work_graph(db_result.db_path, repo_root / "data" / "derived")
     result["compatibility"] = write_compatibility_outputs(repo_root)
