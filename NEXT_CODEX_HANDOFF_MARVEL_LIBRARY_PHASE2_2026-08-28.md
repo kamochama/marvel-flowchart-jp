@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `19134e187d40e808f926fd32607b0a2deebac8f1` (main may include later documentation-only commits)
+- latest semantic baseline commit: `230d49e21383121fe1ac6cead117ee12bbb5ef48` (main may include later documentation-only commits)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -21,6 +21,7 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #13 Pages artifact fix: merged as `8234cfa04edf5fb6dd851d335107d606b9011731`
 - PR #21 mobile touch-target contract: merged (mobile interaction regression fix)
 - PR #22 X-Men '97 release/status evidence promotion batch005: merged as `19134e187d40e808f926fd32607b0a2deebac8f1`
+- PR #26 VisionQuest production-status evidence promotion batch006: merged as `230d49e21383121fe1ac6cead117ee12bbb5ef48`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -53,7 +54,7 @@ If the working tree is not clean or remote HEAD differs unexpectedly, reconcile 
 
 ## 0.1 Production baseline after the 2026-08-30 integration
 
-The latest semantic production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`; later documentation-only commits do not alter this code/data baseline. PR #21 fixed the mobile touch-target/undo contract, and PR #22 completed release/status evidence promotion batch005 for X-Men '97 Season 2.
+The latest semantic production baseline is `main` at `230d49e21383121fe1ac6cead117ee12bbb5ef48`; later documentation-only commits do not alter this code/data baseline. PR #21 fixed the mobile touch-target/undo contract, PR #22 completed batch005 for X-Men '97 Season 2, and PR #26 completed batch006 for the VisionQuest production-status snapshot.
 
 Fresh verification for the batch005-integrated baseline:
 
@@ -68,9 +69,9 @@ Fresh verification for the batch005-integrated baseline:
 - DB-derived artifact: `131` nodes, `361` directed edges, `569` traceable reasons, `42` character groups;
 - compatibility: prewatch edges `199`, story paths `83/83`.
 
-Batch005 promotes only the X-Men '97 Season 2 primary streaming release and released-status snapshot. The Japanese release row remains `territory=JP`, blank `release_date`, and `legacy_seed`; no graph edge or work-pair reason is derived from release/status facts. The applied record is `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch005.json`.
+Batch005 promotes only the X-Men '97 Season 2 primary streaming release and released-status snapshot. Batch006 promotes only the VisionQuest announced-status snapshot using Marvel Television's official Disney+ announcement. The Japanese release row remains `territory=JP`, blank `release_date`, and `legacy_seed`; no graph edge or work-pair reason is derived from release/status facts. Applied records: `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch005.json` and `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch006.json`.
 
-The remaining normalized release/status rows are intentionally still seeds (`132` release rows and `129` status rows). The next semantic batch requires its own bounded plan, RED contract, qualifying evidence, review transition, and full verification.
+The remaining normalized release/status rows are intentionally still seeds (`132` release rows and `128` status rows). The next semantic batch requires its own bounded plan, RED contract, qualifying evidence, review transition, and full verification.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
