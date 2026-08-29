@@ -1,0 +1,74 @@
+import csv
+from pathlib import Path
+import unittest
+
+ROOT = Path(__file__).resolve().parents[2]
+TARGETS = {
+    "release-avengers-doomsday-2026-12-18-primary": {
+        "evidence_id": "evidence-release-avengers-doomsday-2026-12-18-primary",
+        "source_id": "marvel-movies-current-v4",
+        "review_id": "review-2026-08-29-release-avengers-doomsday-2026-12-18-primary",
+    },
+    "release-spider-man-beyond-the-spider-verse-tba-primary": {
+        "evidence_id": "evidence-release-spider-man-beyond-the-spider-verse-tba-primary",
+        "source_id": "sony-beyond-2026",
+        "review_id": "review-2026-08-29-release-spider-man-beyond-the-spider-verse-tba-primary",
+    },
+    "release-visionquest-2026-10-14-primary": {
+        "evidence_id": "evidence-release-visionquest-2026-10-14-primary",
+        "source_id": "visionquest",
+        "review_id": "review-2026-08-29-release-visionquest-2026-10-14-primary",
+    },
+}
+
+
+def _rows(relative_path):
+    with (ROOT / relative_path).open(encoding="utf-8-sig", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+class ReleaseStatusEvidencePromotionBatch001Tests(unittest.TestCase):
+    def test_only_three_named_primary_releases_are_promoted(self):
+        releases = {row["release_id"]: row for row in _rows("data/library/releases.csv")}
+        promoted = {
+            release_id
+            for release_id, row in releases.items()
+            if row["verification_status"] == "source_verified"
+        }
+        self.assertEqual(promoted, set(TARGETS))
+        for release_id in TARGETS:
+            self.assertEqual(releases[release_id]["verification_status"], "source_verified")
+            self.assertNotIn("legacy seed", releases[release_id]["notes"])
+
+    def test_promoted_releases_have_matching_primary_evidence_and_review(self):
+        evidence = {row["evidence_id"]: row for row in _rows("data/library/evidence.csv")}
+        reviews = {row["review_id"]: row for row in _rows("data/content_audit/reviews.csv")}
+        for release_id, expected in TARGETS.items():
+            ev = evidence[expected["evidence_id"]]
+            self.assertEqual(ev["fact_table"], "releases.csv")
+            self.assertEqual(ev["fact_id"], release_id)
+            self.assertEqual(ev["source_id"], expected["source_id"])
+            self.assertEqual(ev["evidence_role"], "primary")
+            review = reviews[expected["review_id"]]
+            self.assertEqual(review["fact_table"], "releases.csv")
+            self.assertEqual(review["fact_id"], release_id)
+            self.assertEqual(review["previous_verification_status"], "legacy_seed")
+            self.assertEqual(review["new_verification_status"], "source_verified")
+            self.assertEqual(review["review_action"], "verified_source")
+            self.assertEqual(review["evidence_ids"], expected["evidence_id"])
+
+    def test_status_snapshots_and_other_release_rows_remain_legacy_seed(self):
+        releases = _rows("data/library/releases.csv")
+        statuses = _rows("data/library/production_status_assertions.csv")
+        self.assertTrue(all(row["verification_status"] == "legacy_seed" for row in statuses))
+        self.assertTrue(
+            all(
+                row["verification_status"] == "legacy_seed"
+                for row in releases
+                if row["release_id"] not in TARGETS
+            )
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()

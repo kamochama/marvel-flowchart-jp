@@ -1,0 +1,33 @@
+{
+  "batch_id": "2026-08-29-release-status-evidence-promotion-batch001",
+  "evidence_ids": [
+    "evidence-release-avengers-doomsday-2026-12-18-primary",
+    "evidence-release-spider-man-beyond-the-spider-verse-tba-primary",
+    "evidence-release-visionquest-2026-10-14-primary"
+  ],
+  "fact_table": "releases.csv",
+  "post_write_sha256": {
+    "data/content_audit/reviews.csv": "70f8e562756451f389f896c7d1757e82aa87d0c46afcab14b002e565818a2e49",
+    "data/library/evidence.csv": "1b6aa9480b22548bbb1cd6c9dd00d846505c651e1eef29da7877f8108ab2bccd",
+    "data/library/releases.csv": "9a4a5a64b80d78d6815ef99203c41aaa5498704ce9dd634f504d92ef80d65ef2"
+  },
+  "production_status_row_count": 131,
+  "promoted_fact_ids": [
+    "release-avengers-doomsday-2026-12-18-primary",
+    "release-spider-man-beyond-the-spider-verse-tba-primary",
+    "release-visionquest-2026-10-14-primary"
+  ],
+  "release_row_count_after": 138,
+  "release_row_count_before": 138,
+  "review_ids": [
+    "review-2026-08-29-release-avengers-doomsday-2026-12-18-primary",
+    "review-2026-08-29-release-spider-man-beyond-the-spider-verse-tba-primary",
+    "review-2026-08-29-release-visionquest-2026-10-14-primary"
+  ],
+  "source_ids": [
+    "marvel-movies-current-v4",
+    "sony-beyond-2026",
+    "visionquest"
+  ],
+  "verification_scope": "Only the three named primary release facts are source_verified; all other release/status facts remain legacy_seed."
+}
