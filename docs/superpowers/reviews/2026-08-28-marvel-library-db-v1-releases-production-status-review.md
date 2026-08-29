@@ -3,6 +3,8 @@
 監査日: 2026-08-29
 対象リポジトリ: `kamochama/marvel-flowchart-jp`
 
+> **Historical review notice (updated 2026-08-30):** This review records the normalized release/status seed boundary before evidence promotions. Its `main` and all-`legacy_seed` statements are historical. The current production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`; PR #22 subsequently promoted the X-Men '97 Season 2 primary release and released-status snapshot, as recorded in the current Codex handoff and roadmap.
+
 ## 対象と実行境界
 
 この監査は、別承認された `docs/superpowers/plans/2026-08-28-marvel-library-db-v1-releases-production-status.md` の normalized release/status subproject（Task 6）だけを対象とする。
@@ -48,6 +50,10 @@ production_status_assertion_id,work_id,status,asserted_at,certainty,verification
 - `data/migration/normalized-releases-status/production_status_assertions.csv`: `a3d9dba46daca8921a4374894a10fbad618a1c0b11ebca15d63f5c2ee3900905`
 
 全 269 件の新規 release/status fact は `verification_status=legacy_seed` のままである。この seed は `evidence.csv` や `reviews.csv` を追加せず、既存の `works.csv` の日付・status・source note を決定的に写像しただけである。したがって、qualifying evidence を追加して `source_verified` に昇格する作業と auditable promotion transition は、後続の別承認 audit batch に延期する。`asserted_at=2026-08-28` は current status snapshot の監査日であり、歴史的な production milestone を主張しない。
+
+## Follow-up after this historical boundary
+
+Evidence-promotion batches are intentionally separate from this seed migration. PR #22 (batch005, 2026-08-30) added qualifying evidence and review transitions for exactly two existing facts: X-Men '97 Season 2's primary streaming release and its released-status snapshot. The Japanese row remains unverified with a blank date. The post-batch production counts are 6 source-verified releases of 138 and 2 source-verified statuses of 131; remaining seeds require their own bounded audit and must not be inferred into graph connectivity.
 
 ## Full verification evidence
 
