@@ -23,6 +23,9 @@ TARGETS = {
 BATCH002_TARGET = "release-spider-man-brand-new-day-2026-07-31-primary"
 BATCH003_TARGET = "release-avengers-secret-wars-2027-12-17-primary"
 EXPECTED_PROMOTED_RELEASES = set(TARGETS) | {BATCH002_TARGET, BATCH003_TARGET}
+EXPECTED_PROMOTED_STATUS_IDS = {
+    "production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28",
+}
 
 
 def _rows(relative_path):
@@ -63,7 +66,13 @@ class ReleaseStatusEvidencePromotionBatch001Tests(unittest.TestCase):
     def test_status_snapshots_and_other_release_rows_remain_legacy_seed(self):
         releases = _rows("data/library/releases.csv")
         statuses = _rows("data/library/production_status_assertions.csv")
-        self.assertTrue(all(row["verification_status"] == "legacy_seed" for row in statuses))
+        self.assertTrue(
+            all(
+                row["verification_status"] == "legacy_seed"
+                for row in statuses
+                if row["production_status_assertion_id"] not in EXPECTED_PROMOTED_STATUS_IDS
+            )
+        )
         self.assertTrue(
             all(
                 row["verification_status"] == "legacy_seed"
