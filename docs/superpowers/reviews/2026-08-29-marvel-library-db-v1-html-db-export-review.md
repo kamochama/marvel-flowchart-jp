@@ -32,6 +32,14 @@ edge-key normalization fix.
 - GitHub Pages root packaging inputs are present exactly as
   `index.html`, `README.md`, `AUDIT.md`, `AUDIT.json`, `preview.png`, and
   `.nojekyll`; no version-named duplicate HTML was added.
+- Browser smoke: the foreground static server served both `/` and
+  `data/derived/flowchart.json` with HTTP 200. The default viewport reached
+  `データを読み込みました（131作品）。`; at 412x915, the same ready state
+  appeared, the mobile search selection/解除 path worked, 361 keyed edges
+  remained present, and no dynamic edge overlays were created. Reference
+  timings from reload through the browser harness were ready `376 ms`,
+  selection `493 ms`, and deselection `550 ms`; the browser console reported
+  no warning or error entries.
 - `git diff --check` is clean for the committed changes. Canonical
   `data/library/` inputs and `data/content_audit/reviews.csv` were not edited by
   the ordinary build or export.
@@ -53,18 +61,20 @@ SQLite/WASM runtime is introduced.
 
 ## Browser and deployment boundary
 
-The required desktop and 412x915 browser smoke could not be completed in this
-managed Windows run: a temporary localhost static server failed to bind with
-`WinError 10013`. Consequently this review makes no browser-render or timing
-claim. The source/runtime contracts and mobile Canvas key-normalization test
-cover the no-edge-rebuild path; a connected environment should repeat the
-desktop/mobile smoke before publication. GitHub Pages/public behavior and
-remote CI remain pending until the user authorizes final integration.
+The required desktop/default and 412x915 browser smoke completed with the
+foreground localhost server. A prior background-server attempt returned
+`WinError 10013`; the same bundled Python runtime subsequently bound
+successfully in the foreground, so that error is treated as a managed-process
+environment limitation rather than an application failure. The 412x915
+selection timings above include browser-harness interaction overhead and use
+the mobile search selection path; they are a smoke signal, not a physical
+Pixel-6 benchmark. GitHub Pages/public behavior and remote CI remain pending
+until the user authorizes final integration.
 
 ## Deferred work
 
-- Repeat static-server desktop/mobile smoke and capture first-ready, selection,
-  and deselection timings on a 412x915 Pixel-6-oriented run.
+- Capture a physical Pixel-6-oriented performance profile separately from the
+  browser-harness smoke timings above.
 - Complete the broader DB-v1 roadmap phases (credits, aliases, memberships,
   possessions, and additional audited multiverse batches) under their own
   approved boundaries.
