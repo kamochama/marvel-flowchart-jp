@@ -1,0 +1,27 @@
+{
+  "batch_id": "2026-08-30-release-status-evidence-promotion-batch014",
+  "evidence_ids": ["evidence-release-x-men-97-s2-2026-07-01-jp"],
+  "fact_tables": ["releases.csv"],
+  "post_write_sha256": {
+    "data/library/releases.csv": "492f368f31b4a75b12e15fcf7a5e7aead155c4dd020cec487de8ff87e8df8f8c",
+    "data/library/production_status_assertions.csv": "c5adda9924fca8f998a302076e11b5e9385731533ae15c25afb752e7818976b5",
+    "data/library/evidence.csv": "019dc3415f43a9ecb257b7592661844ba5b6970230c8e519fb9c0428c1674330",
+    "data/content_audit/reviews.csv": "f531dfbf0f1214c804fd34931ec60709914aac987213a858ccbfab2267a27d13",
+    "data/library/sources.csv": "6d017aa0a783742f532d5af5218086bff708209da4082c741f7d3863663964e1"
+  },
+  "release_row_count_before": 138,
+  "release_row_count_after": 138,
+  "status_row_count_before": 131,
+  "status_row_count_after": 131,
+  "evidence_row_count_before": 127,
+  "evidence_row_count_after": 128,
+  "review_row_count_before": 102,
+  "review_row_count_after": 103,
+  "source_row_count_before": 47,
+  "source_row_count_after": 48,
+  "promoted_fact_ids": ["release-x-men-97-s2-2026-07-01-jp"],
+  "review_ids": ["review-2026-08-30-release-x-men-97-s2-2026-07-01-jp"],
+  "source_ids": ["disneyplus-jp-xmen97-s2-2026"],
+  "verification_scope": "Completed only the directly supported Japanese Disney+ release date for X-Men '97 Season 2 (2026-07-01). Territory remains JP, the existing primary release and status snapshot remain independently verified, and no additional graph fact is derived."
+}
+
