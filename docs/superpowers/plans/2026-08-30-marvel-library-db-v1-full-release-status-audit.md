@@ -122,7 +122,7 @@ Expected: PASS。
 Run: `& $MarvelPython -m unittest discover -s tests/library_v5 -p 'test_*.py' -v` と `& $MarvelPython -m scripts.library_v5.build --repo-root .`
 Expected: 全テストPASS、audit/content-audit issue 0、FK 0、SQLite integrity ok、graph compatibility unchanged。
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 `git add data/library data/content_audit tests/library_v5 docs/superpowers/reviews`
 `git commit -m "audit: promote evidence-backed release-status wave NNN"`
@@ -138,15 +138,15 @@ Expected: 全テストPASS、audit/content-audit issue 0、FK 0、SQLite integri
 - Consumes: Task 2のdefer/conflict report。
 - Produces: 269 factsの最終disposition集計、再監査条件、未昇格件数。
 
-- [ ] **Step 1: disposition集計を固定する**
+- [x] **Step 1: disposition集計を固定する**
 
 台帳にverified/promote/defer/conflictの件数、fact ID一覧、理由、必要な次回証拠を記録する。statusがlegacy_seedのままでも、監査済みであることをapplied JSONに記録する。
 
-- [ ] **Step 2: invariantテストを追加する**
+- [x] **Step 2: invariantテストを追加する**
 
 verifiedでないfactにevidence/reviewがないことをエラーにせず、promote済みfactには両方が必須であること、JP blank dateが補完されていないことを検証する。
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 `git add docs/superpowers/reviews/2026-08-30-marvel-library-full-release-status-audit.md data/content_audit/applied`
 `git commit -m "audit: record full release-status dispositions"`
