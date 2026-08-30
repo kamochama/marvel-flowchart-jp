@@ -2,9 +2,9 @@
 
 ## 判定
 
-既存のHTML変更（`9dc56c0`）に合わせて、公開READMEと監査記録の表記を同期した。現行の公開UIは、チャートの点灯範囲を **関連全体** と **1つ前のみ**、予習プランを **おすすめ** と **完全版** の2択として扱う。公式ルートが未登録の場合は **サイト提案ルート** と表示し、公式の必須リストとは区別する。
+既存のHTML変更（`9dc56c0`）に合わせた当時の公開READMEと監査記録の同期結果である。後続の3モード分離（`2026-08-30-marvel-library-prewatch-three-modes.md`）により、予習プランの2択契約は現在の根拠ではない。
 
-旧レビュー `2026-08-30-marvel-library-html-design-operation-debug.md` にある三段階UIの記述は、v5.20.7時点の履歴として保持する。現在の挙動を説明する根拠には、このレビューと `tests/library_v5/test_watch_scroll_navigation.py` を使用する。
+旧レビュー `2026-08-30-marvel-library-html-design-operation-debug.md` にある三段階UIの記述と本レビューは履歴として保持する。現在の挙動を説明する根拠には、後続レビューと `tests/library_v5/test_watch_scroll_navigation.py` を使用する。
 
 ## 現行UI契約
 

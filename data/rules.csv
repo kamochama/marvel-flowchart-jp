@@ -13,6 +13,6 @@
 12,公式関連作／予習,公式プロモーション関連はprewatchには使えるが関係地図・時系列線へ自動表示しない,promotion-separate
 13,stable work_id,公開日や題名が更新されても既存work_idは原則変更しない,stable-identifiers
 14,最低限,ゴールへ直接入るimportance=core接続のみを表示し再帰探索しない（仮）,minimum-direct-core
-15,おすすめ,公式予習ルートを優先し未登録時は監査済み編集ルートを代替表示。中核の前史を補完,official-route-or-curated-fallback-plus-core
-16,完全版,importance=core/recommendedを再帰探索しゴールへの直接referenceを追加（referenceは再帰しない）,complete-recursive
+15,サイト提案ルート,公式予習ルートとは分離しサイト提案ルートと中核の前史を表示。公式ルートへの自動フォールバックはしない,site-proposal-plus-core
+16,完全版,importance=core/recommendedを再帰探索しゴールへの直接referenceを追加（公式／サイト提案ルートを混ぜずreferenceは再帰しない）,complete-recursive
 17,promotion,公式関連・予習キャンペーンは物語の必須線に昇格させない,promotion-complete-only

@@ -74,8 +74,17 @@ class IndexDbExportContractTests(unittest.TestCase):
         self.assertRegex(self.source, r"flowchartReady\s*=\s*true")
         self.assertIn("policy.default_edge_visibility!=='all'", self.source)
         self.assertIn("policy.default_importance_mode", self.source)
-        self.assertIn("defaultTier={core:'minimum',recommended:'recommended',reference:'complete'}", self.source)
-        self.assertIn("window.marvelSetConnectionTier(defaultTier)", self.source)
+        policy_body = re.search(
+            r"function applyFlowchartPolicy\(policy\)\{.*?\n\s*\}",
+            self.source,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(policy_body)
+        self.assertIn(
+            "window.marvelSetImportanceMode(policy.default_importance_mode)",
+            policy_body.group(0),
+        )
+        self.assertNotIn("window.marvelSetConnectionTier(defaultTier)", policy_body.group(0))
 
     def test_initial_render_is_gated_until_successful_bootstrap(self) -> None:
         loader = self.source.index("async function loadFlowchartData")

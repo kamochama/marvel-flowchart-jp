@@ -56,11 +56,15 @@ class FlowchartSelectionContractTests(unittest.TestCase):
     def test_default_all_reference_policy_keeps_reference_edges_visible(self) -> None:
         self.assertIn("policy.default_edge_visibility!=='all'", self.source)
         self.assertIn("policy.default_importance_mode", self.source)
-        self.assertIn("defaultTier={core:'minimum',recommended:'recommended',reference:'complete'}", self.source)
+        self.assertIn(
+            "window.marvelSetImportanceMode(policy.default_importance_mode)",
+            function_body(self.source, "applyFlowchartPolicy"),
+        )
+        self.assertNotIn("window.marvelSetConnectionTier(defaultTier)", function_body(self.source, "applyFlowchartPolicy"))
         self.assertIn("marvelApplyFlowchartPolicy", self.source)
         self.assertRegex(
             self.source,
-            r"default_edge_visibility.*all[\s\S]{0,240}default_importance_mode.*reference",
+            r"default_importance_mode[\s\S]{0,240}marvelSetImportanceMode",
         )
 
     def test_selection_and_deselection_only_restyle_existing_edge_groups(self) -> None:
