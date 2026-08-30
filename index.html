@@ -814,8 +814,8 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
   <div id="flowchartStatus" class="muted" role="status" aria-live="polite">データを読み込み中…</div>
   <div class="controls-primary">
     <div class="control-group control-search" aria-label="作品を探す"><input id="q" aria-label="作品を検索" placeholder="邦題・英題・シリーズ名で検索"><select id="branch" aria-label="系統で絞り込み"><option value="">すべての系統</option></select></div>
-    <div class="control-group control-scope"><span class="muted">点灯範囲</span><button class="scope-btn active" data-scope="all" title="strong / very strong の物語方向を前後に辿り、medium は直接隣接だけ表示">関連全体</button><button class="scope-btn" data-scope="one">1段階</button><button class="scope-btn" data-scope="two">2段階</button><span class="direction-key" title="関連全体では途中で向きを切り替えません"><i class="bk"></i>←前史 <i class="fw"></i>→後続 <i class="cx"></i>直接補助</span></div>
-    <div class="control-group control-importance"><span class="muted">つながり</span><span class="importance-key"><button class="importance-btn" data-importance-mode="core" title="物語の理解に必要な中核接続だけ表示">最低限</button><button class="importance-btn active" data-importance-mode="recommended" title="中核＋おすすめ接続を表示（既定）">おすすめ</button><button class="importance-btn" data-importance-mode="reference" title="参照関係まで含む全接続を表示">完全版</button></span></div>
+    <div class="control-group control-scope"><span class="muted">点灯範囲</span><button class="scope-btn active" data-scope="all" title="strong / very strong の物語方向を前後に辿り、medium は直接隣接だけ表示">関連全体</button><button class="scope-btn" data-scope="previous1" title="選択作品へ直接入る前史だけ表示">1つ前のみ</button><span class="direction-key" title="関連全体では途中で向きを切り替えません"><i class="bk"></i>←前史 <i class="fw"></i>→後続 <i class="cx"></i>直接補助</span></div>
+    <div class="control-group control-importance"><span class="muted">つながり</span><span class="importance-key"><button class="importance-btn active" data-importance-mode="recommended" title="中核＋おすすめ接続を表示（既定）">おすすめ</button><button class="importance-btn" data-importance-mode="reference" title="参照関係まで含む全接続を表示">完全版</button></span></div>
     <div class="control-group control-reset"><button id="clear">全解除</button></div>
   </div>
   <div class="controls-featured-row" aria-label="今見るなら"><span id="desktopFeaturedHost" class="desktop-featured-host"></span></div>
@@ -835,9 +835,9 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
     <div class="help-grid">
       <div class="help-step"><b>1. 作品を見る</b><p>PCは作品を左クリックすると右側に詳細と関連ラインを表示します。スマホは作品をタップするとその作品をゴールにして、前史・後続の接続を表示します。作品のあらすじは下の予習プランから開けます。</p></div>
       <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動。PCではチャート上のホイールで図をズームできます。スマホではチャート内を1本指で移動、2本指で拡大・縮小できます。ページを動かすときはチャート外をスワイプしてください。</p></div>
-      <div class="help-step"><b>3. 視聴順を決める</b><p>チャート下の大きな「予習・視聴プラン」で、最低限・おすすめ・完全版、視聴済みチェック、残り時間をまとめて管理できます。</p></div>
+      <div class="help-step"><b>3. 視聴順を決める</b><p>チャート下の大きな「予習・視聴プラン」で、公式予習ルート・サイト提案ルート・完全版、視聴済みチェック、残り時間をまとめて管理できます。</p></div>
     </div>
-    <div class="help-legend"><span>← 前史</span><span>→ 後続</span><span>つながり：最低限 / おすすめ / 完全版</span><span>OR / AND / PATH</span></div>
+    <div class="help-legend"><span>← 前史</span><span>→ 後続</span><span>予習プラン：公式 / サイト提案 / 完全版</span><span>OR / AND / PATH</span></div>
     <div class="help-note"><strong>このサイトについて：</strong>もともと自分用に作った相関図を、そのまま公開している個人制作物です。企画・実装・データ整理・監査の多くに生成AI（主にChatGPT）を利用し、人手で確認・調整しています。生成AIの出力には誤りがあり得るため、完全性・正確性は保証しません。継続的な更新・保守・サポートを行うプロジェクトではなく、Issue / Pull Request への対応も保証しません。日本公式邦題を優先した非公式・非商用のファン制作で、接続の「重要度」は独自の視聴ガイド分類です。Marvel / Disney その他の権利は各権利者に帰属します。</div>
   </div>
 </dialog>
@@ -4286,7 +4286,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
 <div id="chronology" class="panel" data-lazy-view="chronology" data-lazy-initialized="0"><div class="stage-a-placeholder"><span class="stage-a-kicker">STAGE C</span><h2>世界線・時系列</h2><p>continuityごとのスイムレーンを、MCU / Raimi / Amazing / SSU / FOX X-MENから監査して追加します。</p><p class="muted">Stage Cで実装予定。Earth番号や絶対年代を推測で固定しません。</p></div></div>
 </section>
 <aside id="right" aria-hidden="true"><button id="desktopSideToggle" class="desktop-side-toggle" type="button" aria-expanded="true" title="詳細パネルを折り畳む">詳細を隠す</button><div class="mobile-sheet-head"><div><b id="mobileDetailsTitle">作品・接続の詳細</b><div class="mobile-sheet-sub">現在のゴールと接続根拠</div></div><button aria-label="詳細を閉じる" id="mobileDetailsClose" type="button">閉じる</button></div><div aria-label="右パネル表示" class="side-tabs" role="tablist"><button id="sideTabWorks" aria-controls="sidePanelWorks" aria-selected="true" class="side-tab-btn active" data-side-tab="works" role="tab" type="button">作品</button><button id="sideTabLinks" aria-controls="sidePanelLinks" aria-selected="false" class="side-tab-btn" data-side-tab="links" role="tab" type="button">接続</button></div><div id="sidePanelWorks" aria-labelledby="sideTabWorks" class="side-tab-panel side-tab-works active" role="tabpanel"><div class="card"><h3>作品一覧</h3><div class="muted" id="count"></div><div class="node-list" id="list" aria-label="作品一覧"></div></div><div class="card"><h3>現在のゴール</h3><div class="muted" id="detail">作品を選ぶと前後の接続を表示します。</div></div></div><div id="sidePanelLinks" aria-labelledby="sideTabLinks" class="side-tab-panel side-tab-links" role="tabpanel"><div class="card path-explain" id="pathExplainCard"><h3>🧭 ゴールを結ぶ経路</h3><div class="muted" id="pathExplain">PATHモードで2作品以上をゴールにすると、採用した有向経路を表示します。</div></div><div class="card"><h3>直接つながる作品</h3><div class="edge-tooltip-note">図の矢印にカーソルを置くと、接続種別・重要度・根拠を確認できます。</div><div id="edgewrap"><table><thead><tr><th>元</th><th>先</th><th>接続</th><th>強さ</th></tr></thead><tbody id="et"></tbody></table></div><div id="edgeReasonExplain" class="edge-reason-explain" aria-live="polite"></div></div></div></aside></main>
-<section id="watchWorkspace" class="watch-workspace" aria-label="予習・視聴プラン"><div class="watch-workspace-head"><div><span class="eyebrow">WATCH PLAN</span><h2>予習・視聴プラン</h2><p>見たい作品を決めて、予習ルート・視聴済み・残り時間を広い画面でまとめて管理できます。</p></div><button id="watchBackToChart" class="watch-back-btn" type="button">↑ チャートへ戻る</button></div><div class="watch-workspace-grid"><div class="card overall-watch-card watch-card-progress"><div id="overallWatchProgress" class="overall-watch-progress" aria-live="polite"></div></div><div class="card watch-card-target" data-ui-role="empty-goal-hint"><span class="watch-target-icon">🎯</span><div><strong>見たい作品をチャートで選ぶ</strong><div class="muted">スマホはチャートの作品をタップするとゴールとして接続を表示します。PCは右クリックでもゴールを追加できます。</div></div></div><div class="card watch-card-plan"><h3>予習プラン</h3><div class="watch-share-tools"><button id="sharePlanImage" type="button">📷 画像で共有</button><button id="sharedRoomOpen" type="button">👥 一緒に見る</button></div><div id="sharedRoomBar" class="shared-room-bar" aria-live="polite"></div><div class="watch-tier-row"><label for="watchConnectionTier">つながり</label><select id="watchConnectionTier" class="connection-tier-select watch-tier-select" aria-label="予習プランとチャートのつながり"><option value="minimum">最低限</option><option value="recommended" selected>おすすめ</option><option value="complete">完全版</option></select></div><div class="muted" id="prepplan">見たい作品を選ぶと、予習した方がよい作品をおすすめ順に並べます。</div></div><details class="card watch-card-flow"><summary><span>見る順ナビ</span><small>前史・次に見る候補</small></summary><div class="muted" id="flow">作品を選ぶと、「前に見る候補」「次に見る候補」を表示します。</div></details></div></section>
+<section id="watchWorkspace" class="watch-workspace" aria-label="予習・視聴プラン"><div class="watch-workspace-head"><div><span class="eyebrow">WATCH PLAN</span><h2>予習・視聴プラン</h2><p>見たい作品を決めて、予習ルート・視聴済み・残り時間を広い画面でまとめて管理できます。</p></div><button id="watchBackToChart" class="watch-back-btn" type="button">↑ チャートへ戻る</button></div><div class="watch-workspace-grid"><div class="card overall-watch-card watch-card-progress"><div id="overallWatchProgress" class="overall-watch-progress" aria-live="polite"></div></div><div class="card watch-card-target" data-ui-role="empty-goal-hint"><span class="watch-target-icon">🎯</span><div><strong>見たい作品をチャートで選ぶ</strong><div class="muted">スマホはチャートの作品をタップするとゴールとして接続を表示します。PCは右クリックでもゴールを追加できます。</div></div></div><div class="card watch-card-plan"><h3>予習プラン</h3><div class="watch-share-tools"><button id="sharePlanImage" type="button">📷 画像で共有</button><button id="sharedRoomOpen" type="button">👥 一緒に見る</button></div><div id="sharedRoomBar" class="shared-room-bar" aria-live="polite"></div><div class="watch-tier-row"><label for="watchConnectionTier">予習プラン</label><select id="watchConnectionTier" class="connection-tier-select watch-tier-select" aria-label="予習プランを選ぶ"><option value="recommended" selected>おすすめ</option><option value="complete">完全版</option></select></div><div class="muted" id="prepplan">見たい作品を選ぶと、予習した方がよい作品をおすすめ順に並べます。</div></div><details class="card watch-card-flow"><summary><span>見る順ナビ</span><small>前史・次に見る候補</small></summary><div class="muted" id="flow">作品を選ぶと、「前に見る候補」「次に見る候補」を表示します。</div></details></div></section>
 <dialog id="sharedRoomDialog"><div class="shared-room-dialog-body"><h3 id="sharedRoomDialogTitle">一緒に見る</h3><p id="sharedRoomDialogText">表示名だけで参加できます。メールアドレスやアカウント登録は不要です。</p><input id="sharedRoomName" maxlength="24" autocomplete="nickname" placeholder="表示名（例：たろう）"><div id="sharedRoomError" class="shared-room-error"></div><div class="shared-room-dialog-actions"><button id="sharedRoomCancel" type="button">キャンセル</button><button id="sharedRoomSubmit" type="button">ルームを作る</button></div></div></dialog>
 <details aria-label="相関図について" class="below-chart-info"><summary class="below-info-summary"><span>この相関図について</span><small>公開日・キャラクター索引・接続ルール</small></summary><div class="below-info-grid"><div class="card info-card"><h3>日本向け今後の注目日</h3>
 <div class="muted">
@@ -4294,7 +4294,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
 2026年10月14日：『VisionQuest』Marvel公式日付（日本配信日は未確認）<br/>
 2026年12月18日：『アベンジャーズ／ドゥームズデイ』日米同時公開<br/>
 2027年12月17日：『Avengers: Secret Wars』Marvel公式予定（日本公開日は未確認）
-</div></div><div class="card info-card"><h3>キャラクター索引</h3><div class="muted" id="charinfo">上部のキャラクター欄から選ぶと、主要出演・物語接続作品だけに絞り込みます。</div></div><div class="card info-card"><h3>接続重要度</h3><div class="importance-summary"><b>中核 91本</b>：本筋として有向に再帰追跡<br/><b>推奨 75本</b>：選択作品へ直接1段だけ付加<br/><b>参照 33本</b>：客演・設定・別宇宙など。「全線」で表示<br/><span class="muted">※ strength（事実上の接続強度）とは別軸です。</span></div></div><div class="card info-card"><h3>日本版ルール</h3><div class="muted">日本の公式邦題を優先。邦題が確認できない未公開作は英題＋「邦題未発表」。英題は検索・監査用に保持しています。日本公開・配信日は公式ソースで確認できたものから順次追加します。作品を選ぶと、関連全体／1段階／2段階の範囲で関連作品だけが点灯します。接続は事実上の強さとは別に「中核／推奨／参照」の視聴重要度を持ち、既定の「全線」は生成JSONに含まれる全接続を表示し、互換性観測値199本を含みます。関連全体では中核のみを有向に再帰し、推奨は選択作品への直接接続だけ付加、参照は直接補助に限定します。複数ゴールでは OR（どれか）／AND（共通）／PATH（ゴール間の有向経路だけ）を切り替えられます。複数のゴールを選ぶと、必要な予習作品を重複除去して1本の視聴順に統合します。v5.7.1では接続を再監査し、120行（119ユニーク矢印）の骨格接続を整理し、66本を追加。追加線は物語・人物・旧映像宇宙・Doomsday公式帰還を区別し、Doomsdayの出演確認線は「直接前日譚」を意味しません。</div></div></details>
+</div></div><div class="card info-card"><h3>キャラクター索引</h3><div class="muted" id="charinfo">上部のキャラクター欄から選ぶと、主要出演・物語接続作品だけに絞り込みます。</div></div><div class="card info-card"><h3>接続重要度</h3><div class="importance-summary"><b>中核 91本</b>：本筋として有向に再帰追跡<br/><b>推奨 75本</b>：選択作品へ直接1段だけ付加<br/><b>参照 33本</b>：客演・設定・別宇宙など。「全線」で表示<br/><span class="muted">※ strength（事実上の接続強度）とは別軸です。</span></div></div><div class="card info-card"><h3>日本版ルール</h3><div class="muted">日本の公式邦題を優先。邦題が確認できない未公開作は英題＋「邦題未発表」。英題は検索・監査用に保持しています。日本公開・配信日は公式ソースで確認できたものから順次追加します。作品を選ぶと、関連全体または1つ前のみの範囲で関連作品を点灯します。接続は事実上の強さとは別に「中核／推奨／参照」の視聴重要度を持ち、既定の「全線」は生成JSONに含まれる全接続を表示し、互換性観測値199本を含みます。関連全体では中核のみを有向に再帰し、推奨は選択作品への直接接続だけ付加、参照は直接補助に限定します。複数ゴールでは OR（どれか）／AND（共通）／PATH（ゴール間の有向経路だけ）を切り替えられます。複数のゴールを選ぶと、必要な予習作品を重複除去して1本の視聴順に統合します。v5.7.1では接続を再監査し、120行（119ユニーク矢印）の骨格接続を整理し、66本を追加。追加線は物語・人物・旧映像宇宙・Doomsday公式帰還を区別し、Doomsdayの出演確認線は「直接前日譚」を意味しません。</div></div></details>
 <div id="mobileBackdrop" class="mobile-backdrop" aria-hidden="true"></div><div class="mobile-graph-actions" aria-label="グラフ操作"><button id="mobileFitBtn" type="button" title="全体表示">全体</button><button id="mobileSelectedBtn" type="button" title="選択作品へ">選択へ</button><button id="mobileDetailsFloat" type="button" aria-expanded="false" aria-controls="right" title="詳細を開く">詳細</button></div>
 <script>
 let NODES=[]; let EDGES=[]; let CHAR_LINKS=[]; let RELEASE_META={}; let CHRONOLOGY_LANES=[]; let CHRONOLOGY_META={};
@@ -5001,7 +5001,7 @@ function initSvgInteraction(){
     const tier=document.createElement('select');
     tier.className='connection-tier-select chart-tier-select';
     tier.setAttribute('aria-label','つながりの詳しさ');
-    tier.innerHTML='<option value="minimum">最低限</option><option value="recommended" selected>おすすめ</option><option value="complete">完全版</option>';
+    tier.innerHTML='<option value="recommended" selected>おすすめ</option><option value="complete">完全版</option>';
     tier.addEventListener('pointerdown',e=>e.stopPropagation());
     const jump=document.createElement('button');
     jump.type='button';
@@ -5394,7 +5394,7 @@ function connectedComponent(start){
 selectionNeighborhood = function(){
   const ctx=new Set();
   for(const id of selectedIds){
-    const part = scopeMode==='all' ? connectedComponent(id) : neighborhood(id, scopeMode==='two'?2:1);
+    const part = scopeMode==='all' ? connectedComponent(id) : scopeMode==='previous1' ? new Set([id,...(inc[id]||[]).map(e=>e.source)]) : new Set([id]);
     for(const x of part) ctx.add(x);
   }
   return ctx;
@@ -5516,7 +5516,7 @@ function buildPreparationPlan(target){
   if(curated){
     return {
       ids: curated.route.ids.slice(0,curated.index),
-      source: `公式予習リスト未登録のため、監査済み編集ルート「${curated.route.route_ja}」を使用`,
+      source: `公式予習リスト未登録のため、サイト提案ルート「${curated.route.route_ja}」を使用`,
       sourceUrl:'',
       sourceCheckedAt:'',
       routeId:'',
@@ -5811,6 +5811,45 @@ if(flowchartReady)render();
 
   function importanceOf(e){ return e.importance||'recommended'; }
   function importanceAllowed(e){ return (IMPORTANCE_RANK[importanceOf(e)]||1) >= (IMPORTANCE_MIN[importanceMode]||2); }
+
+  // Backward history should read as a chain when an explicit shortcut and a
+  // longer supported route coexist (1→2→3 plus 1→3). Keep the shortcut in
+  // the exported graph and neutral chart, but do not light it as prehistory.
+  function filterBackwardShortcutEdges(backEdges,targetId){
+    const edgeByKey=new Map(EDGES.map(e=>[edgeKey(e),e]));
+    const adjacency=new Map();
+    for(const key of backEdges){
+      const [source,target]=key.split('->');
+      if(!source||!target) continue;
+      if(!adjacency.has(source)) adjacency.set(source,[]);
+      adjacency.get(source).push({key,target});
+    }
+    const hasAlternatePath=(source,target,skipKey)=>{
+      const seen=new Set([source]), queue=[source];
+      while(queue.length){
+        const current=queue.shift();
+        for(const link of (adjacency.get(current)||[])){
+          if(link.key===skipKey) continue;
+          if(link.target===target) return true;
+          if(!seen.has(link.target)){
+            seen.add(link.target);
+            queue.push(link.target);
+          }
+        }
+      }
+      return false;
+    };
+    const filtered=new Set();
+    for(const key of backEdges){
+      const [source,target]=key.split('->');
+      const edge=edgeByKey.get(key);
+      const auxiliary=edge?.type_en==='shared character/entity';
+      if(target!==targetId || !auxiliary || !hasAlternatePath(source,target,key)) filtered.add(key);
+    }
+    return filtered;
+  }
+  window.marvelFilterBackwardShortcutEdges=filterBackwardShortcutEdges;
+
   function limitedPart(id,hops){
     const nodes=new Set([id]), usedEdges=new Set();
     const q=[[id,0]];
@@ -5826,6 +5865,17 @@ if(flowchartReady)render();
       }
     }
     return {nodes,backNodes:new Set(),forwardNodes:new Set(),contextNodes:new Set(nodes),backEdges:new Set(),forwardEdges:new Set(),contextEdges:usedEdges,generic:true};
+  }
+
+  function directPredecessorPart(id){
+    const nodes=new Set([id]), backNodes=new Set(), backEdges=new Set();
+    for(const e of (inc[id]||[])){
+      if(!importanceAllowed(e)) continue;
+      nodes.add(e.source);
+      backNodes.add(e.source);
+      backEdges.add(edgeKey(e));
+    }
+    return {nodes,backNodes,forwardNodes:new Set(),contextNodes:new Set(),backEdges,forwardEdges:new Set(),contextEdges:new Set(),generic:false};
   }
 
   function tagEdgeImportance(){
@@ -5876,18 +5926,36 @@ if(flowchartReady)render();
   // follows outgoing arrows.  A walk never changes direction midway.
   function directedPartAll(id){
     const backNodes=new Set([id]), forwardNodes=new Set([id]), contextNodes=new Set();
-    const backEdges=new Set(), forwardEdges=new Set(), contextEdges=new Set();
-    const propagates=e=>importanceAllowed(e) && edgeRank(e)>=3; // recursive traversal follows the selected connection tier
+    let backEdges=new Set();
+    const forwardEdges=new Set(), contextEdges=new Set();
+    const propagates=e=>importanceAllowed(e) && edgeRank(e)>=3; // forward keeps the existing strong/very-strong scope
+    // Chart selection keeps an explicit reference-level story chain readable
+    // (for example 1→2→3); the watch-plan policy remains independently
+    // responsible for treating other reference links as direct context.
+    const backPropagates=e=>importanceAllowed(e) && (edgeRank(e)>=3 || (importanceMode==='reference' && e.type_en==='explicit work relation')); // complete history follows explicit story chains, not auxiliary reference fan-out
 
     let stack=[id];
     while(stack.length){
       const x=stack.pop();
       for(const e of (inc[x]||[])){
-        if(!propagates(e)) continue;
+        if(!backPropagates(e)) continue;
         backEdges.add(edgeKey(e));
         if(!backNodes.has(e.source)){ backNodes.add(e.source); stack.push(e.source); }
       }
     }
+    const allBackEdges=backEdges;
+    // Include every visible direct incoming link when identifying transitive
+    // auxiliary shortcuts, even when that link is not a recursive candidate.
+    const visibleIncomingEdges=new Set(
+      (inc[id]||[]).filter(e=>importanceAllowed(e)).map(e=>edgeKey(e))
+    );
+    const filteredBackwardEdges=filterBackwardShortcutEdges(
+      new Set([...allBackEdges,...visibleIncomingEdges]),id
+    );
+    const omittedBackEdges=new Set(
+      [...visibleIncomingEdges].filter(key=>!filteredBackwardEdges.has(key))
+    );
+    backEdges=new Set([...allBackEdges].filter(key=>filteredBackwardEdges.has(key)));
     stack=[id];
     while(stack.length){
       const x=stack.pop();
@@ -5898,15 +5966,16 @@ if(flowchartReady)render();
       }
     }
 
-    // Medium/weak/reference links are one-hop context only. Importance changes
-    // what context is shown, never where recursive history stops.
-    for(const e of (inc[id]||[])) if(importanceAllowed(e) && !propagates(e)){ contextNodes.add(e.source); contextEdges.add(edgeKey(e)); }
+    // In the recommended tier, non-propagating incoming links stay one-hop
+    // context. Complete history also keeps auxiliary reference links direct;
+    // outgoing context remains one-hop so forward behavior is unchanged.
+    for(const e of (inc[id]||[])) if(importanceAllowed(e) && !backPropagates(e) && !omittedBackEdges.has(edgeKey(e))){ contextNodes.add(e.source); contextEdges.add(edgeKey(e)); }
     for(const e of (out[id]||[])) if(importanceAllowed(e) && !propagates(e)){ contextNodes.add(e.target); contextEdges.add(edgeKey(e)); }
     const nodes=new Set([...backNodes,...forwardNodes,...contextNodes]);
     return {nodes,backNodes,forwardNodes,contextNodes,backEdges,forwardEdges,contextEdges,generic:false};
   }
   function directedPart(id){
-    return scopeMode==='all' ? directedPartAll(id) : limitedPart(id, scopeMode==='two'?2:1);
+    return scopeMode==='all' ? directedPartAll(id) : scopeMode==='previous1' ? directPredecessorPart(id) : limitedPart(id,1);
   }
 
   function pathEdgeCost(e,profile=pathPreference){
@@ -6001,7 +6070,7 @@ if(flowchartReady)render();
     const pathState=(combineMode==='path'&&ids.length>1)?computeSelectionState():null;
     const combLabel=combineMode==='and'?'AND（全ゴールに共通）':combineMode==='path'?`PATH（${pathPreference==='shortest'?'最短':'本流優先'}）`:'OR（いずれかのゴール）';
     const disconnectedNote=pathState?.disconnected?.length?`　※有向経路なし：${pathState.disconnected.length}組`:'';
-    const mode=ids.length>1 ? `<div class="selection-mode-note${combineMode==='path'?' path-note':''}">点灯条件：${combLabel} / ${scopeMode==='all'?'関連全体':scopeMode==='two'?'2段階':'1段階'} / つながり：${importanceMode==='core'?'最低限':importanceMode==='recommended'?'おすすめ':'完全版'}${combineMode==='and'&&scopeMode==='all'?'　※有向の共通範囲を表示します。':''}${disconnectedNote}</div>` : '';
+    const mode=ids.length>1 ? `<div class="selection-mode-note${combineMode==='path'?' path-note':''}">点灯条件：${combLabel} / ${scopeMode==='all'?'関連全体':'1つ前のみ'} / つながり：${importanceMode==='core'?'中核':importanceMode==='recommended'?'おすすめ':'完全版'}${combineMode==='and'&&scopeMode==='all'?'　※有向の共通範囲を表示します。':''}${disconnectedNote}</div>` : '';
     if(ids.length===1) return mode;
     const target=selected;
     return `<p><b>複数ゴール中 (${ids.length})：</b><br>${ids.map(x=>`<span class="badge selbadge"${x===target?' style="outline:1px solid #f59e0b"':''}><span class="seljump" data-id="${x}" title="このゴールを基準に表示">${x===target?'🎯 ':''}${esc(nm[x]?.title||x)}</span><button class="selremove" data-id="${x}" title="このゴールだけ解除" aria-label="${esc(nm[x]?.title||x)}をゴールから解除">×</button></span>`).join(' ')}</p>${mode}`;
@@ -6215,6 +6284,7 @@ if(flowchartReady)render();
   window.renderSelectionState=renderSelectionState;
   window.marvelApplyOfficialRouteSvgOverlay=applyOfficialRouteSvgOverlay;
   window.marvelDirectedPartAll=directedPartAll;
+  window.marvelDirectPredecessorPart=directPredecessorPart;
   window.marvelImportanceAllowed=importanceAllowed;
   window.marvelEdgeKey=edgeKey;
   window.marvelAddMissingDirectedEdges=addMissingDirectedEdges;
@@ -6298,14 +6368,14 @@ if(flowchartReady)render();
     if(prepTier==='minimum'){
       const directCore=(inc[target]||[]).filter(e=>importanceOf(e)==='core').map(e=>e.source);
       const ids=sortByRelease(new Set(directCore));
-      return {ids,source:'接続重要度「中核」の直接前史',sourceUrl:'',sourceCheckedAt:'',routeId:'',kind:'minimum',provenance:'policy',tierLabel:'最低限',tierNote:'視聴目標へ直接入る「中核」接続だけを表示します。再帰探索や推奨ルートからの補完は行いません。'};
+      return {ids,source:'接続重要度「中核」の直接前史',sourceUrl:'',sourceCheckedAt:'',routeId:'',kind:'minimum',provenance:'policy',tierLabel:'互換レガシー',tierNote:'旧互換データの中核直接前史です。再帰探索や推奨ルートからの補完は行いません。'};
     }
 
     if(prepTier==='recommended'){
       const core=ancestorSetByImportance(target,false);
       for(const id of recIds) core.add(id);
       const ids=preserveOfficialRouteOrder(topologicalOrderByImportance(core,false),rec);
-      return {ids,source:`${rec.source} ＋ 接続重要度「中核」`,sourceUrl:rec.sourceUrl||'',sourceCheckedAt:rec.sourceCheckedAt||'',routeId:rec.routeId||'',kind:rec.kind,provenance:rec.provenance,tierLabel:'おすすめ',tierNote:'公式予習リストが登録されている場合はそれを優先します。未登録の作品は監査済み編集ルートと「中核」前史で補います。客演や参照だけの接続は自動では広げません。'};
+      return {ids,source:`${rec.source} ＋ 接続重要度「中核」`,sourceUrl:rec.sourceUrl||'',sourceCheckedAt:rec.sourceCheckedAt||'',routeId:rec.routeId||'',kind:rec.kind,provenance:rec.provenance,tierLabel:'おすすめ',tierNote:'公式予習リストが登録されている場合はそれを優先します。未登録の作品はサイト提案ルートと「中核」前史で補います。客演や参照だけの接続は自動では広げません。'};
     }
 
     const broad=ancestorSetByImportance(target,true);
@@ -6313,7 +6383,7 @@ if(flowchartReady)render();
     // Reference edges are direct context only, never recursive even in complete mode.
     for(const e of (inc[target]||[])) if(importanceOf(e)==='reference') broad.add(e.source);
     const ids=preserveOfficialRouteOrder(topologicalOrderByImportance(broad,true),rec);
-    return {ids,source:`${rec.source} ＋ 「中核／推奨」を再帰追跡 ＋ 直接参照`,sourceUrl:rec.sourceUrl||'',sourceCheckedAt:rec.sourceCheckedAt||'',routeId:rec.routeId||'',kind:'complete',provenance:rec.provenance,tierLabel:'完全版',tierNote:'「中核」と「推奨」を再帰的に遡り、視聴目標へ直接つながる「参照」も加えます。参照を踏み台に別系列へは拡散しません。'};
+      return {ids,source:`${rec.source} ＋ 「中核／推奨」を再帰追跡 ＋ 直接参照`,sourceUrl:rec.sourceUrl||'',sourceCheckedAt:rec.sourceCheckedAt||'',routeId:rec.routeId||'',kind:'complete',provenance:rec.provenance,tierLabel:'完全版',tierNote:'「中核」と「推奨」を再帰的に遡り、視聴目標へ直接つながる「参照」も加えます。参照を踏み台に別系列へは拡散しません。'};
   }
 
   function buildMultiGoalPlan(goalIds,tier=prepTier){
@@ -6416,7 +6486,7 @@ if(flowchartReady)render();
       return {imp, html:`次は <span class="prep-next">${esc(nm[next]?.title||next)}</span> — ${esc(type)} ${hopNote}`, title:first.reason||''};
     }
     // Curated route entries can intentionally exist without an edge chain in the selected layer.
-    return {imp:'recommended', html:'監査済み編集ルート上の予習作品', title:''};
+    return {imp:'recommended', html:'サイト提案ルート上の予習作品', title:''};
   }
 
 
@@ -6610,10 +6680,10 @@ if(flowchartReady)render();
       return {key:'official',label:'公式予習リスト',description:'公式が示す予習順を使用しています。'};
     }
     if(values.includes('official')){
-      return {key:'mixed',label:'公式＋編集ルート',description:'公式予習リストと、監査済み編集ルートを組み合わせています。'};
+      return {key:'mixed',label:'公式＋サイト提案',description:'公式予習リストと、サイト提案ルートを組み合わせています。'};
     }
     if(values.some(value=>value==='curated'||value==='graph')){
-      return {key:'editorial-fallback',label:'公式リスト未登録・編集ルート',description:'公式の作品別予習リストが未登録のため、監査済みの編集ルート／接続表を表示しています。公式の必須リストではありません。'};
+      return {key:'editorial-fallback',label:'公式リスト未登録・サイト提案',description:'公式の作品別予習リストが未登録のため、サイト提案ルート／接続表を表示しています。公式の必須リストではありません。'};
     }
     return {key:'policy',label:'接続重要度ルール',description:'接続重要度の暫定ルールで直接前史を表示しています。'};
   }
@@ -6646,7 +6716,7 @@ if(flowchartReady)render();
     const officialToggle=hasOfficialRoute
       ? `<button type="button" class="official-route-toggle${officialRouteHighlightEnabled?' active':''}" data-official-route-toggle="1" aria-pressed="${officialRouteHighlightEnabled?'true':'false'}">${officialRouteHighlightEnabled?'✓ 公式予習ルートをチャートで表示中':'公式予習ルートをチャートで光らせる'}</button>`
       : '';
-    const heading=`<div class="prep-plan-heading"><strong>${multi?'複数ゴールの統合予習プラン':`${esc(nm[goals[0]]?.title||goals[0])} の予習プラン`}</strong><span class="prep-tier-label">${({minimum:'最低限',recommended:'おすすめ',complete:'完全版'})[prepTier]||prepTier}</span>${provenanceBadge}</div>`;
+    const heading=`<div class="prep-plan-heading"><strong>${multi?'複数ゴールの統合予習プラン':`${esc(nm[goals[0]]?.title||goals[0])} の予習プラン`}</strong><span class="prep-tier-label">${({minimum:'互換レガシー',recommended:'おすすめ',complete:'完全版'})[prepTier]||prepTier}</span>${provenanceBadge}</div>`;
     const goalBadges=`<div class="multi-goal-summary"><span>🎯 ${goals.length}作品をゴール中</span>${goals.map((id,i)=>`<span class="multi-goal-badge-wrap"><button type="button" class="multi-goal-badge" data-goal-focus="${esc(id)}">ゴール ${i+1}：${esc(nm[id]?.title||id)}</button><button type="button" class="prep-goal-remove" data-id="${esc(id)}" title="このゴールを解除" aria-label="${esc(nm[id]?.title||id)}をゴールから解除">×</button></span>`).join('')}</div>`;
     const progress=prepProgressTools(plan.orderedIds);
     const timeSummary=multiGoalWatchTimeSummary(plan);
@@ -6825,7 +6895,9 @@ if(flowchartReady)render();
     };
   });
   window.marvelSetConnectionTier=function(tier){
-    prepTier=['minimum','recommended','complete'].includes(tier)?tier:'recommended';
+    // The legacy minimum tier remains readable in stored data, but is no longer
+    // a public UI choice. Normalize it to the recommended plan on entry.
+    prepTier=tier==='complete'?'complete':'recommended';
     importanceMode=PREP_TO_IMPORTANCE[prepTier]||'recommended';
     selectionStateCache=null;
     updateModeButtons();
@@ -7200,7 +7272,7 @@ if(flowchartReady)render();
         watchedIds=ownSet();
         const rp=roomViewState.plan||{};
         const goals=(rp.goalIds||[]).filter(id=>nm[id]);
-        const tier=['minimum','recommended','complete'].includes(rp.tier)?rp.tier:'recommended';
+        const tier=rp.tier==='complete'?'complete':'recommended';
         const creating=kind==='created';
         const differs=tier!==prepTier||JSON.stringify(goals)!==JSON.stringify(orderedGoalIds());
         if(!creating&&differs){selectedIds=new Set(goals);selected=goals.slice(-1)[0]||null;prepTier=tier;selectionStateCache=null;refreshSelection(false)}
@@ -7254,7 +7326,7 @@ if(flowchartReady)render();
   // PUBLIC v5.12.0: render the current watch plan to a standalone PNG.
   (()=>{
     const shareButton=document.getElementById('sharePlanImage');
-    const TIER_LABEL={minimum:'最低限',recommended:'おすすめ',complete:'完全版'};
+    const TIER_LABEL={minimum:'互換レガシー',recommended:'おすすめ',complete:'完全版'};
     function wrapChars(ctx,text,maxWidth){
       const out=[];let line='';
       for(const ch of String(text||'')){
@@ -8441,7 +8513,8 @@ window.FEATURED_ROUTE=Object.freeze({
   function focusPart(id){
     const scope=scopeNow();
     if(scope==='all'&&window.marvelDirectedPartAll)return window.marvelDirectedPartAll(id);
-    return limitedFocusPart(id,scope==='two'?2:1);
+    if(scope==='previous1'&&window.marvelDirectPredecessorPart)return window.marvelDirectPredecessorPart(id);
+    return limitedFocusPart(id,1);
   }
 
   const attrEsc=s=>esc(s).replaceAll('"','&quot;').replaceAll("'",'&#39;');
@@ -8744,6 +8817,13 @@ function initializeFlowchartData(payload){
   return payload;
 }
 
+function flowchartBootstrapFailureMessage(){
+  if(location.protocol==='file:'){
+    return 'フォルダから直接開いたため作品データを読み込めません。リポジトリのルートで `python -m http.server 8765` を実行し、http://127.0.0.1:8765/index.html を開いてください。';
+  }
+  return '作品データの読み込みに失敗しました。ページを再読み込みしてください。';
+}
+
 async function loadFlowchartData(){
   setFlowchartStatus('作品データを読み込み中…','loading');
   try{
@@ -8753,7 +8833,7 @@ async function loadFlowchartData(){
     return initializeFlowchartData(payload);
   }catch(error){
     flowchartReady=false;
-    setFlowchartStatus('作品データの読み込みに失敗しました。ページを再読み込みしてください。','error');
+    setFlowchartStatus(flowchartBootstrapFailureMessage(),'error');
     console.error('Flowchart data bootstrap failed',error);
     return null;
   }

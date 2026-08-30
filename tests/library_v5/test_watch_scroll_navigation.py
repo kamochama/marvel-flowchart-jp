@@ -42,6 +42,50 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("watchWorkspace.scrollIntoView", self.html)
         self.assertIn("window.returnToGraphFromWatch", self.html)
 
+    def test_chart_scope_exposes_full_and_previous1_only(self) -> None:
+        """The chart viewer has one full view and one direct-predecessor view."""
+        scope = re.search(
+            r'<div class="control-group control-scope">.*?</div>',
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(scope)
+        scope_text = scope.group(0)
+        self.assertIn('data-scope="all"', scope_text)
+        self.assertIn('data-scope="previous1"', scope_text)
+        self.assertIn("1つ前のみ", scope_text)
+        self.assertNotIn('data-scope="two"', scope_text)
+        self.assertNotIn("2段階", scope_text)
+
+    def test_previous1_scope_follows_incoming_edges_only(self) -> None:
+        """The one-step chart mode must not light outgoing neighbours."""
+        self.assertIn("function directPredecessorPart(id)", self.html)
+        previous = re.search(
+            r"function directPredecessorPart\(id\)\{.*?\n\s*\}",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(previous)
+        self.assertIn("inc[id]", previous.group(0))
+        self.assertNotIn("out[id]", previous.group(0))
+
+    def test_user_facing_plan_uses_site_proposal_route(self) -> None:
+        """Curated fallback wording should describe the site's proposal, not editing work."""
+        self.assertIn("サイト提案ルート", self.html)
+        self.assertNotIn("監査済み編集ルート", self.html)
+
+    def test_html_hides_minimum_and_two_stage_choices(self) -> None:
+        """Legacy minimum/two-stage values stay internal, but are not offered in HTML controls."""
+        tier_select = re.search(
+            r'<select id="watchConnectionTier".*?</select>',
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(tier_select)
+        self.assertNotIn('value="minimum"', tier_select.group(0))
+        self.assertNotIn("最低限", tier_select.group(0))
+        self.assertNotIn("2段階", self.html)
+
     def test_mobile_overlay_restoration_uses_public_selection_state(self) -> None:
         """Global mobile helpers must not reach into the core module's local cache."""
         restore = re.search(
