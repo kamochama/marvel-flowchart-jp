@@ -47,7 +47,16 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 390px;min-height:calc(100v
 .prep-item{display:grid;grid-template-columns:30px 1fr;gap:7px;align-items:start;padding:7px 0;border-bottom:1px solid #263246}
 .prep-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#1d4ed8;color:#fff;font-weight:700;font-size:12px}
 .prep-goal{margin-top:9px;padding:8px;border:1px solid #ef4444;border-radius:8px;background:#30151d}
-.prep-source{font-size:11px;color:#94a3b8;margin-top:5px}
+.prep-source{font-size:11px;color:#94a3b8;margin-top:8px;padding:7px 9px;border-left:3px solid #475569;background:rgba(15,23,42,.5);line-height:1.55}
+.prep-source[data-prep-provenance="official"]{border:1px solid #0e7490;border-left:4px solid #22c55e;border-radius:8px;background:linear-gradient(135deg,rgba(6,78,59,.28),rgba(8,47,73,.4));color:#d1fae5;box-shadow:0 5px 18px rgba(6,78,59,.16)}
+.prep-source[data-prep-provenance="official"] strong{color:#bbf7d0}
+.prep-source[data-prep-provenance="mixed"]{border-color:#2563eb;border-left-color:#a78bfa;background:rgba(30,41,91,.38)}
+.prep-source-links{display:inline-flex;gap:6px;flex-wrap:wrap;margin-left:4px}
+.prep-source-link{display:inline-flex;align-items:center;min-height:28px;padding:2px 7px;border:1px solid #0e7490;border-radius:999px;color:#bae6fd;text-decoration:none;background:rgba(8,47,73,.55);font-size:10px;font-weight:800;white-space:nowrap}
+.prep-source-link:hover,.prep-source-link:focus-visible{border-color:#67e8f9;background:#164e63;color:#ecfeff}
+.prep-provenance-badge{display:inline-flex;align-items:center;min-height:22px;margin-left:7px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:900;vertical-align:middle}
+.prep-provenance-badge.official{border:1px solid #22c55e;background:#14532d;color:#bbf7d0;box-shadow:0 0 0 2px rgba(34,197,94,.12)}
+.prep-provenance-badge.mixed{border:1px solid #a78bfa;background:#312e81;color:#ddd6fe}
 
 table{width:100%;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid var(--line);padding:5px;text-align:left;vertical-align:top}th{position:sticky;top:0;background:var(--card)}#edgewrap{max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:8px}
 .svg-wrap svg g.node,.svg-wrap svg g.edge{transition:opacity .15s ease,filter .15s ease}.svg-wrap svg.dim g.node{opacity:.14;filter:grayscale(.62) saturate(.38) brightness(.72)}.svg-wrap svg.dim g.edge{opacity:.035;filter:grayscale(.75) saturate(.22) brightness(.58)}
@@ -480,7 +489,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .chart-watch-jump:focus-visible,.connection-tier-select:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
 .watch-tier-row{display:flex;align-items:center;justify-content:flex-start;gap:8px;margin:0 0 10px}
 .watch-tier-row label{font-size:11px;font-weight:800;color:#cbd5e1}
-.watch-tier-select{min-width:118px;border-radius:9px;box-shadow:none}
+.watch-tier-select{min-width:118px;min-height:42px;border-radius:9px;box-shadow:none}
 .svg-wrap.scroll-friendly .zoom-hint{right:10px;left:auto;bottom:8px;max-width:min(520px,72%)}
 @media(max-width:760px){
   .svg-wrap{touch-action:none!important;overscroll-behavior:auto!important;contain:layout paint}
@@ -749,7 +758,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
 
 </style>
 <style id="mobile-touch-target-contract">
-/* PUBLIC v5.20.6 — keep mobile controls comfortably tappable. */
+/* PUBLIC v5.20.7 — keep mobile controls comfortably tappable. */
 @media(max-width:760px){
   .mobile-primary-nav input,
   .mobile-primary-nav #q,
@@ -778,7 +787,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.20.6</span>
+      <span class="stat-chip public-release">PUBLIC v5.20.7</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -5338,10 +5347,10 @@ if(flowchartReady)render();
 <script>
 // v5.6: full connected-component focus + ordered preparation plan
 const CURATED_ROUTES_V56 = [{"route": "Spider-Man / Multiverse", "route_ja": "スパイダーマン／マルチバース", "ids": ["captain-america-civil-war-2016", "spider-man-homecoming-2017", "avengers-infinity-war-2018", "avengers-endgame-2019", "spider-man-far-from-home-2019", "spider-man-no-way-home-2021", "doctor-strange-in-the-multiverse-of-madness-2022", "spider-man-brand-new-day-2026-07-31"]}, {"route": "Wanda / Vision / 魔術", "route_ja": "ワンダ／ヴィジョン／魔術", "ids": ["avengers-age-of-ultron-2015", "captain-america-civil-war-2016", "avengers-infinity-war-2018", "avengers-endgame-2019", "wandavision-2021", "doctor-strange-in-the-multiverse-of-madness-2022", "agatha-all-along-2024", "visionquest-2026-10-14"]}, {"route": "Daredevil / Street-level", "route_ja": "デアデビル／ストリート系", "ids": ["daredevil-s1-2015", "daredevil-s2-2016", "the-punisher-s1-2017", "the-defenders-2017", "daredevil-s3-2018", "the-punisher-s2-2019", "hawkeye-2021", "echo-2024", "daredevil-born-again-s1-2025", "daredevil-born-again-s2-2026", "the-punisher-one-last-kill-2026-05-12"]}, {"route": "X-Men / Deadpool", "route_ja": "X-MEN／デッドプール", "ids": ["x-men-2000", "x2-x-men-united-2003", "x-men-the-last-stand-2006", "x-men-first-class-2011", "x-men-days-of-future-past-2014", "the-wolverine-2013", "deadpool-2016", "logan-2017", "deadpool-2-2018", "deadpool-wolverine-2024", "avengers-doomsday-2026-12-18"]}, {"route": "Doomsday 最短準備", "route_ja": "『アベンジャーズ／ドゥームズデイ』最短準備", "ids": ["avengers-endgame-2019", "wandavision-2021", "loki-s1-2021", "loki-s2-2023", "spider-man-no-way-home-2021", "deadpool-wolverine-2024", "thunderbolts-new-avengers-2025", "the-fantastic-four-first-steps-2025", "spider-man-brand-new-day-2026-07-31", "avengers-doomsday-2026-12-18", "avengers-secret-wars-2027-12-17"]}];
-// Official work-specific "watch this before" lists are intentionally empty until
-// each route is registered with a source and audit review. Curated routes remain
-// useful as an explicit fallback, but must never be labelled as official.
-const OFFICIAL_PREWATCH_ROUTES_V57 = Object.freeze([]);
+// Official work-specific "watch this before" lists are supplied by the checked-in
+// view policy inside flowchart.json. Curated routes remain useful as an explicit
+// fallback, but must never be labelled as official.
+let OFFICIAL_PREWATCH_ROUTES_V57 = Object.freeze([]);
 const prepplan = document.getElementById('prepplan');
 let scopeMode = 'all';
 
@@ -5485,6 +5494,9 @@ function buildPreparationPlan(target){
     return {
       ids: official.route.ids.slice(0,official.index),
       source: `公式予習リスト「${official.route.route_ja}」を使用`,
+      sourceUrl: official.route.source_url||'',
+      sourceCheckedAt: official.route.checked_at||'',
+      routeId: official.route.route_id||'',
       kind:'official',
       provenance:'official'
     };
@@ -5494,6 +5506,9 @@ function buildPreparationPlan(target){
     return {
       ids: curated.route.ids.slice(0,curated.index),
       source: `公式予習リスト未登録のため、監査済み編集ルート「${curated.route.route_ja}」を使用`,
+      sourceUrl:'',
+      sourceCheckedAt:'',
+      routeId:'',
       kind:'curated',
       provenance:'curated'
     };
@@ -5508,6 +5523,9 @@ function buildPreparationPlan(target){
   return {
     ids,
     source:'公式予習リスト未登録のため、監査済み接続表の strong / very strong 接続から自動生成',
+    sourceUrl:'',
+    sourceCheckedAt:'',
+    routeId:'',
     kind:'graph',
     provenance:'graph'
   };
@@ -6202,6 +6220,13 @@ if(flowchartReady)render();
   }
 
   const buildRecommendedPlan=buildPreparationPlan;
+  function preserveOfficialRouteOrder(ids,plan){
+    const officialRouteIds=plan.provenance==='official'?[...new Set(plan.ids)]:[];
+    const routeOrdered=officialRouteIds.filter(id=>ids.includes(id));
+    if(!routeOrdered.length)return ids;
+    const routeSet=new Set(routeOrdered);
+    return [...routeOrdered,...ids.filter(id=>!routeSet.has(id))];
+  }
   function buildTieredPlan(target){
     const rec=buildRecommendedPlan(target);
     const recIds=[...new Set(rec.ids)];
@@ -6209,27 +6234,28 @@ if(flowchartReady)render();
     if(prepTier==='minimum'){
       const directCore=(inc[target]||[]).filter(e=>importanceOf(e)==='core').map(e=>e.source);
       const ids=sortByRelease(new Set(directCore));
-      return {ids,source:'接続重要度「中核」の直接前史',kind:'minimum',provenance:'policy',tierLabel:'最低限',tierNote:'視聴目標へ直接入る「中核」接続だけを表示します。再帰探索や推奨ルートからの補完は行いません。'};
+      return {ids,source:'接続重要度「中核」の直接前史',sourceUrl:'',sourceCheckedAt:'',routeId:'',kind:'minimum',provenance:'policy',tierLabel:'最低限',tierNote:'視聴目標へ直接入る「中核」接続だけを表示します。再帰探索や推奨ルートからの補完は行いません。'};
     }
 
     if(prepTier==='recommended'){
       const core=ancestorSetByImportance(target,false);
       for(const id of recIds) core.add(id);
-      const ids=topologicalOrderByImportance(core,false);
-      return {ids,source:`${rec.source} ＋ 接続重要度「中核」`,kind:rec.kind,provenance:rec.provenance,tierLabel:'おすすめ',tierNote:'公式予習リストが登録されている場合はそれを優先します。未登録の作品は監査済み編集ルートと「中核」前史で補います。客演や参照だけの接続は自動では広げません。'};
+      const ids=preserveOfficialRouteOrder(topologicalOrderByImportance(core,false),rec);
+      return {ids,source:`${rec.source} ＋ 接続重要度「中核」`,sourceUrl:rec.sourceUrl||'',sourceCheckedAt:rec.sourceCheckedAt||'',routeId:rec.routeId||'',kind:rec.kind,provenance:rec.provenance,tierLabel:'おすすめ',tierNote:'公式予習リストが登録されている場合はそれを優先します。未登録の作品は監査済み編集ルートと「中核」前史で補います。客演や参照だけの接続は自動では広げません。'};
     }
 
     const broad=ancestorSetByImportance(target,true);
     for(const id of recIds) broad.add(id);
     // Reference edges are direct context only, never recursive even in complete mode.
     for(const e of (inc[target]||[])) if(importanceOf(e)==='reference') broad.add(e.source);
-    const ids=topologicalOrderByImportance(broad,true);
-    return {ids,source:`${rec.source} ＋ 「中核／推奨」を再帰追跡 ＋ 直接参照`,kind:'complete',provenance:rec.provenance,tierLabel:'完全版',tierNote:'「中核」と「推奨」を再帰的に遡り、視聴目標へ直接つながる「参照」も加えます。参照を踏み台に別系列へは拡散しません。'};
+    const ids=preserveOfficialRouteOrder(topologicalOrderByImportance(broad,true),rec);
+    return {ids,source:`${rec.source} ＋ 「中核／推奨」を再帰追跡 ＋ 直接参照`,sourceUrl:rec.sourceUrl||'',sourceCheckedAt:rec.sourceCheckedAt||'',routeId:rec.routeId||'',kind:'complete',provenance:rec.provenance,tierLabel:'完全版',tierNote:'「中核」と「推奨」を再帰的に遡り、視聴目標へ直接つながる「参照」も加えます。参照を踏み台に別系列へは拡散しません。'};
   }
 
   function buildMultiGoalPlan(goalIds,tier=prepTier){
     const goals=[...new Set((goalIds||[]).filter(id=>nm[id]))];
-    const goalSet=new Set(goals), union=new Set(goals), sourceByGoal={}, sourceLabelByGoal={}, provenanceByGoal={}, tierNoteByGoal={};
+    const goalSet=new Set(goals), union=new Set(goals), sourceByGoal={}, sourceLabelByGoal={}, sourceUrlByGoal={}, sourceCheckedAtByGoal={}, routeIdByGoal={}, provenanceByGoal={}, tierNoteByGoal={};
+    const officialOrder=[];
     const rolesById={};
     const previousTier=prepTier;
     try{
@@ -6238,8 +6264,12 @@ if(flowchartReady)render();
         const plan=buildTieredPlan(goal);
         sourceByGoal[goal]=[...plan.ids];
         sourceLabelByGoal[goal]=plan.source||'';
+        sourceUrlByGoal[goal]=plan.sourceUrl||'';
+        sourceCheckedAtByGoal[goal]=plan.sourceCheckedAt||'';
+        routeIdByGoal[goal]=plan.routeId||'';
         provenanceByGoal[goal]=plan.provenance||'policy';
         tierNoteByGoal[goal]=plan.tierNote||'';
+        if(plan.provenance==='official') for(const id of plan.ids) if(!officialOrder.includes(id)) officialOrder.push(id);
         for(const id of plan.ids){
           union.add(id);
           if(!rolesById[id]) rolesById[id]=[];
@@ -6259,18 +6289,23 @@ if(flowchartReady)render();
         indeg.set(e.target,(indeg.get(e.target)||0)+1);
       }
     }
-    let ready=sortByRelease([...union].filter(id=>(indeg.get(id)||0)===0));
+    const officialRank=new Map(officialOrder.map((id,index)=>[id,index]));
+    const orderReady=(ids)=>[...ids].sort((a,b)=>{
+      const ra=officialRank.has(a)?officialRank.get(a):Infinity, rb=officialRank.has(b)?officialRank.get(b):Infinity;
+      return ra-rb || releaseKey(a)-releaseKey(b) || (nm[a]?.title||a).localeCompare(nm[b]?.title||b,'ja');
+    });
+    let ready=orderReady([...union].filter(id=>(indeg.get(id)||0)===0));
     const ordered=[];
     while(ready.length){
       const id=ready.shift(); ordered.push(id);
       for(const next of fwd.get(id)||[]){
         indeg.set(next,indeg.get(next)-1);
-        if(indeg.get(next)===0){ ready.push(next); ready=sortByRelease(ready); }
+        if(indeg.get(next)===0){ ready.push(next); ready=orderReady(ready); }
       }
     }
     const orderedIds=ordered.length===union.size?ordered:sortByRelease(union);
     const prepIds=orderedIds.filter(id=>!goalSet.has(id));
-    return {orderedIds,goalIds:goals,prepIds,rolesById,sourceByGoal,sourceLabelByGoal,provenanceByGoal,tierNoteByGoal,unknownOrderingPairs:[]};
+    return {orderedIds,goalIds:goals,prepIds,rolesById,sourceByGoal,sourceLabelByGoal,sourceUrlByGoal,sourceCheckedAtByGoal,routeIdByGoal,provenanceByGoal,tierNoteByGoal,unknownOrderingPairs:[]};
   }
   window.marvelBuildMultiGoalPlan=buildMultiGoalPlan;
   window.marvelMultiGoalAudit=()=>({goals:orderedGoalIds(),tier:prepTier,plan:buildMultiGoalPlan(orderedGoalIds(),prepTier)});
@@ -6533,7 +6568,17 @@ if(flowchartReady)render();
     const provenance=prepPlanProvenance(plan,goals);
     const tierNotes=[...new Set(goals.map(id=>plan.tierNoteByGoal?.[id]).filter(Boolean))];
     const sourceLabels=[...new Set(goals.map(id=>plan.sourceLabelByGoal?.[id]).filter(Boolean))];
-    const heading=`<div class="prep-plan-heading"><strong>${multi?'複数ゴールの統合予習プラン':`${esc(nm[goals[0]]?.title||goals[0])} の予習プラン`}</strong><span class="prep-tier-label">${({minimum:'最低限',recommended:'おすすめ',complete:'完全版'})[prepTier]||prepTier}</span></div>`;
+    const sourceRefs=[];
+    for(const goal of goals){
+      const url=plan.sourceUrlByGoal?.[goal];
+      if(url&&!sourceRefs.some(ref=>ref.url===url))sourceRefs.push({url,date:plan.sourceCheckedAtByGoal?.[goal]||''});
+    }
+    const provenanceBadge=provenance.key==='official'
+      ? '<span class="prep-provenance-badge official">公式</span>'
+      : provenance.key==='mixed'
+        ? '<span class="prep-provenance-badge mixed">公式＋編集</span>'
+        : '';
+    const heading=`<div class="prep-plan-heading"><strong>${multi?'複数ゴールの統合予習プラン':`${esc(nm[goals[0]]?.title||goals[0])} の予習プラン`}</strong><span class="prep-tier-label">${({minimum:'最低限',recommended:'おすすめ',complete:'完全版'})[prepTier]||prepTier}</span>${provenanceBadge}</div>`;
     const goalBadges=`<div class="multi-goal-summary"><span>🎯 ${goals.length}作品をゴール中</span>${goals.map((id,i)=>`<span class="multi-goal-badge-wrap"><button type="button" class="multi-goal-badge" data-goal-focus="${esc(id)}">ゴール ${i+1}：${esc(nm[id]?.title||id)}</button><button type="button" class="prep-goal-remove" data-id="${esc(id)}" title="このゴールを解除" aria-label="${esc(nm[id]?.title||id)}をゴールから解除">×</button></span>`).join('')}</div>`;
     const progress=prepProgressTools(plan.orderedIds);
     const timeSummary=multiGoalWatchTimeSummary(plan);
@@ -6551,7 +6596,8 @@ if(flowchartReady)render();
     }).join('');
     const tierExplain=tierNotes.length?`<div class="prep-explain">${tierNotes.map(note=>esc(note)).join(' ')}</div>`:'';
     const sourceDetail=sourceLabels.length?`（${sourceLabels.map(label=>esc(label)).join(' ／ ')}）`:'';
-    const provenanceNote=`<div class="prep-source" data-prep-provenance="${provenance.key}"><strong>${esc(provenance.label)}</strong>：${esc(provenance.description)}${sourceDetail} 各ゴールの予習候補を統合し、重複を除いて有向接続順に並べています。参照のみの接続は並び順を強制しません。</div>`;
+    const sourceLinks=sourceRefs.map(ref=>`<a class="prep-source-link" href="${esc(ref.url)}" target="_blank" rel="noopener noreferrer">公式出典${ref.date?`（確認日 ${esc(ref.date)}）`:''}</a>`).join(' ');
+    const provenanceNote=`<div class="prep-source" data-prep-provenance="${provenance.key}"><strong>${esc(provenance.label)}</strong>：${esc(provenance.description)}${sourceDetail}${sourceLinks?` <span class="prep-source-links">${sourceLinks}</span>`:''} 各ゴールの予習候補を統合し、重複を除いて有向接続順に並べています。参照のみの接続は並び順を強制しません。</div>`;
     prepplan.innerHTML=`${heading}${goalBadges}${progress}${timeSummary}${tierExplain}<ol class="prep-list multi-goal-list">${rows}</ol>${provenanceNote}`;
     prepplan.querySelectorAll('[data-goal-focus]').forEach(b=>b.onclick=()=>focusGoal(b.dataset.goalFocus));
     prepplan.querySelectorAll('.prep-goal-remove').forEach(b=>b.onclick=e=>{
@@ -7386,7 +7432,7 @@ if(flowchartReady)render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.20.6 · 2026-08-30</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.20.7 · 2026-08-30</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{
@@ -8548,6 +8594,17 @@ function validateFlowchartPayload(payload){
   if(!Array.isArray(policy.chronology_lanes)) throw new Error('表示ポリシーの時系列レーンが不正です。');
   if(policy.default_edge_visibility!=='all') throw new Error('表示ポリシーの既定エッジ表示が不正です。');
   if(!['core','recommended','reference'].includes(policy.default_importance_mode)) throw new Error('表示ポリシーの既定重要度が不正です。');
+  if(policy.official_prewatch_routes!==undefined){
+    if(!Array.isArray(policy.official_prewatch_routes)) throw new Error('公式予習ルートが不正です。');
+    const routeIds=new Set();
+    for(const route of policy.official_prewatch_routes){
+      if(!route||typeof route!=='object'||typeof route.route_id!=='string'||!route.route_id||routeIds.has(route.route_id)) throw new Error('公式予習ルートのIDが不正です。');
+      if(typeof route.target_work_id!=='string'||typeof route.route!=='string'||typeof route.route_ja!=='string'||typeof route.source_url!=='string'||typeof route.checked_at!=='string'||typeof route.notes!=='string'||route.verification_status!=='source_verified') throw new Error('公式予習ルートのメタデータが不正です。');
+      if(!Array.isArray(route.ids)||route.ids.length<2||route.ids.some(id=>typeof id!=='string'||!nodeIds.has(id))||route.ids[route.ids.length-1]!==route.target_work_id) throw new Error('公式予習ルートの作品IDが不正です。');
+      if(!/^https?:\/\//.test(route.source_url)) throw new Error('公式予習ルートの出典URLが不正です。');
+      routeIds.add(route.route_id);
+    }
+  }
   for(const id of nodeIds){
     if(!policy.node_metadata[id]||!Object.prototype.hasOwnProperty.call(policy.details,id)) throw new Error('表示ポリシーの作品 ID が不足しています。');
   }
@@ -8567,6 +8624,7 @@ function initializeFlowchartData(payload){
   validateFlowchartPayload(payload);
   const policy=payload.view_policy;
   const metadata=payload.view_policy.node_metadata;
+  OFFICIAL_PREWATCH_ROUTES_V57=Object.freeze((policy.official_prewatch_routes||[]).map(route=>({...route,ids:Object.freeze([...route.ids])})));
   reasonsById=Object.fromEntries(payload.reasons.map(row=>[row.reason_id,row]));
   NODES=payload.nodes.map(row=>{
     const view=metadata[row.work_id]||{};

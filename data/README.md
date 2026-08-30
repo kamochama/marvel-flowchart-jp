@@ -23,7 +23,7 @@ GitHubで管理する正本データです。Excelは通常生成しません。
 
 これは現行公開UIの仮運用です。公式の作品別予習リストは根拠URLと監査レビューが登録されたものだけを「公式」と表示し、未登録の作品は編集ルートまたは接続表由来であることを明示します。
 
-詳細は `prewatch_policy.json`。
+公式ルートの登録本体は `prewatch_official_routes.json`、探索規則の詳細は `prewatch_policy.json` です。公式ルートはビルド時に静的 `flowchart.json` の表示ポリシーへ取り込まれます。
 
 ## 大事な分離
 

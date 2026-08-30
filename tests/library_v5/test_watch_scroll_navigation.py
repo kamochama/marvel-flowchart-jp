@@ -9,9 +9,11 @@ import unittest
 REPO_ROOT = Path(__file__).resolve().parents[2]
 INDEX_HTML = REPO_ROOT / "index.html"
 PREWATCH_POLICY = REPO_ROOT / "data" / "prewatch_policy.json"
+OFFICIAL_PREWATCH_ROUTES = REPO_ROOT / "data" / "prewatch_official_routes.json"
 PREWATCH_RULES = REPO_ROOT / "data" / "rules.csv"
 DATA_README = REPO_ROOT / "data" / "README.md"
 DATA_MANIFEST = REPO_ROOT / "data" / "manifest.json"
+FLOWCHART_EXPORT = REPO_ROOT / "data" / "derived" / "flowchart.json"
 
 
 class WatchScrollNavigationContract(unittest.TestCase):
@@ -81,7 +83,7 @@ class WatchScrollNavigationContract(unittest.TestCase):
 
     def test_recommended_plan_exposes_official_provenance_boundary(self) -> None:
         """Curated routes must not be presented as an official prewatch list."""
-        self.assertIn("PUBLIC v5.20.6", self.html)
+        self.assertIn("PUBLIC v5.20.7", self.html)
         self.assertIn("OFFICIAL_PREWATCH_ROUTES_V57", self.html)
         self.assertIn("chooseOfficialPrewatchRoute", self.html)
         self.assertIn("provenance:'official'", self.html)
@@ -89,6 +91,48 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("公式予習リスト未登録", self.html)
         self.assertNotIn("監査済み推奨ルート上", self.html)
         self.assertIn("data-prep-provenance", self.html)
+
+    def test_official_route_registry_contains_audited_thunderbolts_route(self) -> None:
+        registry = json.loads(OFFICIAL_PREWATCH_ROUTES.read_text(encoding="utf-8"))
+        self.assertEqual(registry["schema_version"], "1")
+        route = next(
+            row
+            for row in registry["routes"]
+            if row["route_id"] == "official-disneyplus-thunderbolts-2025"
+        )
+        self.assertEqual(route["target_work_id"], "thunderbolts-new-avengers-2025")
+        self.assertEqual(
+            route["ids"],
+            [
+                "black-widow-2021",
+                "the-falcon-and-the-winter-soldier-2021",
+                "hawkeye-2021",
+                "thunderbolts-new-avengers-2025",
+            ],
+        )
+        self.assertEqual(
+            route["source_url"],
+            "https://www.disneyplus.com/explore/articles/thunderbolts-movie",
+        )
+        self.assertEqual(route["verification_status"], "source_verified")
+        self.assertIn("official_prewatch_routes", self.html)
+
+    def test_official_plan_has_distinct_provenance_badge_and_source_link(self) -> None:
+        self.assertIn("prep-provenance-badge", self.html)
+        self.assertIn('data-prep-provenance="official"', self.html)
+        self.assertIn("sourceUrlByGoal", self.html)
+        self.assertIn("公式出典", self.html)
+
+    def test_official_route_order_is_preserved_before_graph_expansion(self) -> None:
+        self.assertIn("officialRouteIds", self.html)
+        self.assertIn("routeOrdered", self.html)
+
+    def test_static_export_carries_the_official_route_in_view_policy(self) -> None:
+        payload = json.loads(FLOWCHART_EXPORT.read_text(encoding="utf-8"))
+        routes = payload["view_policy"]["official_prewatch_routes"]
+        self.assertEqual(len(routes), 1)
+        self.assertEqual(routes[0]["route_id"], "official-disneyplus-thunderbolts-2025")
+        self.assertEqual(routes[0]["ids"][-1], routes[0]["target_work_id"])
 
     def test_data_policy_matches_provisional_tiered_ui_semantics(self) -> None:
         """The documented policy must match the current provisional UI contract."""
@@ -127,6 +171,7 @@ class WatchScrollNavigationContract(unittest.TestCase):
         for manifest_name, path in (
             ("README.md", DATA_README),
             ("prewatch_policy.json", PREWATCH_POLICY),
+            ("prewatch_official_routes.json", OFFICIAL_PREWATCH_ROUTES),
             ("rules.csv", PREWATCH_RULES),
         ):
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
