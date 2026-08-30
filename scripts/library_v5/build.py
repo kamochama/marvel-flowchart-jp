@@ -91,7 +91,6 @@ def build(repo_root: Path, *, clean: bool = True) -> dict[str, object]:
     protected_after = protected_input_hashes(repo_root)
     assert_protected_inputs_unchanged(protected_before, protected_after)
     result["canonical_files"] = len(canonical_hashes(repo_root))
-    result["audit_issues"] = audit["issues"]
     result["audit_ok"] = audit["ok"] and not content_audit["issues"]
     result["audit_issue_count"] = len(audit["issues"]) + len(content_audit["issues"])
     return result
