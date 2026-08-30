@@ -8,6 +8,8 @@ from .derive_edges import _identity_canonical_map
 PUBLIC_VIEW_NAMES = (
     "v_entity_work_history",
     "v_continuity_works",
+    "v_work_releases",
+    "v_work_production_status",
     "v_work_connection_reasons",
     "v_work_connections_all",
     "v_flowchart_nodes",
@@ -149,6 +151,47 @@ def install_public_views(connection: sqlite3.Connection) -> None:
         JOIN works AS w ON w.work_id = wc.work_id
         WHERE wc.verification_status <> 'superseded'
           AND c.verification_status <> 'superseded'
+        """
+    )
+
+    connection.execute(
+        """
+        CREATE VIEW v_work_releases AS
+        SELECT
+            r.release_id,
+            r.work_id,
+            w.title_ja AS work_title_ja,
+            w.title_en AS work_title_en,
+            r.territory,
+            r.release_kind,
+            r.release_date,
+            r.release_precision,
+            r.status,
+            r.certainty,
+            r.verification_status,
+            r.notes
+        FROM releases AS r
+        JOIN works AS w ON w.work_id = r.work_id
+        WHERE r.verification_status <> 'superseded'
+        """
+    )
+
+    connection.execute(
+        """
+        CREATE VIEW v_work_production_status AS
+        SELECT
+            psa.production_status_assertion_id,
+            psa.work_id,
+            w.title_ja AS work_title_ja,
+            w.title_en AS work_title_en,
+            psa.status,
+            psa.asserted_at,
+            psa.certainty,
+            psa.verification_status,
+            psa.notes
+        FROM production_status_assertions AS psa
+        JOIN works AS w ON w.work_id = psa.work_id
+        WHERE psa.verification_status <> 'superseded'
         """
     )
 
@@ -580,13 +623,29 @@ def install_public_views(connection: sqlite3.Connection) -> None:
             title_ja,
             title_en,
             title_official,
+            release,
+            release_raw,
             format,
             status,
             classification,
+            ja_status,
+            japan_date,
+            japan_type,
+            source_url,
+            source_note,
+            notes,
             release_sort_date,
             release_display_date,
             release_kind,
-            release_certainty
+            release_certainty,
+            release_precision,
+            release_source_note,
+            aliases_ja,
+            title_audit_status,
+            title_audit_source_url,
+            title_last_verified,
+            title_management_note,
+            stable_id_note
         FROM works
         """
     )

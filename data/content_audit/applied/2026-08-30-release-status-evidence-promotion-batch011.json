@@ -1,0 +1,34 @@
+{
+  "batch_id": "2026-08-30-release-status-evidence-promotion-batch011",
+  "evidence_ids": [
+    "evidence-release-avengers-doomsday-2026-12-18-jp",
+    "evidence-release-the-fantastic-four-first-steps-2025-jp"
+  ],
+  "fact_tables": ["releases.csv"],
+  "post_write_sha256": {
+    "data/library/releases.csv": "0e42b9790123cce31d9ada5fcac5141f14c92224893a789618d868f4d774b978",
+    "data/library/production_status_assertions.csv": "22a683bbbd29b3d9be5ced21f536fa8b431ce0c26917fb3bf33fe281bc0acc47",
+    "data/library/evidence.csv": "e523e4286deb4ef92481f650f6949441c336986415e4ee4a34504e2b20b2f797",
+    "data/content_audit/reviews.csv": "6851459a11b6ce33606527d26a7c8781b8744bbe78f11ecd9b7901be7a4283d3",
+    "data/library/sources.csv": "3e90cffafc237d1ea20943a50873b72178d729c12330da8de80af3bbbdd13a36"
+  },
+  "release_row_count_before": 138,
+  "release_row_count_after": 138,
+  "evidence_row_count_before": 122,
+  "evidence_row_count_after": 124,
+  "review_row_count_before": 97,
+  "review_row_count_after": 99,
+  "source_row_count_before": 44,
+  "source_row_count_after": 45,
+  "promoted_fact_ids": [
+    "release-avengers-doomsday-2026-12-18-jp",
+    "release-the-fantastic-four-first-steps-2025-jp"
+  ],
+  "review_ids": [
+    "review-2026-08-30-release-avengers-doomsday-2026-12-18-jp",
+    "review-2026-08-30-release-the-fantastic-four-first-steps-2025-jp"
+  ],
+  "source_ids": ["doomsday-jp", "marvel-jp-fantastic4-2025"],
+  "verification_scope": "Completed only the directly supported Japanese release dates for Doomsday (2026-12-18) and Fantastic Four: First Steps (2025-07-25). Territory remains JP, existing announced/released semantics remain unchanged, and the primary U.S. rows are not inferred or rewritten."
+}
+

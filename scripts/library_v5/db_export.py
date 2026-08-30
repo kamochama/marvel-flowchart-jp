@@ -38,7 +38,13 @@ def _write_csv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) ->
         writer.writerows(rows)
 
 
-def _reason_rows(db_path: Path) -> list[dict[str, str]]:
+def reason_rows(db_path: Path) -> list[dict[str, str]]:
+    """Return the stable, evidence-traceable reason rows used by graph exports.
+
+    The flowchart JSON exporter and the compatibility CSV exporter must consume
+    the same SQL projection and ID derivation.  Keep this helper's row shape and
+    ordering aligned with the existing CSV contract.
+    """
     connection = open_query_connection(db_path)
     try:
         cursor = connection.execute(
@@ -124,6 +130,9 @@ def _reason_rows(db_path: Path) -> list[dict[str, str]]:
         connection.close()
 
 
+_reason_rows = reason_rows
+
+
 def _edge_rows(reasons: list[dict[str, str]]) -> list[dict[str, str]]:
     grouped: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
     for row in reasons:
@@ -145,7 +154,7 @@ def _edge_rows(reasons: list[dict[str, str]]) -> list[dict[str, str]]:
 
 
 def export_work_graph(db_path: Path, output_dir: Path) -> dict[str, int]:
-    reasons = _reason_rows(db_path)
+    reasons = reason_rows(db_path)
     edges = _edge_rows(reasons)
     _write_csv(output_dir / "work_pair_reasons.csv", reasons, REASON_FIELDS)
     _write_csv(output_dir / "work_edges_all.csv", edges, EDGE_FIELDS)

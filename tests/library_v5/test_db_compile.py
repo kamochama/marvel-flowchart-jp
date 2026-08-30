@@ -12,6 +12,8 @@ from scripts.library_v5.db_compile import compile_database, open_query_connectio
 
 HEADERS = {
     "works.csv": ["work_id", "title_ja", "title_en", "title_official", "release", "release_raw", "format", "status", "classification", "ja_status", "japan_date", "japan_type", "source_url", "source_note", "notes", "release_sort_date", "release_display_date", "release_kind", "release_certainty", "release_precision", "release_source_note", "aliases_ja", "title_audit_status", "title_audit_source_url", "title_last_verified", "title_management_note", "stable_id_note"],
+    "releases.csv": ["release_id", "work_id", "territory", "release_kind", "release_date", "release_precision", "status", "certainty", "verification_status", "notes"],
+    "production_status_assertions.csv": ["production_status_assertion_id", "work_id", "status", "asserted_at", "certainty", "verification_status", "notes"],
     "entities.csv": ["entity_id", "name_ja", "name_en", "entity_type", "notes"],
     "entity_relations.csv": ["entity_relation_id", "source_entity_id", "relation_kind", "target_entity_id", "certainty", "verification_status", "notes"],
     "appearances.csv": ["appearance_id", "work_id", "entity_id", "appearance_kind", "certainty", "verification_status", "notes"],
@@ -86,6 +88,86 @@ class LibraryDbCompileTests(unittest.TestCase):
             _write_csv(root / "data/library/appearances.csv", HEADERS["appearances.csv"], [
                 {"appearance_id": "appearance-bad", "work_id": "missing-work", "entity_id": "entity-a", "appearance_kind": "onscreen", "certainty": "confirmed", "verification_status": "source_verified", "notes": ""},
             ])
+            output = root / "data/derived/db/marvel.sqlite"
+
+            with self.assertRaises(sqlite3.IntegrityError):
+                compile_database(root, output)
+
+            self.assertFalse(output.exists())
+            self.assertFalse(output.with_suffix(".sqlite.tmp").exists())
+
+    def test_compile_loads_release_and_production_status_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_minimal_repo(Path(tmp))
+            _write_csv(root / "data/library/releases.csv", HEADERS["releases.csv"], [{
+                "release_id": "release-work-a-primary",
+                "work_id": "work-a",
+                "territory": "US",
+                "release_kind": "theatrical",
+                "release_date": "2020-01-01",
+                "release_precision": "day",
+                "status": "released",
+                "certainty": "confirmed",
+                "verification_status": "source_verified",
+                "notes": "",
+            }])
+            _write_csv(root / "data/library/production_status_assertions.csv", HEADERS["production_status_assertions.csv"], [{
+                "production_status_assertion_id": "production-status-work-a-snapshot",
+                "work_id": "work-a",
+                "status": "released",
+                "asserted_at": "2026-08-28",
+                "certainty": "confirmed",
+                "verification_status": "source_verified",
+                "notes": "",
+            }])
+
+            result = compile_database(root)
+            connection = open_query_connection(result.db_path)
+            release = connection.execute(
+                "SELECT release_id,work_id,release_kind,release_date,status FROM releases"
+            ).fetchone()
+            production_status = connection.execute(
+                "SELECT production_status_assertion_id,work_id,status,asserted_at FROM production_status_assertions"
+            ).fetchone()
+            connection.close()
+
+            self.assertEqual(result.table_counts["releases"], 1)
+            self.assertEqual(result.table_counts["production_status_assertions"], 1)
+            self.assertEqual(release, ("release-work-a-primary", "work-a", "theatrical", "2020-01-01", "released"))
+            self.assertEqual(production_status, ("production-status-work-a-snapshot", "work-a", "released", "2026-08-28"))
+
+    def test_compile_is_atomic_on_production_status_foreign_key_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_minimal_repo(Path(tmp))
+            _write_csv(root / "data/library/production_status_assertions.csv", HEADERS["production_status_assertions.csv"], [{
+                "production_status_assertion_id": "production-status-missing-work",
+                "work_id": "missing-work",
+                "status": "released",
+                "asserted_at": "2026-08-28",
+                "certainty": "confirmed",
+                "verification_status": "source_verified",
+                "notes": "",
+            }])
+            output = root / "data/derived/db/marvel.sqlite"
+
+            with self.assertRaises(sqlite3.IntegrityError):
+                compile_database(root, output)
+
+            self.assertFalse(output.exists())
+            self.assertFalse(output.with_suffix(".sqlite.tmp").exists())
+
+    def test_compile_is_atomic_on_production_status_enum_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_minimal_repo(Path(tmp))
+            _write_csv(root / "data/library/production_status_assertions.csv", HEADERS["production_status_assertions.csv"], [{
+                "production_status_assertion_id": "production-status-invalid",
+                "work_id": "work-a",
+                "status": "not-a-production-status",
+                "asserted_at": "2026-08-28",
+                "certainty": "confirmed",
+                "verification_status": "source_verified",
+                "notes": "",
+            }])
             output = root / "data/derived/db/marvel.sqlite"
 
             with self.assertRaises(sqlite3.IntegrityError):

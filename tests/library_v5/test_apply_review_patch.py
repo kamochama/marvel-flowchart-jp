@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.library_v5.apply_review_patch import apply_patch
+from scripts.library_v5.apply_review_patch import ALLOWED_PATHS, apply_patch
 
 
 class ReviewPatchApplierTests(unittest.TestCase):
@@ -47,6 +47,13 @@ class ReviewPatchApplierTests(unittest.TestCase):
         ]}), encoding="utf-8")
         with self.assertRaises(ValueError):
             apply_patch(root, patch)
+
+    def test_release_status_tables_are_patchable(self) -> None:
+        self.assertEqual(ALLOWED_PATHS["releases.csv"], Path("data/library/releases.csv"))
+        self.assertEqual(
+            ALLOWED_PATHS["production_status_assertions.csv"],
+            Path("data/library/production_status_assertions.csv"),
+        )
 
 
 if __name__ == "__main__":

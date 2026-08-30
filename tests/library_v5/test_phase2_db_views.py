@@ -146,12 +146,16 @@ class Phase2DbViewTests(unittest.TestCase):
     def test_public_view_registry_and_fingerprint_include_phase2_views(self) -> None:
         self.assertIn("v_event_history", PUBLIC_VIEW_NAMES)
         self.assertIn("v_multiverse_crossings", PUBLIC_VIEW_NAMES)
+        self.assertIn("v_work_releases", PUBLIC_VIEW_NAMES)
+        self.assertIn("v_work_production_status", PUBLIC_VIEW_NAMES)
         with tempfile.TemporaryDirectory() as tmp:
             root, _ = _fixture(Path(tmp))
             db_path = compile_database(root).db_path
             fingerprint = logical_fingerprint(db_path, repo_root=root)
             self.assertIn("v_event_history", fingerprint["views"])
             self.assertIn("v_multiverse_crossings", fingerprint["views"])
+            self.assertIn("v_work_releases", fingerprint["views"])
+            self.assertIn("v_work_production_status", fingerprint["views"])
 
     def test_event_history_preserves_occurrence_participant_and_verification_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

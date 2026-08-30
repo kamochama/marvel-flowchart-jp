@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -28,8 +29,12 @@ class LibraryDbFingerprintTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             db_path = compile_database(ROOT, Path(tmp) / "marvel.sqlite").db_path
             fingerprint = logical_fingerprint(db_path, repo_root=ROOT)
-            self.assertEqual(fingerprint["db_schema_version"], "1.1-phase2-events")
+            self.assertEqual(fingerprint["db_schema_version"], "1.2-normalized-releases-status")
             self.assertIn("works", fingerprint["tables"])
+            self.assertIn("releases", fingerprint["tables"])
+            self.assertIn("production_status_assertions", fingerprint["tables"])
+            self.assertGreater(fingerprint["tables"]["releases"]["row_count"], 0)
+            self.assertGreater(fingerprint["tables"]["production_status_assertions"]["row_count"], 0)
             self.assertIn("reviews", fingerprint["tables"])
             self.assertIn("events", fingerprint["tables"])
             self.assertIn("multiverse_transitions", fingerprint["tables"])
@@ -49,6 +54,25 @@ class LibraryDbFingerprintTests(unittest.TestCase):
             self.assertEqual(first, second)
             payload = json.loads(first.decode("utf-8"))
             self.assertEqual(payload["equivalence"], logical_fingerprint(db_path, repo_root=ROOT)["equivalence"])
+
+    def test_fingerprint_changes_when_release_content_changes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repo"
+            shutil.copytree(ROOT / "data", root / "data")
+            before_db_path = compile_database(root, Path(tmp) / "before.sqlite").db_path
+            before = logical_fingerprint(before_db_path, repo_root=root)
+
+            releases_path = root / "data/library/releases.csv"
+            original = releases_path.read_text(encoding="utf-8")
+            releases_path.write_text(original.replace("legacy seed; evidence-backed release audit remains pending.", "changed content", 1), encoding="utf-8")
+
+            after_db_path = compile_database(root, Path(tmp) / "after.sqlite").db_path
+            after = logical_fingerprint(after_db_path, repo_root=root)
+            self.assertNotEqual(
+                before["tables"]["releases"]["content_sha256"],
+                after["tables"]["releases"]["content_sha256"],
+            )
+            self.assertNotEqual(before["equivalence"], after["equivalence"])
 
 
 if __name__ == "__main__":

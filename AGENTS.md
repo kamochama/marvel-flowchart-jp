@@ -6,9 +6,11 @@ This file defines persistent working rules for Codex and other coding agents ope
 
 - Repository: `kamochama/marvel-flowchart-jp`.
 - Production branch: `main`.
-- Current forward development branch for Marvel Library DB v1 Phase 2: `library-v5-phase2-db6`.
-- Draft PR: #10, base `main`, head `library-v5-phase2-db6`.
-- During development, **do not merge PR #10, commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
+- Latest semantic production baseline after PR #30: `641d16577c847ab5f917e3faea0900536dc0baab`.
+- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), and PR #30 (full release/status evidence audit) are merged into `main`.
+- PR #30 promoted 27 release/status facts with exact evidence and review transitions; 240 facts remain deferred and 2 remain in explicit conflict.
+- There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
+- During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
 - `main` is **not permanently frozen**. It is the intended final integration target after the current work is complete, fully audited, and the user explicitly approves the final merge.
 - At the start of every session, run/fetch a fresh HEAD check. If local HEAD differs from origin, reconcile before editing; never overwrite a newer remote state blindly.
 - The former PR #9 / `library-v5-canonical-freeze` history was already reconciled into the forward line. Do not merge it again.
@@ -113,46 +115,45 @@ Examples already established:
 
 ## Current compatibility invariants
 
-The latest implementation checkpoint before the Codex documentation commits is:
+The latest semantic production baseline after PR #30 is:
 
-- `ad9796b3a1833d49e044a4eef220ca9d49c3553d`
-- GitHub Actions run #251: GREEN
-- 161 / 161 unit tests PASS
+- `main` `641d16577c847ab5f917e3faea0900536dc0baab`
+- GitHub Actions run #285 (PR #30 head): GREEN
+- 305 / 305 library-v5 unit tests PASS
 - audit issues: 0
-- review integrity issues: 0
+- review-integrity issues: 0
 - FK check rows: 0
 - SQLite integrity: `ok`
+- releases: 138 rows (14 `source_verified`, 124 `legacy_seed`)
+- production-status assertions: 131 rows (13 `source_verified`, 118 `legacy_seed`)
+- sources: 49
+- evidence: 130
+- reviews: 105
 - `work_edges_all`: 361
 - `work_pair_reasons`: 569
 - prewatch edges: 199
 - story paths reproduced: 83 / 83
-- events / occurrences / transitions / transition participants: 8 / 8 / 8 / 8
+- events / occurrences / transitions / transition participants: 9 / 9 / 9 / 10
+
+PR #30 also records the strict full-audit disposition for all 269 release/status facts: 27 promoted, 240 deferred, and 2 conflicts retained as seeds.
 
 These numbers document the checkpoint. They are not frozen targets except where a test explicitly encodes semantic compatibility. Future legitimate first-class facts can increase row counts while preserving protected graph compatibility.
 
 ## Current-plan completion and production integration gate
 
-The current approved Events & Multiverse execution plan ends with Task 8, the Phase 2 completion audit.
+The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, and the full release/status evidence audit (PR #30) are integrated into `main`. The next semantic change must use its own bounded plan, RED contract, evidence/review audit, and full verification. The next explicitly bounded work is HTML design/operation debugging; it has not started in this baseline.
 
-After Task 8 is GREEN:
+For every future branch:
 
-1. fresh-fetch `main` and PR #10;
-2. audit the full PR, not only recent commits;
-3. verify all branch CI and content-audit invariants;
-4. summarize migrated/deferred cases and production impact to the user;
-5. **stop and obtain explicit user authorization for final merge**.
+1. fresh-check `main` and the relevant remote branch;
+2. audit the full diff, not only recent commits;
+3. verify branch CI and content-audit invariants;
+4. summarize migrated/deferred cases and production impact;
+5. obtain explicit user authorization before the final merge unless a standing authorization explicitly covers that exact batch.
 
-If the user explicitly authorizes final integration:
+If authorized, merge through the normal PR path, never force-update or rewrite `main`, then verify the resulting `main` HEAD, CI, GitHub Pages/public behavior, and generated artifacts. Record the new production baseline in the handoff/roadmap.
 
-- merge PR #10 into `main` through the normal PR path;
-- do not force-update or rewrite `main`;
-- verify fresh `main` HEAD and CI;
-- verify GitHub Pages/public behavior and expected generated artifacts;
-- document the new production baseline.
-
-If authorization is not given, leave production unchanged. Do not interpret “finish the branch” as permission to publish.
-
-Later DB-v1 phases are architecturally intended but require their own approved execution boundary. See `CODEX_MASTER_ROADMAP_MARVEL_DB_V1_TO_MAIN_2026-08-28.md`.
+Later DB-v1 phases remain architecturally intended but require their own approved execution boundary. The current integrated HTML export is production baseline; see `NEXT_CODEX_HANDOFF_MARVEL_LIBRARY_PHASE2_2026-08-28.md` and `CODEX_MASTER_ROADMAP_MARVEL_DB_V1_TO_MAIN_2026-08-28.md` for the next-boundary candidates.
 
 ## Verification commands
 
@@ -179,14 +180,14 @@ If local environment/network behavior is unreliable, use CI as the final executi
 
 The approved DB-v1 architecture ultimately intends to:
 
-- complete normalized semantic domains such as releases, production-status assertions, credits, aliases, memberships, and possessions;
+- complete remaining normalized semantic domains such as credits, aliases, memberships, and possessions; releases and production-status assertions are present; batch007 verified the Avengers: Doomsday announced status and remaining seed rows require their own bounded audits;
 - continue evidence-backed multiverse decomposition;
 - switch `index.html` to DB-derived node/edge JSON rather than independent Marvel fact arrays;
 - preserve static GitHub Pages deployment;
 - preserve Pixel-6/mobile performance while the HTML data source changes;
 - continue the broader 131-work content audit using the richer semantic model.
 
-Do not start these later phases automatically after the current Task 8. They require a separately approved plan/boundary.
+Do not start new semantic phases automatically after the integrated HTML export. They require a separately approved plan/boundary and a RED contract before canonical changes.
 
 ## Public site packaging constraint
 

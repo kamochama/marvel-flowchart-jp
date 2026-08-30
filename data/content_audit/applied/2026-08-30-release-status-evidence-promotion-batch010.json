@@ -1,0 +1,33 @@
+{
+  "batch_id": "2026-08-30-release-status-evidence-promotion-batch010",
+  "evidence_ids": [
+    "evidence-production-status-the-fantastic-four-first-steps-2025-snapshot-2026-08-28",
+    "evidence-production-status-daredevil-born-again-s3-tba-snapshot-2026-08-28",
+    "evidence-production-status-your-friendly-neighborhood-spider-man-s2-2026-snapshot-2026-08-28"
+  ],
+  "fact_tables": ["production_status_assertions.csv"],
+  "post_write_sha256": {
+    "data/library/production_status_assertions.csv": "22a683bbbd29b3d9be5ced21f536fa8b431ce0c26917fb3bf33fe281bc0acc47",
+    "data/library/evidence.csv": "b11648786abb23ac2cc992ddb1ef646c0d17384a9036bfa0c89fdcdb15b507f4",
+    "data/content_audit/reviews.csv": "60e147b2a6d3ad3308465ff80131c9bb04a50214cd9d42ea41cb890e74e91e4d"
+  },
+  "production_status_row_count_before": 131,
+  "production_status_row_count_after": 131,
+  "evidence_row_count_before": 119,
+  "evidence_row_count_after": 122,
+  "review_row_count_before": 94,
+  "review_row_count_after": 97,
+  "promoted_fact_ids": [
+    "production-status-the-fantastic-four-first-steps-2025-snapshot-2026-08-28",
+    "production-status-daredevil-born-again-s3-tba-snapshot-2026-08-28",
+    "production-status-your-friendly-neighborhood-spider-man-s2-2026-snapshot-2026-08-28"
+  ],
+  "review_ids": [
+    "review-2026-08-30-production-status-the-fantastic-four-first-steps-2025-snapshot-2026-08-28",
+    "review-2026-08-30-production-status-daredevil-born-again-s3-tba-snapshot-2026-08-28",
+    "review-2026-08-30-production-status-your-friendly-neighborhood-spider-man-s2-2026-snapshot-2026-08-28"
+  ],
+  "source_ids": ["ff-doomsday", "tv"],
+  "verification_scope": "Only the First Steps released-status snapshot, Daredevil: Born Again Season 3 announced listing snapshot, and Your Friendly Neighborhood Spider-Man Season 2 announced listing snapshot are source_verified in this batch. asserted_at=2026-08-28 and existing status semantics are retained; the YFNSM S2 release-date conflict remains a separate deferred conflict and no graph fact is inferred."
+}
+

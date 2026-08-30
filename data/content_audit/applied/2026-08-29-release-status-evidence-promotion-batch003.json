@@ -1,0 +1,25 @@
+{
+  "batch_id": "2026-08-29-release-status-evidence-promotion-batch003",
+  "evidence_ids": [
+    "evidence-release-avengers-secret-wars-2027-12-17-primary"
+  ],
+  "fact_table": "releases.csv",
+  "post_write_sha256": {
+    "data/content_audit/reviews.csv": "1068db7de26697e21d541f63a7b077bfc994d608131a2c997e03878b2d7428b1",
+    "data/library/evidence.csv": "3e5577f933add93988a1f656a2fdeb2aedfbfa9b4fd1a085ef277f5ae4a5249f",
+    "data/library/releases.csv": "a10dc26337acf76dc0aa3a12d9bbd2ac50aa0d85eab0408f69df7c856c594e8b"
+  },
+  "production_status_row_count": 131,
+  "promoted_fact_ids": [
+    "release-avengers-secret-wars-2027-12-17-primary"
+  ],
+  "release_row_count_after": 138,
+  "release_row_count_before": 138,
+  "review_ids": [
+    "review-2026-08-29-release-avengers-secret-wars-2027-12-17-primary"
+  ],
+  "source_ids": [
+    "marvel-movies-current-v4"
+  ],
+  "verification_scope": "Only the Avengers: Secret Wars U.S. primary release fact is source_verified in this batch; its Japanese row and production-status snapshot remain legacy_seed, and all other release/status facts retain their prior verification status."
+}

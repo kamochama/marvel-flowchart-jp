@@ -71,6 +71,36 @@ class MultiverseIdentityHelperTests(unittest.TestCase):
 
 
 class PublicViewContractTests(unittest.TestCase):
+    def test_flowchart_nodes_expose_complete_work_contract_in_work_id_order(self) -> None:
+        expected_columns = (
+            "work_id", "title_ja", "title_en", "title_official", "release", "release_raw",
+            "format", "status", "classification", "ja_status", "japan_date", "japan_type",
+            "source_url", "source_note", "notes", "release_sort_date", "release_display_date",
+            "release_kind", "release_certainty", "release_precision", "release_source_note",
+            "aliases_ja", "title_audit_status", "title_audit_source_url", "title_last_verified",
+            "title_management_note", "stable_id_note",
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = Path(tmp) / "marvel.sqlite"
+            compile_database(ROOT, db_path)
+            connection = open_query_connection(db_path)
+            try:
+                columns = tuple(
+                    row[1]
+                    for row in connection.execute("PRAGMA table_info(v_flowchart_nodes)")
+                )
+                rows = connection.execute(
+                    "SELECT * FROM v_flowchart_nodes ORDER BY work_id"
+                ).fetchall()
+                work_rows = connection.execute(
+                    "SELECT * FROM works ORDER BY work_id"
+                ).fetchall()
+            finally:
+                connection.close()
+
+        self.assertEqual(columns, expected_columns)
+        self.assertEqual(rows, work_rows)
+
     def test_phase1_public_views_are_installed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             db_path = Path(tmp) / "marvel.sqlite"

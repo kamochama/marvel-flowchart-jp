@@ -8,25 +8,26 @@ Repository:
 
 - `kamochama/marvel-flowchart-jp`
 
-Forward branch:
+Current production branch:
 
-- `library-v5-phase2-db6`
+- `main`
+- latest semantic baseline commit: `641d16577c847ab5f917e3faea0900536dc0baab` (PR #30 merge; docs-only baseline updates may follow)
 
-Draft PR:
+The previous forward line and its follow-up PRs are now integrated:
 
-- PR #10: `WIP: Marvel Library DB v1 Phase 2 events & multiverse`
-- base: `main`
-- head: `library-v5-phase2-db6`
-- draft: true
-- merged: false
+- PR #10 Events & Multiverse: merged as `2410ea482d9fe6c9063a23b80b9b766e2bb9daac`
+- PR #11 releases/status normalization: merged as `d5c878d5763b2bd91940c31052db6e35a3e69d0a`
+- PR #12 HTML DB export: merged as `00a7e703616821eec0e4b081cfc656d7fd0ec167`
+- PR #13 Pages artifact fix: merged as `8234cfa04edf5fb6dd851d335107d606b9011731`
+- PR #21 mobile touch-target contract: merged (mobile interaction regression fix)
+- PR #22 X-Men '97 release/status evidence promotion batch005: merged as `19134e187d40e808f926fd32607b0a2deebac8f1`
+- PR #26 VisionQuest production-status evidence promotion batch006: merged as `230d49e21383121fe1ac6cead117ee12bbb5ef48`
+- PR #28 Avengers: Doomsday production-status evidence promotion batch007: merged as `9b0a754aee920c8ec922142d58d71c5d2665fb9a`
+- PR #30 full release/status evidence audit: merged as `641d16577c847ab5f917e3faea0900536dc0baab`
 
-Production `main` checkpoint:
+There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
-- `3af097b72c174077c83d7091f79222a72fc7134f`
-
-**Do not merge PR #10 or change/publish `main` without explicit user approval.**
-
-At handoff preparation time, the last implementation checkpoint was:
+The last pre-integration implementation checkpoint was:
 
 - `ad9796b3a1833d49e044a4eef220ca9d49c3553d`
 - message: `audit: record Earth-838 transition reviews`
@@ -38,7 +39,7 @@ Then documentation-only Codex setup began:
 - message: `docs: add Codex project instructions`
 - adds `AGENTS.md`
 
-This handoff itself is a later documentation-only commit, so **always fetch the fresh remote HEAD before doing anything**. Do not reset the branch back to the implementation checkpoint merely because the SHA in this file is older than fresh HEAD.
+This handoff is historical context, not a checkout target. **Always check the fresh remote HEAD before doing anything** and reconcile documentation if it is stale; never reset code back to an older checkpoint.
 
 Suggested local startup:
 
@@ -46,12 +47,43 @@ Suggested local startup:
 git status
 git branch --show-current
 git fetch origin
-git checkout library-v5-phase2-db6
-git pull --ff-only origin library-v5-phase2-db6
+git checkout main
+git pull --ff-only origin main
 git log -5 --oneline
 ```
 
 If the working tree is not clean or remote HEAD differs unexpectedly, reconcile first; do not discard user/local changes blindly.
+
+## 0.1 Production baseline after the 2026-08-30 integration
+
+The latest semantic production baseline is `main` at `641d16577c847ab5f917e3faea0900536dc0baab`, the merge commit for PR #30. PR #30 completed the strict full release/status evidence audit after batches005–007: exactly 27 facts were promoted with qualifying evidence and review transitions, 240 facts remain deferred, and 2 conflicts remain explicitly retained as seeds.
+
+Fresh verification for the PR #30-integrated baseline:
+
+- GitHub Actions run #285 (PR #30 head): GREEN;
+- 305 / 305 library-v5 tests PASS;
+- audit issues, review-integrity issues, and SQLite foreign-key rows: `0`;
+- SQLite `integrity_check`: `ok`;
+- releases: `138` rows (`14` `source_verified`, `124` `legacy_seed`);
+- production-status assertions: `131` rows (`13` `source_verified`, `118` `legacy_seed`);
+- sources / evidence / reviews: `49` / `130` / `105`;
+- DB-derived artifact: `131` nodes, `361` directed edges, `569` traceable reasons, `42` character groups;
+- compatibility: prewatch edges `199`, story paths `83/83`;
+- full disposition ledger: `269` facts = `27` promote, `240` defer, `2` conflict.
+
+The applied records for the full audit are `data/content_audit/applied/2026-08-30-release-status-audit-dispositions.json` and promotion batches008–015. The inventory is `data/content_audit/release_status_inventory.csv`; conflicts are the YFNSM S2 release and Wonder Man S2 status. No release/status fact derives a graph edge, work-pair reason, production milestone, territory, or Earth identity.
+
+The next boundary is the HTML design/operation debugging pass. It has not started in this baseline; when it begins, use a separate plan and UI regression contract rather than changing canonical metadata implicitly.
+
+## 0.2 Historical production baseline after the 2026-08-29 integration
+
+The static viewer now consumes the committed DB-derived artifact `data/derived/flowchart.json`; the browser does not open SQLite. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups, with all eligible edges visible by default and selection limited to presentation styling.
+
+The post-merge Pages deployment (run #37) succeeded, and the public page was smoke-tested at `https://kamochama.github.io/marvel-flowchart-jp/`: the status reached `データを読み込みました（131作品）。` with no browser console errors. The Pages 404 found immediately after PR #12 was fixed by PR #13, which versions the generated artifact and adds a regression test.
+
+The current local verification baseline for the integrated HTML export is 232 library-v5 tests passing and an ordinary bundled-Python build with audit issue count 0. These counts are observations, not frozen correctness targets.
+
+The next semantic work is not implicitly authorized by the completed export. At this historical snapshot, the candidate boundary was an evidence-backed promotion audit for a small subset of the 269 `legacy_seed` release/status facts, or a separately planned normalized domain (`credits`, `entity_aliases`, `entity_memberships`, or `entity_possessions`). Batch005 has since completed; do not change canonical data until one new bounded plan and its RED contract are selected.
 
 ## 1. Required context
 
@@ -97,7 +129,7 @@ Important implementation files include:
 
 `db_transition_support.py` contains the newer verified-traveler anchor rule used to prevent transition-reason fan-out.
 
-## 3. Current verified baseline
+## 3. Historical Events & Multiverse verified baseline
 
 Implementation checkpoint `ad9796b3...`, Actions run #251:
 
@@ -437,3 +469,24 @@ The user wants the DB redesign to prevent bad arrows and accidental semantic fan
 Bias toward **fewer, better-supported relations** rather than maximizing connectivity.
 
 When the user says `進めて`, continue autonomously under `AGENTS.md` without asking routine questions. Report meaningful RED/GREEN findings and semantic boundaries in Japanese.
+
+## 11. Separate normalized release/status subproject — Task 6 audit
+
+The normalized `releases` / `production_status_assertions` work is a separately approved subproject recorded in:
+
+- plan: `docs/superpowers/plans/2026-08-28-marvel-library-db-v1-releases-production-status.md`;
+- review: `docs/superpowers/reviews/2026-08-28-marvel-library-db-v1-releases-production-status-review.md`.
+
+It was not a continuation of the already completed Events & Multiverse Task 7/8 audit. The subproject was subsequently merged as PR #11; it also does not imply evidence-backed promotion of the seed rows.
+
+Task 6 was finally verified on `codex/db-v1-releases-status` at HEAD `dd56f321eb58569be1b6f386f4421cd2f10235bf` (`test: normalize graph fixture newlines for compatibility`), against fresh `origin/main=2410ea482d9fe6c9063a23b80b9b766e2bb9daac` (the merge base is the same). The exact bundled-Python full suite ran `195` tests with exit code `0`; the ordinary build exited `0` with `audit_issue_count=0`, content-audit/review-integrity issues `0`, SQLite foreign-key rows `0`, and `integrity_check=ok`. The final test-only fix normalizes CRLF/LF graph fixture bytes before comparison and adds one cross-platform regression test; it does not change production implementation, canonical data, or graph policy.
+
+The normalized migration contains `131` primary release rows, `7` separate Japanese-date release rows, and `131` production-status snapshot rows for `131` works. All `269` release/status facts remain `legacy_seed`; no evidence or review rows were added. Evidence-backed promotion is a later separately approved audit batch. The DB schema version is `1.2-normalized-releases-status`, the logical fingerprint is `80f345416dd37ea81dcc9a89b128020132440a9538506820764382d6b20c6825`, and legacy graph compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, story paths `83/83`.
+
+The release/status public views join only to `works` and do not feed graph derivation. The HTML DB-export milestone was later completed and merged as PR #12, with the committed `data/derived/flowchart.json` artifact repaired by PR #13 after the first public Pages check found a 404. The next boundary is (a) a separately planned evidence-promotion audit for a small subset of these legacy seeds or (b) one later normalized domain (`credits`, `entity_aliases`, `entity_memberships`, or `entity_possessions`); do not begin either without selecting a bounded plan and RED contract.
+
+## 12. Full release/status evidence audit — PR #30
+
+The full audit plan is `docs/superpowers/plans/2026-08-30-marvel-library-db-v1-full-release-status-audit.md`, with the review report in `docs/superpowers/reviews/2026-08-30-marvel-library-full-release-status-audit.md`. It inventories all 269 normalized release/status facts, promotes only exact source/evidence/review matches, and records every remaining row as `defer` or `conflict`. The merged baseline is `641d16577c847ab5f917e3faea0900536dc0baab`; CI run #285 passed 305 tests, build/audit/review/FK checks are zero, SQLite integrity is `ok`, and graph compatibility remains 361/569/199 with story paths 83/83.
+
+The data-audit boundary is complete. The next separately bounded task is HTML design and interaction debugging; do not infer that it has been completed from the DB/export tests above.

@@ -12,6 +12,8 @@ production `main` baseline: `3af097b72c174077c83d7091f79222a72fc7134f` (`v5.20.5
 
 PR: #9 (`library-v5-canonical-freeze` -> `main`, draft)
 
+> **Historical review notice (updated 2026-08-30):** This is the Phase 1 snapshot from 2026-08-27. The PR #9/draft and `main` baseline statements below are historical; the latest semantic production baseline is `main` at `19134e187d40e808f926fd32607b0a2deebac8f1`. Consult `AGENTS.md` and the current Codex handoff for present integration state and verification counts.
+
 ## 結論
 
 Marvel Library DB v1 Phase 1 の実装境界は **PASS** と判定する。
