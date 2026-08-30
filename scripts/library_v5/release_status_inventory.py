@@ -176,7 +176,7 @@ def write_markdown_report(rows: Iterable[dict[str, str]], output: Path) -> None:
             "- Batch 012: Daredevil: Born Again Season 2 Japanese release date and current "
             "availability status.\n"
             "- Batch 013: Wonder Man Season 1 Japanese Disney+ release date.\n"
-            "- Batch 014: X-Men '97 Season 2 Japanese Disney+ release date.\n\n"
+            "- Batch 014: X-Men '97 Season 2 Japanese Disney+ release date.\n"
             "- Batch 015: Thunderbolts* U.S. theatrical release and released-status snapshot.\n\n"
             "All promoted rows preserve their existing territory, release precision, "
             "announced/released value, and `asserted_at`; no graph fact is derived from them.\n\n"
