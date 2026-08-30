@@ -70,6 +70,10 @@ class ReleaseStatusEvidencePromotionBatch006Tests(unittest.TestCase):
                 "production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28",
                 TARGET,
                 "production-status-avengers-doomsday-2026-12-18-snapshot-2026-08-28",
+                "production-status-the-punisher-one-last-kill-2026-05-12-snapshot-2026-08-28",
+                "production-status-blade-mcu-tba-tba-snapshot-2026-08-28",
+                "production-status-avengers-secret-wars-2027-12-17-snapshot-2026-08-28",
+                "production-status-spider-man-beyond-the-spider-verse-tba-snapshot-2026-08-28",
             },
         )
 
