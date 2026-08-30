@@ -51,7 +51,7 @@ class ReleaseStatusEvidencePromotionBatch011Tests(unittest.TestCase):
         releases = {row["release_id"]: row for row in _rows("data/library/releases.csv")}
         self.assertEqual(releases["release-avengers-doomsday-2026-12-18-primary"]["verification_status"], "source_verified")
         self.assertEqual(releases["release-the-fantastic-four-first-steps-2025-primary"]["verification_status"], "legacy_seed")
-        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in releases.values()), 10)
+        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in releases.values()), 14)
 
 
 if __name__ == "__main__":
