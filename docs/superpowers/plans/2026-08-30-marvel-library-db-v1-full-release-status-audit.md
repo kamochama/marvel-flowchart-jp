@@ -33,25 +33,25 @@
 - Consumes: `data/library/releases.csv`, `data/library/production_status_assertions.csv`, `data/library/evidence.csv`, `data/content_audit/reviews.csv`, `data/library/sources.csv`。
 - Produces: deterministic CSV/Markdown inventory with one row per fact and disposition fields `promote`, `defer`, `conflict`。
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
-テストは131作品のstatus 131行とrelease 138行を読み、inventoryが269 factsを返し、各行にfact_id、fact_table、work_id、verification_status、source候補、evidence_count、review_count、disposition列があることを要求する。verified済み行はdisposition=verified、未昇格行は未監査状態としてpromote/defer/conflictのいずれかを明示する。
+テストは131作品のstatus 131行とrelease 138行を読み、inventoryが269 factsを返し、各行にfact_id、fact_table、work_id、verification_status、source候補、evidence_count、review_count、disposition列があることを要求する。source_verified済み行はdisposition=promote、未昇格行はpromote/defer/conflictのいずれかを明示する。
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `& $MarvelPython -m unittest tests.library_v5.test_release_status_inventory -v`
 Expected: inventory moduleまたは出力契約が未実装のためFAIL。
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 `release_status_inventory.py` にCSV reader、fact/evidence/reviewのexact ID join、source候補集計、安定したfact sort、Markdown/CSV出力を実装する。入力CSVは変更せず、出力は指定された監査レビューへ書く。
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `& $MarvelPython -m unittest tests.library_v5.test_release_status_inventory -v`
 Expected: PASS、release 138/status 131の全269 factsが一意に出力される。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 `git add scripts/library_v5/release_status_inventory.py tests/library_v5/test_release_status_inventory.py docs/superpowers/reviews/2026-08-30-marvel-library-full-release-status-audit.md`
 `git commit -m "audit: inventory all release-status seed facts"`
@@ -67,20 +67,20 @@ Expected: PASS、release 138/status 131の全269 factsが一意に出力され�
 - Consumes: Task 1 inventoryと各source URL/checked_point。
 - Produces: factごとの `promote`、`defer`、`conflict` disposition、直接支持の引用要約、再監査条件。
 
-- [ ] **Step 1: 三つのread-only subagent監査を並列実行する**
+- [x] **Step 1: 三つのread-only subagent監査を並列実行する**
 
 Marvel Studios/Marvel Television、Sony/Spider-Verse、その他の地域・配信群をそれぞれgpt-5.6-luna/xhighで監査する。各agentはcanonicalを編集せず、fact_id単位でsourceがstatus/releaseを直接支持するかだけを報告する。
 
-- [ ] **Step 2: Primary agentが台帳を統合する**
+- [x] **Step 2: Primary agentが台帳を統合する**
 
 同一factの重複報告をdeduplicateし、source登録だけの行、別factのevidenceだけの行、地域不一致を `defer` または `conflict` として記録する。
 
-- [ ] **Step 3: 監査台帳を検証する**
+- [x] **Step 3: 監査台帳を検証する**
 
 Run: `& $MarvelPython -m unittest tests.library_v5.test_release_status_inventory -v`
 Expected: 269 factsすべてにdispositionと理由があり、未昇格行が暗黙にverified扱いされない。
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 `git add docs/superpowers/reviews/2026-08-30-marvel-library-full-release-status-audit.md`
 `git commit -m "audit: classify release-status evidence dispositions"`
@@ -99,25 +99,25 @@ Expected: 269 factsすべてにdispositionと理由があり、未昇格行が�
 - Consumes: Task 2で `promote` と分類された最大5 factsと、各factのsource/evidence要約。
 - Produces: exact fact/evidence/review IDsを持つsource_verified rows、適用ハッシュ、graph fingerprint parity。
 
-- [ ] **Step 1: REDテストを書く**
+- [x] **Step 1: REDテストを書く**
 
 各waveのテストは対象factが変更前はlegacy_seed、対応evidence/reviewが存在しないこと、JP行・関連graph行が対象外であることを固定する。既存のbatch001–007 cumulative testsと同じexact ID契約を使う。
 
-- [ ] **Step 2: REDを確認する**
+- [x] **Step 2: REDを確認する**
 
 Run: `& $MarvelPython -m unittest tests.library_v5.test_release_status_full_audit_wave -v`
 Expected: 対象factの未昇格状態によりFAIL。
 
-- [ ] **Step 3: 最小データ変更を適用する**
+- [x] **Step 3: 最小データ変更を適用する**
 
 対象factだけをsource_verifiedへ更新し、同じfact_idを指すprimary/supporting evidence、legacy_seed -> source_verified review、applied JSONのrow countsとSHA-256を追加する。statusのannounced/released、asserted_at、territory、JP blank dateは変更しない。
 
-- [ ] **Step 4: focused GREENを確認する**
+- [x] **Step 4: focused GREENを確認する**
 
 Run: `& $MarvelPython -m unittest tests.library_v5.test_release_status_full_audit_wave -v`
 Expected: PASS。
 
-- [ ] **Step 5: 全体検証を実行する**
+- [x] **Step 5: 全体検証を実行する**
 
 Run: `& $MarvelPython -m unittest discover -s tests/library_v5 -p 'test_*.py' -v` と `& $MarvelPython -m scripts.library_v5.build --repo-root .`
 Expected: 全テストPASS、audit/content-audit issue 0、FK 0、SQLite integrity ok、graph compatibility unchanged。
@@ -182,3 +182,4 @@ AGENTS、handoff、roadmap、historical reviewにsemantic baseline SHA、CI run�
 - [ ] **Step 5: Commit**
 
 `git commit -m "docs: record full release-status audit baseline"`
+
