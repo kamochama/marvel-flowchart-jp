@@ -27,11 +27,14 @@
 - 旧共有値の正規化と、チャート接続セレクタの独立性
 - サイト提案の経路説明から `reference` 接続を除外すること
 - 公式ルートのハイライトを公式モード外で解除すること
+- `view_policy.default_importance_mode` がチャート重要度だけを初期化し、予習モードを上書きしないこと
+
+初回レビューで見つかった `applyFlowchartPolicy` の状態ずれは、チャート重要度用setterへ分離して修正した。
 
 ## 検証
 
-- watch navigation contract: 25 / 25 PASS
-- bundled Python full suite: 334 / 334 PASS
+- watch navigation contract: 26 / 26 PASS
+- bundled Python full suite: 335 / 335 PASS
 - ordinary build: 終了コード0、`audit_issue_count=0`、`content_audit.issue_count=0`
 - 互換性観測値: `prewatch_edges=199`、`story_paths=83/83`
 - DB観測値: `works=131`、`releases=138`、`production_status_assertions=131`

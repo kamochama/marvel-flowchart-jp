@@ -106,6 +106,21 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("window.marvelSetImportanceMode", self.html)
         self.assertIn("document.querySelectorAll('.watch-tier-select')", self.html)
 
+    def test_flowchart_policy_initializes_chart_importance_without_changing_watch_mode(self) -> None:
+        """The exported default importance must not overwrite the watch-plan tier."""
+        policy = re.search(
+            r"function applyFlowchartPolicy\(policy\)\{.*?\n\s*\}",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(policy)
+        policy_text = policy.group(0)
+        self.assertIn(
+            "window.marvelSetImportanceMode(policy.default_importance_mode)",
+            policy_text,
+        )
+        self.assertNotIn("window.marvelSetConnectionTier(defaultTier)", policy_text)
+
     def test_complete_mode_has_nonofficial_provenance(self) -> None:
         """Complete mode must not retain an official source URL or official provenance."""
         complete = re.search(

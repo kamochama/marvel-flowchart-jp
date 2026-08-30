@@ -5914,10 +5914,9 @@ if(flowchartReady)render();
   // their existing importance-hidden behavior so users can narrow the view.
   function applyFlowchartPolicy(policy){
     if(!policy || policy.default_edge_visibility!=='all') return false;
-    const defaultTier={core:'minimum',recommended:'recommended',reference:'complete'}[policy.default_importance_mode];
-    if(policy.default_importance_mode==='reference' && defaultTier!=='complete') return false;
-    if(defaultTier && typeof window.marvelSetConnectionTier==='function'){
-      window.marvelSetConnectionTier(defaultTier);
+    // The exported policy controls chart edge importance, not the watch-plan mode.
+    if(policy.default_importance_mode && typeof window.marvelSetImportanceMode==='function'){
+      window.marvelSetImportanceMode(policy.default_importance_mode);
       return true;
     }
     return false;
