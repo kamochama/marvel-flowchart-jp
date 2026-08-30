@@ -27,6 +27,8 @@ EXPECTED_PROMOTED_RELEASE_IDS = {
     "release-x-men-97-s2-2026-07-01-primary",
     "release-the-punisher-one-last-kill-2026-05-12-primary",
     "release-blade-mcu-tba-tba-primary",
+    "release-avengers-doomsday-2026-12-18-jp",
+    "release-the-fantastic-four-first-steps-2025-jp",
 }
 EVIDENCE_ID = "evidence-production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"
 REVIEW_ID = "review-2026-08-30-production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"
