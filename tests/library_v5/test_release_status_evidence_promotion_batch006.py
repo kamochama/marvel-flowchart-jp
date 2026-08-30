@@ -74,6 +74,9 @@ class ReleaseStatusEvidencePromotionBatch006Tests(unittest.TestCase):
                 "production-status-blade-mcu-tba-tba-snapshot-2026-08-28",
                 "production-status-avengers-secret-wars-2027-12-17-snapshot-2026-08-28",
                 "production-status-spider-man-beyond-the-spider-verse-tba-snapshot-2026-08-28",
+                "production-status-the-fantastic-four-first-steps-2025-snapshot-2026-08-28",
+                "production-status-daredevil-born-again-s3-tba-snapshot-2026-08-28",
+                "production-status-your-friendly-neighborhood-spider-man-s2-2026-snapshot-2026-08-28",
             },
         )
 
