@@ -127,6 +127,19 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("officialRouteIds", self.html)
         self.assertIn("routeOrdered", self.html)
 
+    def test_official_route_can_highlight_existing_chart_edges(self) -> None:
+        self.assertIn("official-route-highlight", self.html)
+        self.assertIn("toggleOfficialRouteHighlight", self.html)
+        self.assertIn("officialRouteEdges", self.html)
+        self.assertIn("公式予習ルートをチャートで光らせる", self.html)
+        self.assertIn("data-official-route-toggle", self.html)
+
+    def test_detail_focus_redraw_preserves_official_route_highlight(self) -> None:
+        self.assertIn(
+            "window.marvelApplyOfficialRouteSvgOverlay?.(svg,window.__marvelLastSelectionState)",
+            self.html,
+        )
+
     def test_static_export_carries_the_official_route_in_view_policy(self) -> None:
         payload = json.loads(FLOWCHART_EXPORT.read_text(encoding="utf-8"))
         routes = payload["view_policy"]["official_prewatch_routes"]
