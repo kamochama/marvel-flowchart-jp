@@ -1,0 +1,36 @@
+{
+  "batch_id": "2026-08-30-release-status-evidence-promotion-batch015",
+  "evidence_ids": [
+    "evidence-release-thunderbolts-new-avengers-2025-primary",
+    "evidence-production-status-thunderbolts-new-avengers-2025-snapshot-2026-08-28"
+  ],
+  "fact_tables": ["releases.csv", "production_status_assertions.csv"],
+  "post_write_sha256": {
+    "data/library/releases.csv": "08a63fd05b28b375c3e2961a3f70cea2e934c96ffb0e59519502d36b00c7b6cf",
+    "data/library/production_status_assertions.csv": "37aace7b131a42d277795d5592235e37a92d4d175d22ae8cc9e5244de9a2dc1c",
+    "data/library/evidence.csv": "7923236452f8097d35b7d68eccabefeae04a4f80427fc1ad6d00d47bb1804a4f",
+    "data/content_audit/reviews.csv": "03d5ab8f6eda08c87e7137fa27224098b866a2f1423461498bfbc82a38b4caa9",
+    "data/library/sources.csv": "7eb3bfe42bf283e4410b3e28513c946cc6fba4e2812f3a15b37003ea09974c66"
+  },
+  "release_row_count_before": 138,
+  "release_row_count_after": 138,
+  "status_row_count_before": 131,
+  "status_row_count_after": 131,
+  "evidence_row_count_before": 128,
+  "evidence_row_count_after": 130,
+  "review_row_count_before": 103,
+  "review_row_count_after": 105,
+  "source_row_count_before": 48,
+  "source_row_count_after": 49,
+  "promoted_fact_ids": [
+    "release-thunderbolts-new-avengers-2025-primary",
+    "production-status-thunderbolts-new-avengers-2025-snapshot-2026-08-28"
+  ],
+  "review_ids": [
+    "review-2026-08-30-release-thunderbolts-new-avengers-2025-primary",
+    "review-2026-08-30-production-status-thunderbolts-new-avengers-2025-snapshot-2026-08-28"
+  ],
+  "source_ids": ["disney-movies-thunderbolts-2025"],
+  "verification_scope": "Verified the U.S. Thunderbolts* theatrical release date (2025-05-02) and released snapshot from the official Disney Movies page. The U.S. territory and released semantics are preserved; no Japanese row or production milestone is inferred."
+}
+
