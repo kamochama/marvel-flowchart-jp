@@ -1,4 +1,5 @@
 import csv
+import random
 import tempfile
 from pathlib import Path
 import unittest
@@ -33,14 +34,37 @@ class ReleaseStatusInventoryTests(unittest.TestCase):
             "disposition",
         }
         self.assertTrue(required <= set(rows[0]))
-        self.assertEqual({row["disposition"] for row in rows}, {"verified", "defer"})
+        self.assertEqual({row["disposition"] for row in rows}, {"promote", "defer", "conflict"})
         self.assertEqual(
-            sum(row["disposition"] == "verified" for row in rows),
-            10,
+            sum(row["disposition"] == "promote" for row in rows),
+            16,
         )
         self.assertEqual(
             sum(row["disposition"] == "defer" for row in rows),
-            259,
+            251,
+        )
+        self.assertEqual(
+            sum(row["disposition"] == "conflict" for row in rows),
+            2,
+        )
+        doomsday = next(
+            row
+            for row in rows
+            if row["fact_id"] == "release-avengers-doomsday-2026-12-18-primary"
+        )
+        self.assertIn("doomsday", doomsday["source_candidates"])
+        self.assertIn("marvel-jp-titlelist", doomsday["source_candidates"])
+        conflicts = {
+            row["fact_id"]
+            for row in rows
+            if row["disposition"] == "conflict"
+        }
+        self.assertEqual(
+            conflicts,
+            {
+                "release-your-friendly-neighborhood-spider-man-s2-2026-primary",
+                "production-status-wonder-man-s2-tba-snapshot-2026-08-28",
+            },
         )
 
     def test_inventory_is_stably_sorted_and_can_be_written(self):
@@ -55,17 +79,29 @@ class ReleaseStatusInventoryTests(unittest.TestCase):
         self.assertEqual(keys, sorted(keys))
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "inventory.csv"
-            write_inventory(rows, output)
+            shuffled = list(rows)
+            random.Random(7).shuffle(shuffled)
+            write_inventory(shuffled, output)
             with output.open(encoding="utf-8", newline="") as handle:
                 written = list(csv.DictReader(handle))
-        self.assertEqual(len(written), 269)
-        self.assertEqual(written[0]["fact_id"], rows[0]["fact_id"])
-        report = Path(tmp) / "inventory.md"
-        write_markdown_report(rows, report)
-        markdown = report.read_text(encoding="utf-8")
+            self.assertEqual(len(written), 269)
+            self.assertEqual(written[0]["fact_id"], rows[0]["fact_id"])
+            report = Path(tmp) / "inventory.md"
+            write_markdown_report(shuffled, report)
+            markdown = report.read_text(encoding="utf-8")
         self.assertIn("release facts: 138", markdown)
         self.assertIn("production-status facts: 131", markdown)
+        self.assertIn("promote dispositions: 16", markdown)
+        self.assertIn("conflict dispositions: 2", markdown)
         self.assertIn("production-status-avengers-doomsday-2026-12-18-snapshot-2026-08-28", markdown)
+
+    def test_inventory_writers_reject_canonical_outputs(self):
+        from scripts.library_v5.release_status_inventory import write_inventory
+
+        with self.assertRaises(ValueError):
+            write_inventory([], ROOT / "data/library/releases.csv")
+        with self.assertRaises(ValueError):
+            write_inventory([], ROOT / "data/content_audit/reviews.csv")
 
 
 if __name__ == "__main__":
