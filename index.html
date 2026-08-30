@@ -764,6 +764,14 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
 @media(max-width:760px){#chronology .chronology-view-wrap{height:64vh;min-height:450px}.chronology-source-note{font-size:10px}.chronology-legend .badge{font-size:10px}.chronology-jump-bar{padding:8px}.chronology-jump-group{display:block}.chronology-jump-group-label{display:block;min-width:0;padding-top:0;margin-bottom:4px}.chronology-jump-btn{font-size:10px;padding:5px 8px}.chronology-lane-sub,.chronology-group-sub,.chronology-track-label{display:none}.chronology-group-label{font-size:13px}.chronology-nav-popover.is-mini{max-width:min(250px,calc(100% - 12px));max-height:92px;padding:5px 26px 5px 6px}.chronology-nav-popover.is-mini .chronology-nav-popover-title{display:none}.chronology-nav-popover.is-mini .chronology-nav-choice{font-size:9px;padding:5px 7px}}
 
 </style>
+<style id="chronology-selection-highlight">
+  .chronology-edge{pointer-events:none}.chronology-edge path{fill:none;opacity:.72}
+  .svg-wrap svg.dim g.chronology-edge.hl{opacity:1;filter:saturate(1.24) brightness(1.14) drop-shadow(0 0 8px #60a5fa)}
+  .svg-wrap svg.dim g.chronology-edge.backhl path{stroke:#60a5fa!important;stroke-width:4.2px!important;opacity:1}
+  .svg-wrap svg.dim g.chronology-edge.forwardhl path{stroke:#34d399!important;stroke-width:4.2px!important;opacity:1}
+  .svg-wrap svg.dim g.chronology-edge.bothhl path{stroke:#a78bfa!important;stroke-width:4.5px!important;opacity:1}
+  .svg-wrap svg.dim g.chronology-edge.pathhl path{stroke:#c4b5fd!important;stroke-width:4.5px!important;opacity:1}
+</style>
 <style id="mobile-touch-target-contract">
 /* PUBLIC v5.20.7 — keep mobile controls comfortably tappable. */
 @media(max-width:760px){
@@ -794,7 +802,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.21.0</span>
+      <span class="stat-chip public-release">PUBLIC v5.21.1</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -4453,8 +4461,8 @@ function canvasPrimitive(svg,el){
     }
     geom=p;
   }else if(tag==='text') geom=canvasTextLines(el); else return null;
-  const overlayGroup=el.closest('g.node,g.edge,g.dynamic-edge-overlay');
-  let overlayNodeId='',overlayEdgeKey='',overlayIsEdge=false,overlayDynamic=false;
+  const overlayGroup=el.closest('g.node,g.edge,g.dynamic-edge-overlay'),chronologyGroup=el.closest('g.chronology-edge');
+  let overlayNodeId='',overlayEdgeKey='',overlayIsEdge=false,overlayDynamic=false,overlayChronologyEdge=false,overlayChronologySource='',overlayChronologyTarget='';
   if(overlayGroup){
     if(overlayGroup.matches('g.node'))overlayNodeId=gt(overlayGroup)||'';
     else{
@@ -4463,7 +4471,12 @@ function canvasPrimitive(svg,el){
       overlayEdgeKey=typeof window.marvelEdgeKeyFromGroup==='function'?(window.marvelEdgeKeyFromGroup(overlayGroup)||rawEdgeKey):rawEdgeKey;
     }
   }
-  return {el,tag,m,bbox,geom,style:null,overlayNodeId,overlayEdgeKey,overlayIsEdge,overlayDynamic};
+  if(chronologyGroup){
+    overlayChronologySource=chronologyGroup.dataset?.chronologySource||'';
+    overlayChronologyTarget=chronologyGroup.dataset?.chronologyTarget||'';
+    overlayChronologyEdge=!!(overlayChronologySource&&overlayChronologyTarget);
+  }
+  return {el,tag,m,bbox,geom,style:null,overlayNodeId,overlayEdgeKey,overlayIsEdge,overlayDynamic,overlayChronologyEdge,overlayChronologySource,overlayChronologyTarget};
 }
 function canvasStylePrimitive(p){
   const cs=getComputedStyle(p.el),gs=canvasGroupState(p.el);
@@ -4494,7 +4507,7 @@ function rebuildMobileCanvas(wrap,geometry=true,preserveOverlay=false){
     st.chronologyNavBoxes=[...svg.querySelectorAll('[data-chronology-nav-group]')].map(el=>({key:el.dataset.chronologyNavGroup,box:canvasRootBBox(svg,el)})).filter(x=>x.key&&x.box);
   }
   for(const p of st.primitives) canvasStylePrimitive(p);
-  st.overlayWorldReady=false;st.overlayWorldState=null;st.overlayWorldSelectionKey='';st.overlayWorldSyntheticSpecs=null;
+  st.overlayWorldReady=false;st.overlayWorldState=null;st.overlayWorldSelectionKey='';st.overlayWorldSyntheticSpecs=null;st.overlayWorldChronologyClasses=null;
   renderMobileCanvasCache(wrap);
   if(geometry||!st.overlayWorldCache)prepareMobileSelectionWorldResources(wrap);
   st.overlayActive=false;
@@ -4525,7 +4538,7 @@ function initMobileCanvas(wrap){
   wrap.insertBefore(canvas,svg.nextSibling);
   const overlay=document.createElement('canvas');overlay.dataset.marvelMobileHighlight=key;overlay.setAttribute('aria-hidden','true');
   canvas.insertAdjacentElement('afterend',overlay);wrap.classList.add('mobile-canvas-active');
-  cs={wrap,svg,canvas,ctx:canvas.getContext('2d',{alpha:true,desynchronized:true}),overlay,overlayCtx:overlay.getContext('2d',{alpha:true,desynchronized:true}),primitives:[],nodeBoxes:[],chronologyNavBoxes:[],syncRaf:0,needsRebuild:false,dpr:1,frames:0,cullDraws:0,overlayVersion:0,overlayDrawn:0,overlayActive:false,overlayState:null,overlayCamera:null,overlayGestureCache:null,overlayGestureState:null,overlayGestureSelectionKey:'',overlayGestureLod:0,overlayGestureBuildToken:0,overlayGestureBuildRaf:0,overlayGestureBuildKey:'',overlayGestureBuildState:null,overlayLocalPatch:null,overlayLocalPatchState:null,overlayLocalPatchSelectionKey:'',overlayWorldCache:null,overlayWorldCtx:null,overlayWorldLod:.35,overlayWorldReady:false,overlayWorldState:null,overlayWorldSelectionKey:'',overlayWorldSyntheticSpecs:null,overlayNodePrimitives:null,overlayEdgePrimitives:null,overlayNodeBoxMap:null,overlayVisibleNodeIds:null,overlayStaticEdgeKeys:null,preserveOverlayOnce:false};
+  cs={wrap,svg,canvas,ctx:canvas.getContext('2d',{alpha:true,desynchronized:true}),overlay,overlayCtx:overlay.getContext('2d',{alpha:true,desynchronized:true}),primitives:[],nodeBoxes:[],chronologyNavBoxes:[],syncRaf:0,needsRebuild:false,dpr:1,frames:0,cullDraws:0,overlayVersion:0,overlayDrawn:0,overlayActive:false,overlayState:null,overlayCamera:null,overlayGestureCache:null,overlayGestureState:null,overlayGestureSelectionKey:'',overlayGestureLod:0,overlayGestureBuildToken:0,overlayGestureBuildKey:'',overlayGestureBuildState:null,overlayLocalPatch:null,overlayLocalPatchState:null,overlayLocalPatchSelectionKey:'',overlayWorldCache:null,overlayWorldCtx:null,overlayWorldLod:.35,overlayWorldReady:false,overlayWorldState:null,overlayWorldSelectionKey:'',overlayWorldSyntheticSpecs:null,overlayWorldChronologyClasses:null,overlayNodePrimitives:null,overlayEdgePrimitives:null,overlayChronologyEdgePrimitives:null,overlayNodeBoxMap:null,overlayVisibleNodeIds:null,overlayStaticEdgeKeys:null,preserveOverlayOnce:false};
   mobileCanvasStates.set(wrap,cs);
   const observer=new MutationObserver(records=>{
     let geometry=false,style=false;
@@ -4602,6 +4615,26 @@ function mobileOverlayEdgeClass(key,state){
   const b=state.backEdges?.has(key),f=state.forwardEdges?.has(key),c=state.contextEdges?.has(key);
   if(b&&f)return 'bothhl'; if(b)return 'backhl'; if(f)return 'forwardhl'; if(c)return 'contexthl';
   return null;
+}
+function mobileOverlayChronologyEdgeClassMap(cs,state){
+  const classes=new Map();if(!cs||!state||!selectedIds.size)return classes;
+  const incoming=new Map(),outgoing=new Map();
+  for(const [key,primitives] of (cs.overlayChronologyEdgePrimitives||new Map())){
+    const p=primitives?.[0],source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
+    if(!source||!target)continue;
+    if(!incoming.has(target))incoming.set(target,[]);if(!outgoing.has(source))outgoing.set(source,[]);
+    incoming.get(target).push({node:source,key});outgoing.get(source).push({node:target,key});
+  }
+  const walk=(starts,adjacent)=>{
+    const seen=new Set(starts),found=new Set(),queue=[...starts];
+    while(queue.length){const id=queue.shift();for(const {node,key} of (adjacent.get(id)||[])){found.add(key);if(!seen.has(node)){seen.add(node);queue.push(node);}}}
+    return found;
+  };
+  const back=walk(selectedIds,incoming),forward=walk(selectedIds,outgoing);
+  for(const key of new Set([...back,...forward])){
+    const b=back.has(key),f=forward.has(key);classes.set(key,b&&f?'bothhl':b?'backhl':'forwardhl');
+  }
+  return classes;
 }
 function mobileOverlayCategory(p,state){
   if(p.overlayNodeId)return mobileOverlayNodeClass(p.overlayNodeId,state);
@@ -4692,7 +4725,7 @@ function drawMobileOverlayPrimitive(ctx,p,category,worldScale,cs){
     ctx.font=`${ps.fontSize}px ${ps.fontFamily}`;for(const line of p.geom)ctx.fillText(line.text,line.x,line.y);
   }else{
     let fill=ps.fill,stroke=ps.stroke,lineWidth=ps.lineWidth;
-    if(p.overlayIsEdge){
+    if(p.overlayIsEdge||p.overlayChronologyEdge){
       const c=mobileOverlayColor(category);stroke=c;if(p.tag==='polygon')fill=c;lineWidth=Math.max(lineWidth||1,category==='contexthl'?3.6:4.2)/Math.max(.001,worldScale);
     }
     if(fill){ctx.fillStyle=fill;ctx.fill(p.geom)}
@@ -4730,17 +4763,18 @@ function mobileOverlayRelevantEdgeKeys(state){
 function prepareMobileSelectionWorldResources(wrap){
   const cs=mobileCanvasStates.get(wrap);if(!cs)return false;
   const st=ensureMobileViewBoxState(wrap);if(!st?.baseViewBox)return false;
-  const nodeMap=new Map(),edgeMap=new Map(),staticKeys=new Set();
+  const nodeMap=new Map(),edgeMap=new Map(),chronologyEdgeMap=new Map(),staticKeys=new Set();
   for(const p of cs.primitives){
     if(p.overlayNodeId){if(!nodeMap.has(p.overlayNodeId))nodeMap.set(p.overlayNodeId,[]);nodeMap.get(p.overlayNodeId).push(p);}
     else if(p.overlayIsEdge&&p.overlayEdgeKey){if(!edgeMap.has(p.overlayEdgeKey))edgeMap.set(p.overlayEdgeKey,[]);edgeMap.get(p.overlayEdgeKey).push(p);if(!p.overlayDynamic)staticKeys.add(p.overlayEdgeKey);}
+    else if(p.overlayChronologyEdge){const key=`${p.overlayChronologySource}->${p.overlayChronologyTarget}`;if(!chronologyEdgeMap.has(key))chronologyEdgeMap.set(key,[]);chronologyEdgeMap.get(key).push(p);}
   }
-  cs.overlayNodePrimitives=nodeMap;cs.overlayEdgePrimitives=edgeMap;
+  cs.overlayNodePrimitives=nodeMap;cs.overlayEdgePrimitives=edgeMap;cs.overlayChronologyEdgePrimitives=chronologyEdgeMap;
   cs.overlayNodeBoxMap=new Map(cs.nodeBoxes.map(n=>[n.id,n.box]));cs.overlayVisibleNodeIds=new Set(cs.nodeBoxes.map(n=>n.id));cs.overlayStaticEdgeKeys=staticKeys;
   const b=st.baseViewBox,lod=MOBILE_SELECTION_WORLD_LOD,w=Math.max(1,Math.ceil(b.w*lod)),h=Math.max(1,Math.ceil(b.h*lod));
   let cache=cs.overlayWorldCache;
   if(!cache||cache.width!==w||cache.height!==h){cache=document.createElement('canvas');cache.width=w;cache.height=h;cs.overlayWorldCache=cache;cs.overlayWorldCtx=cache.getContext('2d',{alpha:true,desynchronized:true});}
-  cs.overlayWorldLod=lod;cs.overlayWorldRect={x:b.x,y:b.y,x2:b.x+b.w,y2:b.y+b.h};cs.overlayWorldReady=false;cs.overlayWorldState=null;cs.overlayWorldSelectionKey='';cs.overlayWorldSyntheticSpecs=null;
+  cs.overlayWorldLod=lod;cs.overlayWorldRect={x:b.x,y:b.y,x2:b.x+b.w,y2:b.y+b.h};cs.overlayWorldReady=false;cs.overlayWorldState=null;cs.overlayWorldSelectionKey='';cs.overlayWorldSyntheticSpecs=null;cs.overlayWorldChronologyClasses=null;
   return !!cs.overlayWorldCtx;
 }
 function renderMobileSelectionWorldCache(wrap,state){
@@ -4758,8 +4792,10 @@ function renderMobileSelectionWorldCache(wrap,state){
     const category=mobileOverlayEdgeClass(edgeKey,state);if(!category)continue;
     for(const p of (cs.overlayEdgePrimitives.get(edgeKey)||[]))if(drawMobileOverlayPrimitive(ctx,p,category,lod,cs))drawn++;
   }
+  const chronologyClasses=mobileOverlayChronologyEdgeClassMap(cs,state);
+  for(const [edgeKey,category] of chronologyClasses){for(const p of (cs.overlayChronologyEdgePrimitives?.get(edgeKey)||[]))if(drawMobileOverlayPrimitive(ctx,p,category,lod,cs))drawn++;}
   const syntheticSpecs=mobileOverlaySyntheticSpecs(cs,state);for(const spec of syntheticSpecs)if(drawMobileSyntheticOverlayEdge(ctx,cs,spec,lod))drawn++;
-  cs.overlayWorldReady=true;cs.overlayWorldState=state;cs.overlayWorldSelectionKey=key;cs.overlayWorldSyntheticSpecs=syntheticSpecs;cs.overlayWorldDrawn=drawn;
+  cs.overlayWorldReady=true;cs.overlayWorldState=state;cs.overlayWorldSelectionKey=key;cs.overlayWorldSyntheticSpecs=syntheticSpecs;cs.overlayWorldChronologyClasses=chronologyClasses;cs.overlayWorldDrawn=drawn;
   return true;
 }
 function drawMobileSelectionCacheSlice(wrap,source){
@@ -4790,6 +4826,8 @@ function drawMobileSelectionOverlay(wrap,state){
     const category=mobileOverlayEdgeClass(edgeKey,state);if(!category)continue;
     for(const p of (cs.overlayEdgePrimitives.get(edgeKey)||[])){if(!mobileOverlayPrimitiveNearViewport(p,visibleRect))continue;if(drawMobileOverlayPrimitive(ctx,p,category,m.pxPerWorld,cs))n++;}
   }
+  const chronologyClasses=cs.overlayWorldChronologyClasses||mobileOverlayChronologyEdgeClassMap(cs,state);
+  for(const [edgeKey,category] of chronologyClasses){for(const p of (cs.overlayChronologyEdgePrimitives?.get(edgeKey)||[])){if(!mobileOverlayPrimitiveNearViewport(p,visibleRect))continue;if(drawMobileOverlayPrimitive(ctx,p,category,m.pxPerWorld,cs))n++;}}
   let synthetic=0;for(const spec of (cs.overlayWorldSyntheticSpecs||[]))if(mobileOverlaySyntheticNearViewport(cs,spec,visibleRect)&&drawMobileSyntheticOverlayEdge(ctx,cs,spec,m.pxPerWorld))synthetic++;
   cs.overlayActive=true;cs.overlayState=state;cs.overlayCamera={vbX:st.vbX,vbY:st.vbY,vbW:st.vbW,vbH:st.vbH,pxPerWorld:m.pxPerWorld,offsetX:m.offsetX,offsetY:m.offsetY};cs.overlayVersion=(cs.overlayVersion||0)+1;cs.overlayDrawn=n+synthetic;cs.overlaySyntheticDrawn=synthetic;
   return (n+synthetic)>0;
@@ -6261,6 +6299,42 @@ if(flowchartReady)render();
     return hits;
   }
 
+  function renderChronologySelectionState(svg,state){
+    const groups=[...svg.querySelectorAll('g.chronology-edge')];
+    groups.forEach(g=>g.classList.remove('hl','backhl','forwardhl','bothhl','pathhl'));
+    if(!groups.length||!selectedIds.size)return;
+    const incoming=new Map(),outgoing=new Map();
+    for(const g of groups){
+      const source=g.dataset.chronologySource,target=g.dataset.chronologyTarget;
+      if(!source||!target)continue;
+      if(!incoming.has(target))incoming.set(target,[]);
+      if(!outgoing.has(source))outgoing.set(source,[]);
+      incoming.get(target).push({node:source,group:g});
+      outgoing.get(source).push({node:target,group:g});
+    }
+    const walk=(starts,adjacent)=>{
+      const seen=new Set(starts),found=new Set(),queue=[...starts];
+      while(queue.length){
+        const id=queue.shift();
+        for(const {node,group} of(adjacent.get(id)||[])){
+          found.add(group);
+          if(!seen.has(node)){seen.add(node);queue.push(node);}
+        }
+      }
+      return found;
+    };
+    const back=walk(selectedIds,incoming),forward=walk(selectedIds,outgoing);
+    for(const g of groups){
+      const b=back.has(g),f=forward.has(g);
+      if(!b&&!f)continue;
+      g.classList.add('hl');
+      if(b&&f)g.classList.add('bothhl');
+      else if(b)g.classList.add('backhl');
+      else g.classList.add('forwardhl');
+    }
+  }
+  window.renderChronologySelectionState=renderChronologySelectionState;
+
   // Unlike the old behavior, allow context to remain lit on a tab even if the
   // selected work itself is absent, as long as matching context nodes exist.
   function renderSelectionState(svg,state){
@@ -6272,6 +6346,7 @@ if(flowchartReady)render();
       svg.classList.remove('dim','family-mode','char-mode');
       return;
     }
+    renderChronologySelectionState(svg,state);
     if(!selectedIds.size){ svg.classList.remove('dim'); return; }
     svg.classList.remove('family-mode','char-mode');
     svg.classList.add('dim');
@@ -7600,7 +7675,7 @@ if(flowchartReady)render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.21.0 · 2026-08-30</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.21.1 · 2026-08-31</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{
@@ -8155,6 +8230,10 @@ if(flowchartReady)render();
     const placedMcu=new Set();
     const addMcu=id=>{if(id&&CHRONOLOGY_META[id]?.lane==='mcu-main')placedMcu.add(id);};
     function drawCard(id,col,y){ if(!nm[id]||!CHRONOLOGY_META[id])return false; out.push(chronologyCard(id,xForCol(col),y,cardW,cardH)); return true; }
+    function chronologyEdgeGroup(source,target,d,klass){
+      const key=source+'->'+target;
+      return '<g class="chronology-edge" data-chronology-source="'+esc(source)+'" data-chronology-target="'+esc(target)+'" data-chronology-edge-key="'+esc(key)+'"><title>'+esc(key)+'</title><path class="'+esc(klass)+'" d="'+d+'"/></g>';
+    }
     function drawSequence(ids,startCol,y,{klass='chronology-axis',dashedTracks=[]}={}){
       const use=ids.filter(id=>nm[id]&&CHRONOLOGY_META[id]);
       use.forEach((id,i)=>{
@@ -8162,18 +8241,18 @@ if(flowchartReady)render();
         if(i>0){
           const prev=use[i-1], prevCol=startCol+i-1;
           const dashed=dashedTracks.includes(CHRONOLOGY_META[prev].track)||dashedTracks.includes(CHRONOLOGY_META[id].track)?' dashed':'';
-          out.push('<path class="'+klass+dashed+'" d="M '+(xForCol(prevCol)+cardW)+' '+mid(y)+' H '+xForCol(col)+'"/>');
+          out.push(chronologyEdgeGroup(prev,id,'M '+(xForCol(prevCol)+cardW)+' '+mid(y)+' H '+xForCol(col),klass+dashed));
         }
         drawCard(id,col,y); addMcu(id);
       });
       return {start:startCol,end:startCol+use.length-1,ids:use};
     }
     function drawSingle(id,col,y){ if(drawCard(id,col,y)) addMcu(id); }
-    function renderSpiderMerge(ids,y,startCol,targetCol){
+    function renderSpiderMerge(ids,y,startCol,targetCol,targetId){
       const seq=drawSequence(ids,startCol,y,{klass:'chronology-spider-line'});
       if(!seq.ids.length)return;
       const lastX=xForCol(seq.end)+cardW,lastY=mid(y),joinX=xForCol(targetCol),joinY=mid(rowY.spiderMcu),spineX=joinX-8;
-      out.push('<path class="chronology-spider-merge" d="M '+lastX+' '+lastY+' H '+spineX+' V '+joinY+' H '+joinX+'"/>');
+      out.push(chronologyEdgeGroup(seq.ids.at(-1),targetId,'M '+lastX+' '+lastY+' H '+spineX+' V '+joinY+' H '+joinX,'chronology-spider-merge'));
     }
 
     const spiderTone='#ec4899';
@@ -8188,8 +8267,8 @@ if(flowchartReady)render();
 
     // Spider-Man block
     const homecomingCol=8, nwhCol=10;
-    renderSpiderMerge(['spider-man-2002','spider-man-2-2004','spider-man-3-2007'],rowY.spiderRaimi,1,nwhCol);
-    renderSpiderMerge(['the-amazing-spider-man-2012','the-amazing-spider-man-2-2014'],rowY.spiderAmazing,2,nwhCol);
+    renderSpiderMerge(['spider-man-2002','spider-man-2-2004','spider-man-3-2007'],rowY.spiderRaimi,1,nwhCol,'spider-man-no-way-home-2021');
+    renderSpiderMerge(['the-amazing-spider-man-2012','the-amazing-spider-man-2-2014'],rowY.spiderAmazing,2,nwhCol,'spider-man-no-way-home-2021');
     drawSequence(['spider-man-homecoming-2017','spider-man-far-from-home-2019','spider-man-no-way-home-2021','spider-man-brand-new-day-2026-07-31'],homecomingCol,rowY.spiderMcu,{klass:'chronology-spider-line'});
 
     // MCU split rows
@@ -8263,7 +8342,7 @@ if(flowchartReady)render();
     // labels and connectors
 
     const civilX=xForCol(3)+cardW, civilY=mid(rowY.mcuCap), homeX=xForCol(homecomingCol), homeY=mid(rowY.spiderMcu);
-    out.push('<path class="chronology-spider-line" d="M '+civilX+' '+civilY+' H '+(civilX+18)+' V '+homeY+' H '+homeX+'"/>');
+    out.push(chronologyEdgeGroup('captain-america-civil-war-2016','spider-man-homecoming-2017','M '+civilX+' '+civilY+' H '+(civilX+18)+' V '+homeY+' H '+homeX,'chronology-spider-line'));
 
     panel.innerHTML=chronologyJumpBarHtml()+'<div class="chronology-legend"><span class="badge">大枠＝世界線 / 段＝物語系列</span><span class="badge">同じ世界線でも直接つながらない作品は別段</span><span class="badge">接続は左→右</span><span class="badge">枠内ナビあり</span></div>'+ 
       '<div class="chronology-source-note"><strong>Stage C:</strong> ③「世界線・時系列」は、<strong>同じ世界線でも物語のつながりが薄い作品は別段に分ける</strong> 方向へ再構成しました。特にMCUは1本の横線ではなく、共有イベントの背骨・宇宙サイド・魔術/マルチバース・街/地上サイド・ワカンダ/量子/新世代などの段に分離しています。これにより、同じ世界線だが別の物語系列であることを表しやすくし、横幅も抑えています。Spider-Man系列は Raimi / Amazing / MCU版 を別段化し、<em>No Way Home</em> 付近で交差させています。 <a href="https://www.disneyplus.com/ja-jp/explore/articles/mcu-series" target="_blank" rel="noopener">Disney+公式時系列 ↗</a></div>'+ 
@@ -8597,6 +8676,7 @@ window.FEATURED_ROUTE=Object.freeze({
       if(part.forwardEdges?.has(k))g.classList.add('hl','forwardhl');
       if(part.contextEdges?.has(k))g.classList.add('hl','contexthl');
     }
+    window.renderChronologySelectionState?.(svg,window.__marvelLastSelectionState);
     window.marvelApplyOfficialRouteSvgOverlay?.(svg,window.__marvelLastSelectionState);
     if(typeof window.marvelRenderReasonExplanation==='function')window.marvelRenderReasonExplanation([...(inc[id]||[]),...(out[id]||[])]);
     if(typeof window.marvelRenderFocusedDetail==='function')window.marvelRenderFocusedDetail(id);

@@ -142,6 +142,44 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("window.marvelEdgeKeyFromGroup(overlayGroup)", body)
         self.assertIn("overlayEdgeKey=typeof window.marvelEdgeKeyFromGroup", body)
 
+    def test_chronology_sequence_edges_are_explicit_and_selection_aware(self) -> None:
+        """Chronology lines must be their own sequence layer, not graph shortcuts."""
+        chronology = function_body(self.source, "buildChronologyView")
+        self.assertIn("chronologyEdgeGroup", chronology)
+        self.assertIn("data-chronology-source", self.source)
+        self.assertIn("data-chronology-target", self.source)
+        self.assertIn("renderChronologySelectionState", self.source)
+        selection_renderer = function_body(self.source, "renderSelectionState")
+        self.assertIn("renderChronologySelectionState(svg,state)", selection_renderer)
+        renderer = function_body(self.source, "renderChronologySelectionState")
+        self.assertIn("selectedIds", renderer)
+        self.assertIn("chronology-edge", renderer)
+        self.assertNotIn("EDGES", renderer)
+        focus_renderer = function_body(self.source, "renderFocusHighlight")
+        self.assertIn("renderChronologySelectionState", focus_renderer)
+
+    def test_release_order_keeps_work_relationship_edges_disabled(self) -> None:
+        """Publication order remains a date axis, not a fabricated work chain."""
+        release = function_body(self.source, "buildReleaseView")
+        self.assertIn('data-relationship-edges="off"', release)
+        self.assertNotIn("chronology-edge", release)
+
+    def test_mobile_canvas_preserves_chronology_selection_overlay_metadata(self) -> None:
+        """Canvas mode must highlight chronology paths without mixing them into graph edges."""
+        primitive = function_body(self.source, "canvasPrimitive")
+        self.assertIn("overlayChronologySource", primitive)
+        self.assertIn("overlayChronologyTarget", primitive)
+        self.assertIn("overlayChronologyEdge", primitive)
+        self.assertIn("g.chronology-edge", primitive)
+
+        rebuild = function_body(self.source, "prepareMobileSelectionWorldResources")
+        self.assertIn("overlayChronologyEdgePrimitives", rebuild)
+        self.assertIn("overlayChronologySource", rebuild)
+
+        overlay = function_body(self.source, "drawMobileSelectionOverlay")
+        self.assertIn("mobileOverlayChronologyEdgeClass", overlay)
+        self.assertIn("overlayChronologyEdgePrimitives", overlay)
+
 
 if __name__ == "__main__":
     unittest.main()
