@@ -720,7 +720,9 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 /* v5.17.2 Stage B historical release view — release-order view on the five-view shell. Legacy flow panels remain internal and untouched. */
 .stage-a-placeholder{min-height:min(58vh,560px);display:grid;align-content:center;justify-items:center;text-align:center;padding:42px 24px;border:1px solid #263550;border-radius:14px;background:radial-gradient(circle at 50% 0,rgba(37,99,235,.12),transparent 48%),#0b1220;color:#e5e7eb}
 .stage-a-placeholder h2{margin:6px 0 8px;font-size:25px}.stage-a-placeholder p{max-width:720px;margin:4px auto;line-height:1.7}.stage-a-kicker{font-size:10px;font-weight:850;letter-spacing:.16em;color:#60a5fa}
-body.public-watch-view main{display:none!important}body.public-watch-view #watchWorkspace{padding-top:18px}
+/* Keep the chart in the document flow while the watch plan is focused so the
+   user can return by scrolling upward as well as with the explicit button. */
+body.public-watch-view main{display:grid!important}body.public-watch-view #watchWorkspace{padding-top:18px}
 @media(max-width:760px){#left>.tabs{display:none!important}.mobile-area-group{grid-template-columns:1fr 1fr}.mobile-area-group button[data-mobile-target="chronology"],.mobile-area-group button[data-mobile-target="watch"],.mobile-area-group button[data-mobile-target="characters"]{grid-column:1/-1}.stage-a-placeholder{min-height:48dvh;padding:28px 16px}.stage-a-placeholder h2{font-size:21px}}
 </style>
 
