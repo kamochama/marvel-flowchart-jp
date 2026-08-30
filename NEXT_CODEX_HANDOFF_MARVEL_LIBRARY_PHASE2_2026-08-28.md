@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `230d49e21383121fe1ac6cead117ee12bbb5ef48` (main may include later documentation-only commits)
+- latest semantic baseline commit: `9b0a754aee920c8ec922142d58d71c5d2665fb9a` (main may include later documentation-only commits)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -22,6 +22,7 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #21 mobile touch-target contract: merged (mobile interaction regression fix)
 - PR #22 X-Men '97 release/status evidence promotion batch005: merged as `19134e187d40e808f926fd32607b0a2deebac8f1`
 - PR #26 VisionQuest production-status evidence promotion batch006: merged as `230d49e21383121fe1ac6cead117ee12bbb5ef48`
+- PR #28 Avengers: Doomsday production-status evidence promotion batch007: merged as `9b0a754aee920c8ec922142d58d71c5d2665fb9a`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -54,24 +55,24 @@ If the working tree is not clean or remote HEAD differs unexpectedly, reconcile 
 
 ## 0.1 Production baseline after the 2026-08-30 integration
 
-The latest semantic production baseline is `main` at `230d49e21383121fe1ac6cead117ee12bbb5ef48`; later documentation-only commits do not alter this code/data baseline. PR #21 fixed the mobile touch-target/undo contract, PR #22 completed batch005 for X-Men '97 Season 2, and PR #26 completed batch006 for the VisionQuest production-status snapshot.
+The latest semantic production baseline is `main` at `9b0a754aee920c8ec922142d58d71c5d2665fb9a`; later documentation-only commits do not alter this code/data baseline. PR #21 fixed the mobile touch-target/undo contract, PR #22 completed batch005 for X-Men '97 Season 2, PR #26 completed batch006 for the VisionQuest production-status snapshot, and PR #28 completed batch007 for the Avengers: Doomsday production-status snapshot.
 
-Fresh verification for the batch005-integrated baseline:
+Fresh verification for the batch007-integrated baseline:
 
-- GitHub Actions run #272: GREEN;
-- GitHub Pages deployment run #46: GREEN;
-- 265 / 265 library-v5 tests PASS;
+- GitHub Actions run #274: GREEN;
+- GitHub Pages deployment: triggered by the merge (the preceding confirmed deployment run #49 was GREEN);
+- 253 / 253 library-v5 tests PASS;
 - audit issues, review-integrity issues, and SQLite foreign-key rows: `0`;
 - SQLite `integrity_check`: `ok`;
 - releases: `138` rows (`6` `source_verified`, `132` `legacy_seed`);
-- production-status assertions: `131` rows (`2` `source_verified`, `129` `legacy_seed`);
-- sources / evidence / reviews: `44` / `111` / `86`;
+- production-status assertions: `131` rows (`4` `source_verified`, `127` `legacy_seed`);
+- sources / evidence / reviews: `44` / `113` / `88`;
 - DB-derived artifact: `131` nodes, `361` directed edges, `569` traceable reasons, `42` character groups;
 - compatibility: prewatch edges `199`, story paths `83/83`.
 
-Batch005 promotes only the X-Men '97 Season 2 primary streaming release and released-status snapshot. Batch006 promotes only the VisionQuest announced-status snapshot using Marvel Television's official Disney+ announcement. The Japanese release row remains `territory=JP`, blank `release_date`, and `legacy_seed`; no graph edge or work-pair reason is derived from release/status facts. Applied records: `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch005.json` and `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch006.json`.
+Batch005 promotes only the X-Men '97 Season 2 primary streaming release and released-status snapshot. Batch006 promotes only the VisionQuest announced-status snapshot using Marvel Television's official Disney+ announcement. Batch007 promotes only the Avengers: Doomsday announced-status snapshot using Marvel Japan's official page; the announced state, audit snapshot date, and separate JP blank-date row remain unchanged, with no production milestone, territory, Japanese date, or graph fact inferred. The Japanese release rows remain unverified with blank dates. No graph edge or work-pair reason is derived from release/status facts. Applied records: `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch005.json`, `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch006.json`, and `data/content_audit/applied/2026-08-30-production-status-evidence-promotion-batch007.json`.
 
-The remaining normalized release/status rows are intentionally still seeds (`132` release rows and `128` status rows). The next semantic batch requires its own bounded plan, RED contract, qualifying evidence, review transition, and full verification.
+The remaining normalized release/status rows are intentionally still seeds (`132` release rows and `127` status rows). The next semantic batch requires its own bounded plan, RED contract, qualifying evidence, review transition, and full verification.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
