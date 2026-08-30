@@ -8,6 +8,7 @@ TARGET = "production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08
 EXPECTED_PROMOTED_STATUS_IDS = {
     TARGET,
     "production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28",
+    "production-status-avengers-doomsday-2026-12-18-snapshot-2026-08-28",
     "production-status-visionquest-2026-10-14-snapshot-2026-08-28",
 }
 EXPECTED_PROMOTED_RELEASE_IDS = {
