@@ -5811,6 +5811,45 @@ if(flowchartReady)render();
 
   function importanceOf(e){ return e.importance||'recommended'; }
   function importanceAllowed(e){ return (IMPORTANCE_RANK[importanceOf(e)]||1) >= (IMPORTANCE_MIN[importanceMode]||2); }
+
+  // Backward history should read as a chain when an explicit shortcut and a
+  // longer supported route coexist (1→2→3 plus 1→3). Keep the shortcut in
+  // the exported graph and neutral chart, but do not light it as prehistory.
+  function filterBackwardShortcutEdges(backEdges,targetId){
+    const edgeByKey=new Map(EDGES.map(e=>[edgeKey(e),e]));
+    const adjacency=new Map();
+    for(const key of backEdges){
+      const [source,target]=key.split('->');
+      if(!source||!target) continue;
+      if(!adjacency.has(source)) adjacency.set(source,[]);
+      adjacency.get(source).push({key,target});
+    }
+    const hasAlternatePath=(source,target,skipKey)=>{
+      const seen=new Set([source]), queue=[source];
+      while(queue.length){
+        const current=queue.shift();
+        for(const link of (adjacency.get(current)||[])){
+          if(link.key===skipKey) continue;
+          if(link.target===target) return true;
+          if(!seen.has(link.target)){
+            seen.add(link.target);
+            queue.push(link.target);
+          }
+        }
+      }
+      return false;
+    };
+    const filtered=new Set();
+    for(const key of backEdges){
+      const [source,target]=key.split('->');
+      const edge=edgeByKey.get(key);
+      const auxiliary=edge?.type_en==='shared character/entity';
+      if(target!==targetId || !auxiliary || !hasAlternatePath(source,target,key)) filtered.add(key);
+    }
+    return filtered;
+  }
+  window.marvelFilterBackwardShortcutEdges=filterBackwardShortcutEdges;
+
   function limitedPart(id,hops){
     const nodes=new Set([id]), usedEdges=new Set();
     const q=[[id,0]];
@@ -5887,18 +5926,21 @@ if(flowchartReady)render();
   // follows outgoing arrows.  A walk never changes direction midway.
   function directedPartAll(id){
     const backNodes=new Set([id]), forwardNodes=new Set([id]), contextNodes=new Set();
-    const backEdges=new Set(), forwardEdges=new Set(), contextEdges=new Set();
-    const propagates=e=>importanceAllowed(e) && edgeRank(e)>=3; // recursive traversal follows the selected connection tier
+    let backEdges=new Set();
+    const forwardEdges=new Set(), contextEdges=new Set();
+    const propagates=e=>importanceAllowed(e) && edgeRank(e)>=3; // forward keeps the existing strong/very-strong scope
+    const backPropagates=e=>importanceAllowed(e) && (importanceMode==='reference' || edgeRank(e)>=3); // complete history follows every visible tier
 
     let stack=[id];
     while(stack.length){
       const x=stack.pop();
       for(const e of (inc[x]||[])){
-        if(!propagates(e)) continue;
+        if(!backPropagates(e)) continue;
         backEdges.add(edgeKey(e));
         if(!backNodes.has(e.source)){ backNodes.add(e.source); stack.push(e.source); }
       }
     }
+    backEdges=filterBackwardShortcutEdges(backEdges,id);
     stack=[id];
     while(stack.length){
       const x=stack.pop();
@@ -5909,9 +5951,11 @@ if(flowchartReady)render();
       }
     }
 
-    // Medium/weak/reference links are one-hop context only. Importance changes
-    // what context is shown, never where recursive history stops.
-    for(const e of (inc[id]||[])) if(importanceAllowed(e) && !propagates(e)){ contextNodes.add(e.source); contextEdges.add(edgeKey(e)); }
+    // In the recommended tier, non-propagating incoming links stay one-hop
+    // context. Complete history has already consumed every visible incoming
+    // tier above; outgoing context remains one-hop so forward behavior is
+    // unchanged.
+    for(const e of (inc[id]||[])) if(importanceAllowed(e) && !backPropagates(e)){ contextNodes.add(e.source); contextEdges.add(edgeKey(e)); }
     for(const e of (out[id]||[])) if(importanceAllowed(e) && !propagates(e)){ contextNodes.add(e.target); contextEdges.add(edgeKey(e)); }
     const nodes=new Set([...backNodes,...forwardNodes,...contextNodes]);
     return {nodes,backNodes,forwardNodes,contextNodes,backEdges,forwardEdges,contextEdges,generic:false};

@@ -89,6 +89,33 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         render_body = function_body(self.source, "renderSelectionState")
         self.assertRegex(render_body, r"state\.pathEdges\.has\(k\)")
 
+    def test_backward_highlight_prefers_chain_over_transitive_shortcut(self) -> None:
+        body = function_body(self.source, "directedPartAll")
+        self.assertIn("filterBackwardShortcutEdges", body)
+        helper = function_body(self.source, "filterBackwardShortcutEdges")
+        self.assertIn("backEdges", helper)
+        self.assertIn("hasAlternatePath", helper)
+        self.assertIn("targetId", helper)
+        self.assertIn("type_en", helper)
+        self.assertIn("shared character/entity", helper)
+        self.assertRegex(helper, r"skipKey")
+        self.assertRegex(helper, r"queue|stack")
+        self.assertIn("backEdges=filterBackwardShortcutEdges(backEdges,id)", body)
+
+    def test_forward_highlight_does_not_use_backward_shortcut_filter(self) -> None:
+        body = function_body(self.source, "directedPartAll")
+        self.assertRegex(body, r"backEdges=filterBackwardShortcutEdges\(backEdges,id\)")
+        self.assertNotRegex(body, r"forwardEdges=filterBackwardShortcutEdges\(forwardEdges\)")
+
+    def test_complete_tier_expands_backward_history_without_expanding_forward_scope(self) -> None:
+        body = function_body(self.source, "directedPartAll")
+        self.assertRegex(
+            body,
+            r"backPropagates=e=>importanceAllowed\(e\) && \(importanceMode==='reference' \|\| edgeRank\(e\)>=3\)",
+        )
+        self.assertRegex(body, r"if\(!backPropagates\(e\)\) continue")
+        self.assertRegex(body, r"if\(!propagates\(e\)\) continue")
+
     def test_character_filter_is_visual_only_and_does_not_replace_exported_edges(self) -> None:
         body = function_body(self.source, "applyCharacterHighlight")
         self.assertIn("charhl", body)
