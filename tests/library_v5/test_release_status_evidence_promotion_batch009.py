@@ -82,8 +82,8 @@ class ReleaseStatusEvidencePromotionBatch009Tests(unittest.TestCase):
         self.assertEqual(releases["release-the-punisher-one-last-kill-2026-05-12-jp"]["verification_status"], "legacy_seed")
         self.assertEqual(releases["release-the-punisher-one-last-kill-2026-05-12-jp"]["release_date"], "")
         statuses = _rows("data/library/production_status_assertions.csv")
-        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in releases.values()), 10)
-        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in statuses), 11)
+        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in releases.values()), 14)
+        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in statuses), 13)
 
 
 if __name__ == "__main__":
