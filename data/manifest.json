@@ -1,6 +1,6 @@
 {
   "schema_version": "4.0",
-  "generated_at": "2026-08-26",
+  "generated_at": "2026-08-30",
   "counts": {
     "works": 131,
     "connections": 199,
@@ -17,16 +17,16 @@
     "complete": 34
   },
   "files": {
-    "README.md": "e8a192c825bf243ac0efbd6ca29d3338ef3094273fe757990777dc41867b660a",
+    "README.md": "52acdb4bfde216f62e26535a0ae445499b35c4201bf818e3aece5c6224c37d7a",
     "audit_issues.csv": "208ab9b96d9e8a529bd6048cb884b603b727f06f85e9de16cd3507a069f7b6de",
     "audit_report.json": "b61baed85af52d0a56d16be91beb459010293ae46901ec87ebd68e6ad69dd135",
     "chronology.csv": "7ea2e76e28a1ca221e60266c2cd63f19e2d52886bd510505396cdcdcf5ff473f",
     "connections.csv": "4ff87f9c9ebcfdf3fcda83b81b2ce7d44b96c3e85ec16334f375fe0f4c8ae822",
     "entity_returns.csv": "147a45abf21ef5b740a258e5760c58685dfe520e6eef2ed32beeff249f5489e4",
     "prewatch_overrides.csv": "eeca08a2efa4a8eacbcac98e910bc104e8ff7d49a6e0d67fbe09f0e29cfab799",
-    "prewatch_policy.json": "7afe2e674fb9980b363a4af14a0222bd70404f413a223b8c835d0f12cdab6d3e",
+    "prewatch_policy.json": "39797206084bdd4c3daef8e8448acb9d2224b8295a36b778235ed127e6a3ca59",
     "relation_types.csv": "2e531a9a693f2213324ea5af1d4020b34e1233b2e5276582eedf65be667db84e",
-    "rules.csv": "95d6f1c4a86abc71dd16f89729e78b879795b160cf3a061cc684f5333a712ec9",
+    "rules.csv": "5d8315fb3986666561dc15107c41e77cb82090254a2ebc3d0c6ef234580dd26f",
     "schema.json": "99aa080a995345c69c4b77e83ecbc57ecb7466f0f27f6bfe22f1c122094c1fb8",
     "sources.csv": "1ebf0533055f5d9fa2639181153d4ec66cef0a5eeb516187a9cb5629ae431e7d",
     "story_groups.csv": "0bc4fae8f6f9d56219c2e930da84f4306e087caadaf900b2966907445ddf943e",

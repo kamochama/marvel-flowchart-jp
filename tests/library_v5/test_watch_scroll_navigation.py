@@ -1,10 +1,17 @@
 from pathlib import Path
+import csv
+import hashlib
+import json
 import re
 import unittest
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 INDEX_HTML = REPO_ROOT / "index.html"
+PREWATCH_POLICY = REPO_ROOT / "data" / "prewatch_policy.json"
+PREWATCH_RULES = REPO_ROOT / "data" / "rules.csv"
+DATA_README = REPO_ROOT / "data" / "README.md"
+DATA_MANIFEST = REPO_ROOT / "data" / "manifest.json"
 
 
 class WatchScrollNavigationContract(unittest.TestCase):
@@ -81,6 +88,48 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("公式予習リスト未登録", self.html)
         self.assertNotIn("監査済み推奨ルート上", self.html)
         self.assertIn("data-prep-provenance", self.html)
+
+    def test_data_policy_matches_provisional_tiered_ui_semantics(self) -> None:
+        """The documented policy must match the current provisional UI contract."""
+        policy = json.loads(PREWATCH_POLICY.read_text(encoding="utf-8"))
+        minimum = policy["modes"]["minimum"]
+        recommended = policy["modes"]["recommended"]
+
+        self.assertEqual(minimum["algorithm"], "direct_core_edges")
+        self.assertEqual(minimum.get("recursive_tiers", []), [])
+        self.assertIn("再帰", minimum["description"])
+        self.assertIn("行わない", minimum["description"])
+
+        self.assertEqual(
+            recommended["algorithm"],
+            "official_route_or_curated_fallback_plus_core",
+        )
+        self.assertIn("official", recommended["provenance"])
+        self.assertIn("curated", recommended["provenance"])
+        self.assertEqual(recommended["expansion_waves"], 0)
+
+        with PREWATCH_RULES.open(encoding="utf-8-sig", newline="") as handle:
+            rules = list(csv.DictReader(handle))
+        by_no = {row["rule_no"]: row for row in rules}
+        self.assertEqual(by_no["14"]["management_value"], "minimum-direct-core")
+        self.assertEqual(
+            by_no["15"]["management_value"],
+            "official-route-or-curated-fallback-plus-core",
+        )
+        self.assertIn("再帰探索しない", by_no["14"]["meaning"])
+
+        readme = DATA_README.read_text(encoding="utf-8")
+        self.assertIn("最低限: ゴールへ直接入る中核接続のみ（再帰なし）", readme)
+        self.assertIn("公式予習リストが未登録なら監査済み編集ルートを代替表示", readme)
+
+        manifest = json.loads(DATA_MANIFEST.read_text(encoding="utf-8"))
+        for manifest_name, path in (
+            ("README.md", DATA_README),
+            ("prewatch_policy.json", PREWATCH_POLICY),
+            ("rules.csv", PREWATCH_RULES),
+        ):
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            self.assertEqual(manifest["files"][manifest_name], digest)
 
 
 if __name__ == "__main__":

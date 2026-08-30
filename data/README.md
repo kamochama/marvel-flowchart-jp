@@ -1,6 +1,6 @@
-# Marvel data master — v4 foundation / prewatch tiers
+# Marvel data master — v4 foundation / prewatch tiers (v5 provisional UI policy)
 
-更新日: 2026-08-26
+更新日: 2026-08-30
 
 GitHubで管理する正本データです。Excelは通常生成しません。
 
@@ -13,13 +13,15 @@ GitHubで管理する正本データです。Excelは通常生成しません。
 - `complete` = 完全版
 - `none` = 予習対象外
 
-従来の `importance=core/recommended/reference` は関係地図側の編集重要度として残します。予習プランは今後 `prewatch_tier` を使用します。
+従来の `importance=core/recommended/reference` と `prewatch_tier` は監査・互換性のために保持します。現行v5公開UIの仮ルールは `importance` と明示的な予習ルート由来を使います。
 
 ## 探索規則
 
-- 最低限: `minimum` を再帰探索
-- おすすめ: minimum closure → recommendedを1波追加 → 追加作品のminimum closure
-- 完全版: `minimum + recommended + complete` を再帰探索
+- 最低限: ゴールへ直接入る中核接続のみ（再帰なし）
+- おすすめ: 公式予習リストを優先し、公式予習リストが未登録なら監査済み編集ルートを代替表示。中核の前史を補完
+- 完全版: 中核・推奨を再帰探索し、ゴールへ直接入る参照接続も追加（参照を踏み台にしない）
+
+これは現行公開UIの仮運用です。公式の作品別予習リストは根拠URLと監査レビューが登録されたものだけを「公式」と表示し、未登録の作品は編集ルートまたは接続表由来であることを明示します。
 
 詳細は `prewatch_policy.json`。
 
