@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `641d16577c847ab5f917e3faea0900536dc0baab` (PR #30 merge; docs-only baseline updates may follow)
+- latest semantic baseline commit: `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d` (PR #32 merge; docs-only baseline updates may follow)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -24,6 +24,7 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #26 VisionQuest production-status evidence promotion batch006: merged as `230d49e21383121fe1ac6cead117ee12bbb5ef48`
 - PR #28 Avengers: Doomsday production-status evidence promotion batch007: merged as `9b0a754aee920c8ec922142d58d71c5d2665fb9a`
 - PR #30 full release/status evidence audit: merged as `641d16577c847ab5f917e3faea0900536dc0baab`
+- PR #32 HTML design/operation debugging: merged as `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -56,7 +57,7 @@ If the working tree is not clean or remote HEAD differs unexpectedly, reconcile 
 
 ## 0.1 Production baseline after the 2026-08-30 integration
 
-The latest semantic production baseline is `main` at `641d16577c847ab5f917e3faea0900536dc0baab`, the merge commit for PR #30. PR #30 completed the strict full release/status evidence audit after batches005–007: exactly 27 facts were promoted with qualifying evidence and review transitions, 240 facts remain deferred, and 2 conflicts remain explicitly retained as seeds.
+The latest semantic production baseline is `main` at `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`, the merge commit for PR #32. PR #30 completed the strict full release/status evidence audit after batches005–007: exactly 27 facts were promoted with qualifying evidence and review transitions, 240 facts remain deferred, and 2 conflicts remain explicitly retained as seeds. PR #32 completed the separately bounded HTML design/operation debugging pass without changing canonical semantic data.
 
 Fresh verification for the PR #30-integrated baseline:
 
@@ -73,7 +74,7 @@ Fresh verification for the PR #30-integrated baseline:
 
 The applied records for the full audit are `data/content_audit/applied/2026-08-30-release-status-audit-dispositions.json` and promotion batches008–015. The inventory is `data/content_audit/release_status_inventory.csv`; conflicts are the YFNSM S2 release and Wonder Man S2 status. No release/status fact derives a graph edge, work-pair reason, production milestone, territory, or Earth identity.
 
-The next boundary is the HTML design/operation debugging pass. It has not started in this baseline; when it begins, use a separate plan and UI regression contract rather than changing canonical metadata implicitly.
+The HTML design/operation debugging pass is complete and recorded in `docs/superpowers/plans/2026-08-30-marvel-library-html-design-operation-debug.md` and `docs/superpowers/reviews/2026-08-30-marvel-library-html-design-operation-debug.md`. Any further viewer change must use a new plan and UI regression contract rather than changing canonical metadata implicitly.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
@@ -489,4 +490,4 @@ The release/status public views join only to `works` and do not feed graph deriv
 
 The full audit plan is `docs/superpowers/plans/2026-08-30-marvel-library-db-v1-full-release-status-audit.md`, with the review report in `docs/superpowers/reviews/2026-08-30-marvel-library-full-release-status-audit.md`. It inventories all 269 normalized release/status facts, promotes only exact source/evidence/review matches, and records every remaining row as `defer` or `conflict`. The merged baseline is `641d16577c847ab5f917e3faea0900536dc0baab`; CI run #285 passed 305 tests, build/audit/review/FK checks are zero, SQLite integrity is `ok`, and graph compatibility remains 361/569/199 with story paths 83/83.
 
-The data-audit boundary is complete. The next separately bounded task is HTML design and interaction debugging; do not infer that it has been completed from the DB/export tests above.
+The data-audit boundary and the HTML design/interaction debugging boundary are complete. Do not infer future viewer or semantic work from this completion; select a new bounded plan before changing code or canonical data.
