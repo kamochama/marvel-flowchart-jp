@@ -6,6 +6,29 @@
 - deferred dispositions: 251
 - conflict dispositions: 2
 
+## Strict disposition policy
+
+`promote` is limited to facts whose exact release/status meaning is directly supported by a registered source and whose evidence/review rows exist. `defer` means a source is only a catalogue/listing candidate or no fact-level primary source is registered; the next audit must add a work-specific source, evidence, and review. `conflict` means cited claims disagree and the canonical row is intentionally left unchanged.
+
+### Promoted facts in the current waves
+
+- Existing verified baseline: six release rows and four status snapshots.
+- Batch 008: The Punisher: One Last Kill primary release and released-status snapshot.
+- Batch 009: Blade undated release/status listing, Secret Wars announced-status snapshot, and Beyond the Spider-Verse announced-status snapshot.
+
+All promoted rows preserve their existing territory, release precision, announced/released value, and `asserted_at`; no graph fact is derived from them.
+
+### Explicit conflicts retained as seed
+
+- `release-your-friendly-neighborhood-spider-man-s2-2026-primary`: migrated 2027-01 value conflicts with the current official TV listing showing 2026.
+- `production-status-wonder-man-s2-tba-snapshot-2026-08-28`: official listing and cancellation note are not reconciled.
+
+These rows remain `legacy_seed` until a primary-source resolution is reviewed.
+
+### Deferred-source boundary
+
+The remaining deferred rows are not silently treated as verified. Historical Marvel catalogue listings require work-specific primary pages; generic `movies`/`tv` pages do not prove every exact day, territory, or current status. JP rows with non-ISO dates remain blank, and Sony catalogue pages do not replace title-specific theatrical-date sources.
+
 | fact_id | fact_table | work_id | verification_status | source_candidates | evidence_count | review_count | disposition | disposition_reason | next_action |
 |---|---|---|---|---|---:|---:|---|---|---|
 | production-status-a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011-snapshot-2026-08-28 | production_status_assertions.csv | a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011 | legacy_seed |  | 0 | 0 | defer | no qualifying source or fact-level evidence is registered | register a work-specific primary source, then add evidence and review |
