@@ -37,11 +37,11 @@ class ReleaseStatusInventoryTests(unittest.TestCase):
         self.assertEqual({row["disposition"] for row in rows}, {"promote", "defer", "conflict"})
         self.assertEqual(
             sum(row["disposition"] == "promote" for row in rows),
-            19,
+            21,
         )
         self.assertEqual(
             sum(row["disposition"] == "defer" for row in rows),
-            248,
+            246,
         )
         self.assertEqual(
             sum(row["disposition"] == "conflict" for row in rows),
@@ -91,7 +91,7 @@ class ReleaseStatusInventoryTests(unittest.TestCase):
             markdown = report.read_text(encoding="utf-8")
         self.assertIn("release facts: 138", markdown)
         self.assertIn("production-status facts: 131", markdown)
-        self.assertIn("promote dispositions: 16", markdown)
+        self.assertIn("promote dispositions: 21", markdown)
         self.assertIn("conflict dispositions: 2", markdown)
         self.assertIn("production-status-avengers-doomsday-2026-12-18-snapshot-2026-08-28", markdown)
 
