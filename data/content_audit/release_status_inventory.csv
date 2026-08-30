@@ -1,271 +1,271 @@
-fact_id,fact_table,work_id,verification_status,source_candidates,evidence_count,review_count,disposition
-production-status-a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011-snapshot-2026-08-28,production_status_assertions.csv,a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011,legacy_seed,,0,0,defer
-production-status-agatha-all-along-2024-snapshot-2026-08-28,production_status_assertions.csv,agatha-all-along-2024,legacy_seed,,0,0,defer
-production-status-agent-carter-one-shot-2013-snapshot-2026-08-28,production_status_assertions.csv,agent-carter-one-shot-2013,legacy_seed,,0,0,defer
-production-status-agents-of-s-h-i-e-l-d-20132020-snapshot-2026-08-28,production_status_assertions.csv,agents-of-s-h-i-e-l-d-20132020,legacy_seed,,0,0,defer
-production-status-all-hail-the-king-2014-snapshot-2026-08-28,production_status_assertions.csv,all-hail-the-king-2014,legacy_seed,,0,0,defer
-production-status-ant-man-2015-snapshot-2026-08-28,production_status_assertions.csv,ant-man-2015,legacy_seed,,0,0,defer
-production-status-ant-man-and-the-wasp-2018-snapshot-2026-08-28,production_status_assertions.csv,ant-man-and-the-wasp-2018,legacy_seed,,0,0,defer
-production-status-ant-man-and-the-wasp-quantumania-2023-snapshot-2026-08-28,production_status_assertions.csv,ant-man-and-the-wasp-quantumania-2023,legacy_seed,,0,0,defer
-production-status-avengers-age-of-ultron-2015-snapshot-2026-08-28,production_status_assertions.csv,avengers-age-of-ultron-2015,legacy_seed,,0,0,defer
-production-status-avengers-doomsday-2026-12-18-snapshot-2026-08-28,production_status_assertions.csv,avengers-doomsday-2026-12-18,source_verified,doomsday,1,1,verified
-production-status-avengers-endgame-2019-snapshot-2026-08-28,production_status_assertions.csv,avengers-endgame-2019,legacy_seed,,0,0,defer
-production-status-avengers-infinity-war-2018-snapshot-2026-08-28,production_status_assertions.csv,avengers-infinity-war-2018,legacy_seed,,0,0,defer
-production-status-avengers-secret-wars-2027-12-17-snapshot-2026-08-28,production_status_assertions.csv,avengers-secret-wars-2027-12-17,legacy_seed,,0,0,defer
-production-status-black-panther-2018-snapshot-2026-08-28,production_status_assertions.csv,black-panther-2018,legacy_seed,,0,0,defer
-production-status-black-panther-wakanda-forever-2022-snapshot-2026-08-28,production_status_assertions.csv,black-panther-wakanda-forever-2022,legacy_seed,,0,0,defer
-production-status-black-widow-2021-snapshot-2026-08-28,production_status_assertions.csv,black-widow-2021,legacy_seed,,0,0,defer
-production-status-blade-1998-1998-snapshot-2026-08-28,production_status_assertions.csv,blade-1998-1998,legacy_seed,,0,0,defer
-production-status-blade-ii-2002-snapshot-2026-08-28,production_status_assertions.csv,blade-ii-2002,legacy_seed,,0,0,defer
-production-status-blade-mcu-tba-tba-snapshot-2026-08-28,production_status_assertions.csv,blade-mcu-tba-tba,legacy_seed,,0,0,defer
-production-status-blade-trinity-2004-snapshot-2026-08-28,production_status_assertions.csv,blade-trinity-2004,legacy_seed,,0,0,defer
-production-status-captain-america-brave-new-world-2025-snapshot-2026-08-28,production_status_assertions.csv,captain-america-brave-new-world-2025,legacy_seed,,0,0,defer
-production-status-captain-america-civil-war-2016-snapshot-2026-08-28,production_status_assertions.csv,captain-america-civil-war-2016,legacy_seed,,0,0,defer
-production-status-captain-america-the-first-avenger-2011-snapshot-2026-08-28,production_status_assertions.csv,captain-america-the-first-avenger-2011,legacy_seed,,0,0,defer
-production-status-captain-america-the-winter-soldier-2014-snapshot-2026-08-28,production_status_assertions.csv,captain-america-the-winter-soldier-2014,legacy_seed,,0,0,defer
-production-status-captain-marvel-2019-snapshot-2026-08-28,production_status_assertions.csv,captain-marvel-2019,legacy_seed,,0,0,defer
-production-status-cloak-dagger-20182019-snapshot-2026-08-28,production_status_assertions.csv,cloak-dagger-20182019,legacy_seed,,0,0,defer
-production-status-daredevil-2003-snapshot-2026-08-28,production_status_assertions.csv,daredevil-2003,legacy_seed,,0,0,defer
-production-status-daredevil-born-again-s1-2025-snapshot-2026-08-28,production_status_assertions.csv,daredevil-born-again-s1-2025,legacy_seed,,0,0,defer
-production-status-daredevil-born-again-s2-2026-snapshot-2026-08-28,production_status_assertions.csv,daredevil-born-again-s2-2026,legacy_seed,,0,0,defer
-production-status-daredevil-born-again-s3-tba-snapshot-2026-08-28,production_status_assertions.csv,daredevil-born-again-s3-tba,legacy_seed,,0,0,defer
-production-status-daredevil-s1-2015-snapshot-2026-08-28,production_status_assertions.csv,daredevil-s1-2015,legacy_seed,,0,0,defer
-production-status-daredevil-s2-2016-snapshot-2026-08-28,production_status_assertions.csv,daredevil-s2-2016,legacy_seed,,0,0,defer
-production-status-daredevil-s3-2018-snapshot-2026-08-28,production_status_assertions.csv,daredevil-s3-2018,legacy_seed,,0,0,defer
-production-status-dark-phoenix-2019-snapshot-2026-08-28,production_status_assertions.csv,dark-phoenix-2019,legacy_seed,,0,0,defer
-production-status-deadpool-2-2018-snapshot-2026-08-28,production_status_assertions.csv,deadpool-2-2018,legacy_seed,,0,0,defer
-production-status-deadpool-2016-snapshot-2026-08-28,production_status_assertions.csv,deadpool-2016,legacy_seed,,0,0,defer
-production-status-deadpool-wolverine-2024-snapshot-2026-08-28,production_status_assertions.csv,deadpool-wolverine-2024,legacy_seed,,0,0,defer
-production-status-doctor-strange-2016-snapshot-2026-08-28,production_status_assertions.csv,doctor-strange-2016,legacy_seed,,0,0,defer
-production-status-doctor-strange-in-the-multiverse-of-madness-2022-snapshot-2026-08-28,production_status_assertions.csv,doctor-strange-in-the-multiverse-of-madness-2022,legacy_seed,,0,0,defer
-production-status-echo-2024-snapshot-2026-08-28,production_status_assertions.csv,echo-2024,legacy_seed,,0,0,defer
-production-status-elektra-2005-snapshot-2026-08-28,production_status_assertions.csv,elektra-2005,legacy_seed,,0,0,defer
-production-status-eternals-2021-snapshot-2026-08-28,production_status_assertions.csv,eternals-2021,legacy_seed,,0,0,defer
-production-status-eyes-of-wakanda-2025-snapshot-2026-08-28,production_status_assertions.csv,eyes-of-wakanda-2025,legacy_seed,,0,0,defer
-production-status-fantastic-four-2005-snapshot-2026-08-28,production_status_assertions.csv,fantastic-four-2005,legacy_seed,,0,0,defer
-production-status-fantastic-four-rise-of-the-silver-surfer-2007-snapshot-2026-08-28,production_status_assertions.csv,fantastic-four-rise-of-the-silver-surfer-2007,legacy_seed,,0,0,defer
-production-status-guardians-of-the-galaxy-2014-snapshot-2026-08-28,production_status_assertions.csv,guardians-of-the-galaxy-2014,legacy_seed,,0,0,defer
-production-status-guardians-of-the-galaxy-vol-2-2017-snapshot-2026-08-28,production_status_assertions.csv,guardians-of-the-galaxy-vol-2-2017,legacy_seed,,0,0,defer
-production-status-guardians-of-the-galaxy-vol-3-2023-snapshot-2026-08-28,production_status_assertions.csv,guardians-of-the-galaxy-vol-3-2023,legacy_seed,,0,0,defer
-production-status-hawkeye-2021-snapshot-2026-08-28,production_status_assertions.csv,hawkeye-2021,legacy_seed,,0,0,defer
-production-status-i-am-groot-s1-2022-snapshot-2026-08-28,production_status_assertions.csv,i-am-groot-s1-2022,legacy_seed,,0,0,defer
-production-status-i-am-groot-s2-2023-snapshot-2026-08-28,production_status_assertions.csv,i-am-groot-s2-2023,legacy_seed,,0,0,defer
-production-status-inhumans-2017-snapshot-2026-08-28,production_status_assertions.csv,inhumans-2017,legacy_seed,,0,0,defer
-production-status-iron-fist-s1-2017-snapshot-2026-08-28,production_status_assertions.csv,iron-fist-s1-2017,legacy_seed,,0,0,defer
-production-status-iron-fist-s2-2018-snapshot-2026-08-28,production_status_assertions.csv,iron-fist-s2-2018,legacy_seed,,0,0,defer
-production-status-iron-man-2-2010-snapshot-2026-08-28,production_status_assertions.csv,iron-man-2-2010,legacy_seed,,0,0,defer
-production-status-iron-man-2008-snapshot-2026-08-28,production_status_assertions.csv,iron-man-2008,legacy_seed,,0,0,defer
-production-status-iron-man-3-2013-snapshot-2026-08-28,production_status_assertions.csv,iron-man-3-2013,legacy_seed,,0,0,defer
-production-status-ironheart-2025-snapshot-2026-08-28,production_status_assertions.csv,ironheart-2025,legacy_seed,,0,0,defer
-production-status-item-47-2012-snapshot-2026-08-28,production_status_assertions.csv,item-47-2012,legacy_seed,,0,0,defer
-production-status-jessica-jones-s1-2015-snapshot-2026-08-28,production_status_assertions.csv,jessica-jones-s1-2015,legacy_seed,,0,0,defer
-production-status-jessica-jones-s2-2018-snapshot-2026-08-28,production_status_assertions.csv,jessica-jones-s2-2018,legacy_seed,,0,0,defer
-production-status-jessica-jones-s3-2019-snapshot-2026-08-28,production_status_assertions.csv,jessica-jones-s3-2019,legacy_seed,,0,0,defer
-production-status-kraven-the-hunter-2024-snapshot-2026-08-28,production_status_assertions.csv,kraven-the-hunter-2024,legacy_seed,,0,0,defer
-production-status-logan-2017-snapshot-2026-08-28,production_status_assertions.csv,logan-2017,legacy_seed,,0,0,defer
-production-status-loki-s1-2021-snapshot-2026-08-28,production_status_assertions.csv,loki-s1-2021,legacy_seed,,0,0,defer
-production-status-loki-s2-2023-snapshot-2026-08-28,production_status_assertions.csv,loki-s2-2023,legacy_seed,,0,0,defer
-production-status-luke-cage-s1-2016-snapshot-2026-08-28,production_status_assertions.csv,luke-cage-s1-2016,legacy_seed,,0,0,defer
-production-status-luke-cage-s2-2018-snapshot-2026-08-28,production_status_assertions.csv,luke-cage-s2-2018,legacy_seed,,0,0,defer
-production-status-madame-web-2024-snapshot-2026-08-28,production_status_assertions.csv,madame-web-2024,legacy_seed,,0,0,defer
-production-status-marvel-s-agent-carter-series-20152016-snapshot-2026-08-28,production_status_assertions.csv,marvel-s-agent-carter-series-20152016,legacy_seed,,0,0,defer
-production-status-marvel-zombies-s1-2025-snapshot-2026-08-28,production_status_assertions.csv,marvel-zombies-s1-2025,legacy_seed,,0,0,defer
-production-status-moon-knight-2022-snapshot-2026-08-28,production_status_assertions.csv,moon-knight-2022,legacy_seed,,0,0,defer
-production-status-morbius-2022-snapshot-2026-08-28,production_status_assertions.csv,morbius-2022,legacy_seed,,0,0,defer
-production-status-ms-marvel-2022-snapshot-2026-08-28,production_status_assertions.csv,ms-marvel-2022,legacy_seed,,0,0,defer
-production-status-runaways-20172019-snapshot-2026-08-28,production_status_assertions.csv,runaways-20172019,legacy_seed,,0,0,defer
-production-status-secret-invasion-2023-snapshot-2026-08-28,production_status_assertions.csv,secret-invasion-2023,legacy_seed,,0,0,defer
-production-status-shang-chi-and-the-legend-of-the-ten-rings-2021-snapshot-2026-08-28,production_status_assertions.csv,shang-chi-and-the-legend-of-the-ten-rings-2021,legacy_seed,,0,0,defer
-production-status-she-hulk-attorney-at-law-2022-snapshot-2026-08-28,production_status_assertions.csv,she-hulk-attorney-at-law-2022,legacy_seed,,0,0,defer
-production-status-spider-man-2-2004-snapshot-2026-08-28,production_status_assertions.csv,spider-man-2-2004,legacy_seed,,0,0,defer
-production-status-spider-man-2002-snapshot-2026-08-28,production_status_assertions.csv,spider-man-2002,legacy_seed,,0,0,defer
-production-status-spider-man-3-2007-snapshot-2026-08-28,production_status_assertions.csv,spider-man-3-2007,legacy_seed,,0,0,defer
-production-status-spider-man-across-the-spider-verse-2023-snapshot-2026-08-28,production_status_assertions.csv,spider-man-across-the-spider-verse-2023,legacy_seed,,0,0,defer
-production-status-spider-man-beyond-the-spider-verse-tba-snapshot-2026-08-28,production_status_assertions.csv,spider-man-beyond-the-spider-verse-tba,legacy_seed,,0,0,defer
-production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28,production_status_assertions.csv,spider-man-brand-new-day-2026-07-31,source_verified,sony-bnd-current-2026-08,1,1,verified
-production-status-spider-man-far-from-home-2019-snapshot-2026-08-28,production_status_assertions.csv,spider-man-far-from-home-2019,legacy_seed,,0,0,defer
-production-status-spider-man-homecoming-2017-snapshot-2026-08-28,production_status_assertions.csv,spider-man-homecoming-2017,legacy_seed,,0,0,defer
-production-status-spider-man-into-the-spider-verse-2018-snapshot-2026-08-28,production_status_assertions.csv,spider-man-into-the-spider-verse-2018,legacy_seed,,0,0,defer
-production-status-spider-man-no-way-home-2021-snapshot-2026-08-28,production_status_assertions.csv,spider-man-no-way-home-2021,legacy_seed,,0,0,defer
-production-status-the-amazing-spider-man-2-2014-snapshot-2026-08-28,production_status_assertions.csv,the-amazing-spider-man-2-2014,legacy_seed,,0,0,defer
-production-status-the-amazing-spider-man-2012-snapshot-2026-08-28,production_status_assertions.csv,the-amazing-spider-man-2012,legacy_seed,,0,0,defer
-production-status-the-avengers-2012-snapshot-2026-08-28,production_status_assertions.csv,the-avengers-2012,legacy_seed,,0,0,defer
-production-status-the-consultant-2011-snapshot-2026-08-28,production_status_assertions.csv,the-consultant-2011,legacy_seed,,0,0,defer
-production-status-the-defenders-2017-snapshot-2026-08-28,production_status_assertions.csv,the-defenders-2017,legacy_seed,,0,0,defer
-production-status-the-falcon-and-the-winter-soldier-2021-snapshot-2026-08-28,production_status_assertions.csv,the-falcon-and-the-winter-soldier-2021,legacy_seed,,0,0,defer
-production-status-the-fantastic-four-first-steps-2025-snapshot-2026-08-28,production_status_assertions.csv,the-fantastic-four-first-steps-2025,legacy_seed,,0,0,defer
-production-status-the-guardians-of-the-galaxy-holiday-special-2022-snapshot-2026-08-28,production_status_assertions.csv,the-guardians-of-the-galaxy-holiday-special-2022,legacy_seed,,0,0,defer
-production-status-the-incredible-hulk-2008-snapshot-2026-08-28,production_status_assertions.csv,the-incredible-hulk-2008,legacy_seed,,0,0,defer
-production-status-the-marvels-2023-snapshot-2026-08-28,production_status_assertions.csv,the-marvels-2023,legacy_seed,,0,0,defer
-production-status-the-new-mutants-2020-snapshot-2026-08-28,production_status_assertions.csv,the-new-mutants-2020,legacy_seed,,0,0,defer
-production-status-the-punisher-one-last-kill-2026-05-12-snapshot-2026-08-28,production_status_assertions.csv,the-punisher-one-last-kill-2026-05-12,legacy_seed,,0,0,defer
-production-status-the-punisher-s1-2017-snapshot-2026-08-28,production_status_assertions.csv,the-punisher-s1-2017,legacy_seed,,0,0,defer
-production-status-the-punisher-s2-2019-snapshot-2026-08-28,production_status_assertions.csv,the-punisher-s2-2019,legacy_seed,,0,0,defer
-production-status-the-wolverine-2013-snapshot-2026-08-28,production_status_assertions.csv,the-wolverine-2013,legacy_seed,,0,0,defer
-production-status-thor-2011-snapshot-2026-08-28,production_status_assertions.csv,thor-2011,legacy_seed,,0,0,defer
-production-status-thor-love-and-thunder-2022-snapshot-2026-08-28,production_status_assertions.csv,thor-love-and-thunder-2022,legacy_seed,,0,0,defer
-production-status-thor-ragnarok-2017-snapshot-2026-08-28,production_status_assertions.csv,thor-ragnarok-2017,legacy_seed,,0,0,defer
-production-status-thor-the-dark-world-2013-snapshot-2026-08-28,production_status_assertions.csv,thor-the-dark-world-2013,legacy_seed,,0,0,defer
-production-status-thunderbolts-new-avengers-2025-snapshot-2026-08-28,production_status_assertions.csv,thunderbolts-new-avengers-2025,legacy_seed,,0,0,defer
-production-status-venom-2018-snapshot-2026-08-28,production_status_assertions.csv,venom-2018,legacy_seed,,0,0,defer
-production-status-venom-let-there-be-carnage-2021-snapshot-2026-08-28,production_status_assertions.csv,venom-let-there-be-carnage-2021,legacy_seed,,0,0,defer
-production-status-venom-the-last-dance-2024-snapshot-2026-08-28,production_status_assertions.csv,venom-the-last-dance-2024,legacy_seed,,0,0,defer
-production-status-visionquest-2026-10-14-snapshot-2026-08-28,production_status_assertions.csv,visionquest-2026-10-14,source_verified,visionquest,1,1,verified
-production-status-wandavision-2021-snapshot-2026-08-28,production_status_assertions.csv,wandavision-2021,legacy_seed,,0,0,defer
-production-status-werewolf-by-night-2022-snapshot-2026-08-28,production_status_assertions.csv,werewolf-by-night-2022,legacy_seed,,0,0,defer
-production-status-what-if-s1-2021-snapshot-2026-08-28,production_status_assertions.csv,what-if-s1-2021,legacy_seed,,0,0,defer
-production-status-what-if-s2-2023-snapshot-2026-08-28,production_status_assertions.csv,what-if-s2-2023,legacy_seed,,0,0,defer
-production-status-what-if-s3-2024-snapshot-2026-08-28,production_status_assertions.csv,what-if-s3-2024,legacy_seed,,0,0,defer
-production-status-wonder-man-s1-2026-snapshot-2026-08-28,production_status_assertions.csv,wonder-man-s1-2026,legacy_seed,,0,0,defer
-production-status-wonder-man-s2-tba-snapshot-2026-08-28,production_status_assertions.csv,wonder-man-s2-tba,legacy_seed,,0,0,defer
-production-status-x-men-2000-snapshot-2026-08-28,production_status_assertions.csv,x-men-2000,legacy_seed,,0,0,defer
-production-status-x-men-97-s1-2024-snapshot-2026-08-28,production_status_assertions.csv,x-men-97-s1-2024,legacy_seed,,0,0,defer
-production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28,production_status_assertions.csv,x-men-97-s2-2026-07-01,source_verified,xmen97-s2-current-2026-08,1,1,verified
-production-status-x-men-apocalypse-2016-snapshot-2026-08-28,production_status_assertions.csv,x-men-apocalypse-2016,legacy_seed,,0,0,defer
-production-status-x-men-days-of-future-past-2014-snapshot-2026-08-28,production_status_assertions.csv,x-men-days-of-future-past-2014,legacy_seed,,0,0,defer
-production-status-x-men-first-class-2011-snapshot-2026-08-28,production_status_assertions.csv,x-men-first-class-2011,legacy_seed,,0,0,defer
-production-status-x-men-origins-wolverine-2009-snapshot-2026-08-28,production_status_assertions.csv,x-men-origins-wolverine-2009,legacy_seed,,0,0,defer
-production-status-x-men-the-animated-series-19921997-snapshot-2026-08-28,production_status_assertions.csv,x-men-the-animated-series-19921997,legacy_seed,,0,0,defer
-production-status-x-men-the-last-stand-2006-snapshot-2026-08-28,production_status_assertions.csv,x-men-the-last-stand-2006,legacy_seed,,0,0,defer
-production-status-x2-x-men-united-2003-snapshot-2026-08-28,production_status_assertions.csv,x2-x-men-united-2003,legacy_seed,,0,0,defer
-production-status-your-friendly-neighborhood-spider-man-s1-2025-snapshot-2026-08-28,production_status_assertions.csv,your-friendly-neighborhood-spider-man-s1-2025,legacy_seed,,0,0,defer
-production-status-your-friendly-neighborhood-spider-man-s2-2026-snapshot-2026-08-28,production_status_assertions.csv,your-friendly-neighborhood-spider-man-s2-2026,legacy_seed,,0,0,defer
-release-a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011-primary,releases.csv,a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011,legacy_seed,,0,0,defer
-release-agatha-all-along-2024-primary,releases.csv,agatha-all-along-2024,legacy_seed,,0,0,defer
-release-agent-carter-one-shot-2013-primary,releases.csv,agent-carter-one-shot-2013,legacy_seed,,0,0,defer
-release-agents-of-s-h-i-e-l-d-20132020-primary,releases.csv,agents-of-s-h-i-e-l-d-20132020,legacy_seed,,0,0,defer
-release-all-hail-the-king-2014-primary,releases.csv,all-hail-the-king-2014,legacy_seed,,0,0,defer
-release-ant-man-2015-primary,releases.csv,ant-man-2015,legacy_seed,,0,0,defer
-release-ant-man-and-the-wasp-2018-primary,releases.csv,ant-man-and-the-wasp-2018,legacy_seed,,0,0,defer
-release-ant-man-and-the-wasp-quantumania-2023-primary,releases.csv,ant-man-and-the-wasp-quantumania-2023,legacy_seed,,0,0,defer
-release-avengers-age-of-ultron-2015-primary,releases.csv,avengers-age-of-ultron-2015,legacy_seed,,0,0,defer
-release-avengers-doomsday-2026-12-18-jp,releases.csv,avengers-doomsday-2026-12-18,legacy_seed,,0,0,defer
-release-avengers-doomsday-2026-12-18-primary,releases.csv,avengers-doomsday-2026-12-18,source_verified,marvel-movies-current-v4,1,1,verified
-release-avengers-endgame-2019-primary,releases.csv,avengers-endgame-2019,legacy_seed,,0,0,defer
-release-avengers-infinity-war-2018-primary,releases.csv,avengers-infinity-war-2018,legacy_seed,,0,0,defer
-release-avengers-secret-wars-2027-12-17-primary,releases.csv,avengers-secret-wars-2027-12-17,source_verified,marvel-movies-current-v4,1,1,verified
-release-black-panther-2018-primary,releases.csv,black-panther-2018,legacy_seed,,0,0,defer
-release-black-panther-wakanda-forever-2022-primary,releases.csv,black-panther-wakanda-forever-2022,legacy_seed,,0,0,defer
-release-black-widow-2021-primary,releases.csv,black-widow-2021,legacy_seed,,0,0,defer
-release-blade-1998-1998-primary,releases.csv,blade-1998-1998,legacy_seed,,0,0,defer
-release-blade-ii-2002-primary,releases.csv,blade-ii-2002,legacy_seed,,0,0,defer
-release-blade-mcu-tba-tba-primary,releases.csv,blade-mcu-tba-tba,legacy_seed,,0,0,defer
-release-blade-trinity-2004-primary,releases.csv,blade-trinity-2004,legacy_seed,,0,0,defer
-release-captain-america-brave-new-world-2025-primary,releases.csv,captain-america-brave-new-world-2025,legacy_seed,,0,0,defer
-release-captain-america-civil-war-2016-primary,releases.csv,captain-america-civil-war-2016,legacy_seed,,0,0,defer
-release-captain-america-the-first-avenger-2011-primary,releases.csv,captain-america-the-first-avenger-2011,legacy_seed,,0,0,defer
-release-captain-america-the-winter-soldier-2014-primary,releases.csv,captain-america-the-winter-soldier-2014,legacy_seed,,0,0,defer
-release-captain-marvel-2019-primary,releases.csv,captain-marvel-2019,legacy_seed,,0,0,defer
-release-cloak-dagger-20182019-primary,releases.csv,cloak-dagger-20182019,legacy_seed,,0,0,defer
-release-daredevil-2003-primary,releases.csv,daredevil-2003,legacy_seed,,0,0,defer
-release-daredevil-born-again-s1-2025-primary,releases.csv,daredevil-born-again-s1-2025,legacy_seed,,0,0,defer
-release-daredevil-born-again-s2-2026-jp,releases.csv,daredevil-born-again-s2-2026,legacy_seed,,0,0,defer
-release-daredevil-born-again-s2-2026-primary,releases.csv,daredevil-born-again-s2-2026,legacy_seed,,0,0,defer
-release-daredevil-born-again-s3-tba-primary,releases.csv,daredevil-born-again-s3-tba,legacy_seed,,0,0,defer
-release-daredevil-s1-2015-primary,releases.csv,daredevil-s1-2015,legacy_seed,,0,0,defer
-release-daredevil-s2-2016-primary,releases.csv,daredevil-s2-2016,legacy_seed,,0,0,defer
-release-daredevil-s3-2018-primary,releases.csv,daredevil-s3-2018,legacy_seed,,0,0,defer
-release-dark-phoenix-2019-primary,releases.csv,dark-phoenix-2019,legacy_seed,,0,0,defer
-release-deadpool-2-2018-primary,releases.csv,deadpool-2-2018,legacy_seed,,0,0,defer
-release-deadpool-2016-primary,releases.csv,deadpool-2016,legacy_seed,,0,0,defer
-release-deadpool-wolverine-2024-primary,releases.csv,deadpool-wolverine-2024,legacy_seed,,0,0,defer
-release-doctor-strange-2016-primary,releases.csv,doctor-strange-2016,legacy_seed,,0,0,defer
-release-doctor-strange-in-the-multiverse-of-madness-2022-primary,releases.csv,doctor-strange-in-the-multiverse-of-madness-2022,legacy_seed,,0,0,defer
-release-echo-2024-primary,releases.csv,echo-2024,legacy_seed,,0,0,defer
-release-elektra-2005-primary,releases.csv,elektra-2005,legacy_seed,,0,0,defer
-release-eternals-2021-primary,releases.csv,eternals-2021,legacy_seed,,0,0,defer
-release-eyes-of-wakanda-2025-primary,releases.csv,eyes-of-wakanda-2025,legacy_seed,,0,0,defer
-release-fantastic-four-2005-primary,releases.csv,fantastic-four-2005,legacy_seed,,0,0,defer
-release-fantastic-four-rise-of-the-silver-surfer-2007-primary,releases.csv,fantastic-four-rise-of-the-silver-surfer-2007,legacy_seed,,0,0,defer
-release-guardians-of-the-galaxy-2014-primary,releases.csv,guardians-of-the-galaxy-2014,legacy_seed,,0,0,defer
-release-guardians-of-the-galaxy-vol-2-2017-primary,releases.csv,guardians-of-the-galaxy-vol-2-2017,legacy_seed,,0,0,defer
-release-guardians-of-the-galaxy-vol-3-2023-primary,releases.csv,guardians-of-the-galaxy-vol-3-2023,legacy_seed,,0,0,defer
-release-hawkeye-2021-primary,releases.csv,hawkeye-2021,legacy_seed,,0,0,defer
-release-i-am-groot-s1-2022-primary,releases.csv,i-am-groot-s1-2022,legacy_seed,,0,0,defer
-release-i-am-groot-s2-2023-primary,releases.csv,i-am-groot-s2-2023,legacy_seed,,0,0,defer
-release-inhumans-2017-primary,releases.csv,inhumans-2017,legacy_seed,,0,0,defer
-release-iron-fist-s1-2017-primary,releases.csv,iron-fist-s1-2017,legacy_seed,,0,0,defer
-release-iron-fist-s2-2018-primary,releases.csv,iron-fist-s2-2018,legacy_seed,,0,0,defer
-release-iron-man-2-2010-primary,releases.csv,iron-man-2-2010,legacy_seed,,0,0,defer
-release-iron-man-2008-primary,releases.csv,iron-man-2008,legacy_seed,,0,0,defer
-release-iron-man-3-2013-primary,releases.csv,iron-man-3-2013,legacy_seed,,0,0,defer
-release-ironheart-2025-primary,releases.csv,ironheart-2025,legacy_seed,,0,0,defer
-release-item-47-2012-primary,releases.csv,item-47-2012,legacy_seed,,0,0,defer
-release-jessica-jones-s1-2015-primary,releases.csv,jessica-jones-s1-2015,legacy_seed,,0,0,defer
-release-jessica-jones-s2-2018-primary,releases.csv,jessica-jones-s2-2018,legacy_seed,,0,0,defer
-release-jessica-jones-s3-2019-primary,releases.csv,jessica-jones-s3-2019,legacy_seed,,0,0,defer
-release-kraven-the-hunter-2024-primary,releases.csv,kraven-the-hunter-2024,legacy_seed,,0,0,defer
-release-logan-2017-primary,releases.csv,logan-2017,legacy_seed,,0,0,defer
-release-loki-s1-2021-primary,releases.csv,loki-s1-2021,legacy_seed,,0,0,defer
-release-loki-s2-2023-primary,releases.csv,loki-s2-2023,legacy_seed,,0,0,defer
-release-luke-cage-s1-2016-primary,releases.csv,luke-cage-s1-2016,legacy_seed,,0,0,defer
-release-luke-cage-s2-2018-primary,releases.csv,luke-cage-s2-2018,legacy_seed,,0,0,defer
-release-madame-web-2024-primary,releases.csv,madame-web-2024,legacy_seed,,0,0,defer
-release-marvel-s-agent-carter-series-20152016-primary,releases.csv,marvel-s-agent-carter-series-20152016,legacy_seed,,0,0,defer
-release-marvel-zombies-s1-2025-primary,releases.csv,marvel-zombies-s1-2025,legacy_seed,,0,0,defer
-release-moon-knight-2022-primary,releases.csv,moon-knight-2022,legacy_seed,,0,0,defer
-release-morbius-2022-primary,releases.csv,morbius-2022,legacy_seed,,0,0,defer
-release-ms-marvel-2022-primary,releases.csv,ms-marvel-2022,legacy_seed,,0,0,defer
-release-runaways-20172019-primary,releases.csv,runaways-20172019,legacy_seed,,0,0,defer
-release-secret-invasion-2023-primary,releases.csv,secret-invasion-2023,legacy_seed,,0,0,defer
-release-shang-chi-and-the-legend-of-the-ten-rings-2021-primary,releases.csv,shang-chi-and-the-legend-of-the-ten-rings-2021,legacy_seed,,0,0,defer
-release-she-hulk-attorney-at-law-2022-primary,releases.csv,she-hulk-attorney-at-law-2022,legacy_seed,,0,0,defer
-release-spider-man-2-2004-primary,releases.csv,spider-man-2-2004,legacy_seed,,0,0,defer
-release-spider-man-2002-primary,releases.csv,spider-man-2002,legacy_seed,,0,0,defer
-release-spider-man-3-2007-primary,releases.csv,spider-man-3-2007,legacy_seed,,0,0,defer
-release-spider-man-across-the-spider-verse-2023-primary,releases.csv,spider-man-across-the-spider-verse-2023,legacy_seed,,0,0,defer
-release-spider-man-beyond-the-spider-verse-tba-primary,releases.csv,spider-man-beyond-the-spider-verse-tba,source_verified,sony-beyond-2026,1,1,verified
-release-spider-man-brand-new-day-2026-07-31-jp,releases.csv,spider-man-brand-new-day-2026-07-31,legacy_seed,,0,0,defer
-release-spider-man-brand-new-day-2026-07-31-primary,releases.csv,spider-man-brand-new-day-2026-07-31,source_verified,sony-bnd-2026-07-03,1,1,verified
-release-spider-man-far-from-home-2019-primary,releases.csv,spider-man-far-from-home-2019,legacy_seed,,0,0,defer
-release-spider-man-homecoming-2017-primary,releases.csv,spider-man-homecoming-2017,legacy_seed,,0,0,defer
-release-spider-man-into-the-spider-verse-2018-primary,releases.csv,spider-man-into-the-spider-verse-2018,legacy_seed,,0,0,defer
-release-spider-man-no-way-home-2021-primary,releases.csv,spider-man-no-way-home-2021,legacy_seed,,0,0,defer
-release-the-amazing-spider-man-2-2014-primary,releases.csv,the-amazing-spider-man-2-2014,legacy_seed,,0,0,defer
-release-the-amazing-spider-man-2012-primary,releases.csv,the-amazing-spider-man-2012,legacy_seed,,0,0,defer
-release-the-avengers-2012-primary,releases.csv,the-avengers-2012,legacy_seed,,0,0,defer
-release-the-consultant-2011-primary,releases.csv,the-consultant-2011,legacy_seed,,0,0,defer
-release-the-defenders-2017-primary,releases.csv,the-defenders-2017,legacy_seed,,0,0,defer
-release-the-falcon-and-the-winter-soldier-2021-primary,releases.csv,the-falcon-and-the-winter-soldier-2021,legacy_seed,,0,0,defer
-release-the-fantastic-four-first-steps-2025-jp,releases.csv,the-fantastic-four-first-steps-2025,legacy_seed,,0,0,defer
-release-the-fantastic-four-first-steps-2025-primary,releases.csv,the-fantastic-four-first-steps-2025,legacy_seed,,0,0,defer
-release-the-guardians-of-the-galaxy-holiday-special-2022-primary,releases.csv,the-guardians-of-the-galaxy-holiday-special-2022,legacy_seed,,0,0,defer
-release-the-incredible-hulk-2008-primary,releases.csv,the-incredible-hulk-2008,legacy_seed,,0,0,defer
-release-the-marvels-2023-primary,releases.csv,the-marvels-2023,legacy_seed,,0,0,defer
-release-the-new-mutants-2020-primary,releases.csv,the-new-mutants-2020,legacy_seed,,0,0,defer
-release-the-punisher-one-last-kill-2026-05-12-jp,releases.csv,the-punisher-one-last-kill-2026-05-12,legacy_seed,,0,0,defer
-release-the-punisher-one-last-kill-2026-05-12-primary,releases.csv,the-punisher-one-last-kill-2026-05-12,legacy_seed,,0,0,defer
-release-the-punisher-s1-2017-primary,releases.csv,the-punisher-s1-2017,legacy_seed,,0,0,defer
-release-the-punisher-s2-2019-primary,releases.csv,the-punisher-s2-2019,legacy_seed,,0,0,defer
-release-the-wolverine-2013-primary,releases.csv,the-wolverine-2013,legacy_seed,,0,0,defer
-release-thor-2011-primary,releases.csv,thor-2011,legacy_seed,,0,0,defer
-release-thor-love-and-thunder-2022-primary,releases.csv,thor-love-and-thunder-2022,legacy_seed,,0,0,defer
-release-thor-ragnarok-2017-primary,releases.csv,thor-ragnarok-2017,legacy_seed,,0,0,defer
-release-thor-the-dark-world-2013-primary,releases.csv,thor-the-dark-world-2013,legacy_seed,,0,0,defer
-release-thunderbolts-new-avengers-2025-primary,releases.csv,thunderbolts-new-avengers-2025,legacy_seed,,0,0,defer
-release-venom-2018-primary,releases.csv,venom-2018,legacy_seed,,0,0,defer
-release-venom-let-there-be-carnage-2021-primary,releases.csv,venom-let-there-be-carnage-2021,legacy_seed,,0,0,defer
-release-venom-the-last-dance-2024-primary,releases.csv,venom-the-last-dance-2024,legacy_seed,,0,0,defer
-release-visionquest-2026-10-14-primary,releases.csv,visionquest-2026-10-14,source_verified,visionquest,1,1,verified
-release-wandavision-2021-primary,releases.csv,wandavision-2021,legacy_seed,,0,0,defer
-release-werewolf-by-night-2022-primary,releases.csv,werewolf-by-night-2022,legacy_seed,,0,0,defer
-release-what-if-s1-2021-primary,releases.csv,what-if-s1-2021,legacy_seed,,0,0,defer
-release-what-if-s2-2023-primary,releases.csv,what-if-s2-2023,legacy_seed,,0,0,defer
-release-what-if-s3-2024-primary,releases.csv,what-if-s3-2024,legacy_seed,,0,0,defer
-release-wonder-man-s1-2026-jp,releases.csv,wonder-man-s1-2026,legacy_seed,,0,0,defer
-release-wonder-man-s1-2026-primary,releases.csv,wonder-man-s1-2026,legacy_seed,,0,0,defer
-release-wonder-man-s2-tba-primary,releases.csv,wonder-man-s2-tba,legacy_seed,,0,0,defer
-release-x-men-2000-primary,releases.csv,x-men-2000,legacy_seed,,0,0,defer
-release-x-men-97-s1-2024-primary,releases.csv,x-men-97-s1-2024,legacy_seed,,0,0,defer
-release-x-men-97-s2-2026-07-01-jp,releases.csv,x-men-97-s2-2026-07-01,legacy_seed,,0,0,defer
-release-x-men-97-s2-2026-07-01-primary,releases.csv,x-men-97-s2-2026-07-01,source_verified,xmen97-s2,1,1,verified
-release-x-men-apocalypse-2016-primary,releases.csv,x-men-apocalypse-2016,legacy_seed,,0,0,defer
-release-x-men-days-of-future-past-2014-primary,releases.csv,x-men-days-of-future-past-2014,legacy_seed,,0,0,defer
-release-x-men-first-class-2011-primary,releases.csv,x-men-first-class-2011,legacy_seed,,0,0,defer
-release-x-men-origins-wolverine-2009-primary,releases.csv,x-men-origins-wolverine-2009,legacy_seed,,0,0,defer
-release-x-men-the-animated-series-19921997-primary,releases.csv,x-men-the-animated-series-19921997,legacy_seed,,0,0,defer
-release-x-men-the-last-stand-2006-primary,releases.csv,x-men-the-last-stand-2006,legacy_seed,,0,0,defer
-release-x2-x-men-united-2003-primary,releases.csv,x2-x-men-united-2003,legacy_seed,,0,0,defer
-release-your-friendly-neighborhood-spider-man-s1-2025-primary,releases.csv,your-friendly-neighborhood-spider-man-s1-2025,legacy_seed,,0,0,defer
-release-your-friendly-neighborhood-spider-man-s2-2026-primary,releases.csv,your-friendly-neighborhood-spider-man-s2-2026,legacy_seed,,0,0,defer
+fact_id,fact_table,work_id,verification_status,source_candidates,evidence_count,review_count,disposition,disposition_reason,next_action
+production-status-a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011-snapshot-2026-08-28,production_status_assertions.csv,a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-agatha-all-along-2024-snapshot-2026-08-28,production_status_assertions.csv,agatha-all-along-2024,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-agent-carter-one-shot-2013-snapshot-2026-08-28,production_status_assertions.csv,agent-carter-one-shot-2013,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-agents-of-s-h-i-e-l-d-20132020-snapshot-2026-08-28,production_status_assertions.csv,agents-of-s-h-i-e-l-d-20132020,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-all-hail-the-king-2014-snapshot-2026-08-28,production_status_assertions.csv,all-hail-the-king-2014,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-ant-man-2015-snapshot-2026-08-28,production_status_assertions.csv,ant-man-2015,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-ant-man-and-the-wasp-2018-snapshot-2026-08-28,production_status_assertions.csv,ant-man-and-the-wasp-2018,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-ant-man-and-the-wasp-quantumania-2023-snapshot-2026-08-28,production_status_assertions.csv,ant-man-and-the-wasp-quantumania-2023,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-avengers-age-of-ultron-2015-snapshot-2026-08-28,production_status_assertions.csv,avengers-age-of-ultron-2015,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-avengers-doomsday-2026-12-18-snapshot-2026-08-28,production_status_assertions.csv,avengers-doomsday-2026-12-18,source_verified,doomsday;doomsday-jp;marvel-jp-titlelist,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+production-status-avengers-endgame-2019-snapshot-2026-08-28,production_status_assertions.csv,avengers-endgame-2019,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-avengers-infinity-war-2018-snapshot-2026-08-28,production_status_assertions.csv,avengers-infinity-war-2018,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-avengers-secret-wars-2027-12-17-snapshot-2026-08-28,production_status_assertions.csv,avengers-secret-wars-2027-12-17,source_verified,marvel-movies-current-v4;movies,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+production-status-black-panther-2018-snapshot-2026-08-28,production_status_assertions.csv,black-panther-2018,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-black-panther-wakanda-forever-2022-snapshot-2026-08-28,production_status_assertions.csv,black-panther-wakanda-forever-2022,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-black-widow-2021-snapshot-2026-08-28,production_status_assertions.csv,black-widow-2021,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-blade-1998-1998-snapshot-2026-08-28,production_status_assertions.csv,blade-1998-1998,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-blade-ii-2002-snapshot-2026-08-28,production_status_assertions.csv,blade-ii-2002,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-blade-mcu-tba-tba-snapshot-2026-08-28,production_status_assertions.csv,blade-mcu-tba-tba,source_verified,marvel-jp-titlelist;movies,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+production-status-blade-trinity-2004-snapshot-2026-08-28,production_status_assertions.csv,blade-trinity-2004,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-captain-america-brave-new-world-2025-snapshot-2026-08-28,production_status_assertions.csv,captain-america-brave-new-world-2025,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-captain-america-civil-war-2016-snapshot-2026-08-28,production_status_assertions.csv,captain-america-civil-war-2016,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-captain-america-the-first-avenger-2011-snapshot-2026-08-28,production_status_assertions.csv,captain-america-the-first-avenger-2011,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-captain-america-the-winter-soldier-2014-snapshot-2026-08-28,production_status_assertions.csv,captain-america-the-winter-soldier-2014,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-captain-marvel-2019-snapshot-2026-08-28,production_status_assertions.csv,captain-marvel-2019,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-cloak-dagger-20182019-snapshot-2026-08-28,production_status_assertions.csv,cloak-dagger-20182019,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-daredevil-2003-snapshot-2026-08-28,production_status_assertions.csv,daredevil-2003,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-daredevil-born-again-s1-2025-snapshot-2026-08-28,production_status_assertions.csv,daredevil-born-again-s1-2025,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-daredevil-born-again-s2-2026-snapshot-2026-08-28,production_status_assertions.csv,daredevil-born-again-s2-2026,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-daredevil-born-again-s3-tba-snapshot-2026-08-28,production_status_assertions.csv,daredevil-born-again-s3-tba,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-daredevil-s1-2015-snapshot-2026-08-28,production_status_assertions.csv,daredevil-s1-2015,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-daredevil-s2-2016-snapshot-2026-08-28,production_status_assertions.csv,daredevil-s2-2016,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-daredevil-s3-2018-snapshot-2026-08-28,production_status_assertions.csv,daredevil-s3-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-dark-phoenix-2019-snapshot-2026-08-28,production_status_assertions.csv,dark-phoenix-2019,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-deadpool-2-2018-snapshot-2026-08-28,production_status_assertions.csv,deadpool-2-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-deadpool-2016-snapshot-2026-08-28,production_status_assertions.csv,deadpool-2016,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-deadpool-wolverine-2024-snapshot-2026-08-28,production_status_assertions.csv,deadpool-wolverine-2024,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-doctor-strange-2016-snapshot-2026-08-28,production_status_assertions.csv,doctor-strange-2016,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-doctor-strange-in-the-multiverse-of-madness-2022-snapshot-2026-08-28,production_status_assertions.csv,doctor-strange-in-the-multiverse-of-madness-2022,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-echo-2024-snapshot-2026-08-28,production_status_assertions.csv,echo-2024,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-elektra-2005-snapshot-2026-08-28,production_status_assertions.csv,elektra-2005,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-eternals-2021-snapshot-2026-08-28,production_status_assertions.csv,eternals-2021,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-eyes-of-wakanda-2025-snapshot-2026-08-28,production_status_assertions.csv,eyes-of-wakanda-2025,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-fantastic-four-2005-snapshot-2026-08-28,production_status_assertions.csv,fantastic-four-2005,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-fantastic-four-rise-of-the-silver-surfer-2007-snapshot-2026-08-28,production_status_assertions.csv,fantastic-four-rise-of-the-silver-surfer-2007,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-guardians-of-the-galaxy-2014-snapshot-2026-08-28,production_status_assertions.csv,guardians-of-the-galaxy-2014,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-guardians-of-the-galaxy-vol-2-2017-snapshot-2026-08-28,production_status_assertions.csv,guardians-of-the-galaxy-vol-2-2017,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-guardians-of-the-galaxy-vol-3-2023-snapshot-2026-08-28,production_status_assertions.csv,guardians-of-the-galaxy-vol-3-2023,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-hawkeye-2021-snapshot-2026-08-28,production_status_assertions.csv,hawkeye-2021,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-i-am-groot-s1-2022-snapshot-2026-08-28,production_status_assertions.csv,i-am-groot-s1-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-i-am-groot-s2-2023-snapshot-2026-08-28,production_status_assertions.csv,i-am-groot-s2-2023,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-inhumans-2017-snapshot-2026-08-28,production_status_assertions.csv,inhumans-2017,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-iron-fist-s1-2017-snapshot-2026-08-28,production_status_assertions.csv,iron-fist-s1-2017,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-iron-fist-s2-2018-snapshot-2026-08-28,production_status_assertions.csv,iron-fist-s2-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-iron-man-2-2010-snapshot-2026-08-28,production_status_assertions.csv,iron-man-2-2010,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-iron-man-2008-snapshot-2026-08-28,production_status_assertions.csv,iron-man-2008,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-iron-man-3-2013-snapshot-2026-08-28,production_status_assertions.csv,iron-man-3-2013,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-ironheart-2025-snapshot-2026-08-28,production_status_assertions.csv,ironheart-2025,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-item-47-2012-snapshot-2026-08-28,production_status_assertions.csv,item-47-2012,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-jessica-jones-s1-2015-snapshot-2026-08-28,production_status_assertions.csv,jessica-jones-s1-2015,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-jessica-jones-s2-2018-snapshot-2026-08-28,production_status_assertions.csv,jessica-jones-s2-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-jessica-jones-s3-2019-snapshot-2026-08-28,production_status_assertions.csv,jessica-jones-s3-2019,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-kraven-the-hunter-2024-snapshot-2026-08-28,production_status_assertions.csv,kraven-the-hunter-2024,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-logan-2017-snapshot-2026-08-28,production_status_assertions.csv,logan-2017,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-loki-s1-2021-snapshot-2026-08-28,production_status_assertions.csv,loki-s1-2021,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-loki-s2-2023-snapshot-2026-08-28,production_status_assertions.csv,loki-s2-2023,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-luke-cage-s1-2016-snapshot-2026-08-28,production_status_assertions.csv,luke-cage-s1-2016,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-luke-cage-s2-2018-snapshot-2026-08-28,production_status_assertions.csv,luke-cage-s2-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-madame-web-2024-snapshot-2026-08-28,production_status_assertions.csv,madame-web-2024,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-marvel-s-agent-carter-series-20152016-snapshot-2026-08-28,production_status_assertions.csv,marvel-s-agent-carter-series-20152016,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-marvel-zombies-s1-2025-snapshot-2026-08-28,production_status_assertions.csv,marvel-zombies-s1-2025,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-moon-knight-2022-snapshot-2026-08-28,production_status_assertions.csv,moon-knight-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-morbius-2022-snapshot-2026-08-28,production_status_assertions.csv,morbius-2022,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-ms-marvel-2022-snapshot-2026-08-28,production_status_assertions.csv,ms-marvel-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-runaways-20172019-snapshot-2026-08-28,production_status_assertions.csv,runaways-20172019,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-secret-invasion-2023-snapshot-2026-08-28,production_status_assertions.csv,secret-invasion-2023,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-shang-chi-and-the-legend-of-the-ten-rings-2021-snapshot-2026-08-28,production_status_assertions.csv,shang-chi-and-the-legend-of-the-ten-rings-2021,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-she-hulk-attorney-at-law-2022-snapshot-2026-08-28,production_status_assertions.csv,she-hulk-attorney-at-law-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-spider-man-2-2004-snapshot-2026-08-28,production_status_assertions.csv,spider-man-2-2004,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-spider-man-2002-snapshot-2026-08-28,production_status_assertions.csv,spider-man-2002,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-spider-man-3-2007-snapshot-2026-08-28,production_status_assertions.csv,spider-man-3-2007,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-spider-man-across-the-spider-verse-2023-snapshot-2026-08-28,production_status_assertions.csv,spider-man-across-the-spider-verse-2023,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-spider-man-beyond-the-spider-verse-tba-snapshot-2026-08-28,production_status_assertions.csv,spider-man-beyond-the-spider-verse-tba,source_verified,sony-beyond-2026,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28,production_status_assertions.csv,spider-man-brand-new-day-2026-07-31,source_verified,sony-bnd-2026-07-03;sony-bnd-current-2026-08,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+production-status-spider-man-far-from-home-2019-snapshot-2026-08-28,production_status_assertions.csv,spider-man-far-from-home-2019,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-spider-man-homecoming-2017-snapshot-2026-08-28,production_status_assertions.csv,spider-man-homecoming-2017,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-spider-man-into-the-spider-verse-2018-snapshot-2026-08-28,production_status_assertions.csv,spider-man-into-the-spider-verse-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-spider-man-no-way-home-2021-snapshot-2026-08-28,production_status_assertions.csv,spider-man-no-way-home-2021,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-the-amazing-spider-man-2-2014-snapshot-2026-08-28,production_status_assertions.csv,the-amazing-spider-man-2-2014,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-the-amazing-spider-man-2012-snapshot-2026-08-28,production_status_assertions.csv,the-amazing-spider-man-2012,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-the-avengers-2012-snapshot-2026-08-28,production_status_assertions.csv,the-avengers-2012,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-the-consultant-2011-snapshot-2026-08-28,production_status_assertions.csv,the-consultant-2011,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-the-defenders-2017-snapshot-2026-08-28,production_status_assertions.csv,the-defenders-2017,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-the-falcon-and-the-winter-soldier-2021-snapshot-2026-08-28,production_status_assertions.csv,the-falcon-and-the-winter-soldier-2021,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-the-fantastic-four-first-steps-2025-snapshot-2026-08-28,production_status_assertions.csv,the-fantastic-four-first-steps-2025,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-the-guardians-of-the-galaxy-holiday-special-2022-snapshot-2026-08-28,production_status_assertions.csv,the-guardians-of-the-galaxy-holiday-special-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-the-incredible-hulk-2008-snapshot-2026-08-28,production_status_assertions.csv,the-incredible-hulk-2008,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-the-marvels-2023-snapshot-2026-08-28,production_status_assertions.csv,the-marvels-2023,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-the-new-mutants-2020-snapshot-2026-08-28,production_status_assertions.csv,the-new-mutants-2020,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-the-punisher-one-last-kill-2026-05-12-snapshot-2026-08-28,production_status_assertions.csv,the-punisher-one-last-kill-2026-05-12,source_verified,marvel-jp-titlelist;tv,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+production-status-the-punisher-s1-2017-snapshot-2026-08-28,production_status_assertions.csv,the-punisher-s1-2017,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-the-punisher-s2-2019-snapshot-2026-08-28,production_status_assertions.csv,the-punisher-s2-2019,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-the-wolverine-2013-snapshot-2026-08-28,production_status_assertions.csv,the-wolverine-2013,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-thor-2011-snapshot-2026-08-28,production_status_assertions.csv,thor-2011,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-thor-love-and-thunder-2022-snapshot-2026-08-28,production_status_assertions.csv,thor-love-and-thunder-2022,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-thor-ragnarok-2017-snapshot-2026-08-28,production_status_assertions.csv,thor-ragnarok-2017,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-thor-the-dark-world-2013-snapshot-2026-08-28,production_status_assertions.csv,thor-the-dark-world-2013,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-thunderbolts-new-avengers-2025-snapshot-2026-08-28,production_status_assertions.csv,thunderbolts-new-avengers-2025,legacy_seed,thunderbolts-jp;thunderbolts-postcredits-film-2025,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-venom-2018-snapshot-2026-08-28,production_status_assertions.csv,venom-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-venom-let-there-be-carnage-2021-snapshot-2026-08-28,production_status_assertions.csv,venom-let-there-be-carnage-2021,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-venom-the-last-dance-2024-snapshot-2026-08-28,production_status_assertions.csv,venom-the-last-dance-2024,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-visionquest-2026-10-14-snapshot-2026-08-28,production_status_assertions.csv,visionquest-2026-10-14,source_verified,tv;visionquest,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+production-status-wandavision-2021-snapshot-2026-08-28,production_status_assertions.csv,wandavision-2021,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-werewolf-by-night-2022-snapshot-2026-08-28,production_status_assertions.csv,werewolf-by-night-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-what-if-s1-2021-snapshot-2026-08-28,production_status_assertions.csv,what-if-s1-2021,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-what-if-s2-2023-snapshot-2026-08-28,production_status_assertions.csv,what-if-s2-2023,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-what-if-s3-2024-snapshot-2026-08-28,production_status_assertions.csv,what-if-s3-2024,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-wonder-man-s1-2026-snapshot-2026-08-28,production_status_assertions.csv,wonder-man-s1-2026,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-wonder-man-s2-tba-snapshot-2026-08-28,production_status_assertions.csv,wonder-man-s2-tba,legacy_seed,,0,0,conflict,registered source conflicts with the migrated fact; no silent rewrite,resolve conflicting primary sources before any promotion
+production-status-x-men-2000-snapshot-2026-08-28,production_status_assertions.csv,x-men-2000,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-x-men-97-s1-2024-snapshot-2026-08-28,production_status_assertions.csv,x-men-97-s1-2024,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28,production_status_assertions.csv,x-men-97-s2-2026-07-01,source_verified,tv;xmen97-s2-current-2026-08,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+production-status-x-men-apocalypse-2016-snapshot-2026-08-28,production_status_assertions.csv,x-men-apocalypse-2016,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-x-men-days-of-future-past-2014-snapshot-2026-08-28,production_status_assertions.csv,x-men-days-of-future-past-2014,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-x-men-first-class-2011-snapshot-2026-08-28,production_status_assertions.csv,x-men-first-class-2011,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-x-men-origins-wolverine-2009-snapshot-2026-08-28,production_status_assertions.csv,x-men-origins-wolverine-2009,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-x-men-the-animated-series-19921997-snapshot-2026-08-28,production_status_assertions.csv,x-men-the-animated-series-19921997,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-x-men-the-last-stand-2006-snapshot-2026-08-28,production_status_assertions.csv,x-men-the-last-stand-2006,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-x2-x-men-united-2003-snapshot-2026-08-28,production_status_assertions.csv,x2-x-men-united-2003,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+production-status-your-friendly-neighborhood-spider-man-s1-2025-snapshot-2026-08-28,production_status_assertions.csv,your-friendly-neighborhood-spider-man-s1-2025,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+production-status-your-friendly-neighborhood-spider-man-s2-2026-snapshot-2026-08-28,production_status_assertions.csv,your-friendly-neighborhood-spider-man-s2-2026,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011-primary,releases.csv,a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-agatha-all-along-2024-primary,releases.csv,agatha-all-along-2024,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-agent-carter-one-shot-2013-primary,releases.csv,agent-carter-one-shot-2013,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-agents-of-s-h-i-e-l-d-20132020-primary,releases.csv,agents-of-s-h-i-e-l-d-20132020,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-all-hail-the-king-2014-primary,releases.csv,all-hail-the-king-2014,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-ant-man-2015-primary,releases.csv,ant-man-2015,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-ant-man-and-the-wasp-2018-primary,releases.csv,ant-man-and-the-wasp-2018,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-ant-man-and-the-wasp-quantumania-2023-primary,releases.csv,ant-man-and-the-wasp-quantumania-2023,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-avengers-age-of-ultron-2015-primary,releases.csv,avengers-age-of-ultron-2015,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-avengers-doomsday-2026-12-18-jp,releases.csv,avengers-doomsday-2026-12-18,legacy_seed,doomsday;doomsday-jp;marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-avengers-doomsday-2026-12-18-primary,releases.csv,avengers-doomsday-2026-12-18,source_verified,doomsday;doomsday-jp;marvel-jp-titlelist;marvel-movies-current-v4,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+release-avengers-endgame-2019-primary,releases.csv,avengers-endgame-2019,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-avengers-infinity-war-2018-primary,releases.csv,avengers-infinity-war-2018,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-avengers-secret-wars-2027-12-17-primary,releases.csv,avengers-secret-wars-2027-12-17,source_verified,marvel-movies-current-v4;movies,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+release-black-panther-2018-primary,releases.csv,black-panther-2018,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-black-panther-wakanda-forever-2022-primary,releases.csv,black-panther-wakanda-forever-2022,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-black-widow-2021-primary,releases.csv,black-widow-2021,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-blade-1998-1998-primary,releases.csv,blade-1998-1998,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-blade-ii-2002-primary,releases.csv,blade-ii-2002,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-blade-mcu-tba-tba-primary,releases.csv,blade-mcu-tba-tba,source_verified,marvel-jp-titlelist;movies,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+release-blade-trinity-2004-primary,releases.csv,blade-trinity-2004,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-captain-america-brave-new-world-2025-primary,releases.csv,captain-america-brave-new-world-2025,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-captain-america-civil-war-2016-primary,releases.csv,captain-america-civil-war-2016,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-captain-america-the-first-avenger-2011-primary,releases.csv,captain-america-the-first-avenger-2011,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-captain-america-the-winter-soldier-2014-primary,releases.csv,captain-america-the-winter-soldier-2014,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-captain-marvel-2019-primary,releases.csv,captain-marvel-2019,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-cloak-dagger-20182019-primary,releases.csv,cloak-dagger-20182019,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-daredevil-2003-primary,releases.csv,daredevil-2003,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-daredevil-born-again-s1-2025-primary,releases.csv,daredevil-born-again-s1-2025,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-daredevil-born-again-s2-2026-jp,releases.csv,daredevil-born-again-s2-2026,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-daredevil-born-again-s2-2026-primary,releases.csv,daredevil-born-again-s2-2026,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-daredevil-born-again-s3-tba-primary,releases.csv,daredevil-born-again-s3-tba,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-daredevil-s1-2015-primary,releases.csv,daredevil-s1-2015,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-daredevil-s2-2016-primary,releases.csv,daredevil-s2-2016,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-daredevil-s3-2018-primary,releases.csv,daredevil-s3-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-dark-phoenix-2019-primary,releases.csv,dark-phoenix-2019,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-deadpool-2-2018-primary,releases.csv,deadpool-2-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-deadpool-2016-primary,releases.csv,deadpool-2016,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-deadpool-wolverine-2024-primary,releases.csv,deadpool-wolverine-2024,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-doctor-strange-2016-primary,releases.csv,doctor-strange-2016,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-doctor-strange-in-the-multiverse-of-madness-2022-primary,releases.csv,doctor-strange-in-the-multiverse-of-madness-2022,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-echo-2024-primary,releases.csv,echo-2024,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-elektra-2005-primary,releases.csv,elektra-2005,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-eternals-2021-primary,releases.csv,eternals-2021,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-eyes-of-wakanda-2025-primary,releases.csv,eyes-of-wakanda-2025,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-fantastic-four-2005-primary,releases.csv,fantastic-four-2005,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-fantastic-four-rise-of-the-silver-surfer-2007-primary,releases.csv,fantastic-four-rise-of-the-silver-surfer-2007,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-guardians-of-the-galaxy-2014-primary,releases.csv,guardians-of-the-galaxy-2014,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-guardians-of-the-galaxy-vol-2-2017-primary,releases.csv,guardians-of-the-galaxy-vol-2-2017,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-guardians-of-the-galaxy-vol-3-2023-primary,releases.csv,guardians-of-the-galaxy-vol-3-2023,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-hawkeye-2021-primary,releases.csv,hawkeye-2021,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-i-am-groot-s1-2022-primary,releases.csv,i-am-groot-s1-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-i-am-groot-s2-2023-primary,releases.csv,i-am-groot-s2-2023,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-inhumans-2017-primary,releases.csv,inhumans-2017,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-iron-fist-s1-2017-primary,releases.csv,iron-fist-s1-2017,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-iron-fist-s2-2018-primary,releases.csv,iron-fist-s2-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-iron-man-2-2010-primary,releases.csv,iron-man-2-2010,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-iron-man-2008-primary,releases.csv,iron-man-2008,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-iron-man-3-2013-primary,releases.csv,iron-man-3-2013,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-ironheart-2025-primary,releases.csv,ironheart-2025,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-item-47-2012-primary,releases.csv,item-47-2012,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-jessica-jones-s1-2015-primary,releases.csv,jessica-jones-s1-2015,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-jessica-jones-s2-2018-primary,releases.csv,jessica-jones-s2-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-jessica-jones-s3-2019-primary,releases.csv,jessica-jones-s3-2019,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-kraven-the-hunter-2024-primary,releases.csv,kraven-the-hunter-2024,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-logan-2017-primary,releases.csv,logan-2017,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-loki-s1-2021-primary,releases.csv,loki-s1-2021,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-loki-s2-2023-primary,releases.csv,loki-s2-2023,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-luke-cage-s1-2016-primary,releases.csv,luke-cage-s1-2016,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-luke-cage-s2-2018-primary,releases.csv,luke-cage-s2-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-madame-web-2024-primary,releases.csv,madame-web-2024,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-marvel-s-agent-carter-series-20152016-primary,releases.csv,marvel-s-agent-carter-series-20152016,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-marvel-zombies-s1-2025-primary,releases.csv,marvel-zombies-s1-2025,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-moon-knight-2022-primary,releases.csv,moon-knight-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-morbius-2022-primary,releases.csv,morbius-2022,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-ms-marvel-2022-primary,releases.csv,ms-marvel-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-runaways-20172019-primary,releases.csv,runaways-20172019,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-secret-invasion-2023-primary,releases.csv,secret-invasion-2023,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-shang-chi-and-the-legend-of-the-ten-rings-2021-primary,releases.csv,shang-chi-and-the-legend-of-the-ten-rings-2021,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-she-hulk-attorney-at-law-2022-primary,releases.csv,she-hulk-attorney-at-law-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-spider-man-2-2004-primary,releases.csv,spider-man-2-2004,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-spider-man-2002-primary,releases.csv,spider-man-2002,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-spider-man-3-2007-primary,releases.csv,spider-man-3-2007,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-spider-man-across-the-spider-verse-2023-primary,releases.csv,spider-man-across-the-spider-verse-2023,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-spider-man-beyond-the-spider-verse-tba-primary,releases.csv,spider-man-beyond-the-spider-verse-tba,source_verified,sony-beyond-2026,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+release-spider-man-brand-new-day-2026-07-31-jp,releases.csv,spider-man-brand-new-day-2026-07-31,legacy_seed,sony-bnd-2026-07-03,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-spider-man-brand-new-day-2026-07-31-primary,releases.csv,spider-man-brand-new-day-2026-07-31,source_verified,sony-bnd-2026-07-03,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+release-spider-man-far-from-home-2019-primary,releases.csv,spider-man-far-from-home-2019,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-spider-man-homecoming-2017-primary,releases.csv,spider-man-homecoming-2017,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-spider-man-into-the-spider-verse-2018-primary,releases.csv,spider-man-into-the-spider-verse-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-spider-man-no-way-home-2021-primary,releases.csv,spider-man-no-way-home-2021,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-the-amazing-spider-man-2-2014-primary,releases.csv,the-amazing-spider-man-2-2014,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-the-amazing-spider-man-2012-primary,releases.csv,the-amazing-spider-man-2012,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-the-avengers-2012-primary,releases.csv,the-avengers-2012,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-the-consultant-2011-primary,releases.csv,the-consultant-2011,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-the-defenders-2017-primary,releases.csv,the-defenders-2017,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-the-falcon-and-the-winter-soldier-2021-primary,releases.csv,the-falcon-and-the-winter-soldier-2021,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-the-fantastic-four-first-steps-2025-jp,releases.csv,the-fantastic-four-first-steps-2025,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-the-fantastic-four-first-steps-2025-primary,releases.csv,the-fantastic-four-first-steps-2025,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-the-guardians-of-the-galaxy-holiday-special-2022-primary,releases.csv,the-guardians-of-the-galaxy-holiday-special-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-the-incredible-hulk-2008-primary,releases.csv,the-incredible-hulk-2008,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-the-marvels-2023-primary,releases.csv,the-marvels-2023,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-the-new-mutants-2020-primary,releases.csv,the-new-mutants-2020,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-the-punisher-one-last-kill-2026-05-12-jp,releases.csv,the-punisher-one-last-kill-2026-05-12,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-the-punisher-one-last-kill-2026-05-12-primary,releases.csv,the-punisher-one-last-kill-2026-05-12,source_verified,marvel-jp-titlelist;tv,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+release-the-punisher-s1-2017-primary,releases.csv,the-punisher-s1-2017,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-the-punisher-s2-2019-primary,releases.csv,the-punisher-s2-2019,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-the-wolverine-2013-primary,releases.csv,the-wolverine-2013,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-thor-2011-primary,releases.csv,thor-2011,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-thor-love-and-thunder-2022-primary,releases.csv,thor-love-and-thunder-2022,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-thor-ragnarok-2017-primary,releases.csv,thor-ragnarok-2017,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-thor-the-dark-world-2013-primary,releases.csv,thor-the-dark-world-2013,legacy_seed,marvel-jp-titlelist,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-thunderbolts-new-avengers-2025-primary,releases.csv,thunderbolts-new-avengers-2025,legacy_seed,thunderbolts-jp;thunderbolts-postcredits-film-2025,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-venom-2018-primary,releases.csv,venom-2018,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-venom-let-there-be-carnage-2021-primary,releases.csv,venom-let-there-be-carnage-2021,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-venom-the-last-dance-2024-primary,releases.csv,venom-the-last-dance-2024,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-visionquest-2026-10-14-primary,releases.csv,visionquest-2026-10-14,source_verified,tv;visionquest,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+release-wandavision-2021-primary,releases.csv,wandavision-2021,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-werewolf-by-night-2022-primary,releases.csv,werewolf-by-night-2022,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-what-if-s1-2021-primary,releases.csv,what-if-s1-2021,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-what-if-s2-2023-primary,releases.csv,what-if-s2-2023,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-what-if-s3-2024-primary,releases.csv,what-if-s3-2024,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-wonder-man-s1-2026-jp,releases.csv,wonder-man-s1-2026,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-wonder-man-s1-2026-primary,releases.csv,wonder-man-s1-2026,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-wonder-man-s2-tba-primary,releases.csv,wonder-man-s2-tba,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-x-men-2000-primary,releases.csv,x-men-2000,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-x-men-97-s1-2024-primary,releases.csv,x-men-97-s1-2024,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-x-men-97-s2-2026-07-01-jp,releases.csv,x-men-97-s2-2026-07-01,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-x-men-97-s2-2026-07-01-primary,releases.csv,x-men-97-s2-2026-07-01,source_verified,tv;xmen97-s2,1,1,promote,direct source-backed fact with qualifying evidence and review,retain source_verified; recheck when the source changes
+release-x-men-apocalypse-2016-primary,releases.csv,x-men-apocalypse-2016,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-x-men-days-of-future-past-2014-primary,releases.csv,x-men-days-of-future-past-2014,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-x-men-first-class-2011-primary,releases.csv,x-men-first-class-2011,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-x-men-origins-wolverine-2009-primary,releases.csv,x-men-origins-wolverine-2009,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-x-men-the-animated-series-19921997-primary,releases.csv,x-men-the-animated-series-19921997,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-x-men-the-last-stand-2006-primary,releases.csv,x-men-the-last-stand-2006,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-x2-x-men-united-2003-primary,releases.csv,x2-x-men-united-2003,legacy_seed,,0,0,defer,no qualifying source or fact-level evidence is registered,"register a work-specific primary source, then add evidence and review"
+release-your-friendly-neighborhood-spider-man-s1-2025-primary,releases.csv,your-friendly-neighborhood-spider-man-s1-2025,legacy_seed,tv,0,0,defer,source registration/listing is not fact-level qualifying evidence,add work-specific primary evidence and a review transition
+release-your-friendly-neighborhood-spider-man-s2-2026-primary,releases.csv,your-friendly-neighborhood-spider-man-s2-2026,legacy_seed,tv,0,0,conflict,registered source conflicts with the migrated fact; no silent rewrite,resolve conflicting primary sources before any promotion
 
