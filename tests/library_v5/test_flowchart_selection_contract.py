@@ -100,21 +100,25 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("shared character/entity", helper)
         self.assertRegex(helper, r"skipKey")
         self.assertRegex(helper, r"queue|stack")
-        self.assertIn("backEdges=filterBackwardShortcutEdges(backEdges,id)", body)
+        self.assertIn("const filteredBackwardEdges=filterBackwardShortcutEdges(", body)
+        self.assertIn("const visibleIncomingEdges", body)
+        self.assertIn("const omittedBackEdges", body)
+        self.assertIn("!omittedBackEdges.has(edgeKey(e))", body)
 
     def test_forward_highlight_does_not_use_backward_shortcut_filter(self) -> None:
         body = function_body(self.source, "directedPartAll")
-        self.assertRegex(body, r"backEdges=filterBackwardShortcutEdges\(backEdges,id\)")
+        self.assertRegex(body, r"filteredBackwardEdges=filterBackwardShortcutEdges\(")
         self.assertNotRegex(body, r"forwardEdges=filterBackwardShortcutEdges\(forwardEdges\)")
 
     def test_complete_tier_expands_backward_history_without_expanding_forward_scope(self) -> None:
         body = function_body(self.source, "directedPartAll")
         self.assertRegex(
             body,
-            r"backPropagates=e=>importanceAllowed\(e\) && \(importanceMode==='reference' \|\| edgeRank\(e\)>=3\)",
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| \(importanceMode==='reference' && e\.type_en==='explicit work relation'\)\)",
         )
         self.assertRegex(body, r"if\(!backPropagates\(e\)\) continue")
         self.assertRegex(body, r"if\(!propagates\(e\)\) continue")
+        self.assertNotRegex(body, r"importanceMode==='reference' \|\| edgeRank\(e\)>=3")
 
     def test_character_filter_is_visual_only_and_does_not_replace_exported_edges(self) -> None:
         body = function_body(self.source, "applyCharacterHighlight")

@@ -5929,7 +5929,10 @@ if(flowchartReady)render();
     let backEdges=new Set();
     const forwardEdges=new Set(), contextEdges=new Set();
     const propagates=e=>importanceAllowed(e) && edgeRank(e)>=3; // forward keeps the existing strong/very-strong scope
-    const backPropagates=e=>importanceAllowed(e) && (importanceMode==='reference' || edgeRank(e)>=3); // complete history follows every visible tier
+    // Chart selection keeps an explicit reference-level story chain readable
+    // (for example 1→2→3); the watch-plan policy remains independently
+    // responsible for treating other reference links as direct context.
+    const backPropagates=e=>importanceAllowed(e) && (edgeRank(e)>=3 || (importanceMode==='reference' && e.type_en==='explicit work relation')); // complete history follows explicit story chains, not auxiliary reference fan-out
 
     let stack=[id];
     while(stack.length){
@@ -5940,7 +5943,19 @@ if(flowchartReady)render();
         if(!backNodes.has(e.source)){ backNodes.add(e.source); stack.push(e.source); }
       }
     }
-    backEdges=filterBackwardShortcutEdges(backEdges,id);
+    const allBackEdges=backEdges;
+    // Include every visible direct incoming link when identifying transitive
+    // auxiliary shortcuts, even when that link is not a recursive candidate.
+    const visibleIncomingEdges=new Set(
+      (inc[id]||[]).filter(e=>importanceAllowed(e)).map(e=>edgeKey(e))
+    );
+    const filteredBackwardEdges=filterBackwardShortcutEdges(
+      new Set([...allBackEdges,...visibleIncomingEdges]),id
+    );
+    const omittedBackEdges=new Set(
+      [...visibleIncomingEdges].filter(key=>!filteredBackwardEdges.has(key))
+    );
+    backEdges=new Set([...allBackEdges].filter(key=>filteredBackwardEdges.has(key)));
     stack=[id];
     while(stack.length){
       const x=stack.pop();
@@ -5952,10 +5967,9 @@ if(flowchartReady)render();
     }
 
     // In the recommended tier, non-propagating incoming links stay one-hop
-    // context. Complete history has already consumed every visible incoming
-    // tier above; outgoing context remains one-hop so forward behavior is
-    // unchanged.
-    for(const e of (inc[id]||[])) if(importanceAllowed(e) && !backPropagates(e)){ contextNodes.add(e.source); contextEdges.add(edgeKey(e)); }
+    // context. Complete history also keeps auxiliary reference links direct;
+    // outgoing context remains one-hop so forward behavior is unchanged.
+    for(const e of (inc[id]||[])) if(importanceAllowed(e) && !backPropagates(e) && !omittedBackEdges.has(edgeKey(e))){ contextNodes.add(e.source); contextEdges.add(edgeKey(e)); }
     for(const e of (out[id]||[])) if(importanceAllowed(e) && !propagates(e)){ contextNodes.add(e.target); contextEdges.add(edgeKey(e)); }
     const nodes=new Set([...backNodes,...forwardNodes,...contextNodes]);
     return {nodes,backNodes,forwardNodes,contextNodes,backEdges,forwardEdges,contextEdges,generic:false};
