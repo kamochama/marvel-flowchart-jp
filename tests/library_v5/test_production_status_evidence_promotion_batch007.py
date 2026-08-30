@@ -50,7 +50,7 @@ class ProductionStatusEvidencePromotionBatch007Tests(unittest.TestCase):
         self.assertEqual(review["review_action"], "verified_source")
         self.assertEqual(review["evidence_ids"], EVIDENCE_ID)
 
-    def test_release_and_japanese_row_remain_unchanged(self):
+    def test_release_and_japanese_row_keep_their_explicit_territory_scopes(self):
         releases = {row["release_id"]: row for row in _rows("data/library/releases.csv")}
         primary = releases[RELEASE_TARGET]
         self.assertEqual(primary["territory"], "US")
@@ -59,8 +59,8 @@ class ProductionStatusEvidencePromotionBatch007Tests(unittest.TestCase):
         self.assertEqual(primary["verification_status"], "source_verified")
         jp = releases[JP_RELEASE]
         self.assertEqual(jp["territory"], "JP")
-        self.assertEqual(jp["release_date"], "")
-        self.assertEqual(jp["verification_status"], "legacy_seed")
+        self.assertEqual(jp["release_date"], "2026-12-18")
+        self.assertEqual(jp["verification_status"], "source_verified")
 
 
 if __name__ == "__main__":

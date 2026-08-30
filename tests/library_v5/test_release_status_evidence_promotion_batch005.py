@@ -68,13 +68,14 @@ class ReleaseStatusEvidencePromotionBatch005Tests(unittest.TestCase):
         self.assertEqual(status_review["review_action"], "verified_source")
         self.assertEqual(status_review["evidence_ids"], STATUS_EVIDENCE_ID)
 
-    def test_japanese_release_row_stays_legacy_without_inferred_date(self):
+    def test_japanese_release_row_is_verified_only_from_its_direct_source(self):
         releases = {row["release_id"]: row for row in _rows("data/library/releases.csv")}
         jp = releases["release-x-men-97-s2-2026-07-01-jp"]
         self.assertEqual(jp["territory"], "JP")
-        self.assertEqual(jp["verification_status"], "legacy_seed")
-        self.assertEqual(jp["release_date"], "")
+        self.assertEqual(jp["verification_status"], "source_verified")
+        self.assertEqual(jp["release_date"], "2026-07-01")
 
 
 if __name__ == "__main__":
     unittest.main()
+

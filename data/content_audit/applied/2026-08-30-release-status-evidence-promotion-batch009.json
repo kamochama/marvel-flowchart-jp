@@ -1,0 +1,39 @@
+{
+  "batch_id": "2026-08-30-release-status-evidence-promotion-batch009",
+  "evidence_ids": [
+    "evidence-release-blade-mcu-tba-tba-primary",
+    "evidence-production-status-blade-mcu-tba-tba-snapshot-2026-08-28",
+    "evidence-production-status-avengers-secret-wars-2027-12-17-snapshot-2026-08-28",
+    "evidence-production-status-spider-man-beyond-the-spider-verse-tba-snapshot-2026-08-28"
+  ],
+  "fact_tables": ["releases.csv", "production_status_assertions.csv"],
+  "post_write_sha256": {
+    "data/library/releases.csv": "2a291a638d5dec788be3dc35407b52dd695eead8547fc96a011a22a011ff9215",
+    "data/library/production_status_assertions.csv": "f70295b9f23e814e212ddf3f4514e378e33b7a6ca9ff5e1bb39b3019cdb7774a",
+    "data/library/evidence.csv": "190791be061aed3da695c284a739a4217a1e5670734c8007fe621d4291f9f3a2",
+    "data/content_audit/reviews.csv": "dcb28aa581df969695af119b4dd212539cd8282ff3e4086688e975936be2e8eb"
+  },
+  "release_row_count_before": 138,
+  "release_row_count_after": 138,
+  "production_status_row_count_before": 131,
+  "production_status_row_count_after": 131,
+  "evidence_row_count_before": 115,
+  "evidence_row_count_after": 119,
+  "review_row_count_before": 90,
+  "review_row_count_after": 94,
+  "promoted_fact_ids": [
+    "release-blade-mcu-tba-tba-primary",
+    "production-status-blade-mcu-tba-tba-snapshot-2026-08-28",
+    "production-status-avengers-secret-wars-2027-12-17-snapshot-2026-08-28",
+    "production-status-spider-man-beyond-the-spider-verse-tba-snapshot-2026-08-28"
+  ],
+  "review_ids": [
+    "review-2026-08-30-release-blade-mcu-tba-tba-primary",
+    "review-2026-08-30-production-status-blade-mcu-tba-tba-snapshot-2026-08-28",
+    "review-2026-08-30-production-status-avengers-secret-wars-2027-12-17-snapshot-2026-08-28",
+    "review-2026-08-30-production-status-spider-man-beyond-the-spider-verse-tba-snapshot-2026-08-28"
+  ],
+  "source_ids": ["movies", "marvel-movies-current-v4", "sony-beyond-2026"],
+  "verification_scope": "Only the Blade undated announced release/status listing, the Secret Wars announced-status snapshot, and the Beyond the Spider-Verse announced-status snapshot are source_verified in this batch. Blade remains territory=unknown, release_date blank, release_precision=none, certainty=unknown; announced semantics and asserted_at=2026-08-28 are retained; no phase, completion, or release inference is made."
+}
+

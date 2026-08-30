@@ -34,6 +34,14 @@ class ReleaseStatusEvidencePromotionBatch002Tests(unittest.TestCase):
                 TARGET,
                 "release-avengers-secret-wars-2027-12-17-primary",
                 "release-x-men-97-s2-2026-07-01-primary",
+                "release-the-punisher-one-last-kill-2026-05-12-primary",
+                "release-blade-mcu-tba-tba-primary",
+                "release-avengers-doomsday-2026-12-18-jp",
+                "release-the-fantastic-four-first-steps-2025-jp",
+                "release-daredevil-born-again-s2-2026-jp",
+                "release-wonder-man-s1-2026-jp",
+                "release-x-men-97-s2-2026-07-01-jp",
+                "release-thunderbolts-new-avengers-2025-primary",
             },
         )
         self.assertEqual(releases[TARGET]["territory"], "US")
@@ -73,3 +81,4 @@ class ReleaseStatusEvidencePromotionBatch002Tests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

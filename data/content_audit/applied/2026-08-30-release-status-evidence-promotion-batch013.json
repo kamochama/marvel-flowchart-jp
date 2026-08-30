@@ -1,0 +1,27 @@
+{
+  "batch_id": "2026-08-30-release-status-evidence-promotion-batch013",
+  "evidence_ids": ["evidence-release-wonder-man-s1-2026-jp"],
+  "fact_tables": ["releases.csv"],
+  "post_write_sha256": {
+    "data/library/releases.csv": "b461679303eb8d26f682f97f61c220e31022e20f2ea53a167eee03dede90b60d",
+    "data/library/production_status_assertions.csv": "c5adda9924fca8f998a302076e11b5e9385731533ae15c25afb752e7818976b5",
+    "data/library/evidence.csv": "4d6ca6d78d39567af15cddcbafb5c0ea473a0e5476583a4d3acc6612b56b499c",
+    "data/content_audit/reviews.csv": "87d49f4b046ed5400164b18b2ae40e2c8e12049524f9a6451d067ac5b3db8e67",
+    "data/library/sources.csv": "5b0eaa3fa3c0471c848785781ddef083ac4a8219dd17745882eec4a411830f3e"
+  },
+  "release_row_count_before": 138,
+  "release_row_count_after": 138,
+  "status_row_count_before": 131,
+  "status_row_count_after": 131,
+  "evidence_row_count_before": 126,
+  "evidence_row_count_after": 127,
+  "review_row_count_before": 101,
+  "review_row_count_after": 102,
+  "source_row_count_before": 46,
+  "source_row_count_after": 47,
+  "promoted_fact_ids": ["release-wonder-man-s1-2026-jp"],
+  "review_ids": ["review-2026-08-30-release-wonder-man-s1-2026-jp"],
+  "source_ids": ["marvel-jp-wonder-man-s1-2026"],
+  "verification_scope": "Completed only the directly supported Japanese Disney+ release date for Wonder Man Season 1 (2026-01-28). Territory remains JP, the existing primary row remains legacy_seed with its original 2026-01-27 date, and the legacy production-status snapshot is not promoted by date inference."
+}
+

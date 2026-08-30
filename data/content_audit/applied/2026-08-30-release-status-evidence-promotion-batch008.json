@@ -1,0 +1,41 @@
+{
+  "batch_id": "2026-08-30-release-status-evidence-promotion-batch008",
+  "evidence_ids": [
+    "evidence-release-the-punisher-one-last-kill-2026-05-12-primary",
+    "evidence-production-status-the-punisher-one-last-kill-2026-05-12-snapshot-2026-08-28"
+  ],
+  "fact_tables": [
+    "releases.csv",
+    "production_status_assertions.csv"
+  ],
+  "post_write_sha256": {
+    "data/content_audit/reviews.csv": "41ac21e26604f0000f2b05d07c2993834b01c60066bb45d37843502c8262c249",
+    "data/library/evidence.csv": "1f5e7ab443e734d377e8eb11a3f07291d068acfd8a67932ff4db05cb983bce7d",
+    "data/library/production_status_assertions.csv": "5ada0e5c1b7bc0a7c675289638cd2c5473e93b8ce3f7b0da93209c976948e10c",
+    "data/library/releases.csv": "5e6719ce424924fd0615f206b5dfc7de777fd6ce4c7abd58cf635471c0ef81db",
+    "data/library/sources.csv": "3b28c7d5951a4d0fd1641ec7d154f8979a8c107936fc5998fd74a6191ef47a3b"
+  },
+  "release_row_count_before": 138,
+  "release_row_count_after": 138,
+  "production_status_row_count_before": 131,
+  "production_status_row_count_after": 131,
+  "evidence_row_count_before": 113,
+  "evidence_row_count_after": 115,
+  "review_row_count_before": 88,
+  "review_row_count_after": 90,
+  "source_row_count_before": 44,
+  "source_row_count_after": 44,
+  "promoted_fact_ids": [
+    "release-the-punisher-one-last-kill-2026-05-12-primary",
+    "production-status-the-punisher-one-last-kill-2026-05-12-snapshot-2026-08-28"
+  ],
+  "review_ids": [
+    "review-2026-08-30-release-the-punisher-one-last-kill-2026-05-12-primary",
+    "review-2026-08-30-production-status-the-punisher-one-last-kill-2026-05-12-snapshot-2026-08-28"
+  ],
+  "source_ids": [
+    "tv"
+  ],
+  "verification_scope": "Only the existing Punisher: One Last Kill primary streaming release and released-status snapshot are source_verified in this batch. The release remains territory=unknown, the status remains released with asserted_at=2026-08-28, the separate JP row remains blank-date legacy_seed, and no production milestone or graph fact is inferred."
+}
+

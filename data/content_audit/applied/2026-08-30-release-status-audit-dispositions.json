@@ -1,0 +1,49 @@
+{
+  "batch_id": "2026-08-30-release-status-audit-dispositions",
+  "fact_count": 269,
+  "disposition_counts": {
+    "promote": 27,
+    "defer": 240,
+    "conflict": 2
+  },
+  "promoted_fact_count": 27,
+  "deferred_fact_count": 240,
+  "conflict_fact_count": 2,
+  "promoted_fact_ids": [
+    "production-status-avengers-doomsday-2026-12-18-snapshot-2026-08-28",
+    "production-status-avengers-secret-wars-2027-12-17-snapshot-2026-08-28",
+    "production-status-blade-mcu-tba-tba-snapshot-2026-08-28",
+    "production-status-daredevil-born-again-s2-2026-snapshot-2026-08-28",
+    "production-status-daredevil-born-again-s3-tba-snapshot-2026-08-28",
+    "production-status-spider-man-beyond-the-spider-verse-tba-snapshot-2026-08-28",
+    "production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28",
+    "production-status-the-fantastic-four-first-steps-2025-snapshot-2026-08-28",
+    "production-status-the-punisher-one-last-kill-2026-05-12-snapshot-2026-08-28",
+    "production-status-thunderbolts-new-avengers-2025-snapshot-2026-08-28",
+    "production-status-visionquest-2026-10-14-snapshot-2026-08-28",
+    "production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28",
+    "production-status-your-friendly-neighborhood-spider-man-s2-2026-snapshot-2026-08-28",
+    "release-avengers-doomsday-2026-12-18-jp",
+    "release-avengers-doomsday-2026-12-18-primary",
+    "release-avengers-secret-wars-2027-12-17-primary",
+    "release-blade-mcu-tba-tba-primary",
+    "release-daredevil-born-again-s2-2026-jp",
+    "release-spider-man-beyond-the-spider-verse-tba-primary",
+    "release-spider-man-brand-new-day-2026-07-31-primary",
+    "release-the-fantastic-four-first-steps-2025-jp",
+    "release-the-punisher-one-last-kill-2026-05-12-primary",
+    "release-thunderbolts-new-avengers-2025-primary",
+    "release-visionquest-2026-10-14-primary",
+    "release-wonder-man-s1-2026-jp",
+    "release-x-men-97-s2-2026-07-01-jp",
+    "release-x-men-97-s2-2026-07-01-primary"
+  ],
+  "conflict_fact_ids": [
+    "production-status-wonder-man-s2-tba-snapshot-2026-08-28",
+    "release-your-friendly-neighborhood-spider-man-s2-2026-primary"
+  ],
+  "inventory_sha256": "4eb7e213b487352c545270d630c5db1ff3294ed074e271ca5d4d0aa9272bd6c2",
+  "verification_boundary": "Only promote facts with exact qualifying evidence and an auditable legacy_seed -> source_verified review. All deferred and conflict facts remain legacy_seed; no release/status fact is used to derive graph edges or production milestones.",
+  "next_audit": "Add a work-specific primary source, evidence row, and review transition for deferred facts; resolve both conflicts before any promotion."
+}
+
