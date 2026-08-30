@@ -1,55 +1,50 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "policy_scope": "public_ui_v5_provisional",
   "runtime_edge_field": "connections.csv.importance",
   "legacy_annotation_field": "connections.csv.prewatch_tier",
   "tiers": [
-    "minimum",
-    "recommended",
+    "official",
+    "site-proposal",
     "complete",
     "none"
   ],
   "labels_ja": {
-    "minimum": "最低限",
-    "recommended": "おすすめ",
+    "official": "公式予習ルート",
+    "site-proposal": "サイト提案ルート",
     "complete": "完全版",
     "none": "対象外"
   },
   "tier_meaning": {
-    "minimum": "そのゴールへ直接入る本筋・直接続編・強いlead-in。直接の中核接続だけを表示し、再帰的には辿らない（仮）。",
-    "recommended": "公式が対象作品の前に見るものとして示した予習ルートを優先する。未登録なら監査済み編集ルートと中核の前史で補う（仮）。",
+    "official": "根拠URLと監査レビューが登録された公式予習ルートだけを表示する。未登録時はサイト提案へ自動切替しない。",
+    "site-proposal": "公式予習ルートとは分離し、監査済み接続表とサイト提案ルートから中核の前史を表示する。",
     "complete": "中核・推奨の前史を再帰的に辿り、人物再登場、世界観、マルチバース、variant、公式関連企画などの直接参照も含める。",
     "none": "関係データには残すが予習プランには使わない。"
   },
   "modes": {
-    "minimum": {
-      "label_ja": "最低限",
-      "algorithm": "direct_core_edges",
-      "edge_field": "connections.csv.importance",
-      "accepted_values": [
-        "core"
-      ],
+    "official": {
+      "label_ja": "公式予習ルート",
+      "algorithm": "official_route_only",
+      "source": "data/prewatch_official_routes.json",
+      "fallback": "none",
       "recursive_tiers": [],
-      "description": "ゴールへ直接入るimportance=coreの前史だけを表示する。再帰探索や推奨ルートからの補完は行わない（仮）。"
+      "description": "登録済みの公式予習ルートだけを表示する。未登録のゴールはサイト提案へ自動切替せず、未登録であることを明示する。"
     },
-    "recommended": {
-      "label_ja": "おすすめ",
-      "algorithm": "official_route_or_curated_fallback_plus_core",
-      "steps": [
-        "対象作品に監査済みの公式予習ルートがあれば、それを優先する",
-        "公式ルートが未登録なら監査済み編集ルートを代替表示する",
-        "中核の前史を再帰的に加え、客演・参照だけの接続は自動では広げない"
-      ],
-      "provenance": [
-        "official",
-        "curated",
-        "graph"
-      ],
+    "site-proposal": {
+      "label_ja": "サイト提案ルート",
+      "algorithm": "curated_route_plus_core",
+      "source": "index.htmlのサイト提案ルート（CURATED_ROUTES_V56）とconnections.csv",
+      "fallback": "graph_core",
       "recursive_tiers": [],
       "expansion_tiers": [
         "core"
       ],
-      "expansion_waves": 0
+      "expansion_waves": 0,
+      "provenance": [
+        "curated",
+        "graph"
+      ],
+      "description": "公式予習ルートとは分離し、サイト提案ルートと接続重要度coreの前史を表示する。"
     },
     "complete": {
       "label_ja": "完全版",
@@ -61,8 +56,12 @@
       "direct_tiers": [
         "reference"
       ],
-      "description": "中核・推奨を逆向きに再帰探索し、ゴールへ直接入るreferenceだけを補助的に加える。referenceを踏み台に再帰しない。visited setで重複・循環を防止する。"
+      "description": "中核・推奨を逆向きに再帰探索し、ゴールへ直接入るreferenceだけを補助的に加える。公式／サイト提案ルートは混ぜず、referenceを踏み台に再帰しない。visited setで重複・循環を防止する。"
     }
+  },
+  "legacy_modes": {
+    "minimum": "旧v4注釈。現行公開UIの選択肢ではない。",
+    "recommended": "旧v5共有状態。現行公開UIではsite-proposalへ正規化する。"
   },
   "compatibility": {
     "prewatch_tier": "v4の監査済み注釈として保持する。現行v5公開UIの仮ルールはimportanceと明示的なルート由来を使う。"

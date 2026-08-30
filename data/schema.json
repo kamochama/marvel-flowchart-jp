@@ -63,7 +63,7 @@
       "primary_key": "rule_no"
     },
     "prewatch_policy.json": {
-      "purpose": "minimum/recommended/complete traversal semantics"
+      "purpose": "official/site-proposal/complete traversal semantics"
     },
     "prewatch_overrides.csv": {
       "purpose": "manual/semantic tier overrides with evidence"

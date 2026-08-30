@@ -74,20 +74,8 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("サイト提案ルート", self.html)
         self.assertNotIn("監査済み編集ルート", self.html)
 
-    def test_html_hides_minimum_and_two_stage_choices(self) -> None:
-        """Legacy minimum/two-stage values stay internal, but are not offered in HTML controls."""
-        tier_select = re.search(
-            r'<select id="watchConnectionTier".*?</select>',
-            self.html,
-            re.DOTALL,
-        )
-        self.assertIsNotNone(tier_select)
-        self.assertNotIn('value="minimum"', tier_select.group(0))
-        self.assertNotIn("最低限", tier_select.group(0))
-        self.assertNotIn("2段階", self.html)
-
-    def test_preparation_selector_exposes_official_site_and_complete_modes(self) -> None:
-        """The watch planner exposes the three user-facing route choices."""
+    def test_preparation_selector_exposes_three_public_modes(self) -> None:
+        """The watch planner exposes official, site proposal, and complete modes."""
         tier_select = re.search(
             r'<select id="watchConnectionTier".*?</select>',
             self.html,
@@ -101,6 +89,33 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("公式予習ルート", tier_select.group(0))
         self.assertIn("サイト提案ルート", tier_select.group(0))
         self.assertIn("完全版", tier_select.group(0))
+        self.assertNotIn('value="minimum"', tier_select.group(0))
+        self.assertNotIn('value="recommended"', tier_select.group(0))
+        self.assertNotIn("2段階", self.html)
+
+    def test_chart_connection_selector_remains_independent_from_watch_modes(self) -> None:
+        """Chart edge visibility keeps its own recommended/complete selector."""
+        self.assertIn(
+            "tier.className='chart-tier-select'",
+            self.html,
+        )
+        self.assertIn(
+            "tier.innerHTML='<option value=\"recommended\" selected>おすすめ</option><option value=\"complete\">完全版</option>'",
+            self.html,
+        )
+        self.assertIn("window.marvelSetImportanceMode", self.html)
+        self.assertIn("document.querySelectorAll('.watch-tier-select')", self.html)
+
+    def test_complete_mode_has_nonofficial_provenance(self) -> None:
+        """Complete mode must not retain an official source URL or official provenance."""
+        complete = re.search(
+            r"if\(prepTier==='complete'\)\{.*?return \{ids,source:.*?\n\s*\};",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(complete)
+        self.assertIn("provenance:'complete'", complete.group(0))
+        self.assertIn("sourceUrl:''", complete.group(0))
 
     def test_mobile_overlay_restoration_uses_public_selection_state(self) -> None:
         """Global mobile helpers must not reach into the core module's local cache."""
@@ -124,6 +139,81 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("directCore", minimum.group(0))
         self.assertNotIn("recIds", minimum.group(0))
 
+    def test_official_mode_does_not_fallback_to_site_proposal(self) -> None:
+        """Official mode must use only a registered official route or show it as unavailable."""
+        official = re.search(
+            r"function buildOfficialPreparationPlan\(target\)\{.*?return \{\n\s*ids:\[\],",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(official)
+        self.assertIn("chooseOfficialPrewatchRoute", official.group(0))
+        self.assertIn("公式予習ルートは未登録", self.html)
+        self.assertIn("公式予習ルートは未登録", self.html)
+
+    def test_site_proposal_mode_never_uses_official_route(self) -> None:
+        """Site proposal mode must be independent from official route registration."""
+        site = re.search(
+            r"function buildSiteProposalPreparationPlan\(target\)\{.*?\n\}\nfunction buildPreparationPlan",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(site)
+        self.assertIn("chooseCuratedRoute", site.group(0))
+        self.assertNotIn("chooseOfficialPrewatchRoute", site.group(0))
+
+    def test_complete_mode_uses_graph_recursion_without_route_mixing(self) -> None:
+        """Complete mode must not import official/site proposal route IDs as provenance."""
+        complete = re.search(
+            r"if\(prepTier==='complete'\)\{.*?return \{ids,source:",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(complete)
+        self.assertIn("ancestorSetByImportance(target,true)", complete.group(0))
+        self.assertNotIn("recIds", complete.group(0))
+        self.assertNotIn("buildRecommendedPlan", complete.group(0))
+
+    def test_legacy_plan_values_normalize_to_site_proposal(self) -> None:
+        """Old recommended/minimum shared state remains readable as site proposal."""
+        self.assertIn(
+            "function normalizePreparationTier(tier)",
+            self.html,
+        )
+        self.assertIn("prepTier=normalizePreparationTier(tier)", self.html)
+        self.assertIn("Legacy shared-room values map to the explicit site proposal mode", self.html)
+
+    def test_site_proposal_path_filter_excludes_reference_edges(self) -> None:
+        """Site proposal explanations stay on core/recommended connections."""
+        allowed = re.search(
+            r"function prepAllowedEdge\(e\)\{.*?\n\s*\}",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(allowed)
+        self.assertIn(
+            "prepTier==='site-proposal' || prepTier==='recommended'",
+            allowed.group(0),
+        )
+
+    def test_official_route_highlight_is_cleared_outside_official_mode(self) -> None:
+        """Leaving official mode must remove its chart overlay state."""
+        sync = re.search(
+            r"function syncOfficialRouteHighlightForGoals\(\)\{.*?\n\s*\}",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(sync)
+        self.assertIn("prepTier!=='official'", sync.group(0))
+        self.assertIn("officialRouteHighlightEnabled=false", sync.group(0))
+        setter = re.search(
+            r"window\.marvelSetConnectionTier=function\(tier\)\{.*?\n\s*\};",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(setter)
+        self.assertIn("syncOfficialRouteHighlightForGoals();", setter.group(0))
+
     def test_path_mode_exposes_both_route_preferences(self) -> None:
         """The PATH explanation must have the controls it tells users to use."""
         self.assertRegex(
@@ -141,14 +231,15 @@ class WatchScrollNavigationContract(unittest.TestCase):
             ),
         )
 
-    def test_recommended_plan_exposes_official_provenance_boundary(self) -> None:
+    def test_plan_modes_expose_official_and_site_provenance_boundaries(self) -> None:
         """Curated routes must not be presented as an official prewatch list."""
-        self.assertIn("PUBLIC v5.20.7", self.html)
+        self.assertIn("PUBLIC v5.21.0", self.html)
         self.assertIn("OFFICIAL_PREWATCH_ROUTES_V57", self.html)
         self.assertIn("chooseOfficialPrewatchRoute", self.html)
         self.assertIn("provenance:'official'", self.html)
         self.assertIn("provenance:'curated'", self.html)
-        self.assertIn("公式予習リスト未登録", self.html)
+        self.assertIn("公式予習ルートは未登録", self.html)
+        self.assertIn("site-proposal", self.html)
         self.assertNotIn("監査済み推奨ルート上", self.html)
         self.assertIn("data-prep-provenance", self.html)
 
@@ -184,8 +275,8 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("公式出典", self.html)
 
     def test_official_route_order_is_preserved_before_graph_expansion(self) -> None:
-        self.assertIn("officialRouteIds", self.html)
-        self.assertIn("routeOrdered", self.html)
+        self.assertIn("const officialOrder=[]", self.html)
+        self.assertIn("const officialRank=new Map(officialOrder", self.html)
 
     def test_official_route_can_highlight_existing_chart_edges(self) -> None:
         self.assertIn("official-route-highlight", self.html)
@@ -210,21 +301,27 @@ class WatchScrollNavigationContract(unittest.TestCase):
     def test_data_policy_matches_provisional_tiered_ui_semantics(self) -> None:
         """The documented policy must match the current provisional UI contract."""
         policy = json.loads(PREWATCH_POLICY.read_text(encoding="utf-8"))
-        minimum = policy["modes"]["minimum"]
-        recommended = policy["modes"]["recommended"]
+        official = policy["modes"]["official"]
+        site_proposal = policy["modes"]["site-proposal"]
+        complete = policy["modes"]["complete"]
 
-        self.assertEqual(minimum["algorithm"], "direct_core_edges")
-        self.assertEqual(minimum.get("recursive_tiers", []), [])
-        self.assertIn("再帰", minimum["description"])
-        self.assertIn("行わない", minimum["description"])
+        self.assertEqual(official["algorithm"], "official_route_only")
+        self.assertEqual(official["fallback"], "none")
+        self.assertEqual(official.get("recursive_tiers", []), [])
+        self.assertIn("自動切替", official["description"])
+
+        self.assertEqual(site_proposal["algorithm"], "curated_route_plus_core")
+        self.assertIn("curated", site_proposal["provenance"])
+        self.assertIn("graph", site_proposal["provenance"])
+        self.assertEqual(site_proposal["expansion_waves"], 0)
+        self.assertIn("公式予習ルートとは分離", site_proposal["description"])
 
         self.assertEqual(
-            recommended["algorithm"],
-            "official_route_or_curated_fallback_plus_core",
+            complete["algorithm"],
+            "recursive_core_recommended_plus_direct_reference",
         )
-        self.assertIn("official", recommended["provenance"])
-        self.assertIn("curated", recommended["provenance"])
-        self.assertEqual(recommended["expansion_waves"], 0)
+        self.assertIn("混ぜず", complete["description"])
+        self.assertEqual(policy["legacy_modes"]["recommended"], "旧v5共有状態。現行公開UIではsite-proposalへ正規化する。")
 
         with PREWATCH_RULES.open(encoding="utf-8-sig", newline="") as handle:
             rules = list(csv.DictReader(handle))
@@ -232,13 +329,14 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertEqual(by_no["14"]["management_value"], "minimum-direct-core")
         self.assertEqual(
             by_no["15"]["management_value"],
-            "official-route-or-curated-fallback-plus-core",
+            "site-proposal-plus-core",
         )
         self.assertIn("再帰探索しない", by_no["14"]["meaning"])
 
         readme = DATA_README.read_text(encoding="utf-8")
-        self.assertIn("最低限: ゴールへ直接入る中核接続のみ（再帰なし）", readme)
-        self.assertIn("公式予習リストが未登録なら監査済み編集ルートを代替表示", readme)
+        self.assertIn("公式予習ルート", readme)
+        self.assertIn("サイト提案ルート", readme)
+        self.assertIn("完全版", readme)
 
         manifest = json.loads(DATA_MANIFEST.read_text(encoding="utf-8"))
         for manifest_name, path in (
