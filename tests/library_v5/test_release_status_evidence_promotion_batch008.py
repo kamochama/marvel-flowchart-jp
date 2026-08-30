@@ -77,12 +77,12 @@ class ReleaseStatusEvidencePromotionBatch008Tests(unittest.TestCase):
         self.assertEqual(jp["verification_status"], "legacy_seed")
         self.assertEqual(
             sum(row["verification_status"] == "source_verified" for row in releases.values()),
-            10,
+            14,
         )
         statuses = _rows("data/library/production_status_assertions.csv")
         self.assertEqual(
             sum(row["verification_status"] == "source_verified" for row in statuses),
-            11,
+            13,
         )
 
 
