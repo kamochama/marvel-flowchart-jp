@@ -20,7 +20,6 @@
 - Batch 012: Daredevil: Born Again Season 2 Japanese release date and current availability status.
 - Batch 013: Wonder Man Season 1 Japanese Disney+ release date.
 - Batch 014: X-Men '97 Season 2 Japanese Disney+ release date.
-
 - Batch 015: Thunderbolts* U.S. theatrical release and released-status snapshot.
 
 All promoted rows preserve their existing territory, release precision, announced/released value, and `asserted_at`; no graph fact is derived from them.
