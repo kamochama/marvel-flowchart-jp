@@ -25,12 +25,17 @@ BATCH003_TARGET = "release-avengers-secret-wars-2027-12-17-primary"
 BATCH005_TARGET = "release-x-men-97-s2-2026-07-01-primary"
 BATCH008_TARGET = "release-the-punisher-one-last-kill-2026-05-12-primary"
 BATCH009_TARGET = "release-blade-mcu-tba-tba-primary"
+BATCH011_TARGETS = {
+    "release-avengers-doomsday-2026-12-18-jp",
+    "release-the-fantastic-four-first-steps-2025-jp",
+}
 EXPECTED_PROMOTED_RELEASES = set(TARGETS) | {
     BATCH002_TARGET,
     BATCH003_TARGET,
     BATCH005_TARGET,
     BATCH008_TARGET,
     BATCH009_TARGET,
+    *BATCH011_TARGETS,
 }
 EXPECTED_PROMOTED_STATUS_IDS = {
     "production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28",
