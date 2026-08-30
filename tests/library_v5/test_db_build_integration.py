@@ -158,11 +158,11 @@ class DbBackedBuildIntegrationTests(unittest.TestCase):
             first = build_module.build(repo)
             first_flowchart = (repo / "data/derived/flowchart.json").read_bytes()
             first_edges = (repo / "data/derived/work_edges_all.csv").read_bytes()
-            self.assertTrue(first["audit_ok"], first)
+            self.assertTrue(first["audit_ok"])
             self.assertGreater(first["flowchart_export"]["edges"], 0)
 
             second = build_module.build(repo)
-            self.assertTrue(second["audit_ok"], second)
+            self.assertTrue(second["audit_ok"])
             self.assertEqual(first_flowchart, (repo / "data/derived/flowchart.json").read_bytes())
             self.assertEqual(first_edges, (repo / "data/derived/work_edges_all.csv").read_bytes())
 
@@ -205,8 +205,8 @@ class DbBackedBuildIntegrationTests(unittest.TestCase):
             second_flowchart = (repo / "data/derived/flowchart.json").read_bytes()
             second_payload = json.loads(second_flowchart.decode("utf-8"))
 
-            self.assertTrue(first["audit_ok"], first)
-            self.assertTrue(second["audit_ok"], second)
+            self.assertTrue(first["audit_ok"])
+            self.assertTrue(second["audit_ok"])
             self.assertEqual(first_flowchart, second_flowchart)
             self.assertEqual(
                 _flowchart_graph_projection(first_payload),
