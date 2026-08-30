@@ -30,6 +30,8 @@ class ReleaseEvidencePromotionBatch003Tests(unittest.TestCase):
             "release-x-men-97-s2-2026-07-01-primary",
             "release-the-punisher-one-last-kill-2026-05-12-primary",
             "release-blade-mcu-tba-tba-primary",
+            "release-avengers-doomsday-2026-12-18-jp",
+            "release-the-fantastic-four-first-steps-2025-jp",
         }
         self.assertEqual(promoted, expected_existing | {TARGET})
         self.assertEqual(releases[TARGET]["territory"], "US")
