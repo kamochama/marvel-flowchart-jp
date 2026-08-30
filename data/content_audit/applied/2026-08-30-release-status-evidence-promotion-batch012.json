@@ -1,0 +1,36 @@
+{
+  "batch_id": "2026-08-30-release-status-evidence-promotion-batch012",
+  "evidence_ids": [
+    "evidence-release-daredevil-born-again-s2-2026-jp",
+    "evidence-production-status-daredevil-born-again-s2-2026-snapshot-2026-08-28"
+  ],
+  "fact_tables": ["releases.csv", "production_status_assertions.csv"],
+  "post_write_sha256": {
+    "data/library/releases.csv": "bd29df8711796493e4b8e071963f457bb7c915f91b3eb4ba3c2c41e2941b10c2",
+    "data/library/production_status_assertions.csv": "c5adda9924fca8f998a302076e11b5e9385731533ae15c25afb752e7818976b5",
+    "data/library/evidence.csv": "177a3e48c9cdaeccb849b3b9203deb6f259c1c1cbcc5c4dce3e70afe9731efc7",
+    "data/content_audit/reviews.csv": "2d42245973adb887eab1194f09f02dc35664c49be71d183f0ffb7e3d4a476d41",
+    "data/library/sources.csv": "1bec6293289a40573336c3c410066a659dafbf12ea71c687632d797a7564c877"
+  },
+  "release_row_count_before": 138,
+  "release_row_count_after": 138,
+  "status_row_count_before": 131,
+  "status_row_count_after": 131,
+  "evidence_row_count_before": 124,
+  "evidence_row_count_after": 126,
+  "review_row_count_before": 99,
+  "review_row_count_after": 101,
+  "source_row_count_before": 45,
+  "source_row_count_after": 46,
+  "promoted_fact_ids": [
+    "release-daredevil-born-again-s2-2026-jp",
+    "production-status-daredevil-born-again-s2-2026-snapshot-2026-08-28"
+  ],
+  "review_ids": [
+    "review-2026-08-30-release-daredevil-born-again-s2-2026-jp",
+    "review-2026-08-30-production-status-daredevil-born-again-s2-2026-snapshot-2026-08-28"
+  ],
+  "source_ids": ["disneyplus-jp-daredevil-born-again-s2-2026"],
+  "verification_scope": "Completed only the directly supported Japanese release date and current availability for Daredevil: Born Again Season 2 (2026-03-25). Territory remains JP, the existing primary row remains legacy_seed with its original 2026-03-24 date, and no U.S. date or status is inferred."
+}
+
