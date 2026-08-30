@@ -37,11 +37,11 @@ class ReleaseStatusInventoryTests(unittest.TestCase):
         self.assertEqual({row["disposition"] for row in rows}, {"promote", "defer", "conflict"})
         self.assertEqual(
             sum(row["disposition"] == "promote" for row in rows),
-            16,
+            19,
         )
         self.assertEqual(
             sum(row["disposition"] == "defer" for row in rows),
-            251,
+            248,
         )
         self.assertEqual(
             sum(row["disposition"] == "conflict" for row in rows),
