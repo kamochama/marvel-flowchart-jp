@@ -4450,7 +4450,7 @@ function canvasShadowFor(classes){
 }
 function rebuildMobileCanvas(wrap,geometry=true,preserveOverlay=false){
   const st=mobileCanvasStates.get(wrap); if(!st) return;
-  const svg=st.svg,keepState=preserveOverlay&&st.overlayActive?(st.overlayState||selectionStateCache||window.__marvelLastSelectionState||null):null;
+  const svg=st.svg,keepState=preserveOverlay&&st.overlayActive?(st.overlayState||window.__marvelLastSelectionState||null):null;
   if(geometry){
     st.primitives=[...svg.querySelectorAll('path,polygon,polyline,rect,text')].filter(el=>!el.closest('defs')).map(el=>canvasPrimitive(svg,el)).filter(Boolean);
     st.nodeBoxes=[...svg.querySelectorAll('g.node')].map(g=>({id:gt(g),box:canvasRootBBox(svg,g)})).filter(x=>x.id&&x.box);
@@ -4754,13 +4754,13 @@ function drawMobileSelectionGestureFrame(wrap){
 }
 function restoreMobileSelectionOverlay(wrap,state=null){
   const cs=mobileCanvasStates.get(wrap);if(!cs)return false;
-  const next=state||selectionStateCache||window.__marvelLastSelectionState||null;
+  const next=state||window.__marvelLastSelectionState||null;
   if(!selectedIds.size||!next){cs.overlayActive=false;cs.overlayState=null;cs.overlayCamera=null;cs.overlay.style.transform='none';clearMobileSelectionOverlay(wrap);return false;}
   cs.overlayActive=true;cs.overlayState=next;return drawMobileSelectionOverlay(wrap,next);
 }
 function restoreMobileSelectionOverlayIfNeeded(wrap=activeWrap()){
   if(!wrap||!mobileChartMotion.matches||!isMobileCanvasWrap(wrap)||!selectedIds.size)return false;
-  initMobileCanvas(wrap);return restoreMobileSelectionOverlay(wrap,selectionStateCache||window.__marvelLastSelectionState||null);
+  initMobileCanvas(wrap);return restoreMobileSelectionOverlay(wrap,window.__marvelLastSelectionState||null);
 }
 window.restoreMobileSelectionOverlayIfNeeded=restoreMobileSelectionOverlayIfNeeded;
 
@@ -6103,9 +6103,8 @@ render();
 
     if(prepTier==='minimum'){
       const directCore=(inc[target]||[]).filter(e=>importanceOf(e)==='core').map(e=>e.source);
-      let ids=sortByRelease(new Set(directCore));
-      if(!ids.length && recIds.length) ids=recIds.slice(-Math.min(3,recIds.length));
-      return {ids,source:'接続重要度「中核」の直接前史',kind:'minimum',tierLabel:'最低限',tierNote:'視聴目標へ直接入る「中核」接続だけを優先します。中核が無い場合のみ推奨ルート直前を最大3作品提示します。'};
+      const ids=sortByRelease(new Set(directCore));
+      return {ids,source:'接続重要度「中核」の直接前史',kind:'minimum',tierLabel:'最低限',tierNote:'視聴目標へ直接入る「中核」接続だけを表示します。再帰探索や推奨ルートからの補完は行いません。'};
     }
 
     if(prepTier==='recommended'){

@@ -33,6 +33,28 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("watchWorkspace.scrollIntoView", self.html)
         self.assertIn("window.returnToGraphFromWatch", self.html)
 
+    def test_mobile_overlay_restoration_uses_public_selection_state(self) -> None:
+        """Global mobile helpers must not reach into the core module's local cache."""
+        restore = re.search(
+            r"function restoreMobileSelectionOverlayIfNeeded\(.*?\n\}",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(restore)
+        self.assertNotIn("selectionStateCache", restore.group(0))
+        self.assertIn("window.__marvelLastSelectionState", restore.group(0))
+
+    def test_minimum_plan_is_direct_core_only(self) -> None:
+        """The provisional minimum tier must not fall back to a recursive plan."""
+        minimum = re.search(
+            r"if\(prepTier==='minimum'\)\{.*?return \{ids,source:",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(minimum)
+        self.assertIn("directCore", minimum.group(0))
+        self.assertNotIn("recIds", minimum.group(0))
+
 
 if __name__ == "__main__":
     unittest.main()
