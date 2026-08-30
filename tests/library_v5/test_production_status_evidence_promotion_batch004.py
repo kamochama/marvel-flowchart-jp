@@ -8,8 +8,12 @@ TARGET = "production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08
 EXPECTED_PROMOTED_STATUS_IDS = {
     TARGET,
     "production-status-x-men-97-s2-2026-07-01-snapshot-2026-08-28",
-    "production-status-avengers-doomsday-2026-12-18-snapshot-2026-08-28",
     "production-status-visionquest-2026-10-14-snapshot-2026-08-28",
+    "production-status-avengers-doomsday-2026-12-18-snapshot-2026-08-28",
+    "production-status-the-punisher-one-last-kill-2026-05-12-snapshot-2026-08-28",
+    "production-status-blade-mcu-tba-tba-snapshot-2026-08-28",
+    "production-status-avengers-secret-wars-2027-12-17-snapshot-2026-08-28",
+    "production-status-spider-man-beyond-the-spider-verse-tba-snapshot-2026-08-28",
 }
 EXPECTED_PROMOTED_RELEASE_IDS = {
     "release-avengers-doomsday-2026-12-18-primary",
@@ -18,6 +22,8 @@ EXPECTED_PROMOTED_RELEASE_IDS = {
     "release-spider-man-brand-new-day-2026-07-31-primary",
     "release-visionquest-2026-10-14-primary",
     "release-x-men-97-s2-2026-07-01-primary",
+    "release-the-punisher-one-last-kill-2026-05-12-primary",
+    "release-blade-mcu-tba-tba-primary",
 }
 EVIDENCE_ID = "evidence-production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"
 REVIEW_ID = "review-2026-08-30-production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28"
@@ -85,3 +91,4 @@ class ProductionStatusEvidencePromotionBatch004Tests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
