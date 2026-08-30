@@ -6,8 +6,9 @@ This file defines persistent working rules for Codex and other coding agents ope
 
 - Repository: `kamochama/marvel-flowchart-jp`.
 - Production branch: `main`.
-- Latest semantic production baseline (PR #28; subsequent docs-only PRs do not change code/data): `9b0a754aee920c8ec922142d58d71c5d2665fb9a`.
-- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), and PR #28 (Avengers: Doomsday production-status evidence promotion batch007) are merged into `main`.
+- Latest semantic production baseline after PR #30: `641d16577c847ab5f917e3faea0900536dc0baab`.
+- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), and PR #30 (full release/status evidence audit) are merged into `main`.
+- PR #30 promoted 27 release/status facts with exact evidence and review transitions; 240 facts remain deferred and 2 remain in explicit conflict.
 - There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
 - During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
 - `main` is **not permanently frozen**. It is the intended final integration target after the current work is complete, fully audited, and the user explicitly approves the final merge.
@@ -114,32 +115,33 @@ Examples already established:
 
 ## Current compatibility invariants
 
-The latest semantic production baseline after PR #28 is:
+The latest semantic production baseline after PR #30 is:
 
-- `main` `9b0a754aee920c8ec922142d58d71c5d2665fb9a`
-- GitHub Actions run #274: GREEN
-- GitHub Pages deployment: triggered by the merge (the preceding confirmed deployment run #49 was GREEN)
-- 253 / 253 library-v5 unit tests PASS
+- `main` `641d16577c847ab5f917e3faea0900536dc0baab`
+- GitHub Actions run #285 (PR #30 head): GREEN
+- 305 / 305 library-v5 unit tests PASS
 - audit issues: 0
-- review integrity issues: 0
+- review-integrity issues: 0
 - FK check rows: 0
 - SQLite integrity: `ok`
-- releases: 138 rows (6 `source_verified`, 132 `legacy_seed`)
-- production-status assertions: 131 rows (4 `source_verified`, 127 `legacy_seed`)
-- sources: 44
-- evidence: 113
-- reviews: 88
+- releases: 138 rows (14 `source_verified`, 124 `legacy_seed`)
+- production-status assertions: 131 rows (13 `source_verified`, 118 `legacy_seed`)
+- sources: 49
+- evidence: 130
+- reviews: 105
 - `work_edges_all`: 361
 - `work_pair_reasons`: 569
 - prewatch edges: 199
 - story paths reproduced: 83 / 83
-- events / occurrences / transitions / transition participants: 8 / 8 / 8 / 8
+- events / occurrences / transitions / transition participants: 9 / 9 / 9 / 10
+
+PR #30 also records the strict full-audit disposition for all 269 release/status facts: 27 promoted, 240 deferred, and 2 conflicts retained as seeds.
 
 These numbers document the checkpoint. They are not frozen targets except where a test explicitly encodes semantic compatibility. Future legitimate first-class facts can increase row counts while preserving protected graph compatibility.
 
 ## Current-plan completion and production integration gate
 
-The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, and X-Men '97 batch005 are integrated into `main`. The next semantic change must use its own bounded plan, RED contract, evidence/review audit, and full verification.
+The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, and the full release/status evidence audit (PR #30) are integrated into `main`. The next semantic change must use its own bounded plan, RED contract, evidence/review audit, and full verification. The next explicitly bounded work is HTML design/operation debugging; it has not started in this baseline.
 
 For every future branch:
 
