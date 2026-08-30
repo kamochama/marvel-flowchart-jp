@@ -3,7 +3,7 @@
 監査日: 2026-08-29
 対象リポジトリ: `kamochama/marvel-flowchart-jp`
 
-> **Historical review notice (updated 2026-08-30):** This review records the normalized release/status seed boundary before evidence promotions. Its `main` and all-`legacy_seed` statements are historical. The latest semantic production baseline is `main` at `9b0a754aee920c8ec922142d58d71c5d2665fb9a`; PR #22 subsequently promoted the X-Men '97 Season 2 primary release and released-status snapshot, PR #26 promoted the VisionQuest announced-status snapshot, and PR #28 promoted the Avengers: Doomsday announced-status snapshot, as recorded in the current Codex handoff and roadmap. Later documentation-only commits do not alter code/data.
+> **Historical review notice (updated 2026-08-30):** This review records the normalized release/status seed boundary before evidence promotions. Its `main` and all-`legacy_seed` statements are historical. The latest semantic production baseline is `main` at `641d16577c847ab5f917e3faea0900536dc0baab`; PR #22, PR #26, PR #28, and PR #30 subsequently promoted evidence-backed release/status facts, as recorded in the current Codex handoff and roadmap. The full-audit disposition is 27 promoted, 240 deferred, and 2 conflicted facts; later documentation-only commits do not alter code/data.
 
 ## 対象と実行境界
 
@@ -140,3 +140,7 @@ build 前後の protected input hash 比較は `protected_inputs_unchanged=true`
 - `index.html` の DB-derived node/edge JSON への切替（HTML DB-export milestone は未着手）。
 
 PR は primary agent が全体差分と fresh remote CI を最終確認する準備ができているが、この Task では push、PR merge、production publish を行っていない。`main` への統合には、上記の全体監査後にユーザーの明示的な merge authorization が必要である。release/status の evidence promotion と HTML DB-export は、それぞれ別の実行計画・承認境界として扱う。
+
+## Full release/status evidence audit — PR #30
+
+The later full-fact audit is recorded in `docs/superpowers/reviews/2026-08-30-marvel-library-full-release-status-audit.md` and was merged as PR #30 at `641d16577c847ab5f917e3faea0900536dc0baab`. It promotes only exact source/evidence/review matches: 27 facts promoted, 240 deferred, and 2 conflicts retained as `legacy_seed`. GitHub Actions run #285 passed 305 tests; build/audit/review/FK checks are zero and graph compatibility remains 361 edges, 569 reasons, prewatch 199, and story paths 83/83. The normalized rows now contain 14 verified releases and 13 verified status snapshots (sources/evidence/reviews 49/130/105). The next boundary is a separately planned HTML design/operation debugging pass; this historical review does not claim that UI debugging has started.

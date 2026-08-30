@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `9b0a754aee920c8ec922142d58d71c5d2665fb9a` (main may include later documentation-only commits)
+- latest semantic baseline commit: `641d16577c847ab5f917e3faea0900536dc0baab` (PR #30 merge; docs-only baseline updates may follow)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -23,6 +23,7 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #22 X-Men '97 release/status evidence promotion batch005: merged as `19134e187d40e808f926fd32607b0a2deebac8f1`
 - PR #26 VisionQuest production-status evidence promotion batch006: merged as `230d49e21383121fe1ac6cead117ee12bbb5ef48`
 - PR #28 Avengers: Doomsday production-status evidence promotion batch007: merged as `9b0a754aee920c8ec922142d58d71c5d2665fb9a`
+- PR #30 full release/status evidence audit: merged as `641d16577c847ab5f917e3faea0900536dc0baab`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -55,24 +56,24 @@ If the working tree is not clean or remote HEAD differs unexpectedly, reconcile 
 
 ## 0.1 Production baseline after the 2026-08-30 integration
 
-The latest semantic production baseline is `main` at `9b0a754aee920c8ec922142d58d71c5d2665fb9a`; later documentation-only commits do not alter this code/data baseline. PR #21 fixed the mobile touch-target/undo contract, PR #22 completed batch005 for X-Men '97 Season 2, PR #26 completed batch006 for the VisionQuest production-status snapshot, and PR #28 completed batch007 for the Avengers: Doomsday production-status snapshot.
+The latest semantic production baseline is `main` at `641d16577c847ab5f917e3faea0900536dc0baab`, the merge commit for PR #30. PR #30 completed the strict full release/status evidence audit after batches005–007: exactly 27 facts were promoted with qualifying evidence and review transitions, 240 facts remain deferred, and 2 conflicts remain explicitly retained as seeds.
 
-Fresh verification for the batch007-integrated baseline:
+Fresh verification for the PR #30-integrated baseline:
 
-- GitHub Actions run #274: GREEN;
-- GitHub Pages deployment: triggered by the merge (the preceding confirmed deployment run #49 was GREEN);
-- 253 / 253 library-v5 tests PASS;
+- GitHub Actions run #285 (PR #30 head): GREEN;
+- 305 / 305 library-v5 tests PASS;
 - audit issues, review-integrity issues, and SQLite foreign-key rows: `0`;
 - SQLite `integrity_check`: `ok`;
-- releases: `138` rows (`6` `source_verified`, `132` `legacy_seed`);
-- production-status assertions: `131` rows (`4` `source_verified`, `127` `legacy_seed`);
-- sources / evidence / reviews: `44` / `113` / `88`;
+- releases: `138` rows (`14` `source_verified`, `124` `legacy_seed`);
+- production-status assertions: `131` rows (`13` `source_verified`, `118` `legacy_seed`);
+- sources / evidence / reviews: `49` / `130` / `105`;
 - DB-derived artifact: `131` nodes, `361` directed edges, `569` traceable reasons, `42` character groups;
-- compatibility: prewatch edges `199`, story paths `83/83`.
+- compatibility: prewatch edges `199`, story paths `83/83`;
+- full disposition ledger: `269` facts = `27` promote, `240` defer, `2` conflict.
 
-Batch005 promotes only the X-Men '97 Season 2 primary streaming release and released-status snapshot. Batch006 promotes only the VisionQuest announced-status snapshot using Marvel Television's official Disney+ announcement. Batch007 promotes only the Avengers: Doomsday announced-status snapshot using Marvel Japan's official page; the announced state, audit snapshot date, and separate JP blank-date row remain unchanged, with no production milestone, territory, Japanese date, or graph fact inferred. The Japanese release rows remain unverified with blank dates. No graph edge or work-pair reason is derived from release/status facts. Applied records: `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch005.json`, `data/content_audit/applied/2026-08-30-release-status-evidence-promotion-batch006.json`, and `data/content_audit/applied/2026-08-30-production-status-evidence-promotion-batch007.json`.
+The applied records for the full audit are `data/content_audit/applied/2026-08-30-release-status-audit-dispositions.json` and promotion batches008–015. The inventory is `data/content_audit/release_status_inventory.csv`; conflicts are the YFNSM S2 release and Wonder Man S2 status. No release/status fact derives a graph edge, work-pair reason, production milestone, territory, or Earth identity.
 
-The remaining normalized release/status rows are intentionally still seeds (`132` release rows and `127` status rows). The next semantic batch requires its own bounded plan, RED contract, qualifying evidence, review transition, and full verification.
+The next boundary is the HTML design/operation debugging pass. It has not started in this baseline; when it begins, use a separate plan and UI regression contract rather than changing canonical metadata implicitly.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
@@ -483,3 +484,9 @@ Task 6 was finally verified on `codex/db-v1-releases-status` at HEAD `dd56f321eb
 The normalized migration contains `131` primary release rows, `7` separate Japanese-date release rows, and `131` production-status snapshot rows for `131` works. All `269` release/status facts remain `legacy_seed`; no evidence or review rows were added. Evidence-backed promotion is a later separately approved audit batch. The DB schema version is `1.2-normalized-releases-status`, the logical fingerprint is `80f345416dd37ea81dcc9a89b128020132440a9538506820764382d6b20c6825`, and legacy graph compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, story paths `83/83`.
 
 The release/status public views join only to `works` and do not feed graph derivation. The HTML DB-export milestone was later completed and merged as PR #12, with the committed `data/derived/flowchart.json` artifact repaired by PR #13 after the first public Pages check found a 404. The next boundary is (a) a separately planned evidence-promotion audit for a small subset of these legacy seeds or (b) one later normalized domain (`credits`, `entity_aliases`, `entity_memberships`, or `entity_possessions`); do not begin either without selecting a bounded plan and RED contract.
+
+## 12. Full release/status evidence audit — PR #30
+
+The full audit plan is `docs/superpowers/plans/2026-08-30-marvel-library-db-v1-full-release-status-audit.md`, with the review report in `docs/superpowers/reviews/2026-08-30-marvel-library-full-release-status-audit.md`. It inventories all 269 normalized release/status facts, promotes only exact source/evidence/review matches, and records every remaining row as `defer` or `conflict`. The merged baseline is `641d16577c847ab5f917e3faea0900536dc0baab`; CI run #285 passed 305 tests, build/audit/review/FK checks are zero, SQLite integrity is `ok`, and graph compatibility remains 361/569/199 with story paths 83/83.
+
+The data-audit boundary is complete. The next separately bounded task is HTML design and interaction debugging; do not infer that it has been completed from the DB/export tests above.
