@@ -38,6 +38,10 @@ class ReleaseStatusEvidencePromotionBatch002Tests(unittest.TestCase):
                 "release-blade-mcu-tba-tba-primary",
                 "release-avengers-doomsday-2026-12-18-jp",
                 "release-the-fantastic-four-first-steps-2025-jp",
+                "release-daredevil-born-again-s2-2026-jp",
+                "release-wonder-man-s1-2026-jp",
+                "release-x-men-97-s2-2026-07-01-jp",
+                "release-thunderbolts-new-avengers-2025-primary",
             },
         )
         self.assertEqual(releases[TARGET]["territory"], "US")
