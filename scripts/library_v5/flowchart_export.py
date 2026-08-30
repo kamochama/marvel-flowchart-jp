@@ -93,6 +93,69 @@ def _load_view_policy(repo_root: Path) -> dict[str, Any]:
     return _merge_dicts(default_flowchart_policy(), loaded)
 
 
+def _load_official_prewatch_routes(
+    repo_root: Path,
+    work_ids: set[str],
+) -> list[dict[str, object]]:
+    """Load and validate the audited, work-specific prewatch route registry."""
+    path = repo_root / "data" / "prewatch_official_routes.json"
+    if not path.exists():
+        return []
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"official_prewatch_routes_invalid:{path}") from exc
+    if not isinstance(document, dict) or document.get("schema_version") != "1":
+        raise ValueError("official_prewatch_routes_schema_invalid")
+    routes = document.get("routes")
+    if not isinstance(routes, list):
+        raise ValueError("official_prewatch_routes_must_be_list")
+    seen_route_ids: set[str] = set()
+    normalized: list[dict[str, object]] = []
+    for route in routes:
+        if not isinstance(route, dict):
+            raise ValueError("official_prewatch_route_must_be_object")
+        required = (
+            "route_id",
+            "target_work_id",
+            "route",
+            "route_ja",
+            "ids",
+            "source_url",
+            "checked_at",
+            "notes",
+            "verification_status",
+        )
+        if any(not isinstance(route.get(key), str) or not str(route[key]).strip() for key in required if key != "ids"):
+            raise ValueError("official_prewatch_route_field_invalid")
+        route_id = str(route["route_id"])
+        target = str(route["target_work_id"])
+        ids = route.get("ids")
+        if route_id in seen_route_ids or not isinstance(ids, list) or len(ids) < 2:
+            raise ValueError("official_prewatch_route_ids_invalid")
+        if any(not isinstance(work_id, str) or work_id not in work_ids for work_id in ids):
+            raise ValueError("official_prewatch_route_work_id_invalid")
+        if ids[-1] != target:
+            raise ValueError("official_prewatch_route_target_must_be_last")
+        if not str(route["source_url"]).startswith(("https://", "http://")):
+            raise ValueError("official_prewatch_route_source_url_invalid")
+        if str(route["verification_status"]) != "source_verified":
+            raise ValueError("official_prewatch_route_must_be_source_verified")
+        seen_route_ids.add(route_id)
+        normalized.append({
+            "route_id": route_id,
+            "target_work_id": target,
+            "route": str(route["route"]),
+            "route_ja": str(route["route_ja"]),
+            "ids": list(ids),
+            "source_url": str(route["source_url"]),
+            "checked_at": str(route["checked_at"]),
+            "notes": str(route["notes"]),
+            "verification_status": str(route["verification_status"]),
+        })
+    return normalized
+
+
 def _query_dicts(db_path: Path, query: str) -> list[dict[str, object]]:
     connection = open_query_connection(db_path)
     try:
@@ -294,6 +357,12 @@ def export_flowchart(
         _load_view_policy(repo_root),
         load_view_metadata(repo_root, {row["work_id"] for row in nodes}),
     )
+    official_routes = _load_official_prewatch_routes(
+        repo_root,
+        {row["work_id"] for row in nodes},
+    )
+    if official_routes:
+        view_policy["official_prewatch_routes"] = official_routes
     reasons_by_pair: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
     reasons_by_id = {row["reason_id"]: row for row in reasons}
     for row in reasons:

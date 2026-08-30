@@ -1,5 +1,8 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
+  "policy_scope": "public_ui_v5_provisional",
+  "runtime_edge_field": "connections.csv.importance",
+  "legacy_annotation_field": "connections.csv.prewatch_tier",
   "tiers": [
     "minimum",
     "recommended",
@@ -13,49 +16,59 @@
     "none": "対象外"
   },
   "tier_meaning": {
-    "minimum": "そのゴールの本筋・直接続編・強いlead-in。最低限モードで再帰的に辿る。",
-    "recommended": "理解・人物関係・主要クロスオーバーを大きく補強する接続。",
-    "complete": "人物再登場、世界観、マルチバース、variant、公式関連企画など補助情報まで含む。",
+    "minimum": "そのゴールへ直接入る本筋・直接続編・強いlead-in。直接の中核接続だけを表示し、再帰的には辿らない（仮）。",
+    "recommended": "公式が対象作品の前に見るものとして示した予習ルートを優先する。未登録なら監査済み編集ルートと中核の前史で補う（仮）。",
+    "complete": "中核・推奨の前史を再帰的に辿り、人物再登場、世界観、マルチバース、variant、公式関連企画などの直接参照も含める。",
     "none": "関係データには残すが予習プランには使わない。"
   },
   "modes": {
     "minimum": {
       "label_ja": "最低限",
-      "algorithm": "recursive_tier_closure",
-      "recursive_tiers": [
-        "minimum"
+      "algorithm": "direct_core_edges",
+      "edge_field": "connections.csv.importance",
+      "accepted_values": [
+        "core"
       ],
-      "description": "ゴールからminimum edgeだけを逆向きに再帰探索する。"
+      "recursive_tiers": [],
+      "description": "ゴールへ直接入るimportance=coreの前史だけを表示する。再帰探索や推奨ルートからの補完は行わない（仮）。"
     },
     "recommended": {
       "label_ja": "おすすめ",
-      "algorithm": "minimum_closure_plus_one_recommended_wave",
+      "algorithm": "official_route_or_curated_fallback_plus_core",
       "steps": [
-        "minimum closureを作る",
-        "そのclosure中の各作品へ入るrecommended edgeを1波だけ追加",
-        "追加作品についてminimum closureを追加"
+        "対象作品に監査済みの公式予習ルートがあれば、それを優先する",
+        "公式ルートが未登録なら監査済み編集ルートを代替表示する",
+        "中核の前史を再帰的に加え、客演・参照だけの接続は自動では広げない"
       ],
-      "recursive_tiers": [
-        "minimum"
+      "provenance": [
+        "official",
+        "curated",
+        "graph"
       ],
+      "recursive_tiers": [],
       "expansion_tiers": [
-        "recommended"
+        "core"
       ],
-      "expansion_waves": 1
+      "expansion_waves": 0
     },
     "complete": {
       "label_ja": "完全版",
-      "algorithm": "recursive_tier_closure",
+      "algorithm": "recursive_core_recommended_plus_direct_reference",
       "recursive_tiers": [
-        "minimum",
-        "recommended",
-        "complete"
+        "core",
+        "recommended"
       ],
-      "description": "none以外を逆向きに再帰探索する。visited setで重複・循環を防止する。"
+      "direct_tiers": [
+        "reference"
+      ],
+      "description": "中核・推奨を逆向きに再帰探索し、ゴールへ直接入るreferenceだけを補助的に加える。referenceを踏み台に再帰しない。visited setで重複・循環を防止する。"
     }
+  },
+  "compatibility": {
+    "prewatch_tier": "v4の監査済み注釈として保持する。現行v5公開UIの仮ルールはimportanceと明示的なルート由来を使う。"
   },
   "ordering": "release_sort_date then chronology only as display aid; graph reachability decides inclusion",
   "deprecated_fields": {
-    "connections.csv.render_prewatch": "v4以降の予習判定には使用せずprewatch_tierを使用する。"
+    "connections.csv.render_prewatch": "予習プランの判定には使用しない。v4のprewatch_tier注釈は互換性のため保持し、現行v5公開UIはimportanceと明示的なルート由来を使う。"
   }
 }

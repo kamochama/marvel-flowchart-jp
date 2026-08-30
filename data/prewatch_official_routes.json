@@ -1,0 +1,21 @@
+{
+  "schema_version": "1",
+  "routes": [
+    {
+      "route_id": "official-disneyplus-thunderbolts-2025",
+      "target_work_id": "thunderbolts-new-avengers-2025",
+      "route": "Disney+ Thunderbolts* prewatch",
+      "route_ja": "『サンダーボルツ*』公式予習",
+      "ids": [
+        "black-widow-2021",
+        "the-falcon-and-the-winter-soldier-2021",
+        "hawkeye-2021",
+        "thunderbolts-new-avengers-2025"
+      ],
+      "source_url": "https://www.disneyplus.com/explore/articles/thunderbolts-movie",
+      "checked_at": "2026-08-30",
+      "notes": "公式ページの What should I watch before Thunderbolts*? に記載された3作品。対象作品自身は表示順の末尾に含める。",
+      "verification_status": "source_verified"
+    }
+  ]
+}
