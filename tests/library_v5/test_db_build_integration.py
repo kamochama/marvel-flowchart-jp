@@ -77,8 +77,8 @@ class DbBackedBuildIntegrationTests(unittest.TestCase):
             first_fingerprint = json.loads(first_db_manifest.decode("utf-8"))
             second_fingerprint = json.loads(second_db_manifest.decode("utf-8"))
 
-            self.assertTrue(first["audit_ok"], first)
-            self.assertTrue(second["audit_ok"], second)
+            self.assertTrue(first["audit_ok"])
+            self.assertTrue(second["audit_ok"])
             self.assertIn("database", first)
             self.assertEqual(first["flowchart_export"]["path"], "data/derived/flowchart.json")
             self.assertEqual(first["flowchart_export"]["nodes"], len(first_flowchart_payload["nodes"]))
@@ -131,8 +131,8 @@ class DbBackedBuildIntegrationTests(unittest.TestCase):
             compatibility_before = canonical_hashes(repo)
             reviews_before = (repo / "data/content_audit/reviews.csv").read_bytes()
             changed = build_module.build(repo)
-            self.assertTrue(baseline["audit_ok"], baseline)
-            self.assertTrue(changed["audit_ok"], changed)
+            self.assertTrue(baseline["audit_ok"])
+            self.assertTrue(changed["audit_ok"])
             self.assertEqual(
                 baseline_graph,
                 {
