@@ -28,6 +28,8 @@ class ReleaseEvidencePromotionBatch003Tests(unittest.TestCase):
             "release-visionquest-2026-10-14-primary",
             "release-spider-man-brand-new-day-2026-07-31-primary",
             "release-x-men-97-s2-2026-07-01-primary",
+            "release-the-punisher-one-last-kill-2026-05-12-primary",
+            "release-blade-mcu-tba-tba-primary",
         }
         self.assertEqual(promoted, expected_existing | {TARGET})
         self.assertEqual(releases[TARGET]["territory"], "US")
@@ -55,14 +57,15 @@ class ReleaseEvidencePromotionBatch003Tests(unittest.TestCase):
         self.assertEqual(review["review_action"], "verified_source")
         self.assertEqual(review["evidence_ids"], EVIDENCE_ID)
 
-    def test_secret_wars_status_snapshot_remains_legacy_seed(self):
+    def test_secret_wars_status_snapshot_is_source_verified(self):
         statuses = {
             row["production_status_assertion_id"]: row
             for row in _rows("data/library/production_status_assertions.csv")
         }
         snapshot = statuses["production-status-avengers-secret-wars-2027-12-17-snapshot-2026-08-28"]
-        self.assertEqual(snapshot["verification_status"], "legacy_seed")
+        self.assertEqual(snapshot["verification_status"], "source_verified")
 
 
 if __name__ == "__main__":
     unittest.main()
+
