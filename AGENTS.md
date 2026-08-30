@@ -6,8 +6,8 @@ This file defines persistent working rules for Codex and other coding agents ope
 
 - Repository: `kamochama/marvel-flowchart-jp`.
 - Production branch: `main`.
-- Latest semantic production baseline after PR #30: `641d16577c847ab5f917e3faea0900536dc0baab`.
-- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), and PR #30 (full release/status evidence audit) are merged into `main`.
+- Latest semantic production baseline after PR #32: `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`.
+- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), and PR #32 (HTML design/operation debugging) are merged into `main`.
 - PR #30 promoted 27 release/status facts with exact evidence and review transitions; 240 facts remain deferred and 2 remain in explicit conflict.
 - There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
 - During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
@@ -115,11 +115,11 @@ Examples already established:
 
 ## Current compatibility invariants
 
-The latest semantic production baseline after PR #30 is:
+The latest semantic production baseline after PR #32 is:
 
-- `main` `641d16577c847ab5f917e3faea0900536dc0baab`
-- GitHub Actions run #285 (PR #30 head): GREEN
-- 305 / 305 library-v5 unit tests PASS
+- `main` `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`
+- PR #32 required check: GREEN (1 / 1)
+- 318 / 318 library-v5 unit tests PASS
 - audit issues: 0
 - review-integrity issues: 0
 - FK check rows: 0
@@ -135,13 +135,13 @@ The latest semantic production baseline after PR #30 is:
 - story paths reproduced: 83 / 83
 - events / occurrences / transitions / transition participants: 9 / 9 / 9 / 10
 
-PR #30 also records the strict full-audit disposition for all 269 release/status facts: 27 promoted, 240 deferred, and 2 conflicts retained as seeds.
+PR #30 also records the strict full-audit disposition for all 269 release/status facts: 27 promoted, 240 deferred, and 2 conflicts retained as seeds. PR #32 records the UI regression contract and desktop/mobile operation audit for the three watch-plan tiers and the official prewatch route highlight.
 
 These numbers document the checkpoint. They are not frozen targets except where a test explicitly encodes semantic compatibility. Future legitimate first-class facts can increase row counts while preserving protected graph compatibility.
 
 ## Current-plan completion and production integration gate
 
-The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, and the full release/status evidence audit (PR #30) are integrated into `main`. The next semantic change must use its own bounded plan, RED contract, evidence/review audit, and full verification. The next explicitly bounded work is HTML design/operation debugging; it has not started in this baseline.
+The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, the full release/status evidence audit (PR #30), and the HTML design/operation debugging pass (PR #32) are integrated into `main`. The next viewer or semantic change must use its own bounded plan, RED/UI regression contract, evidence/review audit where applicable, and full verification.
 
 For every future branch:
 
