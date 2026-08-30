@@ -29,6 +29,10 @@ BATCH011_TARGETS = {
     "release-avengers-doomsday-2026-12-18-jp",
     "release-the-fantastic-four-first-steps-2025-jp",
 }
+BATCH012_TARGET = "release-daredevil-born-again-s2-2026-jp"
+BATCH013_TARGET = "release-wonder-man-s1-2026-jp"
+BATCH014_TARGET = "release-x-men-97-s2-2026-07-01-jp"
+BATCH015_TARGET = "release-thunderbolts-new-avengers-2025-primary"
 EXPECTED_PROMOTED_RELEASES = set(TARGETS) | {
     BATCH002_TARGET,
     BATCH003_TARGET,
@@ -36,6 +40,10 @@ EXPECTED_PROMOTED_RELEASES = set(TARGETS) | {
     BATCH008_TARGET,
     BATCH009_TARGET,
     *BATCH011_TARGETS,
+    BATCH012_TARGET,
+    BATCH013_TARGET,
+    BATCH014_TARGET,
+    BATCH015_TARGET,
 }
 EXPECTED_PROMOTED_STATUS_IDS = {
     "production-status-spider-man-brand-new-day-2026-07-31-snapshot-2026-08-28",
@@ -49,6 +57,8 @@ EXPECTED_PROMOTED_STATUS_IDS = {
     "production-status-the-fantastic-four-first-steps-2025-snapshot-2026-08-28",
     "production-status-daredevil-born-again-s3-tba-snapshot-2026-08-28",
     "production-status-your-friendly-neighborhood-spider-man-s2-2026-snapshot-2026-08-28",
+    "production-status-daredevil-born-again-s2-2026-snapshot-2026-08-28",
+    "production-status-thunderbolts-new-avengers-2025-snapshot-2026-08-28",
 }
 
 
