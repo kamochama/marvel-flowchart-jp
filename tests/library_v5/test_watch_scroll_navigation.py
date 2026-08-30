@@ -55,6 +55,23 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("directCore", minimum.group(0))
         self.assertNotIn("recIds", minimum.group(0))
 
+    def test_path_mode_exposes_both_route_preferences(self) -> None:
+        """The PATH explanation must have the controls it tells users to use."""
+        self.assertRegex(
+            self.html,
+            re.compile(
+                r'class="path-pref-btn active"[^>]+data-path-pref="main"',
+                re.IGNORECASE,
+            ),
+        )
+        self.assertRegex(
+            self.html,
+            re.compile(
+                r'class="path-pref-btn"[^>]+data-path-pref="shortest"',
+                re.IGNORECASE,
+            ),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
