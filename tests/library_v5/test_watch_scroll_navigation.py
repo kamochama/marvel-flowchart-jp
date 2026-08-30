@@ -86,6 +86,22 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertNotIn("最低限", tier_select.group(0))
         self.assertNotIn("2段階", self.html)
 
+    def test_preparation_selector_exposes_official_site_and_complete_modes(self) -> None:
+        """The watch planner exposes the three user-facing route choices."""
+        tier_select = re.search(
+            r'<select id="watchConnectionTier".*?</select>',
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(tier_select)
+        self.assertEqual(
+            re.findall(r'<option value="([^"]+)"', tier_select.group(0)),
+            ["official", "site-proposal", "complete"],
+        )
+        self.assertIn("公式予習ルート", tier_select.group(0))
+        self.assertIn("サイト提案ルート", tier_select.group(0))
+        self.assertIn("完全版", tier_select.group(0))
+
     def test_mobile_overlay_restoration_uses_public_selection_state(self) -> None:
         """Global mobile helpers must not reach into the core module's local cache."""
         restore = re.search(
