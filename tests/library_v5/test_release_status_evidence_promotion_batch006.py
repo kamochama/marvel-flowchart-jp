@@ -77,6 +77,8 @@ class ReleaseStatusEvidencePromotionBatch006Tests(unittest.TestCase):
                 "production-status-the-fantastic-four-first-steps-2025-snapshot-2026-08-28",
                 "production-status-daredevil-born-again-s3-tba-snapshot-2026-08-28",
                 "production-status-your-friendly-neighborhood-spider-man-s2-2026-snapshot-2026-08-28",
+                "production-status-daredevil-born-again-s2-2026-snapshot-2026-08-28",
+                "production-status-thunderbolts-new-avengers-2025-snapshot-2026-08-28",
             },
         )
 
