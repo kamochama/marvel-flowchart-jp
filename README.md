@@ -81,6 +81,16 @@
 
 `index.html` を含まない状態でも、正規データから静的エクスポートを再生成できます。GitHub Pages などのサブパス配下でも、ページからの相対 URL として同じアーティファクトを参照します。
 
+### ローカルフォルダで確認する場合
+
+`index.html` をエクスプローラーから `file://` で直接開くと、ブラウザのCORS制限で隣の `data/derived/flowchart.json` を読み込めず、チャートの点灯・ドラッグが初期化されません。リポジトリのルートで静的サーバーを起動して確認してください。
+
+```powershell
+python -m http.server 8765
+```
+
+その後、ブラウザで <http://127.0.0.1:8765/index.html> を開きます。Codex DesktopでPythonが解決できない場合は、`AGENTS.md` のBundled Python runtimeコマンドを使用してください。
+
 ## 予習プランを共有する
 
 - **画像で共有** — 現在の予習プランをPNG画像として共有できます。

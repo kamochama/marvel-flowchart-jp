@@ -8803,6 +8803,13 @@ function initializeFlowchartData(payload){
   return payload;
 }
 
+function flowchartBootstrapFailureMessage(){
+  if(location.protocol==='file:'){
+    return 'フォルダから直接開いたため作品データを読み込めません。リポジトリのルートで `python -m http.server 8765` を実行し、http://127.0.0.1:8765/index.html を開いてください。';
+  }
+  return '作品データの読み込みに失敗しました。ページを再読み込みしてください。';
+}
+
 async function loadFlowchartData(){
   setFlowchartStatus('作品データを読み込み中…','loading');
   try{
@@ -8812,7 +8819,7 @@ async function loadFlowchartData(){
     return initializeFlowchartData(payload);
   }catch(error){
     flowchartReady=false;
-    setFlowchartStatus('作品データの読み込みに失敗しました。ページを再読み込みしてください。','error');
+    setFlowchartStatus(flowchartBootstrapFailureMessage(),'error');
     console.error('Flowchart data bootstrap failed',error);
     return null;
   }

@@ -50,6 +50,12 @@ class IndexDbExportContractTests(unittest.TestCase):
         self.assertRegex(self.source, r"読み込みに失敗")
         self.assertRegex(self.source, r"(?:DOMContentLoaded|readyState)[\s\S]{0,240}loadFlowchartData\s*\(")
 
+    def test_file_open_explains_static_server_requirement(self) -> None:
+        """A file:// launch must explain why the JSON-backed viewer is inert."""
+        self.assertIn("location.protocol==='file:'", self.source)
+        self.assertIn("python -m http.server 8765", self.source)
+        self.assertIn("http://127.0.0.1:8765/index.html", self.source)
+
     def test_initialization_maps_db_ids_edges_reasons_characters_and_view_policy(self) -> None:
         for marker in (
             "row.work_id",
