@@ -5302,6 +5302,10 @@ render();
 <script>
 // v5.6: full connected-component focus + ordered preparation plan
 const CURATED_ROUTES_V56 = [{"route": "Spider-Man / Multiverse", "route_ja": "スパイダーマン／マルチバース", "ids": ["captain-america-civil-war-2016", "spider-man-homecoming-2017", "avengers-infinity-war-2018", "avengers-endgame-2019", "spider-man-far-from-home-2019", "spider-man-no-way-home-2021", "doctor-strange-in-the-multiverse-of-madness-2022", "spider-man-brand-new-day-2026-07-31"]}, {"route": "Wanda / Vision / 魔術", "route_ja": "ワンダ／ヴィジョン／魔術", "ids": ["avengers-age-of-ultron-2015", "captain-america-civil-war-2016", "avengers-infinity-war-2018", "avengers-endgame-2019", "wandavision-2021", "doctor-strange-in-the-multiverse-of-madness-2022", "agatha-all-along-2024", "visionquest-2026-10-14"]}, {"route": "Daredevil / Street-level", "route_ja": "デアデビル／ストリート系", "ids": ["daredevil-s1-2015", "daredevil-s2-2016", "the-punisher-s1-2017", "the-defenders-2017", "daredevil-s3-2018", "the-punisher-s2-2019", "hawkeye-2021", "echo-2024", "daredevil-born-again-s1-2025", "daredevil-born-again-s2-2026", "the-punisher-one-last-kill-2026-05-12"]}, {"route": "X-Men / Deadpool", "route_ja": "X-MEN／デッドプール", "ids": ["x-men-2000", "x2-x-men-united-2003", "x-men-the-last-stand-2006", "x-men-first-class-2011", "x-men-days-of-future-past-2014", "the-wolverine-2013", "deadpool-2016", "logan-2017", "deadpool-2-2018", "deadpool-wolverine-2024", "avengers-doomsday-2026-12-18"]}, {"route": "Doomsday 最短準備", "route_ja": "『アベンジャーズ／ドゥームズデイ』最短準備", "ids": ["avengers-endgame-2019", "wandavision-2021", "loki-s1-2021", "loki-s2-2023", "spider-man-no-way-home-2021", "deadpool-wolverine-2024", "thunderbolts-new-avengers-2025", "the-fantastic-four-first-steps-2025", "spider-man-brand-new-day-2026-07-31", "avengers-doomsday-2026-12-18", "avengers-secret-wars-2027-12-17"]}];
+// Official work-specific "watch this before" lists are intentionally empty until
+// each route is registered with a source and audit review. Curated routes remain
+// useful as an explicit fallback, but must never be labelled as official.
+const OFFICIAL_PREWATCH_ROUTES_V57 = Object.freeze([]);
 const prepplan = document.getElementById('prepplan');
 let scopeMode = 'all';
 
@@ -5412,7 +5416,7 @@ function topologicalPreparationOrder(ids){
   }
   return outOrder;
 }
-function chooseCuratedRoute(target){
+function chooseRouteFromTable(routes,target){
   const candidates=[];
   const title=((nm[target]?.title_en||'')+' '+(nm[target]?.title||'')).toLowerCase();
   function affinity(r){
@@ -5425,7 +5429,7 @@ function chooseCuratedRoute(target){
     if((title.includes('doomsday')||title.includes('secret wars')||title.includes('ドゥームズデイ')) && name.includes('doomsday')) s+=150;
     return s;
   }
-  for(const r of CURATED_ROUTES_V56){
+  for(const r of routes){
     const i=r.ids.indexOf(target);
     if(i>0) candidates.push({route:r,index:i,score:affinity(r)});
   }
@@ -5433,13 +5437,29 @@ function chooseCuratedRoute(target){
   candidates.sort((a,b)=>b.score-a.score || b.index-a.index || a.route.ids.length-b.route.ids.length);
   return candidates[0];
 }
+function chooseOfficialPrewatchRoute(target){
+  return chooseRouteFromTable(OFFICIAL_PREWATCH_ROUTES_V57,target);
+}
+function chooseCuratedRoute(target){
+  return chooseRouteFromTable(CURATED_ROUTES_V56,target);
+}
 function buildPreparationPlan(target){
+  const official=chooseOfficialPrewatchRoute(target);
+  if(official){
+    return {
+      ids: official.route.ids.slice(0,official.index),
+      source: `公式予習リスト「${official.route.route_ja}」を使用`,
+      kind:'official',
+      provenance:'official'
+    };
+  }
   const curated=chooseCuratedRoute(target);
   if(curated){
     return {
       ids: curated.route.ids.slice(0,curated.index),
-      source: `監査済み推奨ルート「${curated.route.route_ja}」を使用`,
-      kind:'curated'
+      source: `公式予習リスト未登録のため、監査済み編集ルート「${curated.route.route_ja}」を使用`,
+      kind:'curated',
+      provenance:'curated'
     };
   }
   const strong=strongAncestorSet(target);
@@ -5451,8 +5471,9 @@ function buildPreparationPlan(target){
   }
   return {
     ids,
-    source:'監査済み接続表の strong / very strong 接続から自動生成',
-    kind:'graph'
+    source:'公式予習リスト未登録のため、監査済み接続表の strong / very strong 接続から自動生成',
+    kind:'graph',
+    provenance:'graph'
   };
 }
 function updatePreparationPlan(){
@@ -6104,14 +6125,14 @@ render();
     if(prepTier==='minimum'){
       const directCore=(inc[target]||[]).filter(e=>importanceOf(e)==='core').map(e=>e.source);
       const ids=sortByRelease(new Set(directCore));
-      return {ids,source:'接続重要度「中核」の直接前史',kind:'minimum',tierLabel:'最低限',tierNote:'視聴目標へ直接入る「中核」接続だけを表示します。再帰探索や推奨ルートからの補完は行いません。'};
+      return {ids,source:'接続重要度「中核」の直接前史',kind:'minimum',provenance:'policy',tierLabel:'最低限',tierNote:'視聴目標へ直接入る「中核」接続だけを表示します。再帰探索や推奨ルートからの補完は行いません。'};
     }
 
     if(prepTier==='recommended'){
       const core=ancestorSetByImportance(target,false);
       for(const id of recIds) core.add(id);
       const ids=topologicalOrderByImportance(core,false);
-      return {ids,source:`${rec.source} ＋ 接続重要度「中核」`,kind:rec.kind,tierLabel:'おすすめ',tierNote:'監査済み推奨ルートを優先しつつ、同系列・直接前提などの「中核」前史を補います。客演や参照だけの接続は自動では広げません。'};
+      return {ids,source:`${rec.source} ＋ 接続重要度「中核」`,kind:rec.kind,provenance:rec.provenance,tierLabel:'おすすめ',tierNote:'公式予習リストが登録されている場合はそれを優先します。未登録の作品は監査済み編集ルートと「中核」前史で補います。客演や参照だけの接続は自動では広げません。'};
     }
 
     const broad=ancestorSetByImportance(target,true);
@@ -6119,12 +6140,12 @@ render();
     // Reference edges are direct context only, never recursive even in complete mode.
     for(const e of (inc[target]||[])) if(importanceOf(e)==='reference') broad.add(e.source);
     const ids=topologicalOrderByImportance(broad,true);
-    return {ids,source:`${rec.source} ＋ 「中核／推奨」を再帰追跡 ＋ 直接参照`,kind:'complete',tierLabel:'完全版',tierNote:'「中核」と「推奨」を再帰的に遡り、視聴目標へ直接つながる「参照」も加えます。参照を踏み台に別系列へは拡散しません。'};
+    return {ids,source:`${rec.source} ＋ 「中核／推奨」を再帰追跡 ＋ 直接参照`,kind:'complete',provenance:rec.provenance,tierLabel:'完全版',tierNote:'「中核」と「推奨」を再帰的に遡り、視聴目標へ直接つながる「参照」も加えます。参照を踏み台に別系列へは拡散しません。'};
   }
 
   function buildMultiGoalPlan(goalIds,tier=prepTier){
     const goals=[...new Set((goalIds||[]).filter(id=>nm[id]))];
-    const goalSet=new Set(goals), union=new Set(goals), sourceByGoal={};
+    const goalSet=new Set(goals), union=new Set(goals), sourceByGoal={}, sourceLabelByGoal={}, provenanceByGoal={}, tierNoteByGoal={};
     const rolesById={};
     const previousTier=prepTier;
     try{
@@ -6132,6 +6153,9 @@ render();
       for(const goal of goals){
         const plan=buildTieredPlan(goal);
         sourceByGoal[goal]=[...plan.ids];
+        sourceLabelByGoal[goal]=plan.source||'';
+        provenanceByGoal[goal]=plan.provenance||'policy';
+        tierNoteByGoal[goal]=plan.tierNote||'';
         for(const id of plan.ids){
           union.add(id);
           if(!rolesById[id]) rolesById[id]=[];
@@ -6162,7 +6186,7 @@ render();
     }
     const orderedIds=ordered.length===union.size?ordered:sortByRelease(union);
     const prepIds=orderedIds.filter(id=>!goalSet.has(id));
-    return {orderedIds,goalIds:goals,prepIds,rolesById,sourceByGoal,unknownOrderingPairs:[]};
+    return {orderedIds,goalIds:goals,prepIds,rolesById,sourceByGoal,sourceLabelByGoal,provenanceByGoal,tierNoteByGoal,unknownOrderingPairs:[]};
   }
   window.marvelBuildMultiGoalPlan=buildMultiGoalPlan;
   window.marvelMultiGoalAudit=()=>({goals:orderedGoalIds(),tier:prepTier,plan:buildMultiGoalPlan(orderedGoalIds(),prepTier)});
@@ -6209,7 +6233,7 @@ render();
       return {imp, html:`次は <span class="prep-next">${esc(nm[next]?.title||next)}</span> — ${esc(type)} ${hopNote}`, title:first.reason||''};
     }
     // Curated route entries can intentionally exist without an edge chain in the selected layer.
-    return {imp:'recommended', html:'監査済み推奨ルート上の予習作品', title:''};
+    return {imp:'recommended', html:'監査済み編集ルート上の予習作品', title:''};
   }
 
 
@@ -6397,6 +6421,20 @@ render();
     return `<div class="prep-time-summary multi-goal-time"><div class="prep-time-main"><span class="prep-time-icon">⏱</span><strong>${main}</strong></div><div class="prep-time-sub"><span class="prep-time-chip">ゴール ${plan.goalIds.length}</span><span class="prep-time-chip">ユニーク作品 ${ids.length}</span><span class="prep-time-chip">視聴済み ${watchedCount}/${ids.length}</span>${days?`<span class="prep-time-chip">1日2時間なら約${days}日</span>`:''}${unknown.length?`<span class="prep-time-chip prep-time-missing">時間未登録 ${unknown.length}件</span>`:''}</div><div class="prep-time-note">複数ゴールの前提作品を重複除去し、チェック済みを除いた残り時間です。時間未登録作は推測しません。</div></div>`;
   }
 
+  function prepPlanProvenance(plan,goals){
+    const values=goals.map(id=>plan.provenanceByGoal?.[id]||'policy');
+    if(values.length && values.every(value=>value==='official')){
+      return {key:'official',label:'公式予習リスト',description:'公式が示す予習順を使用しています。'};
+    }
+    if(values.includes('official')){
+      return {key:'mixed',label:'公式＋編集ルート',description:'公式予習リストと、監査済み編集ルートを組み合わせています。'};
+    }
+    if(values.some(value=>value==='curated'||value==='graph')){
+      return {key:'editorial-fallback',label:'公式リスト未登録・編集ルート',description:'公式の作品別予習リストが未登録のため、監査済みの編集ルート／接続表を表示しています。公式の必須リストではありません。'};
+    }
+    return {key:'policy',label:'接続重要度ルール',description:'接続重要度の暫定ルールで直接前史を表示しています。'};
+  }
+
   updatePreparationPlan = function(){
     updateOverallWatchProgress();
     const goals=orderedGoalIds();
@@ -6408,6 +6446,9 @@ render();
     const plan=buildMultiGoalPlan(goals,prepTier);
     const multi=goals.length>1;
     const goalIndex=new Map(goals.map((id,i)=>[id,i+1]));
+    const provenance=prepPlanProvenance(plan,goals);
+    const tierNotes=[...new Set(goals.map(id=>plan.tierNoteByGoal?.[id]).filter(Boolean))];
+    const sourceLabels=[...new Set(goals.map(id=>plan.sourceLabelByGoal?.[id]).filter(Boolean))];
     const heading=`<div class="prep-plan-heading"><strong>${multi?'複数ゴールの統合予習プラン':`${esc(nm[goals[0]]?.title||goals[0])} の予習プラン`}</strong><span class="prep-tier-label">${({minimum:'最低限',recommended:'おすすめ',complete:'完全版'})[prepTier]||prepTier}</span></div>`;
     const goalBadges=`<div class="multi-goal-summary"><span>🎯 ${goals.length}作品をゴール中</span>${goals.map((id,i)=>`<span class="multi-goal-badge-wrap"><button type="button" class="multi-goal-badge" data-goal-focus="${esc(id)}">ゴール ${i+1}：${esc(nm[id]?.title||id)}</button><button type="button" class="prep-goal-remove" data-id="${esc(id)}" title="このゴールを解除" aria-label="${esc(nm[id]?.title||id)}をゴールから解除">×</button></span>`).join('')}</div>`;
     const progress=prepProgressTools(plan.orderedIds);
@@ -6424,7 +6465,10 @@ render();
       else why='統合予習ルート上の作品です。';
       return `<li class="prep-item${done?' is-watched':''}${goalNo?' is-goal':''}" data-plan-id="${esc(id)}"><span class="prep-num">${i+1}</span><div class="prep-item-main"><div class="prep-title-row">${prepWatchedCheckbox(id)}<a href="#" class="prep-link" data-id="${esc(id)}" style="color:#e5e7eb;text-decoration:none"><strong>${esc(nm[id]?.title||id)}</strong></a>${goalNo?`<span class="prep-goal-badge">🎯 ゴール ${goalNo}</span>`:''}${done?'<span class="prep-done-badge">視聴済み</span>':''}</div><div class="prep-item-meta"><span class="muted">${esc(nm[id]?.release||'')}</span>${prepRuntimeBadge(id)}</div><div class="prep-why">${why}</div>${prepInlineDetailHtml(id)}</div></li>`;
     }).join('');
-    prepplan.innerHTML=`${heading}${goalBadges}${progress}${timeSummary}<ol class="prep-list multi-goal-list">${rows}</ol><div class="prep-source">各ゴールの予習候補を統合し、重複を除いて有向接続順に並べています。参照のみの接続は並び順を強制しません。</div>`;
+    const tierExplain=tierNotes.length?`<div class="prep-explain">${tierNotes.map(note=>esc(note)).join(' ')}</div>`:'';
+    const sourceDetail=sourceLabels.length?`（${sourceLabels.map(label=>esc(label)).join(' ／ ')}）`:'';
+    const provenanceNote=`<div class="prep-source" data-prep-provenance="${provenance.key}"><strong>${esc(provenance.label)}</strong>：${esc(provenance.description)}${sourceDetail} 各ゴールの予習候補を統合し、重複を除いて有向接続順に並べています。参照のみの接続は並び順を強制しません。</div>`;
+    prepplan.innerHTML=`${heading}${goalBadges}${progress}${timeSummary}${tierExplain}<ol class="prep-list multi-goal-list">${rows}</ol>${provenanceNote}`;
     prepplan.querySelectorAll('[data-goal-focus]').forEach(b=>b.onclick=()=>focusGoal(b.dataset.goalFocus));
     prepplan.querySelectorAll('.prep-goal-remove').forEach(b=>b.onclick=e=>{
       e.preventDefault(); e.stopPropagation(); removeGoal(b.dataset.id);
