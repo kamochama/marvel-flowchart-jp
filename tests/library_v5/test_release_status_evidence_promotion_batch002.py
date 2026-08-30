@@ -34,6 +34,8 @@ class ReleaseStatusEvidencePromotionBatch002Tests(unittest.TestCase):
                 TARGET,
                 "release-avengers-secret-wars-2027-12-17-primary",
                 "release-x-men-97-s2-2026-07-01-primary",
+                "release-the-punisher-one-last-kill-2026-05-12-primary",
+                "release-blade-mcu-tba-tba-primary",
             },
         )
         self.assertEqual(releases[TARGET]["territory"], "US")
@@ -73,3 +75,4 @@ class ReleaseStatusEvidencePromotionBatch002Tests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
