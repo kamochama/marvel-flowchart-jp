@@ -82,7 +82,7 @@ class ReleaseStatusEvidencePromotionBatch008Tests(unittest.TestCase):
         statuses = _rows("data/library/production_status_assertions.csv")
         self.assertEqual(
             sum(row["verification_status"] == "source_verified" for row in statuses),
-            8,
+            11,
         )
 
 
