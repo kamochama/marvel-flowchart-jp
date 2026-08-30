@@ -52,8 +52,8 @@ class ReleaseStatusEvidencePromotionBatch010Tests(unittest.TestCase):
 
     def test_release_rows_and_graph_scope_remain_unchanged(self):
         releases = _rows("data/library/releases.csv")
-        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in releases), 8)
-        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in _rows("data/library/production_status_assertions.csv")), 11)
+        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in releases), 14)
+        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in _rows("data/library/production_status_assertions.csv")), 13)
 
 
 if __name__ == "__main__":
