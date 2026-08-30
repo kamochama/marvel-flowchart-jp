@@ -81,6 +81,7 @@ class WatchScrollNavigationContract(unittest.TestCase):
 
     def test_recommended_plan_exposes_official_provenance_boundary(self) -> None:
         """Curated routes must not be presented as an official prewatch list."""
+        self.assertIn("PUBLIC v5.20.6", self.html)
         self.assertIn("OFFICIAL_PREWATCH_ROUTES_V57", self.html)
         self.assertIn("chooseOfficialPrewatchRoute", self.html)
         self.assertIn("provenance:'official'", self.html)
