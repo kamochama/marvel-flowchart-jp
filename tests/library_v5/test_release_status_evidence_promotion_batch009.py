@@ -79,10 +79,10 @@ class ReleaseStatusEvidencePromotionBatch009Tests(unittest.TestCase):
 
     def test_japanese_and_unrelated_rows_remain_legacy_seed(self):
         releases = {row["release_id"]: row for row in _rows("data/library/releases.csv")}
-        self.assertEqual(releases["release-avengers-doomsday-2026-12-18-jp"]["verification_status"], "legacy_seed")
-        self.assertEqual(releases["release-avengers-doomsday-2026-12-18-jp"]["release_date"], "")
+        self.assertEqual(releases["release-the-punisher-one-last-kill-2026-05-12-jp"]["verification_status"], "legacy_seed")
+        self.assertEqual(releases["release-the-punisher-one-last-kill-2026-05-12-jp"]["release_date"], "")
         statuses = _rows("data/library/production_status_assertions.csv")
-        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in releases.values()), 8)
+        self.assertEqual(sum(row["verification_status"] == "source_verified" for row in releases.values()), 10)
         self.assertEqual(sum(row["verification_status"] == "source_verified" for row in statuses), 11)
 
 
