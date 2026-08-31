@@ -802,7 +802,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.21.1</span>
+      <span class="stat-chip public-release">PUBLIC v5.21.2</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -4462,7 +4462,7 @@ function canvasPrimitive(svg,el){
     geom=p;
   }else if(tag==='text') geom=canvasTextLines(el); else return null;
   const overlayGroup=el.closest('g.node,g.edge,g.dynamic-edge-overlay'),chronologyGroup=el.closest('g.chronology-edge');
-  let overlayNodeId='',overlayEdgeKey='',overlayIsEdge=false,overlayDynamic=false,overlayChronologyEdge=false,overlayChronologySource='',overlayChronologyTarget='';
+  let overlayNodeId='',overlayEdgeKey='',overlayIsEdge=false,overlayDynamic=false,overlayChronologyEdge=false,overlayChronologySource='',overlayChronologyTarget='',overlayChronologyTraversable=true;
   if(overlayGroup){
     if(overlayGroup.matches('g.node'))overlayNodeId=gt(overlayGroup)||'';
     else{
@@ -4474,9 +4474,10 @@ function canvasPrimitive(svg,el){
   if(chronologyGroup){
     overlayChronologySource=chronologyGroup.dataset?.chronologySource||'';
     overlayChronologyTarget=chronologyGroup.dataset?.chronologyTarget||'';
+    overlayChronologyTraversable=chronologyGroup.dataset?.chronologyTraversable!=='false';
     overlayChronologyEdge=!!(overlayChronologySource&&overlayChronologyTarget);
   }
-  return {el,tag,m,bbox,geom,style:null,overlayNodeId,overlayEdgeKey,overlayIsEdge,overlayDynamic,overlayChronologyEdge,overlayChronologySource,overlayChronologyTarget};
+  return {el,tag,m,bbox,geom,style:null,overlayNodeId,overlayEdgeKey,overlayIsEdge,overlayDynamic,overlayChronologyEdge,overlayChronologySource,overlayChronologyTarget,overlayChronologyTraversable};
 }
 function canvasStylePrimitive(p){
   const cs=getComputedStyle(p.el),gs=canvasGroupState(p.el);
@@ -4616,25 +4617,93 @@ function mobileOverlayEdgeClass(key,state){
   if(b&&f)return 'bothhl'; if(b)return 'backhl'; if(f)return 'forwardhl'; if(c)return 'contexthl';
   return null;
 }
-function mobileOverlayChronologyEdgeClassMap(cs,state){
-  const classes=new Map();if(!cs||!state||!selectedIds.size)return classes;
-  const incoming=new Map(),outgoing=new Map();
-  for(const [key,primitives] of (cs.overlayChronologyEdgePrimitives||new Map())){
-    const p=primitives?.[0],source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
-    if(!source||!target)continue;
-    if(!incoming.has(target))incoming.set(target,[]);if(!outgoing.has(source))outgoing.set(source,[]);
-    incoming.get(target).push({node:source,key});outgoing.get(source).push({node:target,key});
+// Chronology lines are a separate view layer from EDGES.  Keep their selection
+// semantics in one pure classifier so SVG and Canvas cannot drift apart.
+function classifyChronologySelection(edges,state){
+  const classes=new Map();
+  const ids=[...(state?.selectedIds||[])];
+  if(!ids.length)return classes;
+  const records=[],seenKeys=new Set();
+  for(const raw of (edges||[])){
+    const source=raw?.source||raw?.chronologySource,target=raw?.target||raw?.chronologyTarget;
+    const key=raw?.key||`${source||''}->${target||''}`;
+    if(!source||!target||!key||seenKeys.has(key)||raw?.traversable===false)continue;
+    seenKeys.add(key);records.push({source,target,key});
   }
-  const walk=(starts,adjacent)=>{
-    const seen=new Set(starts),found=new Set(),queue=[...starts];
-    while(queue.length){const id=queue.shift();for(const {node,key} of (adjacent.get(id)||[])){found.add(key);if(!seen.has(node)){seen.add(node);queue.push(node);}}}
+  if(!records.length)return classes;
+  const incoming=new Map(),outgoing=new Map();
+  for(const edge of records){
+    if(!incoming.has(edge.target))incoming.set(edge.target,[]);
+    if(!outgoing.has(edge.source))outgoing.set(edge.source,[]);
+    incoming.get(edge.target).push(edge);outgoing.get(edge.source).push(edge);
+  }
+  for(const links of incoming.values())links.sort((a,b)=>a.key.localeCompare(b.key));
+  for(const links of outgoing.values())links.sort((a,b)=>a.key.localeCompare(b.key));
+  const walk=(goal,adjacent)=>{
+    const found=new Map(),seen=new Set([goal]),queue=[goal];
+    const directOnly=state?.scopeMode==='previous1';
+    while(queue.length){
+      const id=queue.shift();
+      for(const edge of (adjacent.get(id)||[])){
+        found.set(edge.key,true);
+        if(directOnly)continue;
+        const next=adjacent===incoming?edge.source:edge.target;
+        if(!seen.has(next)){seen.add(next);queue.push(next);}
+      }
+    }
     return found;
   };
-  const back=walk(selectedIds,incoming),forward=walk(selectedIds,outgoing);
-  for(const key of new Set([...back,...forward])){
-    const b=back.has(key),f=forward.has(key);classes.set(key,b&&f?'bothhl':b?'backhl':'forwardhl');
+  const perGoal=goal=>{
+    if(state?.scopeMode==='none')return new Map();
+    const result=new Map();
+    for(const key of walk(goal,incoming).keys())result.set(key,1);
+    if(state?.scopeMode!=='previous1')for(const key of walk(goal,outgoing).keys())result.set(key,(result.get(key)||0)|2);
+    return result;
+  };
+  if(state?.pathMode||state?.combineMode==='path'){
+    const pathEdges=new Map(records.map(edge=>[edge.source,[]]));
+    for(const edge of records){if(!pathEdges.has(edge.source))pathEdges.set(edge.source,[]);pathEdges.get(edge.source).push(edge);}
+    for(const links of pathEdges.values())links.sort((a,b)=>a.key.localeCompare(b.key));
+    const directedPath=(source,target)=>{
+      if(source===target)return [];
+      const queue=[source],seen=new Set([source]),prev=new Map();
+      while(queue.length){
+        const id=queue.shift();
+        for(const edge of (pathEdges.get(id)||[])){
+          if(seen.has(edge.target))continue;
+          seen.add(edge.target);prev.set(edge.target,{node:id,key:edge.key});
+          if(edge.target===target){const out=[],end=target;let current=end;while(current!==source){const step=prev.get(current);if(!step)return null;out.push(step.key);current=step.node;}return out.reverse();}
+          queue.push(edge.target);
+        }
+      }
+      return null;
+    };
+    const used=new Set();
+    for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++){
+      const path=directedPath(ids[i],ids[j])||directedPath(ids[j],ids[i]);
+      for(const key of (path||[]))used.add(key);
+    }
+    for(const key of used)classes.set(key,'pathhl');
+    return classes;
   }
+  const goalMaps=ids.map(perGoal),combined=new Map();
+  if(state?.combineMode==='and'&&goalMaps.length>1){
+    const common=[...goalMaps[0].keys()].filter(key=>goalMaps.every(map=>map.has(key)));
+    for(const key of common){let bits=0;for(const map of goalMaps)bits|=map.get(key)||0;combined.set(key,bits);}
+  }else{
+    for(const map of goalMaps)for(const [key,bits] of map)combined.set(key,(combined.get(key)||0)|bits);
+  }
+  for(const [key,bits] of combined)classes.set(key,bits===3?'bothhl':bits===1?'backhl':'forwardhl');
   return classes;
+}
+window.classifyChronologySelection=classifyChronologySelection;
+function mobileOverlayChronologyEdgeClassMap(cs,state){
+  const records=[];
+  for(const [key,primitives] of (cs?.overlayChronologyEdgePrimitives||new Map())){
+    const p=primitives?.[0],source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
+    if(source&&target)records.push({key,source,target,traversable:p?.overlayChronologyTraversable!==false});
+  }
+  return classifyChronologySelection(records,state);
 }
 function mobileOverlayCategory(p,state){
   if(p.overlayNodeId)return mobileOverlayNodeClass(p.overlayNodeId,state);
@@ -4642,7 +4711,7 @@ function mobileOverlayCategory(p,state){
   return null;
 }
 function mobileOverlayColor(category){
-  return category==='official-route'?'#22c55e':category==='backhl'?'#38bdf8':category==='forwardhl'?'#34d399':category==='bothhl'||category==='pathhl'?'#a78bfa':category==='contexthl'?'#f59e0b':'#60a5fa';
+  return category==='official-route'?'#22c55e':category==='backhl'?'#60a5fa':category==='forwardhl'?'#34d399':category==='bothhl'||category==='pathhl'?'#a78bfa':category==='contexthl'?'#f59e0b':'#60a5fa';
 }
 function mobileOverlayCompressedBridges(edgeSet,visible){
   const adj=new Map();
@@ -4748,7 +4817,7 @@ function mobileOverlaySyntheticNearViewport(cs,spec,rect){
   return (!!a&&a.x2>=rect.x&&a.x<=rect.x2&&a.y2>=rect.y&&a.y<=rect.y2)||(!!b&&b.x2>=rect.x&&b.x<=rect.x2&&b.y2>=rect.y&&b.y<=rect.y2);
 }
 function mobileSelectionWorldKey(state){
-  return `${selected||''}::${[...selectedIds].sort().join('|')}::${state?.pathMode?'p':'n'}::${state?.generic?'g':'n'}::${state?.officialRouteActive?'o'+[...(state.officialRouteIds||[])].join('|')+'#'+[...(state.officialRouteEdges||[])].join('|'):'n'}`;
+  return `${selected||''}::${[...selectedIds].sort().join('|')}::${state?.scopeMode||'all'}::${state?.combineMode||'or'}::${state?.pathPreference||'main'}::${state?.pathMode?'p':'n'}::${state?.generic?'g':'n'}::${state?.officialRouteActive?'o'+[...(state.officialRouteIds||[])].join('|')+'#'+[...(state.officialRouteEdges||[])].join('|'):'n'}`;
 }
 function mobileOverlayRelevantNodeIds(state){
   const ids=new Set(selectedIds);for(const id of (state?.ctx||[]))ids.add(id);for(const id of (state?.officialRouteIds||[]))ids.add(id);return ids;
@@ -6076,7 +6145,7 @@ if(flowchartReady)render();
       for(const x of p.nodes) nodes.add(x);
       for(const k of p.edges) pathEdges.add(k);
     }
-    return {ctx:nodes,nodes,back:new Set(),forward:new Set(),context:new Set(),backNodes:new Set(),forwardNodes:new Set(),contextNodes:new Set(),backEdges:new Set(),forwardEdges:new Set(),contextEdges:new Set(),pathEdges,pathMode:true,generic:false,disconnected,...officialRouteStateFields()};
+    return {ctx:nodes,nodes,back:new Set(),forward:new Set(),context:new Set(),backNodes:new Set(),forwardNodes:new Set(),contextNodes:new Set(),backEdges:new Set(),forwardEdges:new Set(),contextEdges:new Set(),pathEdges,pathMode:true,generic:false,disconnected,selectedIds:ids,scopeMode,combineMode,pathPreference,...officialRouteStateFields()};
   }
 
   function selectedParts(){
@@ -6084,7 +6153,7 @@ if(flowchartReady)render();
   }
 
   function computeSelectionState(){
-    if(!selectedIds.size) return {ctx:new Set(),back:new Set(),forward:new Set(),context:new Set(),backEdges:new Set(),forwardEdges:new Set(),contextEdges:new Set(),pathEdges:new Set(),generic:scopeMode!=='all',...officialRouteStateFields()};
+    if(!selectedIds.size) return {ctx:new Set(),back:new Set(),forward:new Set(),context:new Set(),backEdges:new Set(),forwardEdges:new Set(),contextEdges:new Set(),pathEdges:new Set(),generic:scopeMode!=='all',selectedIds:[],scopeMode,combineMode,pathPreference,...officialRouteStateFields()};
     if(combineMode==='path' && selectedIds.size>1) return pathSelectionState();
     const parts=selectedParts();
     let ctx;
@@ -6112,7 +6181,7 @@ if(flowchartReady)render();
       for(const k of p.forwardEdges) if(edgeSurvivesCtx(k)) forwardEdges.add(k);
       for(const k of p.contextEdges) if(edgeSurvivesCtx(k)) contextEdges.add(k);
     }
-    return {ctx,back,forward,context,backEdges,forwardEdges,contextEdges,pathEdges:new Set(),generic:scopeMode!=='all',...officialRouteStateFields()};
+    return {ctx,back,forward,context,backEdges,forwardEdges,contextEdges,pathEdges:new Set(),generic:scopeMode!=='all',selectedIds:[...selectedIds],scopeMode,combineMode,pathPreference,...officialRouteStateFields()};
   }
   window.computeSelectionState=computeSelectionState;
   let selectionStateCache=null;
@@ -6301,36 +6370,14 @@ if(flowchartReady)render();
 
   function renderChronologySelectionState(svg,state){
     const groups=[...svg.querySelectorAll('g.chronology-edge')];
-    groups.forEach(g=>g.classList.remove('hl','backhl','forwardhl','bothhl','pathhl'));
-    if(!groups.length||!selectedIds.size)return;
-    const incoming=new Map(),outgoing=new Map();
-    for(const g of groups){
-      const source=g.dataset.chronologySource,target=g.dataset.chronologyTarget;
-      if(!source||!target)continue;
-      if(!incoming.has(target))incoming.set(target,[]);
-      if(!outgoing.has(source))outgoing.set(source,[]);
-      incoming.get(target).push({node:source,group:g});
-      outgoing.get(source).push({node:target,group:g});
-    }
-    const walk=(starts,adjacent)=>{
-      const seen=new Set(starts),found=new Set(),queue=[...starts];
-      while(queue.length){
-        const id=queue.shift();
-        for(const {node,group} of(adjacent.get(id)||[])){
-          found.add(group);
-          if(!seen.has(node)){seen.add(node);queue.push(node);}
-        }
-      }
-      return found;
-    };
-    const back=walk(selectedIds,incoming),forward=walk(selectedIds,outgoing);
-    for(const g of groups){
-      const b=back.has(g),f=forward.has(g);
-      if(!b&&!f)continue;
-      g.classList.add('hl');
-      if(b&&f)g.classList.add('bothhl');
-      else if(b)g.classList.add('backhl');
-      else g.classList.add('forwardhl');
+    groups.forEach(g=>g.classList.remove('hl','backhl','forwardhl','bothhl','pathhl','contexthl'));
+    if(!groups.length||!state)return;
+    const records=groups.map(g=>({key:g.dataset.chronologyEdgeKey||`${g.dataset.chronologySource||''}->${g.dataset.chronologyTarget||''}`,source:g.dataset.chronologySource,target:g.dataset.chronologyTarget,traversable:g.dataset.chronologyTraversable!=='false',group:g}));
+    const classes=classifyChronologySelection(records,state);
+    for(const [key,category] of classes){
+      const record=records.find(item=>item.key===key);
+      if(!record?.group)continue;
+      record.group.classList.add('hl',category);
     }
   }
   window.renderChronologySelectionState=renderChronologySelectionState;
@@ -7675,7 +7722,7 @@ if(flowchartReady)render();
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.21.1 · 2026-08-31</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.21.2 · 2026-09-01</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{
@@ -8221,27 +8268,27 @@ if(flowchartReady)render();
         '</g>');
     }
 
-    function branchBetweenRows(col,y1,y2,{label='',klass='chronology-branch'}={}){
+    function branchBetweenRows(source,target,col,y1,y2,{label='',klass='chronology-branch',traversable=true}={}){
       const x=xForCol(col)-16, yTop=mid(y1), yBottom=mid(y2);
-      out.push('<path class="'+klass+'" d="M '+x+' '+yTop+' V '+yBottom+'"/>');
+      out.push(chronologyEdgeGroup(source,target,'M '+x+' '+yTop+' V '+yBottom,klass,{traversable}));
       out.push('<circle class="chronology-junction" cx="'+x+'" cy="'+yTop+'" r="3.5"/><circle class="chronology-junction" cx="'+x+'" cy="'+yBottom+'" r="3.5"/>');
       if(label)out.push('<text class="chronology-track-label" x="'+(x+8)+'" y="'+((yTop+yBottom)/2-6)+'">'+esc(label)+'</text>');
     }
     const placedMcu=new Set();
     const addMcu=id=>{if(id&&CHRONOLOGY_META[id]?.lane==='mcu-main')placedMcu.add(id);};
     function drawCard(id,col,y){ if(!nm[id]||!CHRONOLOGY_META[id])return false; out.push(chronologyCard(id,xForCol(col),y,cardW,cardH)); return true; }
-    function chronologyEdgeGroup(source,target,d,klass){
+    function chronologyEdgeGroup(source,target,d,klass,{traversable=true}={}){
       const key=source+'->'+target;
-      return '<g class="chronology-edge" data-chronology-source="'+esc(source)+'" data-chronology-target="'+esc(target)+'" data-chronology-edge-key="'+esc(key)+'"><title>'+esc(key)+'</title><path class="'+esc(klass)+'" d="'+d+'"/></g>';
+      return '<g class="chronology-edge" data-chronology-source="'+esc(source)+'" data-chronology-target="'+esc(target)+'" data-chronology-edge-key="'+esc(key)+'" data-chronology-traversable="'+(traversable?'true':'false')+'"><title>'+esc(key)+'</title><path class="'+esc(klass)+'" d="'+d+'"/></g>';
     }
-    function drawSequence(ids,startCol,y,{klass='chronology-axis',dashedTracks=[]}={}){
+    function drawSequence(ids,startCol,y,{klass='chronology-axis',dashedTracks=[],traversable=true}={}){
       const use=ids.filter(id=>nm[id]&&CHRONOLOGY_META[id]);
       use.forEach((id,i)=>{
         const col=startCol+i;
         if(i>0){
           const prev=use[i-1], prevCol=startCol+i-1;
           const dashed=dashedTracks.includes(CHRONOLOGY_META[prev].track)||dashedTracks.includes(CHRONOLOGY_META[id].track)?' dashed':'';
-          out.push(chronologyEdgeGroup(prev,id,'M '+(xForCol(prevCol)+cardW)+' '+mid(y)+' H '+xForCol(col),klass+dashed));
+          out.push(chronologyEdgeGroup(prev,id,'M '+(xForCol(prevCol)+cardW)+' '+mid(y)+' H '+xForCol(col),klass+dashed,{traversable}));
         }
         drawCard(id,col,y); addMcu(id);
       });
@@ -8322,7 +8369,7 @@ if(flowchartReady)render();
 
     // SSU and FOX blocks
     drawSequence(['venom-2018','venom-let-there-be-carnage-2021','venom-the-last-dance-2024'],8,rowY.ssu,{klass:'chronology-branch'});
-    drawSequence(['morbius-2022','madame-web-2024','kraven-the-hunter-2024'],9,rowY.ssuAlt,{klass:'chronology-axis',dashedTracks:['standalone','ambiguous']});
+    drawSequence(['morbius-2022','madame-web-2024','kraven-the-hunter-2024'],9,rowY.ssuAlt,{klass:'chronology-axis',dashedTracks:['standalone','ambiguous'],traversable:false});
     worldFrame(ssuTone,8,11,rowY.ssu,rowY.ssuAlt,{groupKey:'ssu'});
     laneHeader('Venom本線','#a78bfa',8,10,rowY.ssu,rowY.ssu,{navKey:'ssu',headerW:138});
     laneHeader('独立作品','#c084fc',9,11,rowY.ssuAlt,rowY.ssuAlt,{headerW:132});
@@ -8330,9 +8377,9 @@ if(flowchartReady)render();
     drawSequence(['x-men-first-class-2011','x-men-origins-wolverine-2009','x-men-2000','x2-x-men-united-2003','x-men-the-last-stand-2006','the-wolverine-2013','x-men-days-of-future-past-2014'],0,rowY.foxOrig,{klass:'chronology-fox-original'});
     const pivotCol=6;
     out.push('<circle class="chronology-pivot" cx="'+(xForCol(pivotCol)+cardW/2)+'" cy="'+(rowY.foxOrig-10)+'" r="6"/><text class="chronology-track-label" x="'+(xForCol(pivotCol)+cardW/2+10)+'" y="'+(rowY.foxOrig-7)+'">分岐点 / Days of Future Past</text>');
-    branchBetweenRows(pivotCol,rowY.foxOrig,rowY.foxRev,{label:'改変後系列',klass:'chronology-fox-revised'});
+    branchBetweenRows('x-men-days-of-future-past-2014','x-men-apocalypse-2016',pivotCol,rowY.foxOrig,rowY.foxRev,{label:'改変後系列',klass:'chronology-fox-revised'});
     drawSequence(['x-men-apocalypse-2016','dark-phoenix-2019','deadpool-2016','deadpool-2-2018'],pivotCol,rowY.foxRev,{klass:'chronology-fox-revised'});
-    branchBetweenRows(pivotCol+2,rowY.foxRev,rowY.foxAmb,{label:'位置づけ慎重',klass:'chronology-branch'});
+    branchBetweenRows('deadpool-2016','logan-2017',pivotCol+2,rowY.foxRev,rowY.foxAmb,{label:'位置づけ慎重',klass:'chronology-branch',traversable:false});
     drawSequence(['logan-2017','the-new-mutants-2020'],pivotCol+2,rowY.foxAmb,{klass:'chronology-axis',dashedTracks:['ambiguous']});
     worldFrame(foxTone,0,9,rowY.foxOrig,rowY.foxAmb,{groupKey:'fox'});
     laneHeader('旧系列',foxTone,0,6,rowY.foxOrig,rowY.foxOrig,{navKey:'fox',groupKey:'fox-original',headerW:116});

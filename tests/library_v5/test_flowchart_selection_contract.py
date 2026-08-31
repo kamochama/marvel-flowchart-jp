@@ -152,7 +152,7 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         selection_renderer = function_body(self.source, "renderSelectionState")
         self.assertIn("renderChronologySelectionState(svg,state)", selection_renderer)
         renderer = function_body(self.source, "renderChronologySelectionState")
-        self.assertIn("selectedIds", renderer)
+        self.assertIn("state", renderer)
         self.assertIn("chronology-edge", renderer)
         self.assertNotIn("EDGES", renderer)
         focus_renderer = function_body(self.source, "renderFocusHighlight")
@@ -179,6 +179,45 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         overlay = function_body(self.source, "drawMobileSelectionOverlay")
         self.assertIn("mobileOverlayChronologyEdgeClass", overlay)
         self.assertIn("overlayChronologyEdgePrimitives", overlay)
+
+    def test_chronology_highlight_uses_shared_state_aware_classifier(self) -> None:
+        """SVG and Canvas chronology lines must share selection-mode semantics."""
+        self.assertIn("classifyChronologySelection", self.source)
+        renderer = function_body(self.source, "renderChronologySelectionState")
+        self.assertIn("classifyChronologySelection", renderer)
+        mobile = function_body(self.source, "mobileOverlayChronologyEdgeClassMap")
+        self.assertIn("classifyChronologySelection", mobile)
+        self.assertNotIn("const walk=(starts,adjacent)=>", renderer)
+        self.assertNotIn("const walk=(starts,adjacent)=>", mobile)
+        classifier = function_body(self.source, "classifyChronologySelection")
+        for token in ("previous1", "combineMode==='and'", "pathMode", "traversable===false"):
+            self.assertIn(token, classifier)
+
+    def test_selection_state_exposes_scope_and_combine_mode_to_chronology_layer(self) -> None:
+        """The pure classifier must not read hidden module globals for mode semantics."""
+        state_body = function_body(self.source, "computeSelectionState")
+        path_body = function_body(self.source, "pathSelectionState")
+        self.assertRegex(state_body, r"scopeMode")
+        self.assertRegex(state_body, r"combineMode")
+        self.assertRegex(path_body, r"scopeMode")
+        self.assertRegex(path_body, r"combineMode")
+        self.assertIn("selectedIds", state_body)
+
+    def test_chronology_groups_carry_traversability_and_fox_branch_endpoints(self) -> None:
+        """Structural branches are selectable; display-only sequences are not traversed."""
+        chronology = function_body(self.source, "buildChronologyView")
+        edge_group = function_body(self.source, "chronologyEdgeGroup")
+        sequence = function_body(self.source, "drawSequence")
+        branch = function_body(self.source, "branchBetweenRows")
+        self.assertIn("data-chronology-traversable", edge_group)
+        self.assertIn("traversable", sequence)
+        self.assertIn("chronologyEdgeGroup", branch)
+        self.assertIn("source,target", self.source)
+        self.assertIn("chronologyEdgeGroup(source,target", branch)
+        self.assertRegex(
+            chronology,
+            r"drawSequence\(\['morbius-2022','madame-web-2024','kraven-the-hunter-2024'\][\s\S]{0,260}traversable:false",
+        )
 
 
 if __name__ == "__main__":
