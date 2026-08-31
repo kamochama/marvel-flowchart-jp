@@ -43,4 +43,3 @@
 - [ ] Run focused tests, browser smoke checks, full tests, and build; inspect and clean only known generated outputs.
 - [ ] Push the audit branch and ask ChatGPT Work for a read-only audit of the exact commit.
 - [ ] Apply any concrete remaining finding with another RED/GREEN cycle and repeat the audit until no actionable blocker remains.
-
