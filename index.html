@@ -4638,12 +4638,12 @@ function classifyChronologySelection(edges,state){
   if(!ids.length)return classes;
   const tier=normalizePreparationTier(state?.tier||state?.prepTier||'complete');
   const tierNodeIds=state?.tierNodeIds||new Set();
+  const pathMode=state?.pathMode===true||(state?.combineMode==='path'&&ids.length>1);
   const records=[],seenKeys=new Set();
   for(const raw of (edges||[])){
     const source=raw?.source||raw?.chronologySource,target=raw?.target||raw?.chronologyTarget;
     const key=raw?.key||`${source||''}->${target||''}`;
     if(!source||!target||!key||seenKeys.has(key)||raw?.traversable===false)continue;
-    if(!state?.pathMode && tier!=='complete' && tierNodeIds.size && (!tierNodeIds.has(source)||!tierNodeIds.has(target)))continue;
     seenKeys.add(key);records.push({source,target,key});
   }
   if(!records.length)return classes;
@@ -4661,6 +4661,10 @@ function classifyChronologySelection(edges,state){
     while(queue.length){
       const id=queue.shift();
       for(const edge of (adjacent.get(id)||[])){
+        // Tier limits apply only to the incoming/prehistory side. Forward
+        // chronology remains visible so selecting a work still shows where it
+        // leads, matching the main chart directional highlight semantics.
+        if(adjacent===incoming && tier!=='complete' && tierNodeIds.size && (!tierNodeIds.has(edge.source)||!tierNodeIds.has(edge.target)))continue;
         found.set(edge.key,true);
         if(directOnly)continue;
         const next=adjacent===incoming?edge.source:edge.target;
@@ -4676,31 +4680,13 @@ function classifyChronologySelection(edges,state){
     if(state?.scopeMode!=='previous1')for(const key of walk(goal,outgoing).keys())result.set(key,(result.get(key)||0)|2);
     return result;
   };
-  const pathMode=state?.pathMode===true||(state?.combineMode==='path'&&ids.length>1);
   if(pathMode){
-    const pathEdges=new Map(records.map(edge=>[edge.source,[]]));
-    for(const edge of records){if(!pathEdges.has(edge.source))pathEdges.set(edge.source,[]);pathEdges.get(edge.source).push(edge);}
-    for(const links of pathEdges.values())links.sort((a,b)=>a.key.localeCompare(b.key));
-    const directedPath=(source,target)=>{
-      if(source===target)return [];
-      const queue=[source],seen=new Set([source]),prev=new Map();
-      while(queue.length){
-        const id=queue.shift();
-        for(const edge of (pathEdges.get(id)||[])){
-          if(seen.has(edge.target))continue;
-          seen.add(edge.target);prev.set(edge.target,{node:id,key:edge.key});
-          if(edge.target===target){const out=[],end=target;let current=end;while(current!==source){const step=prev.get(current);if(!step)return null;out.push(step.key);current=step.node;}return out.reverse();}
-          queue.push(edge.target);
-        }
-      }
-      return null;
-    };
-    const used=new Set();
-    for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++){
-      const path=directedPath(ids[i],ids[j])||directedPath(ids[j],ids[i]);
-      for(const key of (path||[]))used.add(key);
-    }
-    for(const key of used)classes.set(key,'pathhl');
+    // PATH is already solved against the tier-filtered work graph. Reuse its
+    // directed edge keys here instead of running a second unfiltered BFS over
+    // chronology rows, so SVG/Canvas chronology and the main chart agree.
+    const pathKeys=new Set([...(state?.pathEdges||[])].map(String));
+    const pathPairs=new Set([...pathKeys].filter(key=>key.includes('->')).map(String));
+    for(const edge of records)if(pathKeys.has(edge.key)||pathPairs.has(`${edge.source}->${edge.target}`))classes.set(edge.key,'pathhl');
     return classes;
   }
   const goalMaps=ids.map(perGoal),combined=new Map();
@@ -6145,6 +6131,14 @@ if(flowchartReady)render();
     if(mode==='site-proposal') return importanceOf(e)!=='reference';
     return true;
   }
+  function pathTierContext(ids,tier){
+    const mode=normalizePreparationTier(tier),tierPathEdges=new Set();
+    if(mode==='official') for(const goal of ids||[]){
+      const route=tierRoutePartForGoal(goal,mode);
+      for(const key of route.edges) tierPathEdges.add(key);
+    }
+    return {mode,tierPathEdges};
+  }
   function shortestDirectedPath(source,target,profile=pathPreference,allowedEdge=null){
     if(source===target) return {nodes:[source],edges:[],cost:0};
     const dist=new Map([[source,0]]), prev=new Map(), prevEdge=new Map(), done=new Set();
@@ -7208,10 +7202,12 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const ids=[...selectedIds];
     if(combineMode!=='path'||ids.length<2){ card.classList.remove('active'); return; }
     card.classList.add('active');
+    const tierContext=pathTierContext(ids,selectionStateCache?.tier||prepTier);
+    const allowedEdge=e=>pathEdgeAllowed(e,tierContext.mode,tierContext.tierPathEdges);
     const chunks=[];
     for(let i=0;i<ids.length;i++) for(let j=i+1;j<ids.length;j++){
       const a=ids[i], b=ids[j];
-      const main=bestDirectedPairPath(a,b,'main'), shortest=bestDirectedPairPath(a,b,'shortest');
+      const main=bestDirectedPairPath(a,b,'main',allowedEdge), shortest=bestDirectedPairPath(a,b,'shortest',allowedEdge);
       const same=main&&shortest&&main.edges.join('|')===shortest.edges.join('|')&&main.nodes.join('|')===shortest.nodes.join('|');
       if(same){
         chunks.push(pathRouteHtml(a,b,pathPreference==='shortest'?shortest:main,pathPreference==='shortest'?'最短＝本流優先':'本流優先＝最短',true));

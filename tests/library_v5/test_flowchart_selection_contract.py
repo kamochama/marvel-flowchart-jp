@@ -172,6 +172,14 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertNotIn("if(baseState.pathMode) return {...baseState,tier:mode,tierNodeIds, tierBackEdges", self.source)
         self.assertRegex(self.source, r"function mobileSelectionWorldKey\(state\)[\s\S]{0,500}state\?\.tier\|\|state\?\.prepTier")
 
+    def test_path_explanation_uses_the_same_connection_tier_filter(self) -> None:
+        """The textual route explanation must not show a route hidden from the chart."""
+        explanation = function_body(self.source, "updatePathExplanation")
+        self.assertIn("pathTierContext", explanation)
+        self.assertIn("pathEdgeAllowed", explanation)
+        self.assertRegex(explanation, r"bestDirectedPairPath\(a,b,'main',[^)]+\)")
+        self.assertRegex(explanation, r"bestDirectedPairPath\(a,b,'shortest',[^)]+\)")
+
     def test_backward_highlight_prefers_chain_over_transitive_shortcut(self) -> None:
         body = function_body(self.source, "directedPartAll")
         self.assertIn("filterBackwardShortcutEdges", body)
@@ -274,6 +282,9 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("state?.combineMode==='path'&&ids.length>1", classifier)
         self.assertIn("normalizePreparationTier", classifier)
         self.assertIn("tierNodeIds", classifier)
+        self.assertIn("state?.pathEdges", classifier)
+        self.assertRegex(classifier, r"adjacent===incoming[\s\S]{0,260}tierNodeIds")
+        self.assertRegex(classifier, r"pathEdges?\.has|pathPairs")
 
     def test_selection_state_exposes_scope_and_combine_mode_to_chronology_layer(self) -> None:
         """The pure classifier must not read hidden module globals for mode semantics."""
