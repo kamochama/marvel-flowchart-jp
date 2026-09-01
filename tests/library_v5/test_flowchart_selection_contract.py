@@ -67,6 +67,70 @@ class FlowchartSelectionContractTests(unittest.TestCase):
             r"default_importance_mode[\s\S]{0,240}marvelSetImportanceMode",
         )
 
+    def test_public_tier_highlighting_is_derived_without_importance_visibility_filter(self) -> None:
+        """The public tier must share preparation semantics without hiding master edges."""
+        self.assertIn("function buildTierHighlightState", self.source)
+        body = function_body(self.source, "buildTierHighlightState")
+        self.assertIn("tierRoutePartForGoal", body)
+        self.assertIn("buildMultiGoalPlan", function_body(self.source, "tierRoutePartForGoal"))
+        self.assertIn("tierBackEdges", body)
+        self.assertIn("tierNodeIds", body)
+        self.assertRegex(body, r"forwardEdges\s*:\s*new Set\(baseState\.forwardEdges")
+        self.assertIn("routeBackNodeIds", body)
+        self.assertIn("goals.includes(edgeByKey.get(key)?.source)", body)
+        tagger = function_body(self.source, "tagEdgeImportance")
+        self.assertNotIn("importance-hidden", tagger)
+
+    def test_multigoal_context_keeps_context_edges_from_every_goal(self) -> None:
+        body = function_body(self.source, "buildTierHighlightState")
+        self.assertIn("goals.includes(edgeByKey.get(key)?.source)", body)
+        self.assertIn("goals.includes(edge.source)?edge.target:edge.source", body)
+
+    def test_chart_tier_uses_the_shared_connection_tier_setter(self) -> None:
+        self.assertIn('id="chartConnectionTier"', self.source)
+        selector = re.search(r'<select id="chartConnectionTier".*?</select>', self.source, re.DOTALL)
+        self.assertIsNotNone(selector)
+        self.assertEqual(
+            re.findall(r'<option value="([^"]+)"', selector.group(0)),
+            ["official", "site-proposal", "complete"],
+        )
+        self.assertRegex(
+            self.source,
+            r"chart-tier-select[\s\S]{0,600}marvelSetConnectionTier\(sel\.value\)",
+        )
+
+    def test_desktop_focus_uses_the_shared_connection_tier_state(self) -> None:
+        """PC inspection and watch-plan goals must render the same tier semantics."""
+        body = function_body(self.source, "focusPart")
+        self.assertIn("marvelBuildTierHighlightState", body)
+        self.assertIn("marvelGetConnectionTier", body)
+
+    def test_background_click_clear_is_guarded_against_drag_and_non_background_targets(self) -> None:
+        self.assertIn("startTarget", self.source)
+        self.assertIn("backgroundClickCandidate", self.source)
+        self.assertRegex(self.source, r"backgroundClickCandidate[\s\S]{0,500}clearAllGoalsWithUndo")
+        self.assertRegex(self.source, r"if\(st\?\.(?:didDrag|moved)[\s\S]{0,180}stopImmediatePropagation")
+
+    def test_pointercancel_clears_gesture_click_guard(self) -> None:
+        """A cancelled pointer gesture must not swallow the next real click."""
+        match = re.search(r"const endPointer=e=>\{(?P<body>[\s\S]*?)\n\s*\};", self.source)
+        self.assertIsNotNone(match)
+        body = match.group("body") if match else ""
+        self.assertIn("e.type==='pointercancel'", body)
+        self.assertRegex(body, r"pointercancel[\s\S]{0,260}backgroundClickCandidate=false")
+        self.assertRegex(body, r"pointercancel[\s\S]{0,320}didDrag=false")
+
+    def test_desktop_reclick_and_blank_click_clear_focus(self) -> None:
+        """Desktop inspection must be dismissible without leaving a stale focus paint."""
+        self.assertRegex(
+            self.source,
+            r"window\.marvelFocusWork=function\(id,\{center=true\}=\{\}\)\{[\s\S]{0,1200}detailFocusId===id",
+        )
+        self.assertRegex(
+            self.source,
+            r"window\.marvelReturnToGoalView\?\.\(\);\s*clearAllGoalsWithUndo\(\)",
+        )
+
     def test_selection_and_deselection_only_restyle_existing_edge_groups(self) -> None:
         body = function_body(self.source, "renderSelectionState")
         self.assertIn("classList.add('hl'", body)
@@ -76,6 +140,12 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertNotIn("createElementNS(NS,'g')", body)
         self.assertNotIn("remove()", body)
         self.assertIn("reason_ids", self.source)
+
+    def test_overlapping_backward_and_forward_edges_use_explicit_both_style(self) -> None:
+        """A converging route must not let CSS class order decide the highlight color."""
+        for name in ("renderSelectionState", "renderFocusHighlight"):
+            body = function_body(self.source, name)
+            self.assertRegex(body, r"if\(b&&f\).*classList\.add\('hl','bothhl'\)")
 
     def test_reason_panel_resolves_reason_ids_without_mutating_edges(self) -> None:
         self.assertIn("reasonsById", self.source)
@@ -92,6 +162,23 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertRegex(state_body, r"pathEdges\.add\(k\)")
         render_body = function_body(self.source, "renderSelectionState")
         self.assertRegex(render_body, r"state\.pathEdges\.has\(k\)")
+
+    def test_path_mode_applies_connection_tier_to_candidate_edges(self) -> None:
+        """PATH must recompute its directed candidates when the public tier changes."""
+        self.assertIn("function pathEdgeAllowed", self.source)
+        path_body = function_body(self.source, "pathSelectionState")
+        self.assertIn("pathEdgeAllowed", path_body)
+        self.assertIn("tierPathEdges", path_body)
+        self.assertNotIn("if(baseState.pathMode) return {...baseState,tier:mode,tierNodeIds, tierBackEdges", self.source)
+        self.assertRegex(self.source, r"function mobileSelectionWorldKey\(state\)[\s\S]{0,500}state\?\.tier\|\|state\?\.prepTier")
+
+    def test_path_explanation_uses_the_same_connection_tier_filter(self) -> None:
+        """The textual route explanation must not show a route hidden from the chart."""
+        explanation = function_body(self.source, "updatePathExplanation")
+        self.assertIn("pathTierContext", explanation)
+        self.assertIn("pathEdgeAllowed", explanation)
+        self.assertRegex(explanation, r"bestDirectedPairPath\(a,b,'main',[^)]+\)")
+        self.assertRegex(explanation, r"bestDirectedPairPath\(a,b,'shortest',[^)]+\)")
 
     def test_backward_highlight_prefers_chain_over_transitive_shortcut(self) -> None:
         body = function_body(self.source, "directedPartAll")
@@ -118,11 +205,11 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         body = function_body(self.source, "directedPartAll")
         self.assertRegex(
             body,
-            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| \(importanceMode==='reference' && e\.type_en==='explicit work relation'\)\)",
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| \(prepTier==='complete' && e\.type_en==='explicit work relation'\)\)",
         )
         self.assertRegex(body, r"if\(!backPropagates\(e\)\) continue")
         self.assertRegex(body, r"if\(!propagates\(e\)\) continue")
-        self.assertNotRegex(body, r"importanceMode==='reference' \|\| edgeRank\(e\)>=3")
+        self.assertNotRegex(body, r"prepTier==='complete' \|\| edgeRank\(e\)>=3")
 
     def test_character_filter_is_visual_only_and_does_not_replace_exported_edges(self) -> None:
         body = function_body(self.source, "applyCharacterHighlight")
@@ -193,6 +280,11 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         for token in ("previous1", "combineMode==='and'", "pathMode", "traversable===false"):
             self.assertIn(token, classifier)
         self.assertIn("state?.combineMode==='path'&&ids.length>1", classifier)
+        self.assertIn("normalizePreparationTier", classifier)
+        self.assertIn("tierNodeIds", classifier)
+        self.assertIn("state?.pathEdges", classifier)
+        self.assertRegex(classifier, r"adjacent===incoming[\s\S]{0,260}tierNodeIds")
+        self.assertRegex(classifier, r"pathEdges?\.has|pathPairs")
 
     def test_selection_state_exposes_scope_and_combine_mode_to_chronology_layer(self) -> None:
         """The pure classifier must not read hidden module globals for mode semantics."""
@@ -203,6 +295,12 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertRegex(path_body, r"scopeMode")
         self.assertRegex(path_body, r"combineMode")
         self.assertIn("selectedIds", state_body)
+
+    def test_desktop_focus_passes_its_tier_state_to_chronology(self) -> None:
+        """Detail inspection must not render chronology from a stale goal state."""
+        focus = function_body(self.source, "renderFocusHighlight")
+        self.assertIn("renderChronologySelectionState?.(svg,part)", focus)
+        self.assertIn("marvelApplyOfficialRouteSvgOverlay?.(svg,part)", focus)
 
     def test_chronology_groups_carry_traversability_and_fox_branch_endpoints(self) -> None:
         """Structural branches are selectable; display-only sequences are not traversed."""

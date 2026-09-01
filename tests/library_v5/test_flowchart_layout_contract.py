@@ -73,7 +73,8 @@ class FlowchartLayoutContractTests(unittest.TestCase):
         body = function_body(self.source, "syncDesktopSidePanelLayer")
         self.assertIn("zIndex", body)
         self.assertIn("advancedOpen", body)
-        self.assertIn("'21'", body)
+        self.assertIn("'19'", body)
+        self.assertNotIn("'21'", body)
 
     def test_closed_advanced_controls_restore_existing_side_panel_position(self) -> None:
         body = function_body(self.source, "syncDesktopSidePanelLayer")

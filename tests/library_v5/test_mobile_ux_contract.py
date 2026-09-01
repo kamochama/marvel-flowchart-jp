@@ -92,6 +92,13 @@ class MobileUxContractTests(unittest.TestCase):
             self.assertIn(selector, body)
         self.assertRegex(body, r"min-height\s*:\s*44px")
 
+    def test_mobile_header_stays_at_viewport_top_during_page_scroll(self) -> None:
+        """The mobile search/area bar lives in the header, so its parent is sticky."""
+        self.assertRegex(
+            self.source,
+            r"@media\(max-width:760px\)\{[\s\S]{0,400}header\{[^}]*position\s*:\s*sticky[^}]*top\s*:\s*0[^}]*z-index\s*:\s*30",
+        )
+
     def test_mobile_area_menu_traps_and_restores_focus(self) -> None:
         open_body = function_body(self.source, "openMobileAreaMenu")
         close_body = function_body(self.source, "closeMobileAreaMenu")
