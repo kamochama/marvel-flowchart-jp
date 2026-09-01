@@ -8,7 +8,9 @@
 
 **Tech Stack:** `index.html` inline JavaScript/SVG/Canvas, Python `unittest` contract tests, bundled Codex Python runtime.
 
-**Spec:** ChatGPT read-only audit of `e42a3c0` and the Phase 2 chronology-selection requirements in `AGENTS.md`.
+**Spec:** Local read-only audit of `e42a3c0` and the Phase 2 chronology-selection requirements in `AGENTS.md`.
+
+**Audit boundary:** Do not use ChatGPT Work for this batch; all review and verification stay in this checkout.
 
 ## Global Constraints
 
@@ -23,23 +25,23 @@
 **Files:**
 - Modify: `tests/library_v5/test_flowchart_selection_contract.py`
 
-- [ ] Add assertions for state-aware shared chronology classification, `previous1` direct-incoming behavior, AND/PATH handling, branch metadata, and explicit traversability metadata.
-- [ ] Run the focused test file and confirm the new assertions fail against `e42a3c0`.
+- [x] Add assertions for state-aware shared chronology classification, `previous1` direct-incoming behavior, AND/PATH handling, branch metadata, and explicit traversability metadata.
+- [x] Run the focused test file and confirm the new assertions fail against `e42a3c0`.
 
 ### Task 2: Implement shared chronology selection and metadata
 
 **Files:**
 - Modify: `index.html`
 
-- [ ] Add a pure chronology edge classifier that accepts edge records and selection state, respecting scope, combine mode, path mode, and `data-chronology-traversable`.
-- [ ] Add selection state fields needed by both renderers and route desktop/mobile through the shared classifier.
-- [ ] Add traversability metadata to chronology groups, wrap FOX branch connectors with source/target metadata, and mark the independent SSU sequence display-only.
+- [x] Add a pure chronology edge classifier that accepts edge records and selection state, respecting scope, combine mode, path mode, and `data-chronology-traversable`.
+- [x] Add selection state fields needed by both renderers and route desktop/mobile through the shared classifier.
+- [x] Add traversability metadata to chronology groups, wrap FOX branch connectors with source/target metadata, and mark the independent SSU sequence display-only.
 
 ### Task 3: Verify locally and re-audit
 
 **Files:**
 - Modify: `README.md` only if the user-visible version note is required.
 
-- [ ] Run focused tests, browser smoke checks, full tests, and build; inspect and clean only known generated outputs.
-- [ ] Push the audit branch and ask ChatGPT Work for a read-only audit of the exact commit.
-- [ ] Apply any concrete remaining finding with another RED/GREEN cycle and repeat the audit until no actionable blocker remains.
+- [x] Run focused tests, browser smoke checks, full tests, and build; inspect and clean only known generated outputs.
+- [x] Perform a local read-only audit of the exact branch diff and resolve the stale public-version contract assertion.
+- [x] Apply the concrete finding with another focused GREEN run; no external Work audit is part of this batch.
