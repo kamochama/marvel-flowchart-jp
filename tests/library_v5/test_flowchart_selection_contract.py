@@ -192,6 +192,7 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         classifier = function_body(self.source, "classifyChronologySelection")
         for token in ("previous1", "combineMode==='and'", "pathMode", "traversable===false"):
             self.assertIn(token, classifier)
+        self.assertIn("state?.combineMode==='path'&&ids.length>1", classifier)
 
     def test_selection_state_exposes_scope_and_combine_mode_to_chronology_layer(self) -> None:
         """The pure classifier must not read hidden module globals for mode semantics."""

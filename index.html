@@ -4660,7 +4660,8 @@ function classifyChronologySelection(edges,state){
     if(state?.scopeMode!=='previous1')for(const key of walk(goal,outgoing).keys())result.set(key,(result.get(key)||0)|2);
     return result;
   };
-  if(state?.pathMode||state?.combineMode==='path'){
+  const pathMode=state?.pathMode===true||(state?.combineMode==='path'&&ids.length>1);
+  if(pathMode){
     const pathEdges=new Map(records.map(edge=>[edge.source,[]]));
     for(const edge of records){if(!pathEdges.has(edge.source))pathEdges.set(edge.source,[]);pathEdges.get(edge.source).push(edge);}
     for(const links of pathEdges.values())links.sort((a,b)=>a.key.localeCompare(b.key));
