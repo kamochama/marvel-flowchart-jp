@@ -127,6 +127,12 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertNotIn("remove()", body)
         self.assertIn("reason_ids", self.source)
 
+    def test_overlapping_backward_and_forward_edges_use_explicit_both_style(self) -> None:
+        """A converging route must not let CSS class order decide the highlight color."""
+        for name in ("renderSelectionState", "renderFocusHighlight"):
+            body = function_body(self.source, name)
+            self.assertRegex(body, r"if\(b&&f\).*classList\.add\('hl','bothhl'\)")
+
     def test_reason_panel_resolves_reason_ids_without_mutating_edges(self) -> None:
         self.assertIn("reasonsById", self.source)
         self.assertRegex(self.source, r"reason_ids\.map\(id=>reasonsById\[id\]")

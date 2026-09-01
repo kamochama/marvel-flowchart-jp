@@ -6436,9 +6436,11 @@ if(flowchartReady)render();
       const k=edgeKeyFromSvgGroup(g); if(!k) continue;
       if(state.pathMode){ if(state.pathEdges.has(k)) g.classList.add('hl','pathhl'); continue; }
       if(state.generic){ if(state.contextEdges.has(k)) g.classList.add('hl','contexthl'); continue; }
-      if(state.backEdges.has(k)) g.classList.add('hl','backhl');
-      if(state.forwardEdges.has(k)) g.classList.add('hl','forwardhl');
-      if(state.contextEdges.has(k)) g.classList.add('hl','contexthl');
+      const b=state.backEdges.has(k), f=state.forwardEdges.has(k), c=state.contextEdges.has(k);
+      if(b&&f) g.classList.add('hl','bothhl');
+      else if(b) g.classList.add('hl','backhl');
+      else if(f) g.classList.add('hl','forwardhl');
+      else if(c) g.classList.add('hl','contexthl');
     }
     applyOfficialRouteSvgOverlay(svg,state);
   }
@@ -8831,9 +8833,11 @@ window.FEATURED_ROUTE=Object.freeze({
     for(const g of svg.querySelectorAll('g.edge:not(.dynamic-edge-overlay)')){
       const k=window.marvelEdgeKeyFromGroup?.(g); if(!k)continue;
       if(part.generic){if(part.contextEdges?.has(k))g.classList.add('hl','contexthl');continue;}
-      if(part.backEdges?.has(k))g.classList.add('hl','backhl');
-      if(part.forwardEdges?.has(k))g.classList.add('hl','forwardhl');
-      if(part.contextEdges?.has(k))g.classList.add('hl','contexthl');
+      const b=part.backEdges?.has(k), f=part.forwardEdges?.has(k), c=part.contextEdges?.has(k);
+      if(b&&f)g.classList.add('hl','bothhl');
+      else if(b)g.classList.add('hl','backhl');
+      else if(f)g.classList.add('hl','forwardhl');
+      else if(c)g.classList.add('hl','contexthl');
     }
     window.renderChronologySelectionState?.(svg,window.__marvelLastSelectionState);
     window.marvelApplyOfficialRouteSvgOverlay?.(svg,window.__marvelLastSelectionState);
