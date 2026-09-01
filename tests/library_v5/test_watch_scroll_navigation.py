@@ -319,7 +319,7 @@ class WatchScrollNavigationContract(unittest.TestCase):
 
     def test_detail_focus_redraw_preserves_official_route_highlight(self) -> None:
         self.assertIn(
-            "window.marvelApplyOfficialRouteSvgOverlay?.(svg,window.__marvelLastSelectionState)",
+            "window.marvelApplyOfficialRouteSvgOverlay?.(svg,part)",
             self.html,
         )
 

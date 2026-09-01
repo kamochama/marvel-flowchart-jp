@@ -613,6 +613,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 /* PUBLIC v5.14.0 — mobile hierarchy: persistent search + one area selector. */
 .mobile-primary-nav{display:none}
 @media(max-width:760px){
+    header{position:sticky;top:0;z-index:30}
     .public-nav-sticky{display:none!important}.tabs,.public-guide{display:none!important}
   .mobile-primary-nav{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px;padding:7px 9px 8px;border-top:1px solid #263550;background:rgba(7,11,22,.96)}
   .mobile-search-host{min-width:0;position:relative}
@@ -4635,11 +4636,14 @@ function classifyChronologySelection(edges,state){
   const classes=new Map();
   const ids=[...(state?.selectedIds||[])];
   if(!ids.length)return classes;
+  const tier=normalizePreparationTier(state?.tier||state?.prepTier||'complete');
+  const tierNodeIds=state?.tierNodeIds||new Set();
   const records=[],seenKeys=new Set();
   for(const raw of (edges||[])){
     const source=raw?.source||raw?.chronologySource,target=raw?.target||raw?.chronologyTarget;
     const key=raw?.key||`${source||''}->${target||''}`;
     if(!source||!target||!key||seenKeys.has(key)||raw?.traversable===false)continue;
+    if(!state?.pathMode && tier!=='complete' && tierNodeIds.size && (!tierNodeIds.has(source)||!tierNodeIds.has(target)))continue;
     seenKeys.add(key);records.push({source,target,key});
   }
   if(!records.length)return classes;
@@ -4830,7 +4834,7 @@ function mobileOverlaySyntheticNearViewport(cs,spec,rect){
   return (!!a&&a.x2>=rect.x&&a.x<=rect.x2&&a.y2>=rect.y&&a.y<=rect.y2)||(!!b&&b.x2>=rect.x&&b.x<=rect.x2&&b.y2>=rect.y&&b.y<=rect.y2);
 }
 function mobileSelectionWorldKey(state){
-  return `${selected||''}::${[...selectedIds].sort().join('|')}::${state?.scopeMode||'all'}::${state?.combineMode||'or'}::${state?.pathPreference||'main'}::${state?.pathMode?'p':'n'}::${state?.generic?'g':'n'}::${state?.officialRouteActive?'o'+[...(state.officialRouteIds||[])].join('|')+'#'+[...(state.officialRouteEdges||[])].join('|'):'n'}`;
+  return `${selected||''}::${[...selectedIds].sort().join('|')}::${state?.scopeMode||'all'}::${state?.combineMode||'or'}::${state?.pathPreference||'main'}::${state?.tier||state?.prepTier||'site-proposal'}::${state?.pathMode?'p':'n'}::${state?.generic?'g':'n'}::${state?.officialRouteActive?'o'+[...(state.officialRouteIds||[])].join('|')+'#'+[...(state.officialRouteEdges||[])].join('|'):'n'}`;
 }
 function mobileOverlayRelevantNodeIds(state){
   const ids=new Set(selectedIds);for(const id of (state?.ctx||[]))ids.add(id);for(const id of (state?.officialRouteIds||[]))ids.add(id);return ids;
@@ -5255,6 +5259,7 @@ function initSvgInteraction(){
     const endPointer=e=>{
       const st=ensureViewState(wrap);
       const wasPinching=st.pinching || pointers.size>=2;
+      const canceled=e.type==='pointercancel';
       pointers.delete(e.pointerId);
       try{wrap.releasePointerCapture?.(e.pointerId)}catch(_){}
       if(wasPinching){
@@ -5263,8 +5268,16 @@ function initSvgInteraction(){
         st.drag=false;
       }
       if(pointers.size===0){
-        st.backgroundClickCandidate=!!(e.type==='pointerup' && st.backgroundClickCandidate && !st.moved && !wasPinching);
-        st.didDrag=!!(st.didDrag||st.moved||wasPinching);
+        if(canceled){
+          // pointercancel does not produce a click; clear the one-shot guard so
+          // the next independent click can select/deselect normally.
+          st.backgroundClickCandidate=false;
+          st.didDrag=false;
+          st.moved=false;
+        }else{
+          st.backgroundClickCandidate=!!(e.type==='pointerup' && st.backgroundClickCandidate && !st.moved && !wasPinching);
+          st.didDrag=!!(st.didDrag||st.moved||wasPinching);
+        }
         flushView(wrap);
         st.gestureRect=null;
         wrap.classList.remove('dragging','gesture-active');
@@ -6126,7 +6139,13 @@ if(flowchartReady)render();
     if(profile==='shortest') return imp==='core'?100:(imp==='recommended'?101:103);
     return imp==='core'?1:(imp==='recommended'?3:7);
   }
-  function shortestDirectedPath(source,target,profile=pathPreference){
+  function pathEdgeAllowed(e,tier,tierPathEdges){
+    const mode=normalizePreparationTier(tier);
+    if(mode==='official') return !!tierPathEdges?.has(edgeKey(e));
+    if(mode==='site-proposal') return importanceOf(e)!=='reference';
+    return true;
+  }
+  function shortestDirectedPath(source,target,profile=pathPreference,allowedEdge=null){
     if(source===target) return {nodes:[source],edges:[],cost:0};
     const dist=new Map([[source,0]]), prev=new Map(), prevEdge=new Map(), done=new Set();
     while(true){
@@ -6136,7 +6155,7 @@ if(flowchartReady)render();
       if(x===target) break;
       done.add(x);
       for(const e of (out[x]||[])){
-        if(!importanceAllowed(e)) continue;
+        if(!importanceAllowed(e) || (allowedEdge && !allowedEdge(e))) continue;
         const nd=best+pathEdgeCost(e,profile);
         if(nd<(dist.get(e.target)??Infinity)){dist.set(e.target,nd);prev.set(e.target,x);prevEdge.set(e.target,e);}
       }
@@ -6147,8 +6166,8 @@ if(flowchartReady)render();
     nodes.reverse(); edges.reverse();
     return {nodes,edges,cost:dist.get(target)};
   }
-  function bestDirectedPairPath(a,b,profile=pathPreference){
-    const ab=shortestDirectedPath(a,b,profile), ba=shortestDirectedPath(b,a,profile);
+  function bestDirectedPairPath(a,b,profile=pathPreference,allowedEdge=null){
+    const ab=shortestDirectedPath(a,b,profile,allowedEdge), ba=shortestDirectedPath(b,a,profile,allowedEdge);
     if(!ab) return ba; if(!ba) return ab;
     if(ab.cost!==ba.cost) return ab.cost<ba.cost?ab:ba;
     return ab.edges.length<=ba.edges.length?ab:ba;
@@ -6156,14 +6175,21 @@ if(flowchartReady)render();
   function pathSelectionState(){
     const ids=[...selectedIds];
     if(ids.length<2) return directedPart(ids[0]);
-    const nodes=new Set(ids), pathEdges=new Set(), disconnected=[];
+    const mode=normalizePreparationTier(prepTier), nodes=new Set(ids), pathEdges=new Set(), tierPathEdges=new Set(), disconnected=[];
+    if(mode==='official'){
+      for(const goal of ids){
+        const route=tierRoutePartForGoal(goal,mode);
+        for(const key of route.edges) tierPathEdges.add(key);
+      }
+    }
+    const allowedEdge=e=>pathEdgeAllowed(e,mode,tierPathEdges);
     for(let i=0;i<ids.length;i++) for(let j=i+1;j<ids.length;j++){
-      const p=bestDirectedPairPath(ids[i],ids[j],pathPreference);
+      const p=bestDirectedPairPath(ids[i],ids[j],pathPreference,allowedEdge);
       if(!p){disconnected.push([ids[i],ids[j]]);continue;}
       for(const x of p.nodes) nodes.add(x);
       for(const k of p.edges) pathEdges.add(k);
     }
-    const base={ctx:nodes,nodes,back:new Set(),forward:new Set(),context:new Set(),backNodes:new Set(),forwardNodes:new Set(),contextNodes:new Set(),backEdges:new Set(),forwardEdges:new Set(),contextEdges:new Set(),pathEdges,pathMode:true,generic:false,disconnected,selectedIds:ids,scopeMode,combineMode,pathPreference,...officialRouteStateFields()};
+    const base={ctx:nodes,nodes,back:new Set(),forward:new Set(),context:new Set(),backNodes:new Set(),forwardNodes:new Set(),contextNodes:new Set(),backEdges:new Set(),forwardEdges:new Set(),contextEdges:new Set(),pathEdges,tierPathEdges,pathMode:true,generic:false,disconnected,selectedIds:ids,scopeMode,combineMode,pathPreference,tier:mode,prepTier:mode,...officialRouteStateFields()};
     return buildTierHighlightState(ids,prepTier,base);
   }
 
@@ -6694,17 +6720,20 @@ if(flowchartReady)render();
     for(const id of routeBackNodeIds) if(!goals.includes(id)&&(!limitToScope||backNodes.has(id))) backNodes.add(id);
     const contextEdges=mode==='complete'
       ? new Set(baseState.contextEdges||[])
-      : new Set([...(baseState.contextEdges||[])].filter(key=>scopedBackEdges.has(key)||edgeByKey.get(key)?.source===goals[0]));
+      : new Set([...(baseState.contextEdges||[])].filter(key=>scopedBackEdges.has(key)||goals.includes(edgeByKey.get(key)?.source)));
     const contextNodes=new Set();
     for(const key of contextEdges){
       const edge=edgeByKey.get(key);if(!edge)continue;
       if(baseState.contextNodes?.has(edge.source)) contextNodes.add(edge.source);
       else if(baseState.contextNodes?.has(edge.target)) contextNodes.add(edge.target);
-      else contextNodes.add(edge.source===goals[0]?edge.target:edge.source);
+      else contextNodes.add(goals.includes(edge.source)?edge.target:edge.source);
     }
     const forwardNodes=new Set(baseState.forwardNodes||[]), forward=new Set(baseState.forward||[]);
     const ctx=new Set([...goals,...backNodes,...contextNodes,...forwardNodes]);
-    if(baseState.pathMode) return {...baseState,tier:mode,tierNodeIds,tierBackEdges,prepTier:mode};
+    if(baseState.pathMode){
+      const pathNodes=new Set(baseState.nodes||baseState.ctx||[]);
+      return {...baseState,ctx:pathNodes,nodes:pathNodes,tier:mode,tierNodeIds,tierBackEdges,prepTier:mode};
+    }
     return {...baseState,ctx,nodes:ctx,back:backNodes,context:contextNodes,backNodes,contextNodes,backEdges:scopedBackEdges,contextEdges,forward,forwardNodes,forwardEdges:new Set(baseState.forwardEdges||[]),tier:mode,tierNodeIds,tierBackEdges,prepTier:mode};
   }
 window.buildTierHighlightState=buildTierHighlightState;
@@ -8780,7 +8809,8 @@ window.FEATURED_ROUTE=Object.freeze({
     else if(scope==='previous1'&&window.marvelDirectPredecessorPart)base=window.marvelDirectPredecessorPart(id);
     else base=limitedFocusPart(id,1);
     const tier=window.marvelGetConnectionTier?.()||'site-proposal';
-    return window.marvelBuildTierHighlightState?.([id],tier,base)||base;
+    const state=window.marvelBuildTierHighlightState?.([id],tier,base)||base;
+    return {...state,selectedIds:[id],scopeMode:scope,combineMode:'or',pathMode:false,pathPreference:'main',tier:state.tier||tier,prepTier:state.prepTier||tier};
   }
 
   const attrEsc=s=>esc(s).replaceAll('"','&quot;').replaceAll("'",'&#39;');
@@ -8839,8 +8869,8 @@ window.FEATURED_ROUTE=Object.freeze({
       else if(f)g.classList.add('hl','forwardhl');
       else if(c)g.classList.add('hl','contexthl');
     }
-    window.renderChronologySelectionState?.(svg,window.__marvelLastSelectionState);
-    window.marvelApplyOfficialRouteSvgOverlay?.(svg,window.__marvelLastSelectionState);
+    window.renderChronologySelectionState?.(svg,part);
+    window.marvelApplyOfficialRouteSvgOverlay?.(svg,part);
     if(typeof window.marvelRenderReasonExplanation==='function')window.marvelRenderReasonExplanation([...(inc[id]||[]),...(out[id]||[])]);
     if(typeof window.marvelRenderFocusedDetail==='function')window.marvelRenderFocusedDetail(id);
     else if(detail){
@@ -9130,7 +9160,9 @@ function syncDesktopSidePanelLayer(){
   if(!right)return;
   if(window.matchMedia('(min-width:981px)').matches){
     if(advancedOpen){
-      right.style.zIndex='21';
+      // Keep the viewport-sticky guide/tabs above the detail panel while the
+      // advanced controls are expanded on desktop.
+      right.style.zIndex='19';
     }else{
       right.style.removeProperty('top');
       right.style.removeProperty('z-index');
