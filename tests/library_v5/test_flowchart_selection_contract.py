@@ -67,6 +67,56 @@ class FlowchartSelectionContractTests(unittest.TestCase):
             r"default_importance_mode[\s\S]{0,240}marvelSetImportanceMode",
         )
 
+    def test_public_tier_highlighting_is_derived_without_importance_visibility_filter(self) -> None:
+        """The public tier must share preparation semantics without hiding master edges."""
+        self.assertIn("function buildTierHighlightState", self.source)
+        body = function_body(self.source, "buildTierHighlightState")
+        self.assertIn("tierRoutePartForGoal", body)
+        self.assertIn("buildMultiGoalPlan", function_body(self.source, "tierRoutePartForGoal"))
+        self.assertIn("tierBackEdges", body)
+        self.assertIn("tierNodeIds", body)
+        self.assertRegex(body, r"forwardEdges\s*:\s*new Set\(baseState\.forwardEdges")
+        self.assertIn("routeBackNodeIds", body)
+        self.assertIn("edge.source===goals[0]", body)
+        tagger = function_body(self.source, "tagEdgeImportance")
+        self.assertNotIn("importance-hidden", tagger)
+
+    def test_chart_tier_uses_the_shared_connection_tier_setter(self) -> None:
+        self.assertIn('id="chartConnectionTier"', self.source)
+        selector = re.search(r'<select id="chartConnectionTier".*?</select>', self.source, re.DOTALL)
+        self.assertIsNotNone(selector)
+        self.assertEqual(
+            re.findall(r'<option value="([^"]+)"', selector.group(0)),
+            ["official", "site-proposal", "complete"],
+        )
+        self.assertRegex(
+            self.source,
+            r"chart-tier-select[\s\S]{0,600}marvelSetConnectionTier\(sel\.value\)",
+        )
+
+    def test_desktop_focus_uses_the_shared_connection_tier_state(self) -> None:
+        """PC inspection and watch-plan goals must render the same tier semantics."""
+        body = function_body(self.source, "focusPart")
+        self.assertIn("marvelBuildTierHighlightState", body)
+        self.assertIn("marvelGetConnectionTier", body)
+
+    def test_background_click_clear_is_guarded_against_drag_and_non_background_targets(self) -> None:
+        self.assertIn("startTarget", self.source)
+        self.assertIn("backgroundClickCandidate", self.source)
+        self.assertRegex(self.source, r"backgroundClickCandidate[\s\S]{0,500}clearAllGoalsWithUndo")
+        self.assertRegex(self.source, r"if\(st\?\.(?:didDrag|moved)[\s\S]{0,180}stopImmediatePropagation")
+
+    def test_desktop_reclick_and_blank_click_clear_focus(self) -> None:
+        """Desktop inspection must be dismissible without leaving a stale focus paint."""
+        self.assertRegex(
+            self.source,
+            r"window\.marvelFocusWork=function\(id,\{center=true\}=\{\}\)\{[\s\S]{0,1200}detailFocusId===id",
+        )
+        self.assertRegex(
+            self.source,
+            r"window\.marvelReturnToGoalView\?\.\(\);\s*clearAllGoalsWithUndo\(\)",
+        )
+
     def test_selection_and_deselection_only_restyle_existing_edge_groups(self) -> None:
         body = function_body(self.source, "renderSelectionState")
         self.assertIn("classList.add('hl'", body)
@@ -118,11 +168,11 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         body = function_body(self.source, "directedPartAll")
         self.assertRegex(
             body,
-            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| \(importanceMode==='reference' && e\.type_en==='explicit work relation'\)\)",
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| \(prepTier==='complete' && e\.type_en==='explicit work relation'\)\)",
         )
         self.assertRegex(body, r"if\(!backPropagates\(e\)\) continue")
         self.assertRegex(body, r"if\(!propagates\(e\)\) continue")
-        self.assertNotRegex(body, r"importanceMode==='reference' \|\| edgeRank\(e\)>=3")
+        self.assertNotRegex(body, r"prepTier==='complete' \|\| edgeRank\(e\)>=3")
 
     def test_character_filter_is_visual_only_and_does_not_replace_exported_edges(self) -> None:
         body = function_body(self.source, "applyCharacterHighlight")

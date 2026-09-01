@@ -93,18 +93,35 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertNotIn('value="recommended"', tier_select.group(0))
         self.assertNotIn("2段階", self.html)
 
-    def test_chart_connection_selector_remains_independent_from_watch_modes(self) -> None:
-        """Chart edge visibility keeps its own recommended/complete selector."""
-        self.assertIn(
-            "tier.className='chart-tier-select'",
-            self.html,
+    def test_chart_connection_selector_matches_watch_modes(self) -> None:
+        """The chart and watch plan expose the same three public tiers."""
+        selector = re.search(r'<select id="chartConnectionTier".*?</select>', self.html, re.DOTALL)
+        self.assertIsNotNone(selector)
+        self.assertEqual(
+            re.findall(r'<option value="([^"]+)"', selector.group(0)),
+            ["official", "site-proposal", "complete"],
         )
-        self.assertIn(
-            "tier.innerHTML='<option value=\"recommended\" selected>おすすめ</option><option value=\"complete\">完全版</option>'",
-            self.html,
-        )
-        self.assertIn("window.marvelSetImportanceMode", self.html)
-        self.assertIn("document.querySelectorAll('.watch-tier-select')", self.html)
+        self.assertIn("document.querySelectorAll('.chart-tier-select')", self.html)
+        self.assertIn("window.marvelSetConnectionTier(sel.value)", self.html)
+        self.assertNotIn('data-importance-mode="recommended"', selector.group(0))
+
+    def test_guide_and_tabs_use_a_viewport_sticky_desktop_nav(self) -> None:
+        self.assertIn('<div class="public-nav-sticky">', self.html)
+        nav_start = self.html.index('<div class="public-nav-sticky">')
+        nav_end = self.html.index('<dialog id="publicHelpDialog"', nav_start)
+        nav_text = self.html[nav_start:nav_end]
+        self.assertIn('class="public-guide"', nav_text)
+        self.assertIn('class="tabs"', nav_text)
+        header = re.search(r"<header>[\s\S]*?</header>", self.html)
+        self.assertIsNotNone(header)
+        self.assertNotIn('class="public-guide"', header.group(0))
+        self.assertNotIn('class="tabs"', header.group(0))
+        main = re.search(r"<main>[\s\S]*?</main>", self.html)
+        self.assertIsNotNone(main)
+        self.assertNotIn('class="public-guide"', main.group(0))
+        self.assertNotIn('class="tabs"', main.group(0))
+        self.assertRegex(self.html, r"\.public-nav-sticky\{[^}]*position:sticky[^}]*top:0")
+        self.assertIn(".tabs,.public-guide{display:none!important}", self.html)
 
     def test_flowchart_policy_initializes_chart_importance_without_changing_watch_mode(self) -> None:
         """The exported default importance must not overwrite the watch-plan tier."""
