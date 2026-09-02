@@ -262,3 +262,38 @@ jobs:
         env:
           MARVEL_BROWSER_INTERACTION_AUDIT: '1'
         run: python -m unittest tests.library_v5.test_browser_interaction_audit.BrowserInteractionAuditTests.test_headless_interactions_preserve_selection_contract -v
+
+  browser-chronology-audit:
+    needs: browser-interaction-audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Locate Chrome or Chromium
+        shell: bash
+        run: |
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            sudo apt-get update
+            sudo apt-get install -y chromium
+            chrome="$(command -v chromium || command -v chromium-browser || true)"
+          fi
+          test -n "$chrome"
+          echo "MARVEL_CHROME_BIN=$chrome" >> "$GITHUB_ENV"
+      - name: Build browser fixture
+        run: python -m scripts.library_v5.build --repo-root .
+      - name: Run required headless chronology audit
+        env:
+          MARVEL_BROWSER_CHRONOLOGY_AUDIT: '1'
+        run: python -m unittest tests.library_v5.test_browser_chronology_audit.BrowserChronologyAuditTests.test_headless_chronology_contract -v
+      - name: Print chronology audit JSON summary
+        env:
+          MARVEL_BROWSER_CHRONOLOGY_AUDIT: '1'
+        run: node tests/library_v5/browser_chronology_audit.mjs --root . --chrome "$MARVEL_CHROME_BIN"
