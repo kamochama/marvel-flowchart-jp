@@ -18,12 +18,18 @@ const ORACLE_EDGE_IDS = {
   iron_to_iron2: "sequence-iron-man-2008-iron-man-2-2010-mcu-main-3",
   iron2_to_hulk: "sequence-iron-man-2-2010-the-incredible-hulk-2008-mcu-main-4",
 };
+// These are the fixed public inputs exercised by the browser contract.  The
+// expected edge sets are derived from the independent fixture adjacency in
+// buildModeOracle, never from the production selection implementation or DOM.
 const MODE_ORACLE = {
-  complete: {captain_to_iron: "backhl", iron_to_iron2: "forwardhl"},
-  "site-proposal": {iron_to_iron2: "forwardhl"},
-  or: {captain_to_iron: "backhl", iron_to_iron2: "bothhl"},
-  and: {iron_to_iron2: "bothhl"},
-  path: {iron_to_iron2: "pathhl"},
+  complete: {goals: [PRIMARY_WORK], directions: ["incoming", "outgoing"]},
+  "site-proposal": {
+    goals: [PRIMARY_WORK], directions: ["outgoing"],
+    excluded: [ORACLE_EDGE_IDS.captain_to_iron],
+  },
+  or: {goals: [PRIMARY_WORK, SECONDARY_WORK], directions: ["incoming", "outgoing"]},
+  and: {goals: [PRIMARY_WORK, SECONDARY_WORK], directions: ["incoming", "outgoing"]},
+  path: {goals: [PRIMARY_WORK, SECONDARY_WORK], path: [PRIMARY_WORK, SECONDARY_WORK]},
 };
 // The structural contract is intentionally keyed by the exported
 // data-chronology-edge-id attribute (not by a release/overview graph edge).
@@ -123,6 +129,101 @@ async function startStaticServer(root) {
   const address = server.address();
   if (typeof address !== "object" || !address) throw new Error("static server address unavailable");
   return { server, url: `http://127.0.0.1:${address.port}/index.html` };
+}
+
+function loadChronologyFixture(root) {
+  const fixturePath = path.join(root, "tests/library_v5/browser_chronology_fixture.json");
+  let fixture;
+  try {
+    fixture = JSON.parse(fs.readFileSync(fixturePath, "utf8"));
+  } catch (error) {
+    throw new Error(`unable to load chronology fixture ${fixturePath}: ${error.message}`);
+  }
+  if (!Array.isArray(fixture) || fixture.length !== CHRONOLOGY_EDGE_COUNT) {
+    throw new Error(`chronology fixture must contain exactly ${CHRONOLOGY_EDGE_COUNT} records`);
+  }
+  const seen = new Set();
+  for (const [index, record] of fixture.entries()) {
+    const keys = record && typeof record === "object" ? Object.keys(record).sort() : [];
+    if (keys.join(",") !== "displayOnly,edge_id,source,target,traversable") {
+      throw new Error(`chronology fixture record ${index} has an invalid schema`);
+    }
+    if (typeof record.edge_id !== "string" || !record.edge_id || seen.has(record.edge_id)) {
+      throw new Error(`chronology fixture has a missing or duplicate edge_id at index ${index}`);
+    }
+    if (typeof record.source !== "string" || !record.source || typeof record.target !== "string" || !record.target) {
+      throw new Error(`chronology fixture record ${index} has an invalid endpoint`);
+    }
+    if (typeof record.traversable !== "boolean" || typeof record.displayOnly !== "boolean") {
+      throw new Error(`chronology fixture record ${index} has an invalid traversal flag`);
+    }
+    if (record.displayOnly !== (record.traversable === false)) {
+      throw new Error(`chronology fixture display-only invariant failed for ${record.edge_id}`);
+    }
+    seen.add(record.edge_id);
+  }
+  const nonTraversableCount = fixture.filter(record => record.traversable === false).length;
+  const displayOnlyCount = fixture.filter(record => record.displayOnly === true).length;
+  if (nonTraversableCount !== 3 || displayOnlyCount !== 3) {
+    throw new Error(`chronology fixture must contain exactly 3 non-traversable/display-only records (got ${nonTraversableCount}/${displayOnlyCount})`);
+  }
+  return fixture;
+}
+
+function buildFixtureAdjacency(fixture) {
+  const incoming = new Map(), outgoing = new Map();
+  for (const record of fixture) {
+    if (!record.traversable || record.displayOnly) continue;
+    if (!outgoing.has(record.source)) outgoing.set(record.source, []);
+    outgoing.get(record.source).push(record);
+    if (!incoming.has(record.target)) incoming.set(record.target, []);
+    incoming.get(record.target).push(record);
+  }
+  return {incoming, outgoing};
+}
+
+function reachableFixtureEdges(adjacency, start, direction) {
+  const allowed = new Set(), seen = new Set([start]), queue = [start];
+  while (queue.length) {
+    const current = queue.shift();
+    for (const edge of adjacency.get(current) || []) {
+      allowed.add(edge.edge_id);
+      const next = direction === "incoming" ? edge.source : edge.target;
+      if (!seen.has(next)) { seen.add(next); queue.push(next); }
+    }
+  }
+  return allowed;
+}
+
+function buildModeOracle(fixture, mode) {
+  const input = MODE_ORACLE[mode];
+  if (!input) throw new Error(`unsupported chronology oracle mode: ${mode}`);
+  const expected = new Map();
+  if (mode === "path") {
+    const edgeId = ORACLE_EDGE_IDS.iron_to_iron2;
+    const edge = fixture.find(record => record.edge_id === edgeId);
+    if (!edge || !edge.traversable || edge.displayOnly) throw new Error(`chronology fixture path is missing or non-traversable: ${edgeId}`);
+    expected.set(edgeId, "pathhl");
+    return expected;
+  }
+  const {incoming, outgoing} = buildFixtureAdjacency(fixture);
+  const incomingIds = new Set(), outgoingIds = new Set();
+  for (const goal of input.goals) {
+    if (input.directions.includes("incoming")) {
+      for (const edgeId of reachableFixtureEdges(incoming, goal, "incoming")) incomingIds.add(edgeId);
+    }
+    if (input.directions.includes("outgoing")) {
+      for (const edgeId of reachableFixtureEdges(outgoing, goal, "outgoing")) outgoingIds.add(edgeId);
+    }
+  }
+  const excluded = new Set(input.excluded || []);
+  for (const record of fixture) {
+    if (excluded.has(record.edge_id) || (!incomingIds.has(record.edge_id) && !outgoingIds.has(record.edge_id))) continue;
+    const category = incomingIds.has(record.edge_id) && outgoingIds.has(record.edge_id)
+      ? "bothhl" : incomingIds.has(record.edge_id) ? "backhl" : "forwardhl";
+    expected.set(record.edge_id, category);
+  }
+  return expected;
 }
 
 async function poll(task, timeoutMs, label) {
@@ -294,36 +395,26 @@ async function waitChronologyState(cdp, predicate, timeoutMs, label) {
   return poll(async () => predicate(await chronologySnapshot(cdp)), timeoutMs, label);
 }
 
-function validateModeOracle(snapshot, mode) {
-  const expected = MODE_ORACLE[mode] || {};
-  const byId = new Map(snapshot.records.map(record => [record.id, record.classes.filter(x => x !== "hl")]));
+function observedChronologyClasses(snapshot) {
+  const byId = new Map();
+  for (const record of snapshot.records || []) {
+    if (record.classes.includes("hl")) byId.set(record.id, record.classes.filter(item => item !== "hl"));
+  }
+  return byId;
+}
+
+function validateModeOracle(snapshot, mode, fixture) {
+  const expected = buildModeOracle(fixture, mode);
+  const actual = observedChronologyClasses(snapshot);
   const failures = [];
-  for (const [name, category] of Object.entries(expected)) {
-    const id = ORACLE_EDGE_IDS[name];
-    if (!byId.has(id) || !byId.get(id).includes(category)) failures.push(`${mode}: expected ${id}=${category}`);
+  for (const [id, category] of expected) {
+    const classes = actual.get(id);
+    if (!classes) failures.push(`${mode}: missing highlighted ${id}`);
+    else if (classes.length !== 1 || classes[0] !== category) failures.push(`${mode}: category mismatch ${id} (expected ${category}, got ${classes.join("|") || "none"})`);
   }
-  // Independent directed reachability oracle for the single-goal public cases;
-  // OR/AND/PATH additionally require the explicit fixture IDs above.
-  const allowed = new Set();
-  const starts = mode === "or" || mode === "and" || mode === "path" ? [PRIMARY_WORK, SECONDARY_WORK] : [PRIMARY_WORK];
-  const incoming = new Map(), outgoing = new Map();
-  for (const record of snapshot.records) if (record.traversable) {
-    if (!outgoing.has(record.source)) outgoing.set(record.source, []); outgoing.get(record.source).push(record);
-    if (!incoming.has(record.target)) incoming.set(record.target, []); incoming.get(record.target).push(record);
-  }
-  for (const start of starts) for (const adjacency of [incoming, outgoing]) {
-    const seen = new Set([start]), queue = [start];
-    while (queue.length) for (const edge of (adjacency.get(queue.shift()) || [])) { allowed.add(edge.id); const next = adjacency === incoming ? edge.source : edge.target; if (!seen.has(next)) { seen.add(next); queue.push(next); } }
-  }
-  if (mode === "path") { allowed.clear(); allowed.add(ORACLE_EDGE_IDS.iron_to_iron2); }
-  const actual = new Set(snapshot.highlighted);
-  for (const id of actual) if (!allowed.has(id)) failures.push(`${mode}: unexpected highlighted ${id}`);
-  for (const id of actual) {
-    const names = Object.entries(ORACLE_EDGE_IDS).filter(([, value]) => value === id).map(([name]) => name);
-    const wanted = names.map(name => expected[name]).filter(Boolean);
-    if (wanted.length && !wanted.some(category => byId.get(id)?.includes(category))) failures.push(`${mode}: category mismatch ${id}`);
-  }
-  if (snapshot.displayOnlyHighlighted.length) failures.push(`${mode}: display-only highlighted`);
+  for (const id of actual.keys()) if (!expected.has(id)) failures.push(`${mode}: unexpected highlighted ${id}`);
+  const displayOnlyIds = new Set(fixture.filter(record => record.displayOnly).map(record => record.edge_id));
+  for (const id of actual.keys()) if (displayOnlyIds.has(id)) failures.push(`${mode}: display-only highlighted ${id}`);
   if (failures.length) throw new Error(failures.join("; "));
 }
 
@@ -388,8 +479,7 @@ async function inspectParity(cdp, timeoutMs) {
   const failures=[];
   for(const id of initial.ids){if(!canvasById.has(id))failures.push(`missing canvas edge-id: ${id}`); else if(svgById.get(id)!==canvasById.get(id))failures.push(`category mismatch: ${id} (svg=${svgById.get(id)||"none"}, canvas=${canvasById.get(id)||"none"})`);}
   for(const id of canvasById.keys())if(!svgById.has(id))failures.push(`extra canvas edge-id: ${id}`);
-  // A real mobile canvas may be initialized lazily; the semantic SVG remains the
-  // conservative fallback, but both paths still compare the same stable IDs.
+  // Canvas materialization is mandatory for this parity audit; no SVG fallback.
   return {svg_ids:initial.ids,canvas_ids:[...canvasById.keys()],canvas_available:canvas.canvasAvailable,failures};
 }
 
@@ -401,6 +491,7 @@ async function runCase(cdp, url, timeoutMs, name, action) {
 async function runAudit(args) {
   const root=path.resolve(args.root||"."), timeoutMs=Number(args.timeout_ms||DEFAULT_TIMEOUT_MS);
   if(!Number.isInteger(timeoutMs)||timeoutMs<1000)throw new Error("--timeout-ms must be an integer >= 1000");
+  const fixture=loadChronologyFixture(root);
   const chrome=locateChrome(args.chrome), server=await startStaticServer(root);
   let chromeProcess=null, cdp=null; const cases=[]; let structural=null, parity=null, roundTrip={overview_to_chronology:false,chronology_to_overview:false};
   try {
@@ -411,18 +502,31 @@ async function runAudit(args) {
     const structuralFailures=[];
     if(structural.ids.length!==CHRONOLOGY_EDGE_COUNT)structuralFailures.push(`expected ${CHRONOLOGY_EDGE_COUNT} chronology edges, got ${structural.ids.length}`);
     if(structural.duplicateIds.length)structuralFailures.push(`duplicate edge-id: ${structural.duplicateIds.join(',')}`);
+    const fixtureIds=new Set(fixture.map(record=>record.edge_id));
+    const fixtureById=new Map(fixture.map(record=>[record.edge_id,record]));
+    for(const id of structural.ids)if(!fixtureIds.has(id))structuralFailures.push(`unexpected fixture edge-id: ${id}`);
+    for(const id of fixtureIds)if(!structural.ids.includes(id))structuralFailures.push(`missing fixture edge-id: ${id}`);
+    const metadataLabels={source:"fixture source mismatch",target:"fixture target mismatch",traversable:"fixture traversable mismatch",displayOnly:"fixture displayOnly mismatch"};
+    for(const record of structural.records){
+      const fixtureRecord=fixtureById.get(record.id); if(!fixtureRecord)continue;
+      for(const field of Object.keys(metadataLabels)){
+        if(record[field]!==fixtureRecord[field])structuralFailures.push(`${metadataLabels[field]}: ${record.id} (DOM=${record[field]}, fixture=${fixtureRecord[field]})`);
+      }
+    }
     if(structural.displayOnlyHighlighted.length)structuralFailures.push(`display-only highlighted: ${structural.displayOnlyHighlighted.join(',')}`);
-    structural={edge_count:structural.ids.length,edge_ids:structural.ids,duplicate_ids:structural.duplicateIds,display_only_highlighted:structural.displayOnlyHighlighted,non_traversable:structural.records.filter(x=>!x.traversable).map(x=>x.id),failures:structuralFailures};
+    structural={edge_count:structural.ids.length,edge_ids:structural.ids,records:structural.records,duplicate_ids:structural.duplicateIds,display_only_highlighted:structural.displayOnlyHighlighted,non_traversable:structural.records.filter(x=>!x.traversable).map(x=>x.id),failures:structuralFailures};
 
     cases.push(await runCase(cdp,server.url,timeoutMs,"complete",async()=>{
       await clearSelection(cdp,timeoutMs); await setTier(cdp,"complete",timeoutMs); await clickWork(cdp,PRIMARY_WORK,timeoutMs);
       await waitChronologyState(cdp,s=>s.dim&&s.focus.length>0&&s.highlighted.length>0,timeoutMs,"complete chronology selection");
-      validateModeOracle(await chronologySnapshot(cdp), "complete");
+      validateModeOracle(await chronologySnapshot(cdp), "complete", fixture);
+      return {snapshot:await chronologySnapshot(cdp)};
     }));
     cases.push(await runCase(cdp,server.url,timeoutMs,"site-proposal",async()=>{
       await clearSelection(cdp,timeoutMs); await setTier(cdp,"site-proposal",timeoutMs); await clickWork(cdp,PRIMARY_WORK,timeoutMs);
       await waitChronologyState(cdp,s=>s.dim&&s.focus.length>0&&s.highlighted.length>0,timeoutMs,"site-proposal chronology selection");
-      validateModeOracle(await chronologySnapshot(cdp), "site-proposal");
+      validateModeOracle(await chronologySnapshot(cdp), "site-proposal", fixture);
+      return {snapshot:await chronologySnapshot(cdp)};
     }));
     cases.push(await runCase(cdp,server.url,timeoutMs,"previous1",async()=>{
       const available=await evaluate(cdp,"return !!document.querySelector('.scope-btn[data-scope=\"previous1\"]')");
@@ -437,9 +541,17 @@ async function runAudit(args) {
         await clickWork(cdp,PRIMARY_WORK,timeoutMs,"right"); await clickWork(cdp,SECONDARY_WORK,timeoutMs,"right");
         await waitChronologyState(cdp,s=>s.dim&&s.highlighted.length>0,timeoutMs,`${mode} chronology selection`);
         const state=await chronologySnapshot(cdp); if(state.displayOnlyHighlighted.length)throw new Error(`${mode} highlighted display-only edge`);
-        validateModeOracle(state, mode);
+        validateModeOracle(state, mode, fixture);
+        return {snapshot:state};
       }));
     }
+    cases.push(await runCase(cdp,server.url,timeoutMs,"display-only-endpoint",async()=>{
+      await clearSelection(cdp,timeoutMs); await setTier(cdp,"complete",timeoutMs);
+      await clickWork(cdp,"morbius-2022",timeoutMs,"left","chronology");
+      const state=await chronologySnapshot(cdp);
+      if(state.displayOnlyHighlighted.length)throw new Error("display-only edge highlighted after endpoint click");
+      return {display_only_endpoint:"morbius-2022",display_only_highlighted:state.displayOnlyHighlighted};
+    }));
     await clearSelection(cdp,timeoutMs); await setCombine(cdp,"or",timeoutMs); await setTier(cdp,"complete",timeoutMs);
     await clickSelector(cdp,'.tab[data-target="overview"]',timeoutMs); await clickWork(cdp,PRIMARY_WORK,timeoutMs,"left","overview");
     await waitChronologyState(cdp,s=>s.panel==="overview"&&s.focus.length>0,timeoutMs,"overview selection");
@@ -476,6 +588,7 @@ async function runAudit(args) {
 
 async function main(){
   const args=parseArgs(process.argv.slice(2)); if(args.help){process.stdout.write(`${usage()}\n`);return;}
-  const report=await runAudit(args); process.stdout.write(`${JSON.stringify(report)}\n`); if(report.failures.length)process.exitCode=1;
+  const report=await runAudit(args);
+  process.stdout.write(`${JSON.stringify(report)}\n`); if(report.failures.length)process.exitCode=1;
 }
 main().catch((error)=>{process.stderr.write(`${error.stack||error}\n`);process.exitCode=1;});

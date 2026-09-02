@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNNER = ROOT / "tests" / "library_v5" / "browser_chronology_audit.mjs"
+FIXTURE = ROOT / "tests" / "library_v5" / "browser_chronology_fixture.json"
 WORKFLOW = ROOT / ".github" / "workflows" / "library-v5-ci.yml"
 
 
@@ -88,6 +89,42 @@ class BrowserChronologyAuditTests(unittest.TestCase):
         self.assertIn("ORACLE_EDGE_IDS", source)
         self.assertIn("unexpected highlighted", source)
         self.assertIn("category mismatch", source)
+        self.assertIn("display-only-endpoint", source)
+        self.assertIn("morbius-2022", source)
+        self.assertNotIn("semantic SVG remains the", source)
+
+    def test_fixed_chronology_fixture_is_complete_and_validator_is_dom_independent(self) -> None:
+        fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        self.assertEqual(len(fixture), 74)
+        self.assertEqual(len({record["edge_id"] for record in fixture}), 74)
+        self.assertEqual(sum(record["traversable"] is False for record in fixture), 3)
+        self.assertEqual(sum(record["displayOnly"] is True for record in fixture), 3)
+        for record in fixture:
+            self.assertEqual(
+                set(record), {"edge_id", "source", "target", "traversable", "displayOnly"}
+            )
+            self.assertEqual(record["displayOnly"], record["traversable"] is False)
+
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("browser_chronology_fixture.json", source)
+        self.assertIn("loadChronologyFixture", source)
+        self.assertIn("buildModeOracle", source)
+        validator = source[source.index("function validateModeOracle"):source.index("async function setTier")]
+        self.assertIn("fixture", validator)
+        self.assertNotIn("snapshot.records", validator)
+        self.assertNotIn("for (const record of snapshot.records", validator)
+        self.assertNotIn("window.computeSelectionState", source)
+        self.assertNotIn("window.renderChronologySelectionState", source)
+        oracle = source[source.index("function buildModeOracle"):source.index("async function poll")]
+        self.assertIn("ORACLE_EDGE_IDS.iron_to_iron2", oracle)
+        self.assertIn("record.edge_id === edgeId", oracle)
+
+    def test_structural_audit_checks_fixture_metadata_not_only_edge_ids(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        structural = source[source.index("const structuralFailures"):source.index("cases.push(await runCase")]
+        for field in ("source", "target", "traversable", "displayOnly"):
+            self.assertIn(f"fixture {field} mismatch", structural)
+        self.assertIn("fixtureRecord", structural)
 
     @unittest.skipUnless(
         os.environ.get("MARVEL_BROWSER_CHRONOLOGY_AUDIT") == "1",
