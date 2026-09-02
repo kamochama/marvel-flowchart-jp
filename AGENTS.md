@@ -6,8 +6,8 @@ This file defines persistent working rules for Codex and other coding agents ope
 
 - Repository: `kamochama/marvel-flowchart-jp`.
 - Production branch: `main`.
-- Latest semantic production baseline after PR #38: `fb715e87d5290b73e0ff86139d2554df32fc4a2d`.
-- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), and PR #38 (all-work browser selection audit) are merged into `main`.
+- Latest semantic production baseline after PR #38: `fb715e87d5290b73e0ff86139d2554df32fc4a2d`; latest integrated audit baseline after PR #40 is `04ff92b633f4da5756f58c96de7b321dac4bb02c`.
+- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), PR #38 (all-work browser selection audit), and PR #40 (browser interaction state audit) are merged into `main`.
 - PR #30 promoted 27 release/status facts with exact evidence and review transitions; 240 facts remain deferred and 2 remain in explicit conflict.
 - There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
 - During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
@@ -129,12 +129,13 @@ Examples already established:
 
 ## Current compatibility invariants
 
-The latest semantic production baseline after PR #38 is:
+The latest integrated production/audit baseline after PR #40 is:
 
-- `main` `fb715e87d5290b73e0ff86139d2554df32fc4a2d`
-- PR #38 required checks: GREEN (`test` and `browser-selection-audit`)
-- 379 / 379 library-v5 unit tests PASS
+- `main` `04ff92b633f4da5756f58c96de7b321dac4bb02c` (semantic graph/data remains the PR #38 baseline)
+- PR #40 required checks: GREEN (`test`, `browser-selection-audit`, and `browser-interaction-audit`)
+- 384 / 384 library-v5 unit tests PASS locally (2 browser tests are environment-gated skips in the ordinary suite)
 - real Chrome/CDP audit: 131 works × 2 public tiers, exact-set mismatches `0`
+- real Chrome/CDP interaction audit: 6 / 6 representative cases PASS
 - audit issues: 0
 - review-integrity issues: 0
 - FK check rows: 0
@@ -150,13 +151,13 @@ The latest semantic production baseline after PR #38 is:
 - story paths reproduced: 83 / 83
 - events / occurrences / transitions / transition participants: 9 / 9 / 9 / 10
 
-PR #30 also records the strict full-audit disposition for all 269 release/status facts: 27 promoted, 240 deferred, and 2 conflicts retained as seeds. PR #32 records the UI regression contract and desktop/mobile operation audit for the three watch-plan tiers and the official prewatch route highlight. PR #38 adds the independent all-work selection oracle, real DOM exact-set audit, and CI browser job; it changes no canonical data.
+PR #30 also records the strict full-audit disposition for all 269 release/status facts: 27 promoted, 240 deferred, and 2 conflicts retained as seeds. PR #32 records the UI regression contract and desktop/mobile operation audit for the three watch-plan tiers and the official prewatch route highlight. PR #38 adds the independent all-work selection oracle, real DOM exact-set audit, and CI browser job; PR #40 adds representative PC interaction-state coverage and a dependent CI browser job; neither changes canonical data.
 
 These numbers document the checkpoint. They are not frozen targets except where a test explicitly encodes semantic compatibility. Future legitimate first-class facts can increase row counts while preserving protected graph compatibility.
 
 ## Current-plan completion and production integration gate
 
-The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, the full release/status evidence audit (PR #30), the HTML design/operation debugging pass (PR #32), and the all-work browser selection audit (PR #38) are integrated into `main`. The next viewer or semantic change must use its own bounded plan, RED/UI regression contract, evidence/review audit where applicable, and full verification.
+The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, the full release/status evidence audit (PR #30), the HTML design/operation debugging pass (PR #32), the all-work browser selection audit (PR #38), and the representative browser interaction-state audit (PR #40) are integrated into `main`. The next viewer or semantic change must use its own bounded plan, RED/UI regression contract, evidence/review audit where applicable, and full verification.
 
 For every future branch:
 
