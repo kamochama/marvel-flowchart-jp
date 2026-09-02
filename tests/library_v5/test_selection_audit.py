@@ -51,6 +51,35 @@ class SelectionAuditContractTests(unittest.TestCase):
             self.assertEqual(set(), classes[1] & classes[2], work_id)
             self.assertEqual(set(expectation.all_edges), set().union(*classes), work_id)
 
+    def test_site_proposal_context_is_outgoing_only(self) -> None:
+        """Site proposal keeps direct context after a goal, not weak incoming fan-in."""
+        self.assertIsNotNone(SelectionAuditOracle)
+        oracle = SelectionAuditOracle(
+            {
+                "nodes": [{"work_id": work_id} for work_id in ("prev", "goal", "next")],
+                "edges": [
+                    {
+                        "edge_id": "edge-prev-goal",
+                        "source_work_id": "prev",
+                        "target_work_id": "goal",
+                        "type_en": "shared character/entity",
+                        "strength": "weak",
+                    },
+                    {
+                        "edge_id": "edge-goal-next",
+                        "source_work_id": "goal",
+                        "target_work_id": "next",
+                        "type_en": "shared character/entity",
+                        "strength": "weak",
+                    },
+                ],
+            }
+        )
+        site = oracle.expected_main_selection("goal", tier="site-proposal")
+        complete = oracle.expected_main_selection("goal", tier="complete")
+        self.assertEqual(site.context_edges, frozenset({"goal->next"}))
+        self.assertEqual(complete.context_edges, frozenset({"prev->goal", "goal->next"}))
+
     def test_site_proposal_keeps_every_explicit_predecessor(self) -> None:
         """Every exported explicit story predecessor remains a backward selection edge."""
         self.assertIsNotNone(SelectionAuditOracle)

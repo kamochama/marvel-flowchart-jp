@@ -78,6 +78,14 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("tierBackEdges", body)
         self.assertIn("tierNodeIds", body)
         self.assertRegex(body, r"forwardEdges\s*:\s*new Set\(baseState\.forwardEdges")
+
+    def test_chart_story_predecessors_use_reason_provenance(self) -> None:
+        """An explicit relation remains a predecessor when another reason wins the display label."""
+        helper = function_body(self.source, "hasExplicitWorkRelationReason")
+        self.assertIn("reason_ids", helper)
+        self.assertIn("reason_kind", helper)
+        body = function_body(self.source, "buildTierHighlightState")
+        self.assertIn("hasExplicitWorkRelationReason", body)
         self.assertIn("routeBackNodeIds", body)
         self.assertIn("goals.includes(edgeByKey.get(key)?.source)", body)
         tagger = function_body(self.source, "tagEdgeImportance")
@@ -222,7 +230,7 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         )
         tier_body = function_body(self.source, "buildTierHighlightState")
         self.assertIn("baseState.backEdges", tier_body)
-        self.assertIn("explicit work relation", tier_body)
+        self.assertIn("hasExplicitWorkRelationReason", tier_body)
         self.assertIn("tierNodeIds.add(edge.source)", tier_body)
         self.assertIn("tierNodeIds.add(edge.target)", tier_body)
 

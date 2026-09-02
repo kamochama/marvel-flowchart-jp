@@ -5957,6 +5957,10 @@ if(flowchartReady)render();
 
   function importanceOf(e){ return e.importance||'recommended'; }
   function importanceAllowed(e){ return !!e; }
+  function hasExplicitWorkRelationReason(e){
+    if(e?.type_en==='explicit work relation') return true;
+    return (e?.reason_ids||[]).some(id=>reasonsById[id]?.reason_kind==='explicit_relation');
+  }
 
   // Backward history should read as a chain when an explicit shortcut and a
   // longer supported route coexist (1→2→3 plus 1→3). Keep the shortcut in
@@ -6705,7 +6709,7 @@ if(flowchartReady)render();
     // when the preparation tier classifies their legacy evidence as reference-level.
     // The watch-plan builder still applies its own importance filter.
     const chartStoryBackEdges=mode==='complete' ? new Set() : new Set(
-      [...(baseState.backEdges||[])].filter(key=>edgeByKey.get(key)?.type_en==='explicit work relation')
+      [...(baseState.backEdges||[])].filter(key=>hasExplicitWorkRelationReason(edgeByKey.get(key)))
     );
     for(const key of chartStoryBackEdges){
       const edge=edgeByKey.get(key);

@@ -158,12 +158,17 @@ class SelectionAuditOracle:
                     seen_nodes.add(next_id)
                     stack.append(next_id)
 
-        context_edges = {
-            self.edge_key(edge)
-            for edge in self._incoming.get(target_id, ())
-            if not self._back_propagates(edge)
-            and self.edge_key(edge) not in omitted_shortcuts
-        }
+        # Site proposal is intentionally asymmetric: direct weak context after
+        # the selected work stays visible, while weak incoming fan-in is kept
+        # out of the curated route. Complete mode retains both direct sides.
+        context_edges = set()
+        if tier == "complete":
+            context_edges.update(
+                self.edge_key(edge)
+                for edge in self._incoming.get(target_id, ())
+                if not self._back_propagates(edge)
+                and self.edge_key(edge) not in omitted_shortcuts
+            )
         context_edges.update(
             self.edge_key(edge)
             for edge in self._outgoing.get(target_id, ())
