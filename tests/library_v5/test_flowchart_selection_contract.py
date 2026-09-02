@@ -318,6 +318,34 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn('data-relationship-edges="off"', release)
         self.assertNotIn("chronology-edge", release)
 
+    def test_release_cards_are_a_complete_line_free_date_axis(self) -> None:
+        """Every release card must expose precision and layout-only TBD metadata."""
+        release = function_body(self.source, "buildReleaseView")
+        self.assertIn('data-relationship-edges="off"', release)
+        self.assertNotIn("chronology-edge", release)
+        self.assertIn("data-release-precision", release)
+        self.assertIn("data-release-sort-key", release)
+        self.assertIn("data-release-tbd", release)
+
+    def test_release_cards_cover_the_canonical_work_fixture_once(self) -> None:
+        """The release axis must materialize the canonical 131-work set once."""
+        payload = json.loads((ROOT / "data" / "derived" / "flowchart.json").read_text(encoding="utf-8"))
+        work_ids = [row["work_id"] for row in payload["nodes"]]
+        self.assertEqual(len(work_ids), 131)
+        self.assertEqual(len(set(work_ids)), 131)
+
+        release = function_body(self.source, "buildReleaseView")
+        self.assertRegex(release, r"NODES\.filter\(n=>RELEASE_META\[n\.id\]\?\.sortDate\)")
+        self.assertRegex(release, r"NODES\.filter\(n=>!RELEASE_META\[n\.id\]\?\.sortDate\)")
+        self.assertEqual(release.count('data-release-work-id="${esc(n.id)}"'), 1)
+
+    def test_release_disables_mobile_synthetic_edges_at_the_release_boundary(self) -> None:
+        """A release SVG policy must block synthetic relation overlays on mobile."""
+        synthetic = function_body(self.source, "mobileOverlaySyntheticSpecs")
+        self.assertRegex(synthetic, r"panel\s*=.*release")
+        self.assertRegex(synthetic, r"panel\s*===\s*['\"]release['\"]")
+        self.assertRegex(synthetic, r"relationshipEdges.*off|off.*relationshipEdges")
+
     def test_mobile_canvas_preserves_chronology_selection_overlay_metadata(self) -> None:
         """Canvas mode must highlight chronology paths without mixing them into graph edges."""
         primitive = function_body(self.source, "canvasPrimitive")

@@ -113,6 +113,30 @@ class FlowchartLayoutContractTests(unittest.TestCase):
         self.assertIn("releaseCardDateLabel(meta)", release_body)
         self.assertNotIn("font-size=\"8.2\">${esc(meta.displayDate)}", release_body)
 
+    def test_release_date_precision_never_invents_a_day(self) -> None:
+        """Display precision and TBD status must survive layout anchoring."""
+        self.assertIn("function releaseMetaDate", self.source)
+        self.assertIn("function releaseCardDateLabel", self.source)
+        self.assertIn("month_only", self.source)
+        self.assertIn("year_only", self.source)
+        self.assertIn("date-tbd", self.source)
+        self.assertRegex(self.source, r"stableSortIndex[\s\S]{0,220}work_id")
+
+    def test_release_same_day_sort_uses_stable_index_then_work_id(self) -> None:
+        """Same-day cards require a complete deterministic order independent of graph order."""
+        compare = function_body(self.source, "compareReleaseItems")
+        self.assertRegex(compare, r"sortKey\.localeCompare")
+        self.assertRegex(compare, r"stableSortIndex\s*[-+]\s*.*stableSortIndex")
+        self.assertRegex(compare, r"workId\.localeCompare")
+
+    def test_release_geometry_is_selection_independent(self) -> None:
+        """Selection must not rebuild release cards, axes, or relation geometry."""
+        release = function_body(self.source, "buildReleaseView")
+        self.assertIn("releaseLayoutMeta", release)
+        self.assertIn("compareReleaseItems", release)
+        for forbidden in ("selectedIds", "backEdges", "forwardEdges", "contextEdges", "pathEdges"):
+            self.assertNotIn(forbidden, release)
+
     def test_chronology_viewbox_contains_fox_world_frame_bottom(self) -> None:
         """The FOX outer frame must fit inside the SVG drawing height."""
         body = function_body(self.source, "buildChronologyView")
