@@ -110,6 +110,18 @@ python -m http.server 8765
 
 その後、ブラウザで <http://127.0.0.1:8765/index.html> を開きます。Codex DesktopでPythonが解決できない場合は、`AGENTS.md` のBundled Python runtimeコマンドを使用してください。
 
+### 実ブラウザの選択監査を実行する場合
+
+Chrome / Chromiumを使い、131作品を「サイト提案ルート」「完全版」の両方で実際にクリックして、独立PythonオラクルとSVGの点灯線を完全一致比較できます。監査ランナー自身が一時HTTPサーバーを起動するため、別途サーバーを立ち上げる必要はありません。
+
+```powershell
+$MarvelPython = 'C:\Users\ataka\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
+$env:MARVEL_BROWSER_AUDIT = '1'
+& $MarvelPython -m unittest tests.library_v5.test_browser_selection_audit.BrowserSelectionAuditTests.test_headless_dom_matches_python_oracle_for_both_public_tiers -v
+```
+
+Chromeの場所を自動検出できない場合は、`$env:MARVEL_CHROME_BIN` に実行ファイルの絶対パスを指定してください。
+
 ## 予習プランを共有する
 
 - **画像で共有** — 現在の予習プランをPNG画像として共有できます。
