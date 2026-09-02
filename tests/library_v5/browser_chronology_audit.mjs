@@ -12,7 +12,10 @@ const PROFILE_RETRIES = 100;
 const CHRONOLOGY_EDGE_COUNT = 74;
 const PRIMARY_WORK = "iron-man-2008";
 const SECONDARY_WORK = "iron-man-2-2010";
+const AND_PRIMARY_WORK = "spider-man-homecoming-2017";
+const AND_SECONDARY_WORK = "spider-man-no-way-home-2021";
 const MOBILE_WORK = "blade-mcu-tba-tba";
+const SITE_PROPOSAL_TIER_NODES = [PRIMARY_WORK];
 const ORACLE_EDGE_IDS = {
   captain_to_iron: "sequence-captain-marvel-2019-iron-man-2008-mcu-main-2",
   iron_to_iron2: "sequence-iron-man-2008-iron-man-2-2010-mcu-main-3",
@@ -22,13 +25,13 @@ const ORACLE_EDGE_IDS = {
 // expected edge sets are derived from the independent fixture adjacency in
 // buildModeOracle, never from the production selection implementation or DOM.
 const MODE_ORACLE = {
-  complete: {goals: [PRIMARY_WORK], directions: ["incoming", "outgoing"]},
+  complete: {goals: [PRIMARY_WORK], directions: ["incoming", "outgoing"], combine:"union"},
   "site-proposal": {
-    goals: [PRIMARY_WORK], directions: ["outgoing"],
-    excluded: [ORACLE_EDGE_IDS.captain_to_iron],
+    goals: [PRIMARY_WORK], directions: ["incoming", "outgoing"], combine:"union",
+    tierNodeIds: SITE_PROPOSAL_TIER_NODES,
   },
-  or: {goals: [PRIMARY_WORK, SECONDARY_WORK], directions: ["incoming", "outgoing"]},
-  and: {goals: [PRIMARY_WORK, SECONDARY_WORK], directions: ["incoming", "outgoing"]},
+  or: {goals: [PRIMARY_WORK, SECONDARY_WORK], directions: ["incoming", "outgoing"], combine:"union"},
+  and: {goals: [AND_PRIMARY_WORK, AND_SECONDARY_WORK], directions: ["incoming", "outgoing"], combine:"intersection"},
   path: {goals: [PRIMARY_WORK, SECONDARY_WORK], path: [PRIMARY_WORK, SECONDARY_WORK]},
 };
 // The structural contract is intentionally keyed by the exported
@@ -182,11 +185,12 @@ function buildFixtureAdjacency(fixture) {
   return {incoming, outgoing};
 }
 
-function reachableFixtureEdges(adjacency, start, direction) {
+function reachableFixtureEdges(adjacency, start, direction, tierNodeIds = null) {
   const allowed = new Set(), seen = new Set([start]), queue = [start];
   while (queue.length) {
     const current = queue.shift();
     for (const edge of adjacency.get(current) || []) {
+      if (direction === "incoming" && tierNodeIds && (!tierNodeIds.has(edge.source) || !tierNodeIds.has(edge.target))) continue;
       allowed.add(edge.edge_id);
       const next = direction === "incoming" ? edge.source : edge.target;
       if (!seen.has(next)) { seen.add(next); queue.push(next); }
@@ -207,21 +211,28 @@ function buildModeOracle(fixture, mode) {
     return expected;
   }
   const {incoming, outgoing} = buildFixtureAdjacency(fixture);
-  const incomingIds = new Set(), outgoingIds = new Set();
-  for (const goal of input.goals) {
+  const tierNodeIds = input.tierNodeIds ? new Set(input.tierNodeIds) : null;
+  const goalMaps = input.goals.map(goal => {
+    const bits = new Map();
     if (input.directions.includes("incoming")) {
-      for (const edgeId of reachableFixtureEdges(incoming, goal, "incoming")) incomingIds.add(edgeId);
+      for (const edgeId of reachableFixtureEdges(incoming, goal, "incoming", tierNodeIds)) bits.set(edgeId, (bits.get(edgeId) || 0) | 1);
     }
     if (input.directions.includes("outgoing")) {
-      for (const edgeId of reachableFixtureEdges(outgoing, goal, "outgoing")) outgoingIds.add(edgeId);
+      for (const edgeId of reachableFixtureEdges(outgoing, goal, "outgoing")) bits.set(edgeId, (bits.get(edgeId) || 0) | 2);
     }
+    return bits;
+  });
+  let selectedIds;
+  if (input.combine === "intersection") {
+    selectedIds = new Set(goalMaps.length ? [...goalMaps[0].keys()].filter(edgeId => goalMaps.every(map => map.has(edgeId))) : []);
+  } else {
+    selectedIds = new Set(goalMaps.flatMap(map => [...map.keys()]));
   }
-  const excluded = new Set(input.excluded || []);
-  for (const record of fixture) {
-    if (excluded.has(record.edge_id) || (!incomingIds.has(record.edge_id) && !outgoingIds.has(record.edge_id))) continue;
-    const category = incomingIds.has(record.edge_id) && outgoingIds.has(record.edge_id)
-      ? "bothhl" : incomingIds.has(record.edge_id) ? "backhl" : "forwardhl";
-    expected.set(record.edge_id, category);
+  for (const edgeId of selectedIds) {
+    let bits = 0;
+    for (const map of goalMaps) if (map.has(edgeId)) bits |= map.get(edgeId);
+    const category = bits === 3 ? "bothhl" : bits === 1 ? "backhl" : "forwardhl";
+    expected.set(edgeId, category);
   }
   return expected;
 }
@@ -455,7 +466,9 @@ async function canvasChronologySnapshot(cdp) {
       for(const [key,primitives] of (cs?.overlayChronologyEdgePrimitives||new Map())){
         const p=primitives?.[0]; if(p?.overlayChronologyEdgeId){
           const category=classified.get(p.overlayChronologyEdgeId);
-          records.push({id:p.overlayChronologyEdgeId,classes:category?[category]:[]});
+          const metadata={source:p.overlayChronologySource,target:p.overlayChronologyTarget,displayOnly:p.overlayChronologyDisplayOnly,traversable:p.overlayChronologyTraversable};
+          const metadataPresent=typeof metadata.source==='string'&&metadata.source.length>0&&typeof metadata.target==='string'&&metadata.target.length>0&&typeof metadata.displayOnly==='boolean'&&typeof metadata.traversable==='boolean';
+          records.push({id:p.overlayChronologyEdgeId,classes:category?[category]:[],source:p.overlayChronologySource,target:p.overlayChronologyTarget,displayOnly:p.overlayChronologyDisplayOnly,traversable:p.overlayChronologyTraversable,metadata,metadataPresent});
         }
       }
     } catch (_) { records=[]; }
@@ -463,7 +476,7 @@ async function canvasChronologySnapshot(cdp) {
   `);
 }
 
-async function inspectParity(cdp, timeoutMs) {
+async function inspectParity(cdp, timeoutMs, fixture) {
   const initial = await chronologySnapshot(cdp);
   const canvas = await canvasChronologySnapshot(cdp);
   if (!canvas.canvasAvailable) {
@@ -476,11 +489,25 @@ async function inspectParity(cdp, timeoutMs) {
   const category = (classes) => classes.filter((item) => item !== "hl").join("|");
   const svgById = new Map(initial.records.map(x => [x.id, category(x.classes)]));
   const canvasById = new Map(source.map(x => [x.id, category(x.classes)]));
+  const canvasRecordById = new Map(source.map(x => [x.id, x]));
   const failures=[];
   for(const id of initial.ids){if(!canvasById.has(id))failures.push(`missing canvas edge-id: ${id}`); else if(svgById.get(id)!==canvasById.get(id))failures.push(`category mismatch: ${id} (svg=${svgById.get(id)||"none"}, canvas=${canvasById.get(id)||"none"})`);}
   for(const id of canvasById.keys())if(!svgById.has(id))failures.push(`extra canvas edge-id: ${id}`);
+  const canvasDisplayOnlyHighlighted=[];
+  for(const expected of fixture){
+    const observed=canvasRecordById.get(expected.edge_id);
+    if(!observed)continue;
+    if(!observed.metadataPresent)failures.push(`canvas chronology metadata missing: ${expected.edge_id}`);
+    else{
+      for(const field of ["source","target","displayOnly","traversable"]){
+        if(observed[field]!==expected[field])failures.push(`canvas ${field} mismatch: ${expected.edge_id} (Canvas=${observed[field]}, fixture=${expected[field]})`);
+      }
+    }
+    if(expected.displayOnly&&observed.classes.length)canvasDisplayOnlyHighlighted.push(expected.edge_id);
+  }
+  if(canvasDisplayOnlyHighlighted.length)failures.push(`canvas display-only highlighted: ${canvasDisplayOnlyHighlighted.join(',')}`);
   // Canvas materialization is mandatory for this parity audit; no SVG fallback.
-  return {svg_ids:initial.ids,canvas_ids:[...canvasById.keys()],canvas_available:canvas.canvasAvailable,failures};
+  return {svg_ids:initial.ids,canvas_ids:[...canvasById.keys()],canvas_available:canvas.canvasAvailable,canvas_display_only_highlighted:canvasDisplayOnlyHighlighted,failures};
 }
 
 async function runCase(cdp, url, timeoutMs, name, action) {
@@ -492,6 +519,10 @@ async function runAudit(args) {
   const root=path.resolve(args.root||"."), timeoutMs=Number(args.timeout_ms||DEFAULT_TIMEOUT_MS);
   if(!Number.isInteger(timeoutMs)||timeoutMs<1000)throw new Error("--timeout-ms must be an integer >= 1000");
   const fixture=loadChronologyFixture(root);
+  const orExpected=buildModeOracle(fixture,"or");
+  const andExpected=buildModeOracle(fixture,"and");
+  const oracleModesDiffer=orExpected.size!==andExpected.size || [...orExpected].some(([id,category])=>andExpected.get(id)!==category);
+  if(!oracleModesDiffer)throw new Error("oracle mode expectations must differ");
   const chrome=locateChrome(args.chrome), server=await startStaticServer(root);
   let chromeProcess=null, cdp=null; const cases=[]; let structural=null, parity=null, roundTrip={overview_to_chronology:false,chronology_to_overview:false};
   try {
@@ -538,19 +569,24 @@ async function runAudit(args) {
     for(const mode of ["or","and","path"]){
       cases.push(await runCase(cdp,server.url,timeoutMs,mode,async()=>{
         await clearSelection(cdp,timeoutMs); await setTier(cdp,"complete",timeoutMs); await setCombine(cdp,mode,timeoutMs);
-        await clickWork(cdp,PRIMARY_WORK,timeoutMs,"right"); await clickWork(cdp,SECONDARY_WORK,timeoutMs,"right");
-        await waitChronologyState(cdp,s=>s.dim&&s.highlighted.length>0,timeoutMs,`${mode} chronology selection`);
+        for(const goal of MODE_ORACLE[mode].goals)await clickWork(cdp,goal,timeoutMs,"right");
+        await waitChronologyState(cdp,s=>s.dim&&(mode==='and'||s.highlighted.length>0),timeoutMs,`${mode} chronology selection`);
         const state=await chronologySnapshot(cdp); if(state.displayOnlyHighlighted.length)throw new Error(`${mode} highlighted display-only edge`);
         validateModeOracle(state, mode, fixture);
         return {snapshot:state};
       }));
     }
     cases.push(await runCase(cdp,server.url,timeoutMs,"display-only-endpoint",async()=>{
-      await clearSelection(cdp,timeoutMs); await setTier(cdp,"complete",timeoutMs);
-      await clickWork(cdp,"morbius-2022",timeoutMs,"left","chronology");
-      const state=await chronologySnapshot(cdp);
-      if(state.displayOnlyHighlighted.length)throw new Error("display-only edge highlighted after endpoint click");
-      return {display_only_endpoint:"morbius-2022",display_only_highlighted:state.displayOnlyHighlighted};
+      const endpoints=["morbius-2022","madame-web-2024","kraven-the-hunter-2024","deadpool-2016","logan-2017"];
+      const checked=[];
+      await setTier(cdp,"complete",timeoutMs);
+      for(const endpoint of endpoints){
+        await clearSelection(cdp,timeoutMs); await clickWork(cdp,endpoint,timeoutMs,"left","chronology");
+        const state=await chronologySnapshot(cdp);
+        if(state.displayOnlyHighlighted.length)throw new Error(`display-only edge highlighted after endpoint click: ${endpoint}`);
+        checked.push({endpoint,display_only_highlighted:state.displayOnlyHighlighted});
+      }
+      return {display_only_endpoints:checked};
     }));
     await clearSelection(cdp,timeoutMs); await setCombine(cdp,"or",timeoutMs); await setTier(cdp,"complete",timeoutMs);
     await clickSelector(cdp,'.tab[data-target="overview"]',timeoutMs); await clickWork(cdp,PRIMARY_WORK,timeoutMs,"left","overview");
@@ -575,7 +611,7 @@ async function runAudit(args) {
     await clickWork(cdp,MOBILE_WORK,timeoutMs,"left","chronology");
     await poll(()=>evaluate(cdp,`return !!window.marvelSelectionAudit?.().selected?.includes(${JSON.stringify(MOBILE_WORK)})`),timeoutMs,"mobile chronology public goal selection");
     await poll(()=>evaluate(cdp,"const cs=mobileCanvasStates.get(document.querySelector('#chronology .svg-wrap')); return !!cs?.overlayWorldChronologyClasses"),timeoutMs,"mobile chronology category readiness");
-    parity=await inspectParity(cdp,timeoutMs);
+    parity=await inspectParity(cdp,timeoutMs,fixture);
   } finally {
     cdp?.close(); await new Promise((resolve)=>server.server.close(()=>resolve())); if(chromeProcess)await stopChrome(chromeProcess);
   }

@@ -126,6 +126,36 @@ class BrowserChronologyAuditTests(unittest.TestCase):
             self.assertIn(f"fixture {field} mismatch", structural)
         self.assertIn("fixtureRecord", structural)
 
+    def test_mode_oracles_keep_or_and_site_tier_independent(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        oracle = source[source.index("const MODE_ORACLE"):source.index("// The structural contract")]
+        self.assertIn('combine:"union"', oracle)
+        self.assertIn('combine:"intersection"', oracle)
+        self.assertNotIn('and: {goals: [PRIMARY_WORK, SECONDARY_WORK], directions: ["incoming", "outgoing"]}', oracle)
+        self.assertIn("tierNodeIds", oracle)
+        self.assertNotIn("excluded", oracle)
+        builder = source[source.index("function buildModeOracle"):source.index("async function poll")]
+        self.assertIn("goalMaps", builder)
+        self.assertIn("intersection", builder)
+        self.assertIn("tierNodeIds", builder)
+        self.assertIn("orExpected", source)
+        self.assertIn("andExpected", source)
+        self.assertIn("oracle mode expectations must differ", source)
+
+    def test_canvas_audit_requires_chronology_metadata_parity(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        canvas = source[source.index("async function canvasChronologySnapshot"):source.index("async function inspectParity")]
+        self.assertIn("overlayChronologyDisplayOnly", canvas)
+        self.assertIn("overlayChronologyTraversable", canvas)
+        self.assertIn("metadata", source[source.index("async function inspectParity"):source.index("async function runCase")])
+
+    def test_display_only_endpoints_are_all_exercised(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        start = source.index('"display-only-endpoint"')
+        endpoint_case = source[start:source.index("await clearSelection(cdp,timeoutMs); await setCombine", start)]
+        for work_id in ("morbius-2022", "madame-web-2024", "kraven-the-hunter-2024", "deadpool-2016", "logan-2017"):
+            self.assertIn(work_id, endpoint_case)
+
     @unittest.skipUnless(
         os.environ.get("MARVEL_BROWSER_CHRONOLOGY_AUDIT") == "1",
         "set MARVEL_BROWSER_CHRONOLOGY_AUDIT=1 to run the real headless chronology audit",
