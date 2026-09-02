@@ -68,6 +68,7 @@ const duplicateEdges = [
   { edge_id: "a-goal-sequence", source: "a", target: "goal", traversable: true, display_only: false },
   { edge_id: "a-goal-branch", source: "a", target: "goal", traversable: true, display_only: false },
   { edge_id: "goal-display", source: "goal", target: "next", traversable: false, display_only: true },
+  { edge_id: "goal-display-invalid", source: "goal", target: "next", traversable: true, display_only: true },
 ];
 const duplicateResult = classifyChronologySelection(duplicateEdges, {
   selectedIds: ["goal"], tier: "complete", combineMode: "or",
@@ -163,6 +164,38 @@ renderChronologySelectionState(
 );
 report.svg = Object.fromEntries(
   chronologyGroups.map(group => [group.dataset.chronologyEdgeKey, group.classList.values()]),
+);
+
+const duplicateChronologyGroups = [
+  {
+    dataset: {
+      chronologyEdgeId: "a-goal-sequence",
+      chronologyEdgeKey: "a->goal",
+      chronologySource: "a",
+      chronologyTarget: "goal",
+      chronologyTraversable: "true",
+      chronologyDisplayOnly: "false",
+    },
+    classList: fakeClassList(),
+  },
+  {
+    dataset: {
+      chronologyEdgeId: "a-goal-branch",
+      chronologyEdgeKey: "a->goal",
+      chronologySource: "a",
+      chronologyTarget: "goal",
+      chronologyTraversable: "true",
+      chronologyDisplayOnly: "false",
+    },
+    classList: fakeClassList(),
+  },
+];
+renderChronologySelectionState(
+  {querySelectorAll: selector => selector === "g.chronology-edge" ? duplicateChronologyGroups : []},
+  {selectedIds: ["goal"], tier: "complete", combineMode: "or"},
+);
+report.svg_duplicate_edges = Object.fromEntries(
+  duplicateChronologyGroups.map(group => [group.dataset.chronologyEdgeId, group.classList.values()]),
 );
 
 const canvasClasses = mobileOverlayChronologyEdgeClassMap(

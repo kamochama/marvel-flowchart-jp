@@ -52,6 +52,10 @@ class RuntimeSelectionClassifierTests(unittest.TestCase):
                     "a-goal-branch": "backhl",
                     "a-goal-sequence": "backhl",
                 },
+                "svg_duplicate_edges": {
+                    "a-goal-branch": ["backhl", "hl"],
+                    "a-goal-sequence": ["backhl", "hl"],
+                },
                 "svg": {
                     "a->goal": ["backhl", "hl"],
                     "false->goal": [],

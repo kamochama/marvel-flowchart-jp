@@ -403,6 +403,11 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("overlayChronologyEdgeId", primitive)
         self.assertIn("edgeId", mapper)
 
+    def test_chronology_svg_materialization_uses_edge_id(self) -> None:
+        renderer = function_body(self.source, "renderChronologySelectionState")
+        self.assertRegex(renderer, r"dataset(?:\?\.)?chronologyEdgeId")
+        self.assertIn("edgeId", renderer)
+
 
 if __name__ == "__main__":
     unittest.main()
