@@ -4635,7 +4635,9 @@ function classifyChronologySelection(edges,state){
   // Keep this early, standalone classifier independent from the later
   // preparation-plan script where the shared tier helper is scoped.
   const rawTier=state?.tier||state?.prepTier||'complete';
-  const tier=rawTier==='official'||rawTier==='site-proposal'||rawTier==='complete'?rawTier:'complete';
+  // Only the canonical complete value may widen the incoming scope.  Legacy,
+  // official, and unknown values fail safe to the public site-proposal tier.
+  const tier=rawTier==='complete'?'complete':'site-proposal';
   const tierNodeIds=state?.tierNodeIds||new Set();
   const pathMode=state?.pathMode===true||(state?.combineMode==='path'&&ids.length>1);
   const records=[],seenKeys=new Set();
