@@ -6,9 +6,9 @@
 
 対象ブランチ: `codex/chronology-publication-order-contract`
 
-実装対象の最終コミット: `5ff75514dccb4c2d4cae3e483c09f3ad995cfae5` (`test: add chronology browser audit contract`)
+実装対象の最終コミット: `e141d3da7f26eccea49d3d81a0f51d564f95d06b` (`test: strengthen chronology mode and canvas audits`)
 
-実装範囲: `10726ac..5ff7551`（Task 1–4）。Task 5 はこのレビュー、ハンドオフ、ロードマップの文書化だけを行う。
+実装範囲: `10726ac..e141d3d`（Task 1–4 と最終監査修正）。Task 5 はこのレビュー、ハンドオフ、ロードマップの文書化だけを行う。
 
 ## 判定
 
@@ -32,6 +32,8 @@ chronology display contract は、ローカルの静的契約・ランタイム�
 - `and`: 各 goal の edge ID を intersection する。
 - `path`: 渡された `pathEdges` を、render boundary で materialize 済みの traversable chronology edge ID に対して絞り込む。classifier 内で新しい chronology search／BFS は行わない。
 
+ブラウザ監査の期待集合は `tests/library_v5/browser_chronology_fixture.json`（74件）から独立に計算する。OR は単純和集合、AND は異なる分岐入力の共通集合、site-proposal は明示した `tierNodeIds` による incoming 制限を適用するため、各モードの実装を取り違えても同じ代表入力で通過しない。
+
 全モードで display-only ID は map に入らず、`traversable:false` の線は点灯しない。
 
 ## PATH render-boundary materialization と SVG/Canvas parity
@@ -42,15 +44,16 @@ SVG は `data-chronology-edge-id`、Canvas は `overlayChronologyEdgeId` と `ov
 
 ## 実 Chrome/CDP browser audit
 
-Node runner `tests/library_v5/browser_chronology_audit.mjs` をローカル静的サーバー上で実行し、実際の Chrome pointer event と条件待機だけで公開挙動を観測した。production selection function の直接呼び出し、overview／release の `g.edge` 集合の監査、固定 sleep は使用していない。
+Node runner `tests/library_v5/browser_chronology_audit.mjs` をローカル静的サーバー上で実行し、実際の Chrome pointer event と条件待機だけで公開挙動を観測した。production selection function の直接呼び出し、overview／release の `g.edge` 集合の監査、固定 sleep は使用していない。固定fixtureとの構造照合に加え、Canvas側の chronology source/target/traversable/display-only メタデータも直接検証した。
 
 結果:
 
-- `summary`: `cases=6`, `failures=0`, `coverage_gaps=1`
+- `summary`: `cases=7`, `failures=0`, `coverage_gaps=1`
 - structural: chronology edge `74`、duplicate IDs `[]`、display-only highlighted `[]`
 - non-traversable IDs: `sequence-morbius-2022-madame-web-2024-ssu-10`、`sequence-madame-web-2024-kraven-the-hunter-2024-ssu-11`、`branch-deadpool-2016-logan-2017-fox-ambiguous`
-- 5 public mode checks: `complete`、`site-proposal`、`or`、`and`、`path` は `ok=true`。`previous1` は成功skipではなく `coverage_gaps` に `available=false, coverage=internal-unit-only` として記録し、理由は「この export に public control がないため」、内部 scope state は呼び出していない。
-- SVG/Canvas parity: Canvas available、materialized ID set／category の failures `[]`（74 IDs）
+- 5 public mode checks: `complete`、`site-proposal`、`or`、`and`、`path` は `ok=true`。OR/AND は異なる入力（AND は別分岐）で独立に照合した。`previous1` は成功skipではなく `coverage_gaps` に `available=false, coverage=internal-unit-only` として記録し、理由は「この export に public control がないため」、内部 scope state は呼び出していない。
+- `display-only-endpoint`: Morbius、Madame Web、Kraven、Deadpool、Logan の各端点を実クリックし、表示専用線の点灯なしを確認した。
+- SVG/Canvas parity: Canvas available、materialized ID set／category／metadata の failures `[]`（74 IDs）、Canvas display-only highlighted `[]`
 - round-trip: `overview_to_chronology=true`、`chronology_to_overview=true`
 
 Python wrapper の実 Chrome case も `Ran 1 test ... OK` で終了した。通常の full suite では browser opt-in を要求する 3 テストだけが環境ゲートで skip される。
@@ -68,7 +71,7 @@ if (-not (Test-Path -LiteralPath $MarvelPython)) { throw "Bundled Python runtime
 
 結果:
 
-- full unittest: `Ran 393 tests in 21.614s`, `OK (skipped=3)`
+- full unittest: `Ran 398 tests in 21.246s`, `OK (skipped=3)`
 - build: exit code `0`、`audit_ok=true`、`audit_issue_count=0`、`content_audit.issue_count=0`
 - SQLite: foreign-key check `0` rows、`integrity_check=ok`
 - compatibility: `work_edges_all=361`、`work_pair_reasons=569`、`prewatch_edges=199`、story paths `83/83`
@@ -82,10 +85,10 @@ build が作成した `data/content_audit/CONTENT_AUDIT.md`、`data/content_audi
 
 この実装で chronology の canonical assertion、relation fact、event／transition fact、release/status fact、SQLite canonical input、persistent review ledger は追加・変更していない。chronology 線は表示用の layout/materialization であり、既存の canonical graph policy から新しい pair や reason を生成しない。
 
-公開順表示はこの chronology plan の対象外である。未実施の別計画 `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md` は release-order の日付軸／line-free viewer 契約を扱うため、今回の chronology edge identity や6モード実装と混ぜて開始しない。
+公開順表示はこの chronology plan の対象外である。未実施の別計画 `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md` は release-order の日付軸／line-free viewer 契約を扱うため、今回の chronology edge identity や公開5モード＋内部previous1実装と混ぜて開始しない。
 
 ## Freshness／merge gate
 
-開始時に `git fetch origin` を実行したが、`.git/FETCH_HEAD` に対して `Permission denied`（`error: cannot open '.git/FETCH_HEAD': Permission denied`）で失敗した。この freshness failure は環境制約として記録し、reset、overwrite、force update は行っていない。現在の実装 HEAD は `5ff75514dccb4c2d4cae3e483c09f3ad995cfae5` である。
+開始時に `git fetch origin` を実行したが、`.git/FETCH_HEAD` に対して `Permission denied`（`error: cannot open '.git/FETCH_HEAD': Permission denied`）で失敗した。この freshness failure は環境制約として記録し、reset、overwrite、force update は行っていない。現在の実装 HEAD は `e141d3da7f26eccea49d3d81a0f51d564f95d06b` である。
 
 本レビューとハンドオフ／ロードマップの変更は docs-only commit として残し、push、PR merge、`main` への統合、GitHub Pages 公開は行わない。次の gate は、全ブランチ差分のレビュー、必要な remote CI／公開 artifact 確認、およびユーザーの明示的な merge／publish 承認である。

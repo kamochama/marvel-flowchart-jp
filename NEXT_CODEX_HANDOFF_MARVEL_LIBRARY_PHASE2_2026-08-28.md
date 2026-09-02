@@ -524,19 +524,19 @@ The data-audit boundary and the HTML design/interaction debugging boundary are c
 
 ## 13. Chronology display contract — Task 5 audit (2026-09-03)
 
-The separately bounded chronology display plan is implemented through Task 4 on branch `codex/chronology-publication-order-contract`. The implementation HEAD before this documentation handoff is `5ff75514dccb4c2d4cae3e483c09f3ad995cfae5` (`test: add chronology browser audit contract`), covering the range `10726ac..5ff7551`. The Task 5 documentation commit contains only this handoff, the master roadmap, and the chronology review:
+The separately bounded chronology display plan is implemented through Task 4 on branch `codex/chronology-publication-order-contract`. The implementation HEAD before this documentation handoff is `e141d3da7f26eccea49d3d81a0f51d564f95d06b` (`test: strengthen chronology mode and canvas audits`), covering the range `10726ac..e141d3d`. The Task 5 documentation commit contains only this handoff, the master roadmap, and the chronology review:
 
 - `docs/superpowers/reviews/2026-09-02-marvel-library-chronology-display-contract-review.md`
 - this section;
 - the corresponding chronology boundary in `CODEX_MASTER_ROADMAP_MARVEL_DB_V1_TO_MAIN_2026-08-28.md`.
 
-The display layer now gives every chronology line a stable `data-chronology-edge-id`, while retaining source/target attributes only for compatibility and adjacency. The selection classifier, SVG materialization, and Canvas overlay maps are edge-ID keyed. The `displayOnly:true` / `traversable:false` invariant rejects invalid display-only combinations; the three display-only lines remain visible but never enter selection adjacency or highlight maps. The six explicit classifier modes are `complete`, `site-proposal`, `previous1`, `or`, `and`, and `path`. PATH pair/ID inputs are materialized to existing traversable chronology IDs at the SVG/Canvas render boundary without a new chronology search or BFS.
+The display layer now gives every chronology line a stable `data-chronology-edge-id`, while retaining source/target attributes only for compatibility and adjacency. The selection classifier, SVG materialization, and Canvas overlay maps are edge-ID keyed. The `displayOnly:true` / `traversable:false` invariant rejects invalid display-only combinations; the three display-only lines remain visible but never enter selection adjacency or highlight maps. The public classifier modes are `complete`, `site-proposal`, `or`, `and`, and `path`; `previous1` is an internal unit-only contract because no public scope control is exported. PATH pair/ID inputs are materialized to existing traversable chronology IDs at the SVG/Canvas render boundary without a new chronology search or BFS. The browser audit uses a fixed 74-edge fixture and explicitly verifies OR/AND separation plus site-proposal incoming tier filtering.
 
-The independent real Chrome/CDP audit passed with `cases=6`, `failures=0`, `74` chronology edges, duplicate IDs `0`, display-only highlighted `0`, SVG/Canvas parity failures `0`, and successful overview↔chronology round trips. `previous1` is explicitly unavailable/skipped because this export has no public scope control; no internal scope state was invoked. The dedicated CI browser job is declared after the interaction audit, but remote CI for this new branch remains a future gate.
+The independent real Chrome/CDP audit passed with `cases=7`, `failures=0`, `74` chronology edges, duplicate IDs `0`, display-only highlighted `0`, SVG/Canvas ID/category/metadata parity failures `0`, all five display-only endpoint checks, and successful overview↔chronology round trips. `previous1` is explicitly unavailable/skipped because this export has no public scope control; no internal scope state was invoked. The dedicated CI browser job is declared after the interaction audit, but remote CI for this new branch remains a future gate.
 
 Fresh bundled-runtime verification on this branch:
 
-- full unittest: `393` tests, `OK (skipped=3)` (the three opt-in browser tests are environment-gated in the ordinary suite);
+- full unittest: `398` tests, `OK (skipped=3)` (the three opt-in browser tests are environment-gated in the ordinary suite);
 - ordinary build: exit `0`, `audit_issue_count=0`, content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
 - compatibility: `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, story paths `83/83`;
 - export: `131` nodes, `361` edges, `569` reasons, `42` character groups;

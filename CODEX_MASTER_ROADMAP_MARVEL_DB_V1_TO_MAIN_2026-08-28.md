@@ -466,16 +466,16 @@ The data-audit boundary and the HTML design/interaction debugging pass are compl
 
 ## 14. Chronology display contract boundary (2026-09-03)
 
-The separately approved chronology display plan `docs/superpowers/plans/2026-09-02-marvel-library-chronology-display-contract.md` is complete through its Task 4 implementation and Task 5 local documentation handoff on branch `codex/chronology-publication-order-contract`. The implementation range is `10726ac..5ff7551`, ending at `5ff75514dccb4c2d4cae3e483c09f3ad995cfae5` (`test: add chronology browser audit contract`). The Task 5 commit is documentation-only and records the review, handoff, and this roadmap boundary.
+The separately approved chronology display plan `docs/superpowers/plans/2026-09-02-marvel-library-chronology-display-contract.md` is complete through its Task 4 implementation and Task 5 local documentation handoff on branch `codex/chronology-publication-order-contract`. The implementation range is `10726ac..e141d3d`, ending at `e141d3da7f26eccea49d3d81a0f51d564f95d06b` (`test: strengthen chronology mode and canvas audits`). The Task 5 commit is documentation-only and records the review, handoff, and this roadmap boundary.
 
-The chronology viewer now materializes stable edge IDs for all `74` display lines, separates display-only lines from traversable adjacency, and classifies selections by edge ID across six explicit modes: `complete`, `site-proposal`, `previous1`, `or`, `and`, and `path`. PATH pair/ID inputs are mapped only at the existing SVG/Canvas render boundary to traversable chronology IDs; no new chronology search or BFS is introduced. SVG `data-chronology-edge-id` and Canvas `overlayChronologyEdgeId` produce equal materialized ID sets and categories. These lines remain a display layer, not canonical relation facts.
+The chronology viewer now materializes stable edge IDs for all `74` display lines, separates display-only lines from traversable adjacency, and classifies selections by edge ID across five public modes: `complete`, `site-proposal`, `or`, `and`, and `path`. `previous1` remains an internal unit-only contract without a public scope control. PATH pair/ID inputs are mapped only at the existing SVG/Canvas render boundary to traversable chronology IDs; no new chronology search or BFS is introduced. SVG `data-chronology-edge-id` and Canvas `overlayChronologyEdgeId` produce equal materialized ID sets, categories, and chronology metadata. A fixed independent fixture makes the OR/AND and site-proposal incoming-tier checks distinguishable. These lines remain a display layer, not canonical relation facts.
 
 Local evidence:
 
-- full bundled-Python suite: `393` tests, `OK (skipped=3)`;
+- full bundled-Python suite: `398` tests, `OK (skipped=3)`;
 - ordinary build: exit `0`, audit/review/FK issues `0`, SQLite `integrity_check=ok`;
 - graph compatibility: `361/569`, prewatch `199`, story paths `83/83`;
-- real Chrome/CDP chronology audit: `6` cases, `failures=0`, duplicate IDs `0`, display-only highlighted `0`, SVG/Canvas parity failures `0`, and both overview↔chronology round trips true;
+- real Chrome/CDP chronology audit: `7` cases, `failures=0`, duplicate IDs `0`, display-only highlighted `0`, SVG/Canvas ID/category/metadata parity failures `0`, all five display-only endpoint checks, and both overview↔chronology round trips true;
 - `previous1` is explicitly unavailable/skipped because the export has no public scope control; no internal scope state was invoked;
 - `chronology_assertions=0`, and canonical `data/library/` plus persistent `data/content_audit/reviews.csv` are unchanged.
 
