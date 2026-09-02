@@ -383,7 +383,7 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("traversable", sequence)
         self.assertIn("chronologyEdgeGroup", branch)
         self.assertIn("source,target", self.source)
-        self.assertIn("chronologyEdgeGroup(source,target", branch)
+        self.assertIn("chronologyEdgeGroup(edgeId,source,target", branch)
         self.assertRegex(
             chronology,
             r"drawSequence\(\['morbius-2022','madame-web-2024','kraven-the-hunter-2024'\][\s\S]{0,260}traversable:false",

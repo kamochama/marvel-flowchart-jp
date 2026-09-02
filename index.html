@@ -4471,7 +4471,7 @@ function canvasPrimitive(svg,el){
     geom=p;
   }else if(tag==='text') geom=canvasTextLines(el); else return null;
   const overlayGroup=el.closest('g.node,g.edge,g.dynamic-edge-overlay'),chronologyGroup=el.closest('g.chronology-edge');
-  let overlayNodeId='',overlayEdgeKey='',overlayIsEdge=false,overlayDynamic=false,overlayChronologyEdge=false,overlayChronologySource='',overlayChronologyTarget='',overlayChronologyTraversable=true;
+  let overlayNodeId='',overlayEdgeKey='',overlayIsEdge=false,overlayDynamic=false,overlayChronologyEdge=false,overlayChronologyEdgeId='',overlayChronologySource='',overlayChronologyTarget='',overlayChronologyDisplayOnly=false,overlayChronologyTraversable=true;
   if(overlayGroup){
     if(overlayGroup.matches('g.node'))overlayNodeId=gt(overlayGroup)||'';
     else{
@@ -4481,12 +4481,14 @@ function canvasPrimitive(svg,el){
     }
   }
   if(chronologyGroup){
+    overlayChronologyEdgeId=chronologyGroup.dataset?.chronologyEdgeId||'';
     overlayChronologySource=chronologyGroup.dataset?.chronologySource||'';
     overlayChronologyTarget=chronologyGroup.dataset?.chronologyTarget||'';
+    overlayChronologyDisplayOnly=chronologyGroup.dataset?.chronologyDisplayOnly==='true';
     overlayChronologyTraversable=chronologyGroup.dataset?.chronologyTraversable!=='false';
     overlayChronologyEdge=!!(overlayChronologySource&&overlayChronologyTarget);
   }
-  return {el,tag,m,bbox,geom,style:null,overlayNodeId,overlayEdgeKey,overlayIsEdge,overlayDynamic,overlayChronologyEdge,overlayChronologySource,overlayChronologyTarget,overlayChronologyTraversable};
+  return {el,tag,m,bbox,geom,style:null,overlayNodeId,overlayEdgeKey,overlayIsEdge,overlayDynamic,overlayChronologyEdge,overlayChronologyEdgeId,overlayChronologySource,overlayChronologyTarget,overlayChronologyDisplayOnly,overlayChronologyTraversable};
 }
 function canvasStylePrimitive(p){
   const cs=getComputedStyle(p.el),gs=canvasGroupState(p.el);
@@ -4704,8 +4706,8 @@ window.classifyChronologySelection=classifyChronologySelection;
 function mobileOverlayChronologyEdgeClassMap(cs,state){
   const records=[];
   for(const [key,primitives] of (cs?.overlayChronologyEdgePrimitives||new Map())){
-    const p=primitives?.[0],source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
-    if(source&&target)records.push({key,source,target,traversable:p?.overlayChronologyTraversable!==false});
+    const p=primitives?.[0],edgeId=p?.overlayChronologyEdgeId||key,source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
+    if(source&&target)records.push({key,edgeId,source,target,displayOnly:p?.overlayChronologyDisplayOnly===true,traversable:p?.overlayChronologyTraversable!==false});
   }
   return classifyChronologySelection(records,state);
 }
@@ -6418,7 +6420,7 @@ if(flowchartReady)render();
     const groups=[...svg.querySelectorAll('g.chronology-edge')];
     groups.forEach(g=>g.classList.remove('hl','backhl','forwardhl','bothhl','pathhl','contexthl'));
     if(!groups.length||!state)return;
-    const records=groups.map(g=>({key:g.dataset.chronologyEdgeKey||`${g.dataset.chronologySource||''}->${g.dataset.chronologyTarget||''}`,source:g.dataset.chronologySource,target:g.dataset.chronologyTarget,traversable:g.dataset.chronologyTraversable!=='false',group:g}));
+    const records=groups.map(g=>({edgeId:g.dataset?.chronologyEdgeId||g.dataset?.chronologyEdgeKey||`${g.dataset?.chronologySource||''}->${g.dataset?.chronologyTarget||''}`,key:g.dataset.chronologyEdgeKey||`${g.dataset.chronologySource||''}->${g.dataset.chronologyTarget||''}`,source:g.dataset.chronologySource,target:g.dataset.chronologyTarget,displayOnly:g.dataset?.chronologyDisplayOnly==='true',traversable:g.dataset.chronologyTraversable!=='false',group:g}));
     const classes=classifyChronologySelection(records,state);
     for(const [key,category] of classes){
       const record=records.find(item=>item.key===key);
@@ -8424,27 +8426,32 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
         '</g>');
     }
 
-    function branchBetweenRows(source,target,col,y1,y2,{label='',klass='chronology-branch',traversable=true}={}){
+    function branchBetweenRows(source,target,col,y1,y2,{label='',klass='chronology-branch',row='unknown',kind='branch',traversable=true,displayOnly=false}={}){
       const x=xForCol(col)-16, yTop=mid(y1), yBottom=mid(y2);
-      out.push(chronologyEdgeGroup(source,target,'M '+x+' '+yTop+' V '+yBottom,klass,{traversable}));
+      const edgeId='branch-'+source+'-'+target+'-'+row;
+      out.push(chronologyEdgeGroup(edgeId,source,target,'M '+x+' '+yTop+' V '+yBottom,klass,{kind,traversable,displayOnly}));
       out.push('<circle class="chronology-junction" cx="'+x+'" cy="'+yTop+'" r="3.5"/><circle class="chronology-junction" cx="'+x+'" cy="'+yBottom+'" r="3.5"/>');
       if(label)out.push('<text class="chronology-track-label" x="'+(x+8)+'" y="'+((yTop+yBottom)/2-6)+'">'+esc(label)+'</text>');
     }
     const placedMcu=new Set();
     const addMcu=id=>{if(id&&CHRONOLOGY_META[id]?.lane==='mcu-main')placedMcu.add(id);};
     function drawCard(id,col,y){ if(!nm[id]||!CHRONOLOGY_META[id])return false; out.push(chronologyCard(id,xForCol(col),y,cardW,cardH)); return true; }
-    function chronologyEdgeGroup(source,target,d,klass,{traversable=true}={}){
+    function chronologyEdgeGroup(edgeId,source,target,d,klass,{kind='sequence',traversable=true,displayOnly=false}={}){
+      // displayOnly&&!traversable is the only valid display-only combination.
+      if(displayOnly&&traversable)throw new Error('display-only chronology edge must be non-traversable: '+edgeId);
       const key=source+'->'+target;
-      return '<g class="chronology-edge" data-chronology-source="'+esc(source)+'" data-chronology-target="'+esc(target)+'" data-chronology-edge-key="'+esc(key)+'" data-chronology-traversable="'+(traversable?'true':'false')+'"><title>'+esc(key)+'</title><path class="'+esc(klass)+'" d="'+d+'"/></g>';
+      return '<g class="chronology-edge" data-chronology-edge-id="'+esc(edgeId)+'" data-chronology-source="'+esc(source)+'" data-chronology-target="'+esc(target)+'" data-chronology-edge-key="'+esc(key)+'" data-chronology-kind="'+esc(kind)+'" data-chronology-display-only="'+(displayOnly?'true':'false')+'" data-chronology-traversable="'+(traversable?'true':'false')+'"><title>'+esc(edgeId)+'</title><path class="'+esc(klass)+'" d="'+d+'"/></g>';
     }
-    function drawSequence(ids,startCol,y,{klass='chronology-axis',dashedTracks=[],traversable=true}={}){
+    function drawSequence(ids,startCol,y,{klass='chronology-axis',dashedTracks=[],lane='',kind='sequence',traversable=true,displayOnly=false}={}){
       const use=ids.filter(id=>nm[id]&&CHRONOLOGY_META[id]);
       use.forEach((id,i)=>{
         const col=startCol+i;
         if(i>0){
           const prev=use[i-1], prevCol=startCol+i-1;
           const dashed=dashedTracks.includes(CHRONOLOGY_META[prev].track)||dashedTracks.includes(CHRONOLOGY_META[id].track)?' dashed':'';
-          out.push(chronologyEdgeGroup(prev,id,'M '+(xForCol(prevCol)+cardW)+' '+mid(y)+' H '+xForCol(col),klass+dashed,{traversable}));
+          const edgeLane=lane||CHRONOLOGY_META[prev]?.lane||CHRONOLOGY_META[id]?.lane||'unknown';
+          const edgeId='sequence-'+prev+'-'+id+'-'+edgeLane+'-'+col;
+          out.push(chronologyEdgeGroup(edgeId,prev,id,'M '+(xForCol(prevCol)+cardW)+' '+mid(y)+' H '+xForCol(col),klass+dashed,{kind,traversable,displayOnly}));
         }
         drawCard(id,col,y); addMcu(id);
       });
@@ -8455,7 +8462,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       const seq=drawSequence(ids,startCol,y,{klass:'chronology-spider-line'});
       if(!seq.ids.length)return;
       const lastX=xForCol(seq.end)+cardW,lastY=mid(y),joinX=xForCol(targetCol),joinY=mid(rowY.spiderMcu),spineX=joinX-8;
-      out.push(chronologyEdgeGroup(seq.ids.at(-1),targetId,'M '+lastX+' '+lastY+' H '+spineX+' V '+joinY+' H '+joinX,'chronology-spider-merge'));
+      const edgeId='merge-'+seq.ids.at(-1)+'-'+targetId+'-spider-'+targetCol;
+      out.push(chronologyEdgeGroup(edgeId,seq.ids.at(-1),targetId,'M '+lastX+' '+lastY+' H '+spineX+' V '+joinY+' H '+joinX,'chronology-spider-merge',{kind:'merge'}));
     }
 
     const spiderTone='#ec4899';
@@ -8525,7 +8533,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
     // SSU and FOX blocks
     drawSequence(['venom-2018','venom-let-there-be-carnage-2021','venom-the-last-dance-2024'],8,rowY.ssu,{klass:'chronology-branch'});
-    drawSequence(['morbius-2022','madame-web-2024','kraven-the-hunter-2024'],9,rowY.ssuAlt,{klass:'chronology-axis',dashedTracks:['standalone','ambiguous'],traversable:false});
+    drawSequence(['morbius-2022','madame-web-2024','kraven-the-hunter-2024'],9,rowY.ssuAlt,{klass:'chronology-axis',dashedTracks:['standalone','ambiguous'],traversable:false,displayOnly:true});
     worldFrame(ssuTone,8,11,rowY.ssu,rowY.ssuAlt,{groupKey:'ssu'});
     laneHeader('Venom本線','#a78bfa',8,10,rowY.ssu,rowY.ssu,{navKey:'ssu',headerW:138});
     laneHeader('独立作品','#c084fc',9,11,rowY.ssuAlt,rowY.ssuAlt,{headerW:132});
@@ -8533,9 +8541,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     drawSequence(['x-men-first-class-2011','x-men-origins-wolverine-2009','x-men-2000','x2-x-men-united-2003','x-men-the-last-stand-2006','the-wolverine-2013','x-men-days-of-future-past-2014'],0,rowY.foxOrig,{klass:'chronology-fox-original'});
     const pivotCol=6;
     out.push('<circle class="chronology-pivot" cx="'+(xForCol(pivotCol)+cardW/2)+'" cy="'+(rowY.foxOrig-10)+'" r="6"/><text class="chronology-track-label" x="'+(xForCol(pivotCol)+cardW/2+10)+'" y="'+(rowY.foxOrig-7)+'">分岐点 / Days of Future Past</text>');
-    branchBetweenRows('x-men-days-of-future-past-2014','x-men-apocalypse-2016',pivotCol,rowY.foxOrig,rowY.foxRev,{label:'改変後系列',klass:'chronology-fox-revised'});
+    branchBetweenRows('x-men-days-of-future-past-2014','x-men-apocalypse-2016',pivotCol,rowY.foxOrig,rowY.foxRev,{label:'改変後系列',klass:'chronology-fox-revised',row:'fox-revised'});
     drawSequence(['x-men-apocalypse-2016','dark-phoenix-2019','deadpool-2016','deadpool-2-2018'],pivotCol,rowY.foxRev,{klass:'chronology-fox-revised'});
-    branchBetweenRows('deadpool-2016','logan-2017',pivotCol+2,rowY.foxRev,rowY.foxAmb,{label:'位置づけ慎重',klass:'chronology-branch',traversable:false});
+    branchBetweenRows('deadpool-2016','logan-2017',pivotCol+2,rowY.foxRev,rowY.foxAmb,{label:'位置づけ慎重',klass:'chronology-branch',row:'fox-ambiguous',traversable:false,displayOnly:true});
     drawSequence(['logan-2017','the-new-mutants-2020'],pivotCol+2,rowY.foxAmb,{klass:'chronology-axis',dashedTracks:['ambiguous']});
     worldFrame(foxTone,0,9,rowY.foxOrig,rowY.foxAmb,{groupKey:'fox'});
     laneHeader('旧系列',foxTone,0,6,rowY.foxOrig,rowY.foxOrig,{navKey:'fox',groupKey:'fox-original',headerW:116});
@@ -8545,7 +8553,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     // labels and connectors
 
     const civilX=xForCol(3)+cardW, civilY=mid(rowY.mcuCap), homeX=xForCol(homecomingCol), homeY=mid(rowY.spiderMcu);
-    out.push(chronologyEdgeGroup('captain-america-civil-war-2016','spider-man-homecoming-2017','M '+civilX+' '+civilY+' H '+(civilX+18)+' V '+homeY+' H '+homeX,'chronology-spider-line'));
+    out.push(chronologyEdgeGroup('crossing-captain-america-civil-war-2016-spider-man-homecoming-2017-mcu-spider','captain-america-civil-war-2016','spider-man-homecoming-2017','M '+civilX+' '+civilY+' H '+(civilX+18)+' V '+homeY+' H '+homeX,'chronology-spider-line',{kind:'crossing'}));
 
     panel.innerHTML=chronologyJumpBarHtml()+'<div class="chronology-legend"><span class="badge">大枠＝世界線 / 段＝物語系列</span><span class="badge">同じ世界線でも直接つながらない作品は別段</span><span class="badge">接続は左→右</span><span class="badge">枠内ナビあり</span></div>'+ 
       '<div class="chronology-source-note"><strong>Stage C:</strong> ③「世界線・時系列」は、<strong>同じ世界線でも物語のつながりが薄い作品は別段に分ける</strong> 方向へ再構成しました。特にMCUは1本の横線ではなく、共有イベントの背骨・宇宙サイド・魔術/マルチバース・街/地上サイド・ワカンダ/量子/新世代などの段に分離しています。これにより、同じ世界線だが別の物語系列であることを表しやすくし、横幅も抑えています。Spider-Man系列は Raimi / Amazing / MCU版 を別段化し、<em>No Way Home</em> 付近で交差させています。 <a href="https://www.disneyplus.com/ja-jp/explore/articles/mcu-series" target="_blank" rel="noopener">Disney+公式時系列 ↗</a></div>'+ 
