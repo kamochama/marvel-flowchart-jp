@@ -49,6 +49,13 @@ Historical documents use overlapping phase names. When reporting status, identif
   & $MarvelPython -m scripts.library_v5.build --repo-root .
   ```
 
+実ブラウザの131作品×2 tier選択監査を行う場合は、Chrome / Chromiumを用意したうえで次を実行する。監査ランナーが一時HTTPサーバーを起動し、独立Pythonオラクルと実SVG点灯を比較する。Chromeを自動検出できない場合は `MARVEL_CHROME_BIN` に絶対パスを設定する。
+
+```powershell
+$env:MARVEL_BROWSER_AUDIT = '1'
+& $MarvelPython -m unittest tests.library_v5.test_browser_selection_audit.BrowserSelectionAuditTests.test_headless_dom_matches_python_oracle_for_both_public_tiers -v
+```
+
 - Keep the `&` before a quoted executable path; without it PowerShell treats the path as text rather than launching it. Prefer repository modules (`-m ...`) over ad-hoc inline scripts. If the bundled path changes, resolve the current workspace runtime before substituting a new path; do not silently fall back to a different Python.
 - For final verification, run the exact commands above from the repository root. The build may create transient audit/DB outputs under `data/content_audit/` and `data/derived/`; inspect the result first, then remove only the known generated paths when the workflow requires a clean working tree. Never delete canonical CSVs or `data/content_audit/reviews.csv`.
 - Run strict CSV shape checks when editing CSV notes that contain commas. `csv.DictReader` can hide an extra field, so every row must have exactly the header column count; quote the complete notes field when it contains commas.
