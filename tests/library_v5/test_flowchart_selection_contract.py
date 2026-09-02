@@ -92,7 +92,7 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIsNotNone(selector)
         self.assertEqual(
             re.findall(r'<option value="([^"]+)"', selector.group(0)),
-            ["official", "site-proposal", "complete"],
+            ["site-proposal", "complete"],
         )
         self.assertRegex(
             self.source,
