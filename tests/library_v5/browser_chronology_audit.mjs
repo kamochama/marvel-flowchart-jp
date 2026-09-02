@@ -13,6 +13,18 @@ const CHRONOLOGY_EDGE_COUNT = 74;
 const PRIMARY_WORK = "iron-man-2008";
 const SECONDARY_WORK = "iron-man-2-2010";
 const MOBILE_WORK = "blade-mcu-tba-tba";
+const ORACLE_EDGE_IDS = {
+  captain_to_iron: "sequence-captain-marvel-2019-iron-man-2008-mcu-main-2",
+  iron_to_iron2: "sequence-iron-man-2008-iron-man-2-2010-mcu-main-3",
+  iron2_to_hulk: "sequence-iron-man-2-2010-the-incredible-hulk-2008-mcu-main-4",
+};
+const MODE_ORACLE = {
+  complete: {captain_to_iron: "backhl", iron_to_iron2: "forwardhl"},
+  "site-proposal": {iron_to_iron2: "forwardhl"},
+  or: {captain_to_iron: "backhl", iron_to_iron2: "bothhl"},
+  and: {iron_to_iron2: "bothhl"},
+  path: {iron_to_iron2: "pathhl"},
+};
 // The structural contract is intentionally keyed by the exported
 // data-chronology-edge-id attribute (not by a release/overview graph edge).
 
@@ -21,7 +33,8 @@ function usage() {
     "Usage: node browser_chronology_audit.mjs --root <repo> [--chrome <path>]",
     "",
     "Audits the public chronology display with real Chrome CDP pointer events.",
-    "Checks stable edge-id metadata, non-traversable/display-only safety, six public modes,",
+    "Checks stable edge-id metadata, non-traversable/display-only safety, five public modes",
+    "plus the internal-unit-only previous1 boundary,",
     "SVG/Canvas chronology materialization parity, and overview/chronology round trips.",
     "",
     "Options:",
@@ -281,6 +294,39 @@ async function waitChronologyState(cdp, predicate, timeoutMs, label) {
   return poll(async () => predicate(await chronologySnapshot(cdp)), timeoutMs, label);
 }
 
+function validateModeOracle(snapshot, mode) {
+  const expected = MODE_ORACLE[mode] || {};
+  const byId = new Map(snapshot.records.map(record => [record.id, record.classes.filter(x => x !== "hl")]));
+  const failures = [];
+  for (const [name, category] of Object.entries(expected)) {
+    const id = ORACLE_EDGE_IDS[name];
+    if (!byId.has(id) || !byId.get(id).includes(category)) failures.push(`${mode}: expected ${id}=${category}`);
+  }
+  // Independent directed reachability oracle for the single-goal public cases;
+  // OR/AND/PATH additionally require the explicit fixture IDs above.
+  const allowed = new Set();
+  const starts = mode === "or" || mode === "and" || mode === "path" ? [PRIMARY_WORK, SECONDARY_WORK] : [PRIMARY_WORK];
+  const incoming = new Map(), outgoing = new Map();
+  for (const record of snapshot.records) if (record.traversable) {
+    if (!outgoing.has(record.source)) outgoing.set(record.source, []); outgoing.get(record.source).push(record);
+    if (!incoming.has(record.target)) incoming.set(record.target, []); incoming.get(record.target).push(record);
+  }
+  for (const start of starts) for (const adjacency of [incoming, outgoing]) {
+    const seen = new Set([start]), queue = [start];
+    while (queue.length) for (const edge of (adjacency.get(queue.shift()) || [])) { allowed.add(edge.id); const next = adjacency === incoming ? edge.source : edge.target; if (!seen.has(next)) { seen.add(next); queue.push(next); } }
+  }
+  if (mode === "path") { allowed.clear(); allowed.add(ORACLE_EDGE_IDS.iron_to_iron2); }
+  const actual = new Set(snapshot.highlighted);
+  for (const id of actual) if (!allowed.has(id)) failures.push(`${mode}: unexpected highlighted ${id}`);
+  for (const id of actual) {
+    const names = Object.entries(ORACLE_EDGE_IDS).filter(([, value]) => value === id).map(([name]) => name);
+    const wanted = names.map(name => expected[name]).filter(Boolean);
+    if (wanted.length && !wanted.some(category => byId.get(id)?.includes(category))) failures.push(`${mode}: category mismatch ${id}`);
+  }
+  if (snapshot.displayOnlyHighlighted.length) failures.push(`${mode}: display-only highlighted`);
+  if (failures.length) throw new Error(failures.join("; "));
+}
+
 async function setTier(cdp, tier, timeoutMs) {
   await evaluate(cdp, `
     const select=document.querySelector('#chartConnectionTier');
@@ -329,7 +375,11 @@ async function canvasChronologySnapshot(cdp) {
 async function inspectParity(cdp, timeoutMs) {
   const initial = await chronologySnapshot(cdp);
   const canvas = await canvasChronologySnapshot(cdp);
-  const source = canvas.records.length ? canvas.records : initial.records.map(x => ({ id: x.id, classes: x.classes }));
+  if (!canvas.canvasAvailable) {
+    return {svg_ids: initial.ids, canvas_ids: [], canvas_available: false,
+      failures: ["Canvas chronology materialization unavailable"]};
+  }
+  const source = canvas.records;
   // `hl` is the shared visibility marker; category parity concerns only the
   // directional/path category represented by the SVG and Canvas renderers.
   const category = (classes) => classes.filter((item) => item !== "hl").join("|");
@@ -366,15 +416,17 @@ async function runAudit(args) {
 
     cases.push(await runCase(cdp,server.url,timeoutMs,"complete",async()=>{
       await clearSelection(cdp,timeoutMs); await setTier(cdp,"complete",timeoutMs); await clickWork(cdp,PRIMARY_WORK,timeoutMs);
-      await waitChronologyState(cdp,s=>s.dim&&s.focus.length>0,timeoutMs,"complete chronology selection");
+      await waitChronologyState(cdp,s=>s.dim&&s.focus.length>0&&s.highlighted.length>0,timeoutMs,"complete chronology selection");
+      validateModeOracle(await chronologySnapshot(cdp), "complete");
     }));
     cases.push(await runCase(cdp,server.url,timeoutMs,"site-proposal",async()=>{
       await clearSelection(cdp,timeoutMs); await setTier(cdp,"site-proposal",timeoutMs); await clickWork(cdp,PRIMARY_WORK,timeoutMs);
-      await waitChronologyState(cdp,s=>s.dim&&s.focus.length>0,timeoutMs,"site-proposal chronology selection");
+      await waitChronologyState(cdp,s=>s.dim&&s.focus.length>0&&s.highlighted.length>0,timeoutMs,"site-proposal chronology selection");
+      validateModeOracle(await chronologySnapshot(cdp), "site-proposal");
     }));
     cases.push(await runCase(cdp,server.url,timeoutMs,"previous1",async()=>{
       const available=await evaluate(cdp,"return !!document.querySelector('.scope-btn[data-scope=\"previous1\"]')");
-      if(!available)return {available:false,skipped:true,reason:"previous1 has no public control in this export; no internal scope state was invoked"};
+      if(!available)return {ok:null,available:false,skipped:true,coverage:"internal-unit-only",reason:"previous1 is not a public mode in this export; no internal scope state was invoked"};
       await clearSelection(cdp,timeoutMs); await clickSelector(cdp,'.scope-btn[data-scope="previous1"]',timeoutMs); await clickWork(cdp,PRIMARY_WORK,timeoutMs);
       await waitChronologyState(cdp,s=>s.dim&&s.focus.length>0,timeoutMs,"previous1 public selection");
       return {available:true};
@@ -383,8 +435,9 @@ async function runAudit(args) {
       cases.push(await runCase(cdp,server.url,timeoutMs,mode,async()=>{
         await clearSelection(cdp,timeoutMs); await setTier(cdp,"complete",timeoutMs); await setCombine(cdp,mode,timeoutMs);
         await clickWork(cdp,PRIMARY_WORK,timeoutMs,"right"); await clickWork(cdp,SECONDARY_WORK,timeoutMs,"right");
-        await waitChronologyState(cdp,s=>s.dim,timeoutMs,`${mode} chronology selection`);
+        await waitChronologyState(cdp,s=>s.dim&&s.highlighted.length>0,timeoutMs,`${mode} chronology selection`);
         const state=await chronologySnapshot(cdp); if(state.displayOnlyHighlighted.length)throw new Error(`${mode} highlighted display-only edge`);
+        validateModeOracle(state, mode);
       }));
     }
     await clearSelection(cdp,timeoutMs); await setCombine(cdp,"or",timeoutMs); await setTier(cdp,"complete",timeoutMs);
@@ -414,10 +467,11 @@ async function runAudit(args) {
   } finally {
     cdp?.close(); await new Promise((resolve)=>server.server.close(()=>resolve())); if(chromeProcess)await stopChrome(chromeProcess);
   }
-  const failures=[...(structural?.failures||[]),...(parity?.failures||[]),...cases.filter(x=>!x.ok).map(x=>`${x.name}: ${x.error}`)];
+  const failures=[...(structural?.failures||[]),...(parity?.failures||[]),...cases.filter(x=>x.ok===false).map(x=>`${x.name}: ${x.error}`)];
+  const coverage_gaps=cases.filter(x=>x.skipped).map(x=>({name:x.name,available:x.available===true,coverage:x.coverage||"environment",reason:x.reason||"not exercised"}));
   if(!roundTrip.overview_to_chronology)failures.push("overview_to_chronology round trip failed");
   if(!roundTrip.chronology_to_overview)failures.push("chronology_to_overview round trip failed");
-  return {summary:{cases:cases.length,failures:failures.length},structural,modes:cases,svg_canvas_parity:parity||{failures:["parity not collected"]},round_trip:roundTrip,failures};
+  return {summary:{cases:cases.length,failures:failures.length,coverage_gaps:coverage_gaps.length},coverage_gaps,structural,modes:cases,svg_canvas_parity:parity||{failures:["parity not collected"]},round_trip:roundTrip,failures};
 }
 
 async function main(){

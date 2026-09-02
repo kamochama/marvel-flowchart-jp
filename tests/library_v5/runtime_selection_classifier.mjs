@@ -38,6 +38,8 @@ function loadFunction(name, context = {}) {
 
 const classifyChronologySelection = loadFunction("classifyChronologySelection");
 const materializeChronologyPathEdgeIds = loadFunction("materializeChronologyPathEdgeIds");
+const mobileOverlayCompressedBridges = loadFunction("mobileOverlayCompressedBridges");
+const mobileOverlaySyntheticSpecs = loadFunction("mobileOverlaySyntheticSpecs", {mobileOverlayCompressedBridges});
 const edgeKey = loadFunction("edgeKey");
 const edgeRecordFromSvgGroup = loadFunction("edgeRecordFromSvgGroup", {
   EDGES: [{edge_id: "edge-a-b", source: "a", target: "b"}],
@@ -255,6 +257,10 @@ const canvasPathClasses = mobileOverlayChronologyEdgeClassMap(
   {selectedIds: ["goal"], tier: "complete", combineMode: "path", pathMode: true, pathEdges: new Set(["a->goal", "unknown->goal"])},
 );
 report.canvas_path = Object.fromEntries(canvasPathClasses.entries());
+report.synthetic_relation_guard = {
+  overview: mobileOverlaySyntheticSpecs({svg: {dataset: {relationshipEdges: "on"}}, overlayVisibleNodeIds: new Set(["a", "goal"]), overlayStaticEdgeKeys: new Set()}, {backEdges: new Set(["a->goal"]), forwardEdges: new Set(), contextEdges: new Set(), generic: false}),
+  chronology: mobileOverlaySyntheticSpecs({svg: {dataset: {relationshipEdges: "off"}}, overlayVisibleNodeIds: new Set(["a", "goal"]), overlayStaticEdgeKeys: new Set()}, {backEdges: new Set(["a->goal"]), forwardEdges: new Set(), contextEdges: new Set(), generic: false}),
+};
 
 report.reason_provenance = {
   transition_with_explicit_reason: hasExplicitWorkRelationReason({

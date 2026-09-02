@@ -29,7 +29,7 @@
 
 ### 3.2 選択モード
 
-`complete`、`site-proposal`、`previous1`、`OR`、`AND`、`PATH` の判定は、各表示層が対応する対象に対して同じ状態入力を使う。
+公開5モード（`complete`、`site-proposal`、`OR`、`AND`、`PATH`）の判定は、各表示層が対応する対象に対して同じ状態入力を使う。`previous1` は公開scope UIを持たない内部unit-only classifier 契約であり、公開UIへ追加しない。
 
 - 関係地図の `EDGES` は関係地図の既存契約で分類する。
 - 時系列は §4 の `chronology-edge` だけを分類する。
@@ -91,7 +91,7 @@ traversable な時系列線も、それだけで関係地図の作品ペアや�
 実ブラウザ監査では、少なくとも次を確認する。
 
 - 全時系列カードの作品集合と `work_id` が一致する。
-- `complete`、`site-proposal`、`previous1`、`OR`、`AND`、`PATH` の代表ケースで、期待する線だけが点灯する。
+- `complete`、`site-proposal`、`OR`、`AND`、`PATH` の代表ケースで、期待する線だけが点灯する。`previous1` は公開controlがない場合、実ブラウザでは内部unit-only coverage gap として明示し、内部state注入による代替監査はしない。
 - display-only／non-traversable 線に `hl` 系クラスも Canvas 合成線も付かない。
 - 同一 source/target の複数線を追加した fixture で、固有 edge ID が混線しない。
 - SVG と Canvas の線キー・分類・点灯集合が一致する。
@@ -138,7 +138,7 @@ PC とモバイルの実ブラウザ監査で次を確認する。
 
 この仕様書自体は表示契約のみを定め、実装・canonical CSV・SQLite schema は変更しない。実装時は次の順序で別々に進める。
 
-1. 時系列の RED 契約（固有線キー、non-traversable 除外、6モード、SVG/Canvas parity）を追加する。
+1. 時系列の RED 契約（固有線キー、non-traversable 除外、公開5モード＋内部unit-only previous1、SVG/Canvas parity）を追加する。
 2. 最小実装を行い、時系列の unit／DOM／Canvas 監査を GREEN にする。
 3. 公開順の RED 契約（カード選択、幾何不変、モバイル合成線禁止、日付精度）を別ジョブで追加する。
 4. 最小実装を行い、公開順の PC／モバイル監査を GREEN にする。

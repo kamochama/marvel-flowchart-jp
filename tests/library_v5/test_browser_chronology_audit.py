@@ -78,9 +78,16 @@ class BrowserChronologyAuditTests(unittest.TestCase):
             "duplicate_ids",
             "svg_canvas_parity",
             "round_trip",
+            "coverage_gaps",
         ):
             self.assertIn(label, source)
         self.assertIn("failures", source)
+        self.assertIn('coverage:"internal-unit-only"', source)
+        self.assertIn("MODE_ORACLE", source)
+        self.assertIn("validateModeOracle", source)
+        self.assertIn("ORACLE_EDGE_IDS", source)
+        self.assertIn("unexpected highlighted", source)
+        self.assertIn("category mismatch", source)
 
     @unittest.skipUnless(
         os.environ.get("MARVEL_BROWSER_CHRONOLOGY_AUDIT") == "1",
@@ -108,6 +115,7 @@ class BrowserChronologyAuditTests(unittest.TestCase):
         self.assertEqual(report["structural"]["duplicate_ids"], [])
         self.assertEqual(report["structural"]["display_only_highlighted"], [])
         self.assertEqual(report["svg_canvas_parity"]["failures"], [])
+        self.assertTrue(report["svg_canvas_parity"]["canvas_available"])
         self.assertTrue(report["round_trip"]["overview_to_chronology"])
         self.assertTrue(report["round_trip"]["chronology_to_overview"])
 

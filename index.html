@@ -4767,6 +4767,9 @@ function mobileOverlayCompressedBridges(edgeSet,visible){
 }
 function mobileOverlaySyntheticSpecs(cs,state){
   if(!cs||!state||state.generic)return [];
+  // Chronology/release panels intentionally disable relation edges; their
+  // mobile canvas must not synthesize the overview graph relations.
+  if(cs.svg?.dataset?.relationshipEdges==='off')return [];
   const visible=cs.overlayVisibleNodeIds||new Set(cs.nodeBoxes.map(n=>n.id));
   const staticKeys=cs.overlayStaticEdgeKeys||new Set();
   const specs=[['backhl',state.backEdges],['forwardhl',state.forwardEdges],['contexthl',state.contextEdges],['pathhl',state.pathEdges||new Set()]];

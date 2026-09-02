@@ -21,13 +21,13 @@ chronology display contract は、ローカルの静的契約・ランタイム�
 - `displayOnly:true` と `traversable:false` を表示専用の組合せとして固定し、`displayOnly && traversable` は生成時に拒否する。表示専用の Morbius sequence 2 本と Deadpool→Logan branch 1 本（計 3 本）は表示されるが、隣接・分類・点灯対象へ入らない。
 - chronology display lines は work relation ではない。共有 continuity、表示順、crossing の depiction だけから新しい work-to-work relation を作らない。
 
-## 6 モードの edge-ID semantics
+## 公開5モード＋内部 previous1 の edge-ID semantics
 
-`classifyChronologySelection` は adjacency の構築にだけ `source`／`target` を使い、結果を `Map<edge_id, category>` として返す。6 モードは次の通りである。
+`classifyChronologySelection` は adjacency の構築にだけ `source`／`target` を使い、結果を `Map<edge_id, category>` として返す。公開5モードに加え、公開scope UIを持たない内部unit-only `previous1` 契約がある。
 
 - `complete`: traversable な chronology adjacency を全て辿る。
 - `site-proposal`: `tierNodeIds` を incoming／back traversal にだけ適用する。
-- `previous1`: goal への direct incoming のみを許可する。現行 export にはこの公開 scope control がないため、実ブラウザ監査では利用不可として報告し、内部の scope state は呼び出していない。
+- `previous1`: goal への direct incoming のみを許可する。現行 export には公開scope controlがないため、実ブラウザでは `coverage_gaps` に `available=false, coverage=internal-unit-only` として報告し、内部の scope state は呼び出していない。
 - `or`: 各 goal の edge-ID map を union する。
 - `and`: 各 goal の edge ID を intersection する。
 - `path`: 渡された `pathEdges` を、render boundary で materialize 済みの traversable chronology edge ID に対して絞り込む。classifier 内で新しい chronology search／BFS は行わない。
@@ -46,10 +46,10 @@ Node runner `tests/library_v5/browser_chronology_audit.mjs` をローカル静�
 
 結果:
 
-- `summary`: `cases=6`, `failures=0`
+- `summary`: `cases=6`, `failures=0`, `coverage_gaps=1`
 - structural: chronology edge `74`、duplicate IDs `[]`、display-only highlighted `[]`
 - non-traversable IDs: `sequence-morbius-2022-madame-web-2024-ssu-10`、`sequence-madame-web-2024-kraven-the-hunter-2024-ssu-11`、`branch-deadpool-2016-logan-2017-fox-ambiguous`
-- 6 mode checks: `complete`、`site-proposal`、`or`、`and`、`path` は `ok=true`。`previous1` は `available=false, skipped=true` で、理由は「この export に public control がないため」であり、内部 scope state は呼び出していない。
+- 5 public mode checks: `complete`、`site-proposal`、`or`、`and`、`path` は `ok=true`。`previous1` は成功skipではなく `coverage_gaps` に `available=false, coverage=internal-unit-only` として記録し、理由は「この export に public control がないため」、内部 scope state は呼び出していない。
 - SVG/Canvas parity: Canvas available、materialized ID set／category の failures `[]`（74 IDs）
 - round-trip: `overview_to_chronology=true`、`chronology_to_overview=true`
 

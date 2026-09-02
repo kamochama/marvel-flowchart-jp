@@ -15,7 +15,7 @@
 - 関係地図の `EDGES`、`work_edges_all`、`work_pair_reasons` を時系列表示線の意味論に使用しない。
 - `display_only=true => traversable=false` を不変条件とする。
 - `order`、`track`、カード配置順から時系列 edge を自動生成しない。
-- `complete`、`site-proposal`、`previous1`、`OR`、`AND`、`PATH` は明示された chronology edge だけに適用する。
+- 公開5モード（`complete`、`site-proposal`、`OR`、`AND`、`PATH`）と、公開scope UIを追加しない内部unit-only契約 `previous1` は、明示された chronology edge だけに適用する。
 - `traversable=false`／display-only は selection traversal、PATH、reason、公式予習ルート、Canvas 合成線に使用しない。
 - SVG と Canvas の chronology edge ID 集合・分類結果を一致させる。
 - canonical CSV、SQLite、persistent review ledger はこの viewer 実装計画では変更しない。
@@ -216,7 +216,7 @@ $env:MARVEL_BROWSER_CHRONOLOGY_AUDIT = '1'
 Remove-Item Env:MARVEL_BROWSER_CHRONOLOGY_AUDIT
 ```
 
-Expected: all chronology structural/mode/parity cases pass; when Chrome is unavailable, only the environment-gated test is skipped and static wrapper tests still pass.
+Expected: all chronology structural/five-public-mode/parity cases pass; the report explicitly includes a `previous1` internal-unit-only coverage gap when the public scope control is absent. When Chrome is unavailable, only the environment-gated test is skipped and static wrapper tests still pass.
 
 ### Task 5: Full verification and documentation handoff
 

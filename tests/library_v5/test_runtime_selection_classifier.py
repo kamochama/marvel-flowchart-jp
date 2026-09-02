@@ -80,6 +80,10 @@ class RuntimeSelectionClassifierTests(unittest.TestCase):
                     "a-goal-branch": "pathhl",
                     "a-goal-sequence": "pathhl",
                 },
+                "synthetic_relation_guard": {
+                    "overview": [{"source": "a", "target": "goal", "category": "backhl", "compressed": False}],
+                    "chronology": [],
+                },
                 "reason_provenance": {
                     "transition_with_explicit_reason": True,
                     "transition_without_explicit_reason": False,
