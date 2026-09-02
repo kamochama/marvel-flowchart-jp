@@ -118,14 +118,27 @@ const report = {
       scopeMode: "previous1",
       tier: "complete",
     }),
+    or: classify(
+      [
+        {edge_id: "a-goal-or", source: "a", target: "goal", traversable: true},
+        {edge_id: "goal-next-or", source: "goal", target: "next", traversable: true},
+        {edge_id: "b-other-or", source: "b", target: "other", traversable: true},
+        {edge_id: "other-goal-or", source: "other", target: "goal", traversable: true},
+      ],
+      {selectedIds: ["goal", "other"], combineMode: "or", tier: "complete"},
+    ),
     and: classify(
       [{key: "c->d", source: "c", target: "d", traversable: true}],
       {selectedIds: ["d", "c"], combineMode: "and", tier: "complete"},
     ),
-    path: classify(tierRecords, {
+    path: classify([
+      {edge_id: "q-a-sequence", key: "q->a", source: "q", target: "a", traversable: true},
+      {edge_id: "a-goal-sequence", key: "a->goal", source: "a", target: "goal", traversable: true},
+      {edge_id: "goal-next-sequence", key: "goal->next", source: "goal", target: "next", traversable: true},
+    ], {
       selectedIds: ["goal"],
       pathMode: true,
-      pathEdges: new Set(["a->goal"]),
+      pathEdges: new Set(["a-goal-sequence"]),
       tier: "complete",
     }),
   },
@@ -201,8 +214,9 @@ report.svg_duplicate_edges = Object.fromEntries(
 const canvasClasses = mobileOverlayChronologyEdgeClassMap(
   {
     overlayChronologyEdgePrimitives: new Map([
-      ["a->goal", [{overlayChronologySource: "a", overlayChronologyTarget: "goal", overlayChronologyTraversable: true}]],
-      ["false->goal", [{overlayChronologySource: "false", overlayChronologyTarget: "goal", overlayChronologyTraversable: false}]],
+      ["a-goal-sequence", [{overlayChronologyEdgeId: "a-goal-sequence", overlayChronologySource: "a", overlayChronologyTarget: "goal", overlayChronologyDisplayOnly: false, overlayChronologyTraversable: true}]],
+      ["a-goal-branch", [{overlayChronologyEdgeId: "a-goal-branch", overlayChronologySource: "a", overlayChronologyTarget: "goal", overlayChronologyDisplayOnly: false, overlayChronologyTraversable: true}]],
+      ["false-goal-display", [{overlayChronologyEdgeId: "false-goal-display", overlayChronologySource: "false", overlayChronologyTarget: "goal", overlayChronologyDisplayOnly: true, overlayChronologyTraversable: false}]],
     ]),
   },
   {selectedIds: ["goal"], tier: "complete"},

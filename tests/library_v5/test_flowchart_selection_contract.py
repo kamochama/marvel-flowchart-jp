@@ -284,11 +284,17 @@ class FlowchartSelectionContractTests(unittest.TestCase):
             "the visual-only filter contract should observe the exported edge collection",
         )
 
-    def test_mobile_canvas_normalizes_stable_edge_ids_to_directed_pair_keys(self) -> None:
+    def test_mobile_canvas_preserves_stable_chronology_edge_ids(self) -> None:
         body = function_body(self.source, "canvasPrimitive")
         self.assertIn("rawEdgeKey=overlayGroup.dataset?.edgeKey", body)
         self.assertIn("window.marvelEdgeKeyFromGroup(overlayGroup)", body)
         self.assertIn("overlayEdgeKey=typeof window.marvelEdgeKeyFromGroup", body)
+        self.assertIn("overlayChronologyEdgeId", body)
+        rebuild = function_body(self.source, "prepareMobileSelectionWorldResources")
+        self.assertIn("overlayChronologyEdgeId", rebuild)
+        self.assertIn("chronologyEdgeMap", rebuild)
+        self.assertIn("const edgeId=p.overlayChronologyEdgeId||", rebuild)
+        self.assertIn("chronologyEdgeMap.has(edgeId)", rebuild)
 
     def test_chronology_sequence_edges_are_explicit_and_selection_aware(self) -> None:
         """Chronology lines must be their own sequence layer, not graph shortcuts."""
@@ -347,7 +353,7 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("tierNodeIds", classifier)
         self.assertIn("state?.pathEdges", classifier)
         self.assertRegex(classifier, r"adjacent===incoming[\s\S]{0,260}tierNodeIds")
-        self.assertRegex(classifier, r"pathEdges?\.has|pathPairs")
+        self.assertRegex(classifier, r"pathIds\.has|pathEdges?\.has")
 
     def test_selection_state_exposes_scope_and_combine_mode_to_chronology_layer(self) -> None:
         """The pure classifier must not read hidden module globals for mode semantics."""
@@ -407,6 +413,7 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         renderer = function_body(self.source, "renderChronologySelectionState")
         self.assertRegex(renderer, r"dataset(?:\?\.)?chronologyEdgeId")
         self.assertIn("edgeId", renderer)
+        self.assertIn("recordsById.get(edgeId)", renderer)
 
 
 if __name__ == "__main__":

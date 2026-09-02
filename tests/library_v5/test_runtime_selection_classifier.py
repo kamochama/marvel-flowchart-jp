@@ -44,8 +44,14 @@ class RuntimeSelectionClassifierTests(unittest.TestCase):
                 },
                 "scope_and_path": {
                     "previous1": {"a->goal": "backhl"},
+                    "or": {
+                        "a-goal-or": "backhl",
+                        "b-other-or": "backhl",
+                        "goal-next-or": "forwardhl",
+                        "other-goal-or": "bothhl",
+                    },
                     "and": {"c->d": "bothhl"},
-                    "path": {"a->goal": "pathhl"},
+                    "path": {"a-goal-sequence": "pathhl"},
                 },
                 "edge_key": {"edge_id": "a->b", "title_fallback": "a->b"},
                 "duplicate_edges": {
@@ -60,7 +66,10 @@ class RuntimeSelectionClassifierTests(unittest.TestCase):
                     "a->goal": ["backhl", "hl"],
                     "false->goal": [],
                 },
-                "canvas": {"a->goal": "backhl"},
+                "canvas": {
+                    "a-goal-branch": "backhl",
+                    "a-goal-sequence": "backhl",
+                },
                 "reason_provenance": {
                     "transition_with_explicit_reason": True,
                     "transition_without_explicit_reason": False,

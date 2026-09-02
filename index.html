@@ -4640,15 +4640,18 @@ function classifyChronologySelection(edges,state){
   // Only the canonical complete value may widen the incoming scope.  Legacy,
   // official, and unknown values fail safe to the public site-proposal tier.
   const tier=rawTier==='complete'?'complete':'site-proposal';
-  const tierNodeIds=state?.tierNodeIds||new Set();
+  const tierNodeIds=new Set(state?.tierNodeIds||[]);
   const pathMode=state?.pathMode===true||(state?.combineMode==='path'&&ids.length>1);
-  const records=[],seenKeys=new Set();
-  for(const raw of (edges||[])){
+  const records=(edges||[]).map((raw,index)=>{
     const source=raw?.source||raw?.chronologySource,target=raw?.target||raw?.chronologyTarget;
     const key=raw?.key||`${source||''}->${target||''}`;
-    if(!source||!target||!key||seenKeys.has(key)||raw?.traversable===false)continue;
-    seenKeys.add(key);records.push({source,target,key});
-  }
+    const edgeId=raw?.edge_id||raw?.edgeId||raw?.key||`${source||''}->${target||''}#${index}`;
+    return {edgeId:String(edgeId),source:String(source||''),target:String(target||''),key:String(key),traversable:raw?.traversable!==false&&raw?.display_only!==true&&raw?.displayOnly!==true};
+  }).filter(edge=>{
+    const traversable=edge.traversable;
+    if(traversable===false)return false;
+    return edge.source&&edge.target&&edge.edgeId;
+  });
   if(!records.length)return classes;
   const incoming=new Map(),outgoing=new Map();
   for(const edge of records){
@@ -4656,8 +4659,8 @@ function classifyChronologySelection(edges,state){
     if(!outgoing.has(edge.source))outgoing.set(edge.source,[]);
     incoming.get(edge.target).push(edge);outgoing.get(edge.source).push(edge);
   }
-  for(const links of incoming.values())links.sort((a,b)=>a.key.localeCompare(b.key));
-  for(const links of outgoing.values())links.sort((a,b)=>a.key.localeCompare(b.key));
+  for(const links of incoming.values())links.sort((a,b)=>a.edgeId.localeCompare(b.edgeId));
+  for(const links of outgoing.values())links.sort((a,b)=>a.edgeId.localeCompare(b.edgeId));
   const walk=(goal,adjacent)=>{
     const found=new Map(),seen=new Set([goal]),queue=[goal];
     const directOnly=state?.scopeMode==='previous1';
@@ -4668,7 +4671,7 @@ function classifyChronologySelection(edges,state){
         // chronology remains visible so selecting a work still shows where it
         // leads, matching the main chart directional highlight semantics.
         if(adjacent===incoming && tier!=='complete' && tierNodeIds.size && (!tierNodeIds.has(edge.source)||!tierNodeIds.has(edge.target)))continue;
-        found.set(edge.key,true);
+        found.set(edge.edgeId,true);
         if(directOnly)continue;
         const next=adjacent===incoming?edge.source:edge.target;
         if(!seen.has(next)){seen.add(next);queue.push(next);}
@@ -4679,35 +4682,34 @@ function classifyChronologySelection(edges,state){
   const perGoal=goal=>{
     if(state?.scopeMode==='none')return new Map();
     const result=new Map();
-    for(const key of walk(goal,incoming).keys())result.set(key,1);
-    if(state?.scopeMode!=='previous1')for(const key of walk(goal,outgoing).keys())result.set(key,(result.get(key)||0)|2);
+    for(const edgeId of walk(goal,incoming).keys())result.set(edgeId,1);
+    if(state?.scopeMode!=='previous1')for(const edgeId of walk(goal,outgoing).keys())result.set(edgeId,(result.get(edgeId)||0)|2);
     return result;
   };
   if(pathMode){
     // PATH is already solved against the tier-filtered work graph. Reuse its
-    // directed edge keys here instead of running a second unfiltered BFS over
-    // chronology rows, so SVG/Canvas chronology and the main chart agree.
-    const pathKeys=new Set([...(state?.pathEdges||[])].map(String));
-    const pathPairs=new Set([...pathKeys].filter(key=>key.includes('->')).map(String));
-    for(const edge of records)if(pathKeys.has(edge.key)||pathPairs.has(`${edge.source}->${edge.target}`))classes.set(edge.key,'pathhl');
+    // supplied materialized edge IDs instead of running a second unfiltered BFS
+    // over chronology rows, so SVG/Canvas chronology and the main chart agree.
+    const pathIds=new Set([...(state?.pathEdges||[])].map(String));
+    for(const edge of records)if(pathIds.has(edge.edgeId))classes.set(edge.edgeId,'pathhl');
     return classes;
   }
   const goalMaps=ids.map(perGoal),combined=new Map();
   if(state?.combineMode==='and'&&goalMaps.length>1){
-    const common=[...goalMaps[0].keys()].filter(key=>goalMaps.every(map=>map.has(key)));
-    for(const key of common){let bits=0;for(const map of goalMaps)bits|=map.get(key)||0;combined.set(key,bits);}
+    const common=[...goalMaps[0].keys()].filter(edgeId=>goalMaps.every(map=>map.has(edgeId)));
+    for(const edgeId of common){let bits=0;for(const map of goalMaps)bits|=map.get(edgeId)||0;combined.set(edgeId,bits);}
   }else{
-    for(const map of goalMaps)for(const [key,bits] of map)combined.set(key,(combined.get(key)||0)|bits);
+    for(const map of goalMaps)for(const [edgeId,bits] of map)combined.set(edgeId,(combined.get(edgeId)||0)|bits);
   }
-  for(const [key,bits] of combined)classes.set(key,bits===3?'bothhl':bits===1?'backhl':'forwardhl');
+  for(const [edgeId,bits] of combined)classes.set(edgeId,bits===3?'bothhl':bits===1?'backhl':'forwardhl');
   return classes;
 }
 window.classifyChronologySelection=classifyChronologySelection;
 function mobileOverlayChronologyEdgeClassMap(cs,state){
   const records=[];
-  for(const [key,primitives] of (cs?.overlayChronologyEdgePrimitives||new Map())){
-    const p=primitives?.[0],edgeId=p?.overlayChronologyEdgeId||key,source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
-    if(source&&target)records.push({key,edgeId,source,target,displayOnly:p?.overlayChronologyDisplayOnly===true,traversable:p?.overlayChronologyTraversable!==false});
+  for(const [edgeId,primitives] of (cs?.overlayChronologyEdgePrimitives||new Map())){
+    const p=primitives?.[0],id=p?.overlayChronologyEdgeId||edgeId,source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
+    if(source&&target)records.push({edge_id:id,edgeId:id,key:`${source}->${target}`,source,target,displayOnly:p?.overlayChronologyDisplayOnly===true,traversable:p?.overlayChronologyTraversable!==false});
   }
   return classifyChronologySelection(records,state);
 }
@@ -4842,7 +4844,7 @@ function prepareMobileSelectionWorldResources(wrap){
   for(const p of cs.primitives){
     if(p.overlayNodeId){if(!nodeMap.has(p.overlayNodeId))nodeMap.set(p.overlayNodeId,[]);nodeMap.get(p.overlayNodeId).push(p);}
     else if(p.overlayIsEdge&&p.overlayEdgeKey){if(!edgeMap.has(p.overlayEdgeKey))edgeMap.set(p.overlayEdgeKey,[]);edgeMap.get(p.overlayEdgeKey).push(p);if(!p.overlayDynamic)staticKeys.add(p.overlayEdgeKey);}
-    else if(p.overlayChronologyEdge){const key=`${p.overlayChronologySource}->${p.overlayChronologyTarget}`;if(!chronologyEdgeMap.has(key))chronologyEdgeMap.set(key,[]);chronologyEdgeMap.get(key).push(p);}
+    else if(p.overlayChronologyEdge){const edgeId=p.overlayChronologyEdgeId||`${p.overlayChronologySource}->${p.overlayChronologyTarget}`;if(!chronologyEdgeMap.has(edgeId))chronologyEdgeMap.set(edgeId,[]);chronologyEdgeMap.get(edgeId).push(p);}
   }
   cs.overlayNodePrimitives=nodeMap;cs.overlayEdgePrimitives=edgeMap;cs.overlayChronologyEdgePrimitives=chronologyEdgeMap;
   cs.overlayNodeBoxMap=new Map(cs.nodeBoxes.map(n=>[n.id,n.box]));cs.overlayVisibleNodeIds=new Set(cs.nodeBoxes.map(n=>n.id));cs.overlayStaticEdgeKeys=staticKeys;
@@ -4868,7 +4870,7 @@ function renderMobileSelectionWorldCache(wrap,state){
     for(const p of (cs.overlayEdgePrimitives.get(edgeKey)||[]))if(drawMobileOverlayPrimitive(ctx,p,category,lod,cs))drawn++;
   }
   const chronologyClasses=mobileOverlayChronologyEdgeClassMap(cs,state);
-  for(const [edgeKey,category] of chronologyClasses){for(const p of (cs.overlayChronologyEdgePrimitives?.get(edgeKey)||[]))if(drawMobileOverlayPrimitive(ctx,p,category,lod,cs))drawn++;}
+  for(const [edgeId,category] of chronologyClasses){for(const p of (cs.overlayChronologyEdgePrimitives?.get(edgeId)||[]))if(drawMobileOverlayPrimitive(ctx,p,category,lod,cs))drawn++;}
   const syntheticSpecs=mobileOverlaySyntheticSpecs(cs,state);for(const spec of syntheticSpecs)if(drawMobileSyntheticOverlayEdge(ctx,cs,spec,lod))drawn++;
   cs.overlayWorldReady=true;cs.overlayWorldState=state;cs.overlayWorldSelectionKey=key;cs.overlayWorldSyntheticSpecs=syntheticSpecs;cs.overlayWorldChronologyClasses=chronologyClasses;cs.overlayWorldDrawn=drawn;
   return true;
@@ -4902,7 +4904,7 @@ function drawMobileSelectionOverlay(wrap,state){
     for(const p of (cs.overlayEdgePrimitives.get(edgeKey)||[])){if(!mobileOverlayPrimitiveNearViewport(p,visibleRect))continue;if(drawMobileOverlayPrimitive(ctx,p,category,m.pxPerWorld,cs))n++;}
   }
   const chronologyClasses=cs.overlayWorldChronologyClasses||mobileOverlayChronologyEdgeClassMap(cs,state);
-  for(const [edgeKey,category] of chronologyClasses){for(const p of (cs.overlayChronologyEdgePrimitives?.get(edgeKey)||[])){if(!mobileOverlayPrimitiveNearViewport(p,visibleRect))continue;if(drawMobileOverlayPrimitive(ctx,p,category,m.pxPerWorld,cs))n++;}}
+  for(const [edgeId,category] of chronologyClasses){for(const p of (cs.overlayChronologyEdgePrimitives?.get(edgeId)||[])){if(!mobileOverlayPrimitiveNearViewport(p,visibleRect))continue;if(drawMobileOverlayPrimitive(ctx,p,category,m.pxPerWorld,cs))n++;}}
   let synthetic=0;for(const spec of (cs.overlayWorldSyntheticSpecs||[]))if(mobileOverlaySyntheticNearViewport(cs,spec,visibleRect)&&drawMobileSyntheticOverlayEdge(ctx,cs,spec,m.pxPerWorld))synthetic++;
   cs.overlayActive=true;cs.overlayState=state;cs.overlayCamera={vbX:st.vbX,vbY:st.vbY,vbW:st.vbW,vbH:st.vbH,pxPerWorld:m.pxPerWorld,offsetX:m.offsetX,offsetY:m.offsetY};cs.overlayVersion=(cs.overlayVersion||0)+1;cs.overlayDrawn=n+synthetic;cs.overlaySyntheticDrawn=synthetic;
   return (n+synthetic)>0;
@@ -6420,10 +6422,11 @@ if(flowchartReady)render();
     const groups=[...svg.querySelectorAll('g.chronology-edge')];
     groups.forEach(g=>g.classList.remove('hl','backhl','forwardhl','bothhl','pathhl','contexthl'));
     if(!groups.length||!state)return;
-    const records=groups.map(g=>({edgeId:g.dataset?.chronologyEdgeId||g.dataset?.chronologyEdgeKey||`${g.dataset?.chronologySource||''}->${g.dataset?.chronologyTarget||''}`,key:g.dataset.chronologyEdgeKey||`${g.dataset.chronologySource||''}->${g.dataset.chronologyTarget||''}`,source:g.dataset.chronologySource,target:g.dataset.chronologyTarget,displayOnly:g.dataset?.chronologyDisplayOnly==='true',traversable:g.dataset.chronologyTraversable!=='false',group:g}));
+    const records=groups.map((g,index)=>({edgeId:g.dataset?.chronologyEdgeId||g.dataset?.chronologyEdgeKey||`${g.dataset?.chronologySource||''}->${g.dataset?.chronologyTarget||''}#${index}`,key:g.dataset.chronologyEdgeKey||`${g.dataset.chronologySource||''}->${g.dataset.chronologyTarget||''}`,source:g.dataset.chronologySource,target:g.dataset.chronologyTarget,displayOnly:g.dataset?.chronologyDisplayOnly==='true',traversable:g.dataset.chronologyTraversable!=='false',group:g}));
     const classes=classifyChronologySelection(records,state);
-    for(const [key,category] of classes){
-      const record=records.find(item=>item.key===key);
+    const recordsById=new Map(records.map(record=>[record.edgeId,record]));
+    for(const [edgeId,category] of classes){
+      const record=recordsById.get(edgeId);
       if(!record?.group)continue;
       record.group.classList.add('hl',category);
     }
