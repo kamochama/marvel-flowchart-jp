@@ -4632,7 +4632,12 @@ function classifyChronologySelection(edges,state){
   const classes=new Map();
   const ids=[...(state?.selectedIds||[])];
   if(!ids.length)return classes;
-  const tier=normalizePreparationTier(state?.tier||state?.prepTier||'complete');
+  // Keep this early, standalone classifier independent from the later
+  // preparation-plan script where the shared tier helper is scoped.
+  const rawTier=state?.tier||state?.prepTier||'complete';
+  // Only the canonical complete value may widen the incoming scope.  Legacy,
+  // official, and unknown values fail safe to the public site-proposal tier.
+  const tier=rawTier==='complete'?'complete':'site-proposal';
   const tierNodeIds=state?.tierNodeIds||new Set();
   const pathMode=state?.pathMode===true||(state?.combineMode==='path'&&ids.length>1);
   const records=[],seenKeys=new Set();
@@ -6067,10 +6072,10 @@ if(flowchartReady)render();
     let backEdges=new Set();
     const forwardEdges=new Set(), contextEdges=new Set();
     const propagates=e=>importanceAllowed(e) && edgeRank(e)>=3; // forward keeps the existing strong/very-strong scope
-    // Chart selection keeps an explicit reference-level story chain readable
-    // (for example 1→2→3); the watch-plan policy remains independently
-    // responsible for treating other reference links as direct context.
-    const backPropagates=e=>importanceAllowed(e) && (edgeRank(e)>=3 || (prepTier==='complete' && e.type_en==='explicit work relation')); // complete history follows explicit story chains, not auxiliary reference fan-out
+    // Chart selection keeps every explicit work-relation predecessor readable
+    // (for example 1→2→3); shared-character/entity shortcuts remain filtered
+    // separately so this does not manufacture a shortcut across a chain.
+    const backPropagates=e=>importanceAllowed(e) && (edgeRank(e)>=3 || e.type_en==='explicit work relation'); // chart history follows explicit work relations while shortcut filtering stays separate
 
     let stack=[id];
     while(stack.length){
@@ -6696,8 +6701,22 @@ if(flowchartReady)render();
     }
     const edgeByKey=new Map(EDGES.map(edge=>[edgeKey(edge),edge]));
     const limitToScope=baseState.scopeMode==='previous1';
+    // Chart selection keeps explicit work-relation predecessors visible even
+    // when the preparation tier classifies their legacy evidence as reference-level.
+    // The watch-plan builder still applies its own importance filter.
+    const chartStoryBackEdges=mode==='complete' ? new Set() : new Set(
+      [...(baseState.backEdges||[])].filter(key=>edgeByKey.get(key)?.type_en==='explicit work relation')
+    );
+    for(const key of chartStoryBackEdges){
+      const edge=edgeByKey.get(key);
+      if(!edge)continue;
+      // Chronology is a separate layer, but its incoming lines must agree with
+      // the chart's explicit predecessor set at every tier.
+      tierNodeIds.add(edge.source);
+      tierNodeIds.add(edge.target);
+    }
     const baseBackKeys=new Set([...(baseState.backEdges||[]),...(baseState.contextEdges||[])]);
-    const scopedBackEdges=new Set([...tierBackEdges].filter(key=>!limitToScope||baseBackKeys.has(key)));
+    const scopedBackEdges=new Set([...tierBackEdges,...chartStoryBackEdges].filter(key=>!limitToScope||baseBackKeys.has(key)));
     if(baseState.combineMode==='and'&&baseState.ctx){
       for(const key of [...scopedBackEdges]){
         const edge=edgeByKey.get(key);

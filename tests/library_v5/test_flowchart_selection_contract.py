@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import csv
+import json
 import re
 import unittest
 from pathlib import Path
@@ -205,11 +207,62 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         body = function_body(self.source, "directedPartAll")
         self.assertRegex(
             body,
-            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| \(prepTier==='complete' && e\.type_en==='explicit work relation'\)\)",
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| e\.type_en==='explicit work relation'\)",
         )
         self.assertRegex(body, r"if\(!backPropagates\(e\)\) continue")
         self.assertRegex(body, r"if\(!propagates\(e\)\) continue")
         self.assertNotRegex(body, r"prepTier==='complete' \|\| edgeRank\(e\)>=3")
+
+    def test_chart_history_keeps_explicit_story_chain_in_site_proposal(self) -> None:
+        """Selecting Spider-Man 3 must keep the explicit Spider-Man 2 predecessor lit."""
+        body = function_body(self.source, "directedPartAll")
+        self.assertRegex(
+            body,
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| e\.type_en==='explicit work relation'\)",
+        )
+        tier_body = function_body(self.source, "buildTierHighlightState")
+        self.assertIn("baseState.backEdges", tier_body)
+        self.assertIn("explicit work relation", tier_body)
+        self.assertIn("tierNodeIds.add(edge.source)", tier_body)
+        self.assertIn("tierNodeIds.add(edge.target)", tier_body)
+
+    def test_known_sequel_predecessors_remain_in_the_exported_chart_contract(self) -> None:
+        """Both reported Spider-Man chains must remain available to the chart renderer."""
+        payload = json.loads((ROOT / "data" / "derived" / "flowchart.json").read_text(encoding="utf-8"))
+        edges = {
+            (edge["source_work_id"], edge["target_work_id"]): edge
+            for edge in payload["edges"]
+        }
+        for source, target in (
+            ("the-amazing-spider-man-2012", "the-amazing-spider-man-2-2014"),
+            ("spider-man-2-2004", "spider-man-3-2007"),
+        ):
+            edge = edges.get((source, target))
+            self.assertIsNotNone(edge, f"missing exported edge: {source}->{target}")
+            self.assertEqual(edge["type_en"], "explicit work relation")
+        body = function_body(self.source, "directedPartAll")
+        self.assertRegex(
+            body,
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| e\.type_en==='explicit work relation'\)",
+        )
+
+    def test_every_active_work_relation_has_an_exported_chart_edge(self) -> None:
+        """The renderer must retain every non-superseded canonical relationship pair."""
+        with (ROOT / "data" / "library" / "work_relations.csv").open(
+            encoding="utf-8-sig", newline=""
+        ) as handle:
+            relations = list(csv.DictReader(handle))
+        expected = {
+            (row["source_work_id"], row["target_work_id"])
+            for row in relations
+            if row["verification_status"] != "superseded"
+        }
+        payload = json.loads((ROOT / "data" / "derived" / "flowchart.json").read_text(encoding="utf-8"))
+        exported = {
+            (edge["source_work_id"], edge["target_work_id"])
+            for edge in payload["edges"]
+        }
+        self.assertTrue(expected <= exported, f"missing exported relationship pairs: {sorted(expected - exported)}")
 
     def test_character_filter_is_visual_only_and_does_not_replace_exported_edges(self) -> None:
         body = function_body(self.source, "applyCharacterHighlight")
@@ -280,7 +333,9 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         for token in ("previous1", "combineMode==='and'", "pathMode", "traversable===false"):
             self.assertIn(token, classifier)
         self.assertIn("state?.combineMode==='path'&&ids.length>1", classifier)
-        self.assertIn("normalizePreparationTier", classifier)
+        self.assertIn("const rawTier=state?.tier||state?.prepTier||'complete'", classifier)
+        self.assertIn("const tier=rawTier==='complete'?'complete':'site-proposal'", classifier)
+        self.assertNotIn("normalizePreparationTier", classifier)
         self.assertIn("tierNodeIds", classifier)
         self.assertIn("state?.pathEdges", classifier)
         self.assertRegex(classifier, r"adjacent===incoming[\s\S]{0,260}tierNodeIds")
