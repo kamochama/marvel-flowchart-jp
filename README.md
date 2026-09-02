@@ -122,6 +122,18 @@ $env:MARVEL_BROWSER_AUDIT = '1'
 
 Chromeの場所を自動検出できない場合は、`$env:MARVEL_CHROME_BIN` に実行ファイルの絶対パスを指定してください。
 
+### 実ブラウザの操作状態監査を実行する場合
+
+PC版の代表操作（同じ作品の再クリック解除、チャート空白クリック解除、ドラッグ後の選択維持、公開順・世界線／時系列パネル往復、右パネル切替後の再点灯）を、Node標準CDPで実際に操作して確認できます。
+
+```powershell
+$MarvelPython = 'C:\Users\ataka\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
+$env:MARVEL_BROWSER_INTERACTION_AUDIT = '1'
+& $MarvelPython -m unittest tests.library_v5.test_browser_interaction_audit.BrowserInteractionAuditTests.test_headless_interactions_preserve_selection_contract -v
+```
+
+この監査は既存の131作品×2 tierの選択監査とは別の短いスモークテストです。内部の選択関数を直接呼ばず、Chromeの実クリック・実ドラッグとDOMの点灯状態を観測します。
+
 ## 予習プランを共有する
 
 - **画像で共有** — 現在の予習プランをPNG画像として共有できます。

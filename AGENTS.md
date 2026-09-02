@@ -56,6 +56,13 @@ $env:MARVEL_BROWSER_AUDIT = '1'
 & $MarvelPython -m unittest tests.library_v5.test_browser_selection_audit.BrowserSelectionAuditTests.test_headless_dom_matches_python_oracle_for_both_public_tiers -v
 ```
 
+PC版の操作状態を代表ケースで監査する場合は、同じChrome/CDP方式で次を実行する。再クリック解除、背景クリック解除、ドラッグ後の選択維持、公開順・世界線／時系列・右パネル切替後の再点灯を、内部関数を直接呼ばず実操作とDOM状態で確認する。
+
+```powershell
+$env:MARVEL_BROWSER_INTERACTION_AUDIT = '1'
+& $MarvelPython -m unittest tests.library_v5.test_browser_interaction_audit.BrowserInteractionAuditTests.test_headless_interactions_preserve_selection_contract -v
+```
+
 - Keep the `&` before a quoted executable path; without it PowerShell treats the path as text rather than launching it. Prefer repository modules (`-m ...`) over ad-hoc inline scripts. If the bundled path changes, resolve the current workspace runtime before substituting a new path; do not silently fall back to a different Python.
 - For final verification, run the exact commands above from the repository root. The build may create transient audit/DB outputs under `data/content_audit/` and `data/derived/`; inspect the result first, then remove only the known generated paths when the workflow requires a clean working tree. Never delete canonical CSVs or `data/content_audit/reviews.csv`.
 - Run strict CSV shape checks when editing CSV notes that contain commas. `csv.DictReader` can hide an extra field, so every row must have exactly the header column count; quote the complete notes field when it contains commas.

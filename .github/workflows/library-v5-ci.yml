@@ -231,3 +231,34 @@ jobs:
         env:
           MARVEL_BROWSER_AUDIT: '1'
         run: python -m unittest tests.library_v5.test_browser_selection_audit.BrowserSelectionAuditTests.test_headless_dom_matches_python_oracle_for_both_public_tiers -v
+
+  browser-interaction-audit:
+    needs: browser-selection-audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Locate Chrome or Chromium
+        shell: bash
+        run: |
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$chrome" ]; then
+            sudo apt-get update
+            sudo apt-get install -y chromium
+            chrome="$(command -v chromium || command -v chromium-browser || true)"
+          fi
+          test -n "$chrome"
+          echo "MARVEL_CHROME_BIN=$chrome" >> "$GITHUB_ENV"
+      - name: Build browser fixture
+        run: python -m scripts.library_v5.build --repo-root .
+      - name: Run required headless interaction audit
+        env:
+          MARVEL_BROWSER_INTERACTION_AUDIT: '1'
+        run: python -m unittest tests.library_v5.test_browser_interaction_audit.BrowserInteractionAuditTests.test_headless_interactions_preserve_selection_contract -v
