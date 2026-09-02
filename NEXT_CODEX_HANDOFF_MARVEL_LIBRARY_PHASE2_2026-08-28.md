@@ -521,3 +521,27 @@ The release/status public views join only to `works` and do not feed graph deriv
 The full audit plan is `docs/superpowers/plans/2026-08-30-marvel-library-db-v1-full-release-status-audit.md`, with the review report in `docs/superpowers/reviews/2026-08-30-marvel-library-full-release-status-audit.md`. It inventories all 269 normalized release/status facts, promotes only exact source/evidence/review matches, and records every remaining row as `defer` or `conflict`. The merged baseline is `641d16577c847ab5f917e3faea0900536dc0baab`; CI run #285 passed 305 tests, build/audit/review/FK checks are zero, SQLite integrity is `ok`, and graph compatibility remains 361/569/199 with story paths 83/83.
 
 The data-audit boundary and the HTML design/interaction debugging boundary are complete. Do not infer future viewer or semantic work from this completion; select a new bounded plan before changing code or canonical data.
+
+## 13. Chronology display contract — Task 5 audit (2026-09-03)
+
+The separately bounded chronology display plan is implemented through Task 4 on branch `codex/chronology-publication-order-contract`. The implementation HEAD before this documentation handoff is `5ff75514dccb4c2d4cae3e483c09f3ad995cfae5` (`test: add chronology browser audit contract`), covering the range `10726ac..5ff7551`. The Task 5 documentation commit contains only this handoff, the master roadmap, and the chronology review:
+
+- `docs/superpowers/reviews/2026-09-02-marvel-library-chronology-display-contract-review.md`
+- this section;
+- the corresponding chronology boundary in `CODEX_MASTER_ROADMAP_MARVEL_DB_V1_TO_MAIN_2026-08-28.md`.
+
+The display layer now gives every chronology line a stable `data-chronology-edge-id`, while retaining source/target attributes only for compatibility and adjacency. The selection classifier, SVG materialization, and Canvas overlay maps are edge-ID keyed. The `displayOnly:true` / `traversable:false` invariant rejects invalid display-only combinations; the three display-only lines remain visible but never enter selection adjacency or highlight maps. The six explicit classifier modes are `complete`, `site-proposal`, `previous1`, `or`, `and`, and `path`. PATH pair/ID inputs are materialized to existing traversable chronology IDs at the SVG/Canvas render boundary without a new chronology search or BFS.
+
+The independent real Chrome/CDP audit passed with `cases=6`, `failures=0`, `74` chronology edges, duplicate IDs `0`, display-only highlighted `0`, SVG/Canvas parity failures `0`, and successful overview↔chronology round trips. `previous1` is explicitly unavailable/skipped because this export has no public scope control; no internal scope state was invoked. The dedicated CI browser job is declared after the interaction audit, but remote CI for this new branch remains a future gate.
+
+Fresh bundled-runtime verification on this branch:
+
+- full unittest: `393` tests, `OK (skipped=3)` (the three opt-in browser tests are environment-gated in the ordinary suite);
+- ordinary build: exit `0`, `audit_issue_count=0`, content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- compatibility: `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, story paths `83/83`;
+- export: `131` nodes, `361` edges, `569` reasons, `42` character groups;
+- canonical DB observations: `events/event_occurrences/multiverse_transitions/transition_participants = 9/9/9/10`, `chronology_assertions=0`.
+
+`data/library/` and `data/content_audit/reviews.csv` are unchanged. Build-only reports, queue, DB manifests/SQLite, and `__pycache__` are transient generated outputs; they are not canonical or persistent review inputs. `git diff --check` is clean for the documentation changes.
+
+The required `git fetch origin` freshness check still fails with `.git/FETCH_HEAD: Permission denied`; no reset, overwrite, or force-update was performed. This branch stops at the merge gate: inspect the complete branch diff, obtain fresh remote CI/public-artifact evidence, and get explicit user approval before merging into `main` or publishing Pages. The unexecuted release-order work remains the separate plan `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md`; it must not be inferred from or started as part of this chronology boundary.

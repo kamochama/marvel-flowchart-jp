@@ -463,3 +463,20 @@ PR #30 completed the strict all-fact release/status evidence audit and merged pr
 Fresh verification on PR #30 head (GitHub Actions run #285) passed `305` library-v5 tests. PR #32 then passed its required check (`1 / 1`) with the expanded `318`-test suite. The post-merge build and audit/review checks report zero issues, SQLite foreign-key rows are `0`, `integrity_check=ok`, and compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, prewatch edges `199`, story paths `83/83`. Applied records and the deterministic inventory are recorded under `data/content_audit/applied/` and `data/content_audit/release_status_inventory.csv`.
 
 The data-audit boundary and the HTML design/interaction debugging pass are complete. PR #32 records the official/curated provenance boundary, three tier semantics, chart-return navigation, route highlighting, and desktop/mobile smoke results; PR #38 adds the independent all-work selection oracle and real Chrome/CDP DOM exact-set audit for both public tiers, including its required CI job and hosted-runner cleanup handling. The public Pages URL was rechecked after the merge and returned HTTP `200`. Any subsequent viewer change requires its own plan, RED/UI regression contract, full verification, and an explicit merge boundary.
+
+## 14. Chronology display contract boundary (2026-09-03)
+
+The separately approved chronology display plan `docs/superpowers/plans/2026-09-02-marvel-library-chronology-display-contract.md` is complete through its Task 4 implementation and Task 5 local documentation handoff on branch `codex/chronology-publication-order-contract`. The implementation range is `10726ac..5ff7551`, ending at `5ff75514dccb4c2d4cae3e483c09f3ad995cfae5` (`test: add chronology browser audit contract`). The Task 5 commit is documentation-only and records the review, handoff, and this roadmap boundary.
+
+The chronology viewer now materializes stable edge IDs for all `74` display lines, separates display-only lines from traversable adjacency, and classifies selections by edge ID across six explicit modes: `complete`, `site-proposal`, `previous1`, `or`, `and`, and `path`. PATH pair/ID inputs are mapped only at the existing SVG/Canvas render boundary to traversable chronology IDs; no new chronology search or BFS is introduced. SVG `data-chronology-edge-id` and Canvas `overlayChronologyEdgeId` produce equal materialized ID sets and categories. These lines remain a display layer, not canonical relation facts.
+
+Local evidence:
+
+- full bundled-Python suite: `393` tests, `OK (skipped=3)`;
+- ordinary build: exit `0`, audit/review/FK issues `0`, SQLite `integrity_check=ok`;
+- graph compatibility: `361/569`, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP chronology audit: `6` cases, `failures=0`, duplicate IDs `0`, display-only highlighted `0`, SVG/Canvas parity failures `0`, and both overview↔chronology round trips true;
+- `previous1` is explicitly unavailable/skipped because the export has no public scope control; no internal scope state was invoked;
+- `chronology_assertions=0`, and canonical `data/library/` plus persistent `data/content_audit/reviews.csv` are unchanged.
+
+The local `git fetch origin` freshness check failed with `.git/FETCH_HEAD: Permission denied`; the checkout was not reset or overwritten. Remote CI, complete branch review, merge into `main`, and Pages publication remain pending explicit approval. The release-order/publication-order plan `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md` is intentionally unexecuted and remains a separate future boundary; no release-order semantics are introduced here.
