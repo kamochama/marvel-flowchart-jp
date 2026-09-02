@@ -6067,10 +6067,10 @@ if(flowchartReady)render();
     let backEdges=new Set();
     const forwardEdges=new Set(), contextEdges=new Set();
     const propagates=e=>importanceAllowed(e) && edgeRank(e)>=3; // forward keeps the existing strong/very-strong scope
-    // Chart selection keeps an explicit reference-level story chain readable
-    // (for example 1→2→3); the watch-plan policy remains independently
-    // responsible for treating other reference links as direct context.
-    const backPropagates=e=>importanceAllowed(e) && (edgeRank(e)>=3 || e.type_en==='explicit work relation'); // chart history follows explicit story chains, not auxiliary reference fan-out
+    // Chart selection keeps every explicit work-relation predecessor readable
+    // (for example 1→2→3); shared-character/entity shortcuts remain filtered
+    // separately so this does not manufacture a shortcut across a chain.
+    const backPropagates=e=>importanceAllowed(e) && (edgeRank(e)>=3 || e.type_en==='explicit work relation'); // chart history follows explicit work relations while shortcut filtering stays separate
 
     let stack=[id];
     while(stack.length){
@@ -6696,8 +6696,8 @@ if(flowchartReady)render();
     }
     const edgeByKey=new Map(EDGES.map(edge=>[edgeKey(edge),edge]));
     const limitToScope=baseState.scopeMode==='previous1';
-    // Chart selection keeps explicit story predecessors visible even when the
-    // preparation tier classifies their legacy evidence as reference-level.
+    // Chart selection keeps explicit work-relation predecessors visible even
+    // when the preparation tier classifies their legacy evidence as reference-level.
     // The watch-plan builder still applies its own importance filter.
     const chartStoryBackEdges=mode==='complete' ? new Set() : new Set(
       [...(baseState.backEdges||[])].filter(key=>edgeByKey.get(key)?.type_en==='explicit work relation')
