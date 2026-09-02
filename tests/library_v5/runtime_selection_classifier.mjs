@@ -37,6 +37,7 @@ function loadFunction(name, context = {}) {
 }
 
 const classifyChronologySelection = loadFunction("classifyChronologySelection");
+const materializeChronologyPathEdgeIds = loadFunction("materializeChronologyPathEdgeIds");
 const edgeKey = loadFunction("edgeKey");
 const edgeRecordFromSvgGroup = loadFunction("edgeRecordFromSvgGroup", {
   EDGES: [{edge_id: "edge-a-b", source: "a", target: "b"}],
@@ -44,9 +45,11 @@ const edgeRecordFromSvgGroup = loadFunction("edgeRecordFromSvgGroup", {
 });
 const renderChronologySelectionState = loadFunction("renderChronologySelectionState", {
   classifyChronologySelection,
+  materializeChronologyPathEdgeIds,
 });
 const mobileOverlayChronologyEdgeClassMap = loadFunction("mobileOverlayChronologyEdgeClassMap", {
   classifyChronologySelection,
+  materializeChronologyPathEdgeIds,
 });
 const hasExplicitWorkRelationReason = loadFunction("hasExplicitWorkRelationReason", {
   reasonsById: {"reason-explicit": {reason_kind: "explicit_relation"}},
@@ -202,12 +205,30 @@ const duplicateChronologyGroups = [
     },
     classList: fakeClassList(),
   },
+  {
+    dataset: {
+      chronologyEdgeId: "a-goal-display",
+      chronologyEdgeKey: "a->goal",
+      chronologySource: "a",
+      chronologyTarget: "goal",
+      chronologyTraversable: "false",
+      chronologyDisplayOnly: "true",
+    },
+    classList: fakeClassList(),
+  },
 ];
 renderChronologySelectionState(
   {querySelectorAll: selector => selector === "g.chronology-edge" ? duplicateChronologyGroups : []},
   {selectedIds: ["goal"], tier: "complete", combineMode: "or"},
 );
 report.svg_duplicate_edges = Object.fromEntries(
+  duplicateChronologyGroups.map(group => [group.dataset.chronologyEdgeId, group.classList.values()]),
+);
+renderChronologySelectionState(
+  {querySelectorAll: selector => selector === "g.chronology-edge" ? duplicateChronologyGroups : []},
+  {selectedIds: ["goal"], tier: "complete", combineMode: "path", pathMode: true, pathEdges: new Set(["a->goal", "unknown->goal"])},
+);
+report.svg_duplicate_path = Object.fromEntries(
   duplicateChronologyGroups.map(group => [group.dataset.chronologyEdgeId, group.classList.values()]),
 );
 
@@ -222,6 +243,18 @@ const canvasClasses = mobileOverlayChronologyEdgeClassMap(
   {selectedIds: ["goal"], tier: "complete"},
 );
 report.canvas = Object.fromEntries(canvasClasses.entries());
+
+const canvasPathClasses = mobileOverlayChronologyEdgeClassMap(
+  {
+    overlayChronologyEdgePrimitives: new Map([
+      ["a-goal-sequence", [{overlayChronologyEdgeId: "a-goal-sequence", overlayChronologySource: "a", overlayChronologyTarget: "goal", overlayChronologyDisplayOnly: false, overlayChronologyTraversable: true}]],
+      ["a-goal-branch", [{overlayChronologyEdgeId: "a-goal-branch", overlayChronologySource: "a", overlayChronologyTarget: "goal", overlayChronologyDisplayOnly: false, overlayChronologyTraversable: true}]],
+      ["a-goal-display", [{overlayChronologyEdgeId: "a-goal-display", overlayChronologySource: "a", overlayChronologyTarget: "goal", overlayChronologyDisplayOnly: true, overlayChronologyTraversable: false}]],
+    ]),
+  },
+  {selectedIds: ["goal"], tier: "complete", combineMode: "path", pathMode: true, pathEdges: new Set(["a->goal", "unknown->goal"])},
+);
+report.canvas_path = Object.fromEntries(canvasPathClasses.entries());
 
 report.reason_provenance = {
   transition_with_explicit_reason: hasExplicitWorkRelationReason({

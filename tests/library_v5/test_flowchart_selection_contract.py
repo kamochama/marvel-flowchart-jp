@@ -415,6 +415,18 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("edgeId", renderer)
         self.assertIn("recordsById.get(edgeId)", renderer)
 
+    def test_chronology_path_ids_materialize_at_render_boundary(self) -> None:
+        helper = function_body(self.source, "materializeChronologyPathEdgeIds")
+        self.assertIn("supplied", helper)
+        self.assertIn("materialized", helper)
+        self.assertIn("supplied.has(String(edgeId))", helper)
+        self.assertIn("supplied.has(String(key))", helper)
+        self.assertIn("!traversable", helper)
+        renderer = function_body(self.source, "renderChronologySelectionState")
+        mobile = function_body(self.source, "mobileOverlayChronologyEdgeClassMap")
+        self.assertIn("materializeChronologyPathEdgeIds(records,state.pathEdges)", renderer)
+        self.assertIn("materializeChronologyPathEdgeIds(records,state.pathEdges)", mobile)
+
 
 if __name__ == "__main__":
     unittest.main()

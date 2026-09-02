@@ -4630,6 +4630,23 @@ function mobileOverlayEdgeClass(key,state){
 }
 // Chronology lines are a separate view layer from EDGES.  Keep their selection
 // semantics in one pure classifier so SVG and Canvas cannot drift apart.
+// At the render boundary, materialize relation-graph PATH inputs onto the
+// chronology edge IDs that are already present.  This is an explicit mapping,
+// not a chronology search: pair keys may select every matching traversable ID,
+// while display-only/non-traversable records never enter the materialized set.
+// Render boundary materialization only; no search/BFS is performed here.
+function materializeChronologyPathEdgeIds(records,pathEdges){
+  const supplied=new Set([...(pathEdges||[])].map(String)),materialized=new Set();
+  for(const record of (records||[])){
+    const source=record?.source||record?.chronologySource,target=record?.target||record?.chronologyTarget;
+    const edgeId=record?.edge_id||record?.edgeId||record?.key||`${source||''}->${target||''}`;
+    const key=record?.key||`${source||''}->${target||''}`;
+    const traversable=record?.traversable!==false&&record?.display_only!==true&&record?.displayOnly!==true;
+    if(!edgeId||!source||!target||!traversable)continue;
+    if(supplied.has(String(edgeId))||supplied.has(String(key)))materialized.add(String(edgeId));
+  }
+  return materialized;
+}
 function classifyChronologySelection(edges,state){
   const classes=new Map();
   const ids=[...(state?.selectedIds||[])];
@@ -4711,7 +4728,8 @@ function mobileOverlayChronologyEdgeClassMap(cs,state){
     const p=primitives?.[0],id=p?.overlayChronologyEdgeId||edgeId,source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
     if(source&&target)records.push({edge_id:id,edgeId:id,key:`${source}->${target}`,source,target,displayOnly:p?.overlayChronologyDisplayOnly===true,traversable:p?.overlayChronologyTraversable!==false});
   }
-  return classifyChronologySelection(records,state);
+  const chronologyState=state?.pathEdges ? {...state,pathEdges:materializeChronologyPathEdgeIds(records,state.pathEdges)}:state;
+  return classifyChronologySelection(records,chronologyState);
 }
 function mobileOverlayCategory(p,state){
   if(p.overlayNodeId)return mobileOverlayNodeClass(p.overlayNodeId,state);
@@ -6423,7 +6441,8 @@ if(flowchartReady)render();
     groups.forEach(g=>g.classList.remove('hl','backhl','forwardhl','bothhl','pathhl','contexthl'));
     if(!groups.length||!state)return;
     const records=groups.map((g,index)=>({edgeId:g.dataset?.chronologyEdgeId||g.dataset?.chronologyEdgeKey||`${g.dataset?.chronologySource||''}->${g.dataset?.chronologyTarget||''}#${index}`,key:g.dataset.chronologyEdgeKey||`${g.dataset.chronologySource||''}->${g.dataset.chronologyTarget||''}`,source:g.dataset.chronologySource,target:g.dataset.chronologyTarget,displayOnly:g.dataset?.chronologyDisplayOnly==='true',traversable:g.dataset.chronologyTraversable!=='false',group:g}));
-    const classes=classifyChronologySelection(records,state);
+    const chronologyState=state?.pathEdges ? {...state,pathEdges:materializeChronologyPathEdgeIds(records,state.pathEdges)}:state;
+    const classes=classifyChronologySelection(records,chronologyState);
     const recordsById=new Map(records.map(record=>[record.edgeId,record]));
     for(const [edgeId,category] of classes){
       const record=recordsById.get(edgeId);

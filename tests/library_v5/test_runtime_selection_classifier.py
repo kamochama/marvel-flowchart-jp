@@ -61,6 +61,12 @@ class RuntimeSelectionClassifierTests(unittest.TestCase):
                 "svg_duplicate_edges": {
                     "a-goal-branch": ["backhl", "hl"],
                     "a-goal-sequence": ["backhl", "hl"],
+                    "a-goal-display": [],
+                },
+                "svg_duplicate_path": {
+                    "a-goal-branch": ["hl", "pathhl"],
+                    "a-goal-sequence": ["hl", "pathhl"],
+                    "a-goal-display": [],
                 },
                 "svg": {
                     "a->goal": ["backhl", "hl"],
@@ -69,6 +75,10 @@ class RuntimeSelectionClassifierTests(unittest.TestCase):
                 "canvas": {
                     "a-goal-branch": "backhl",
                     "a-goal-sequence": "backhl",
+                },
+                "canvas_path": {
+                    "a-goal-branch": "pathhl",
+                    "a-goal-sequence": "pathhl",
                 },
                 "reason_provenance": {
                     "transition_with_explicit_reason": True,
