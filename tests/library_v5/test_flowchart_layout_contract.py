@@ -104,6 +104,20 @@ class FlowchartLayoutContractTests(unittest.TestCase):
         body = function_body(self.source, "renderFocusHighlight")
         self.assertIn("g.classList.add('focus','detail-focus')", body)
 
+    def test_release_card_date_label_is_compact_before_kind_column(self) -> None:
+        """Long precision notes must not intrude into the release-kind column."""
+        body = function_body(self.source, "releaseCardDateLabel")
+        self.assertIn("displayDate", body)
+        self.assertRegex(body, r"month|undated|cancel|precision")
+        release_body = function_body(self.source, "buildReleaseView")
+        self.assertIn("releaseCardDateLabel(meta)", release_body)
+        self.assertNotIn("font-size=\"8.2\">${esc(meta.displayDate)}", release_body)
+
+    def test_chronology_viewbox_contains_fox_world_frame_bottom(self) -> None:
+        """The FOX outer frame must fit inside the SVG drawing height."""
+        body = function_body(self.source, "buildChronologyView")
+        self.assertRegex(body, r"svgW=3560,svgH=18(?:2[4-9]|[3-9][0-9])")
+
 
 if __name__ == "__main__":
     unittest.main()
