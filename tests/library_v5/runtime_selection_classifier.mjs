@@ -64,6 +64,15 @@ function edgeKeyFromGroup(group) {
   return group?.dataset?.edgeKey || "";
 }
 
+const duplicateEdges = [
+  { edge_id: "a-goal-sequence", source: "a", target: "goal", traversable: true, display_only: false },
+  { edge_id: "a-goal-branch", source: "a", target: "goal", traversable: true, display_only: false },
+  { edge_id: "goal-display", source: "goal", target: "next", traversable: false, display_only: true },
+];
+const duplicateResult = classifyChronologySelection(duplicateEdges, {
+  selectedIds: ["goal"], tier: "complete", combineMode: "or",
+});
+
 function fakeClassList(initial = []) {
   const values = new Set(initial);
   return {
@@ -123,6 +132,9 @@ const report = {
     edge_id: edgeKeyFromGroup({dataset: {edgeKey: "edge-a-b"}, querySelector: () => null}),
     title_fallback: edgeKeyFromGroup({dataset: {}, querySelector: () => ({textContent: "a->b"})}),
   },
+  duplicate_edges: Object.fromEntries(
+    [...duplicateResult.entries()].sort(([a], [b]) => a.localeCompare(b)),
+  ),
 };
 
 const chronologyGroups = [

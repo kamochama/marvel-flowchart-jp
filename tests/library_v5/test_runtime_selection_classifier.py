@@ -48,6 +48,10 @@ class RuntimeSelectionClassifierTests(unittest.TestCase):
                     "path": {"a->goal": "pathhl"},
                 },
                 "edge_key": {"edge_id": "a->b", "title_fallback": "a->b"},
+                "duplicate_edges": {
+                    "a-goal-branch": "backhl",
+                    "a-goal-sequence": "backhl",
+                },
                 "svg": {
                     "a->goal": ["backhl", "hl"],
                     "false->goal": [],

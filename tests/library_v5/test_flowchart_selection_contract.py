@@ -389,6 +389,20 @@ class FlowchartSelectionContractTests(unittest.TestCase):
             r"drawSequence\(\['morbius-2022','madame-web-2024','kraven-the-hunter-2024'\][\s\S]{0,260}traversable:false",
         )
 
+    def test_chronology_edges_have_stable_identity_and_display_invariant(self) -> None:
+        edge_group = function_body(self.source, "chronologyEdgeGroup")
+        self.assertIn("data-chronology-edge-id", edge_group)
+        self.assertIn("data-chronology-kind", edge_group)
+        self.assertIn("data-chronology-display-only", edge_group)
+        self.assertIn("displayOnly", edge_group)
+        self.assertIn("displayOnly&&!traversable", edge_group)
+
+    def test_chronology_canvas_materialization_uses_edge_id(self) -> None:
+        primitive = function_body(self.source, "canvasPrimitive")
+        mapper = function_body(self.source, "mobileOverlayChronologyEdgeClassMap")
+        self.assertIn("overlayChronologyEdgeId", primitive)
+        self.assertIn("edgeId", mapper)
+
 
 if __name__ == "__main__":
     unittest.main()
