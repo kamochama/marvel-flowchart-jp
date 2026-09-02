@@ -11,6 +11,8 @@ If this roadmap conflicts with a newer explicit user instruction, the newer user
 
 > **Current semantic production note (2026-09-02):** The historical PR #10/PR #11 gate described below has completed. PR #10 (Events & Multiverse), PR #11 (releases/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), and PR #38 (all-work browser selection audit) are merged into `main`; the latest semantic baseline is `fb715e87d5290b73e0ff86139d2554df32fc4a2d`. Later documentation-only commits do not change code/data. The post-merge baseline and the next separately bounded work are recorded in §13.
 
+> **Integrated audit note (2026-09-02):** PR #40 (browser interaction state audit) is also merged into `main` at `04ff92b633f4da5756f58c96de7b321dac4bb02c`; it adds representative PC interaction coverage without changing semantic code or canonical data.
+
 ---
 
 ## 1. End goal
@@ -451,6 +453,8 @@ PR #28 promoted the existing Avengers: Doomsday announced-status snapshot with o
 After batch007, the normalized tables contain 138 releases (6 `source_verified`, 132 `legacy_seed`) and 131 production-status assertions (4 `source_verified`, 127 `legacy_seed`); sources/evidence/reviews are 44/113/88. Compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, prewatch edges `199`, and story paths `83/83`. Remaining seeds require separate evidence-backed batches.
 
 ## 13. Post-integration baseline and next execution boundary (2026-09-02)
+
+PR #40 is integrated as the representative browser interaction-state audit. Its six real desktop cases cover same-work re-click clear, background clear, drag preservation, overview↔chronology repaint, overview↔release repaint, and right-panel works↔links preservation. The audit runs in a separate dependent CI job and observes real pointer events and DOM state without extending the overview selection oracle.
 
 The latest semantic production baseline is `main` at `fb715e87d5290b73e0ff86139d2554df32fc4a2d`, the merge commit for PR #38. The static Pages viewer still loads the committed DB-derived `data/derived/flowchart.json`; release/status metadata remains outside graph derivation.
 

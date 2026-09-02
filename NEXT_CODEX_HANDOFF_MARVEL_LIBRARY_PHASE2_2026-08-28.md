@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `fb715e87d5290b73e0ff86139d2554df32fc4a2d` (PR #38 merge; docs-only baseline updates may follow)
+- latest semantic baseline commit: `fb715e87d5290b73e0ff86139d2554df32fc4a2d` (PR #38); latest integrated audit baseline: `04ff92b633f4da5756f58c96de7b321dac4bb02c` (PR #40)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -26,6 +26,7 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #30 full release/status evidence audit: merged as `641d16577c847ab5f917e3faea0900536dc0baab`
 - PR #32 HTML design/operation debugging: merged as `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`
 - PR #38 all-work browser selection audit: merged as `fb715e87d5290b73e0ff86139d2554df32fc4a2d`
+- PR #40 browser interaction state audit: merged as `04ff92b633f4da5756f58c96de7b321dac4bb02c`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -89,7 +90,21 @@ Fresh verification on merged `main` at `fb715e87d5290b73e0ff86139d2554df32fc4a2d
 - GitHub Actions PR #38 checks `test` and `browser-selection-audit`: both pass;
 - Pages deployment run `33628369828`: success; public URL returns HTTP `200`.
 
-No canonical CSV or persistent review ledger was changed. The next work remains separately bounded: interaction-state browser coverage first, then a distinct chronology/publication-order design and audit.
+No canonical CSV or persistent review ledger was changed. The interaction-state browser coverage is now complete in PR #40; the next work remains separately bounded as a distinct chronology/publication-order design and audit.
+
+## 0.1.2 Production baseline after the 2026-09-02 interaction-state audit
+
+PR #40 adds a separate Node/Chrome CDP smoke audit for representative desktop state transitions: same-work re-click deselection, SVG background clear, drag-end selection preservation, overview↔chronology repaint, overview↔release repaint, and right-panel works↔links preservation. The runner uses real pointer events and observes DOM classes; it does not call production selection functions directly. Chronology repaint additionally requires a highlighted `g.chronology-edge`.
+
+Fresh verification on merged `main` at `04ff92b633f4da5756f58c96de7b321dac4bb02c`:
+
+- `384` / `384` library-v5 tests pass locally (the two browser tests remain environment-gated in the ordinary suite);
+- real Chrome/CDP interaction audit: `6 / 6` representative cases pass;
+- real Chrome/CDP selection audit: `131 × 2` selections, exact-set mismatches `0`;
+- build `audit_issue_count=0`, compatibility `361/569/199`, story paths `83/83`;
+- GitHub Actions run `33630797450` passed `test`, `browser-selection-audit`, and `browser-interaction-audit` after a transient first-run timeout in the existing selection job was rerun successfully.
+
+No canonical CSV or persistent review ledger changed. The next bounded work is a written chronology/publication-order display contract and its separate audit; do not infer new semantics from this interaction-test integration.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
