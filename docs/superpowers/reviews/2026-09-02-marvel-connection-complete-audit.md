@@ -80,3 +80,18 @@ work arrowとcontinuity transitionの方向は別概念である。Thunderbolts�
 5. 0接続作品については、根拠のない補完をせず、追加sourceが得られた場合だけ別バッチで候補化する。
 
 この監査段階ではcanonical CSV、evidence/reviews、派生graphを変更していない。上記処置に基づく修正は、各項目ごとにRED→最小修正→全テスト・build・artifact突合を行う。
+
+## ChatGPT独立レビューとの照合
+
+別チャットのChatGPTにも公開`main`をゼロベースで監査させた（公開HEADは`4c8453c`で、未pushの`06d4f17`は未観測）。同チャットも、`derive_edges.py`の`combined_all_pairs`がshared entityの全組合せをrelease順で向き付けること、361 edge中196がshared-onlyであること、reason_countを信頼度に使えないこと、prewatch 199本がlegacy compatibilityであることを独立に確認した。
+
+分類の粒度には差がある。今回の台帳の`over-broad`はvariant identityが明確に潰れている17 reasonを指す一方、ChatGPTは「shared-onlyでsemantic predecessorを正当化できない」196 edgeも広義の`over-broad`に含めた。両者は矛盾ではなく、次の二層に分けて採用する。
+
+1. **事実・参照層**: shared entity、promotion、variant callback、transition depictionを保持する。これは出演・宣伝・イベント含有の参照であり、データを削除しない。
+2. **意味的な前史／後続層**: 明示的に監査されたstory/crossover/lead-in、または独立したtransition relationだけを採用する。shared-onlyはここへ自動昇格しない。
+
+ChatGPTが追加で指摘した`work-relation-guardians-of-the-galaxy-2014-captain-marvel-2019-lead-in`は、canonical note自身が「年代上は過去だが公開順ベースの背景理解線」と説明している。したがって事実として削除はしないが、前史→後続を示すsemantic arrowではなく、release-order/backgroundのpresentation-only relationとして明示する必要がある。
+
+同様に`work-relation-thunderbolts-new-avengers-2025-the-fantastic-four-first-steps-2025-crossover`は、First Steps由来船のpost-credit crossingを表す事実として保持する。ただしevent/transitionの`does_not_assert_chronology`境界を越えて「Thunderboltsの後にFirst Steps本編」と読ませない。work arrow、transitionのcontinuity direction、route membershipを別フィールド／別表示にする。
+
+この二層整理により、ChatGPTの厳格な9 edge retainという提案と、現行DBのreason-level retain 15を両立させる。今後の修正はshared-only edgeを個別削除するのではなく、semantic predecessor graphから分離してreference overlayへ移すREDテストを先に追加する。
