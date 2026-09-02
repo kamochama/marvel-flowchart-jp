@@ -223,6 +223,8 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         tier_body = function_body(self.source, "buildTierHighlightState")
         self.assertIn("baseState.backEdges", tier_body)
         self.assertIn("explicit work relation", tier_body)
+        self.assertIn("tierNodeIds.add(edge.source)", tier_body)
+        self.assertIn("tierNodeIds.add(edge.target)", tier_body)
 
     def test_known_sequel_predecessors_remain_in_the_exported_chart_contract(self) -> None:
         """Both reported Spider-Man chains must remain available to the chart renderer."""

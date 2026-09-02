@@ -6702,6 +6702,14 @@ if(flowchartReady)render();
     const chartStoryBackEdges=mode==='complete' ? new Set() : new Set(
       [...(baseState.backEdges||[])].filter(key=>edgeByKey.get(key)?.type_en==='explicit work relation')
     );
+    for(const key of chartStoryBackEdges){
+      const edge=edgeByKey.get(key);
+      if(!edge)continue;
+      // Chronology is a separate layer, but its incoming lines must agree with
+      // the chart's explicit predecessor set at every tier.
+      tierNodeIds.add(edge.source);
+      tierNodeIds.add(edge.target);
+    }
     const baseBackKeys=new Set([...(baseState.backEdges||[]),...(baseState.contextEdges||[])]);
     const scopedBackEdges=new Set([...tierBackEdges,...chartStoryBackEdges].filter(key=>!limitToScope||baseBackKeys.has(key)));
     if(baseState.combineMode==='and'&&baseState.ctx){
