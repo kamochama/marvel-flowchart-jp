@@ -357,6 +357,14 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("renderChronologySelectionState?.(svg,part)", focus)
         self.assertIn("marvelApplyOfficialRouteSvgOverlay?.(svg,part)", focus)
 
+    def test_panel_switch_restores_desktop_detail_focus(self) -> None:
+        """Returning to a chart view must repaint an existing desktop inspection."""
+        start = self.source.index("window.activatePanel=function")
+        end = self.source.index("\n  };\n\n  document.querySelectorAll('.tab').forEach", start)
+        activate = self.source[start:end]
+        self.assertIn("window.marvelDetailFocusId", activate)
+        self.assertIn("window.marvelRenderDetailFocus(window.marvelDetailFocusId)", activate)
+
     def test_chronology_groups_carry_traversability_and_fox_branch_endpoints(self) -> None:
         """Structural branches are selectable; display-only sequences are not traversed."""
         chronology = function_body(self.source, "buildChronologyView")

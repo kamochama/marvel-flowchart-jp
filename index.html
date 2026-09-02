@@ -8617,6 +8617,7 @@ window.ensureStageAViewInitialized=function(target){
         }else fitView(wrap);
       }
       if(wrap&&restoreSelection&&selectedIds.size)refreshSelection(false);
+      else if(wrap&&restoreSelection&&window.marvelDetailFocusId&&typeof window.marvelRenderDetailFocus==='function')window.marvelRenderDetailFocus(window.marvelDetailFocusId);
       else if(wrap){clearSvg();applyCharacterHighlight();if(typeof window.applyFamilyFocus==='function')window.applyFamilyFocus();}
     });
     return true;
@@ -8896,6 +8897,8 @@ window.FEATURED_ROUTE=Object.freeze({
     if(!detailFocusId||focusPaintRaf)return;
     focusPaintRaf=requestAnimationFrame(()=>{focusPaintRaf=0;if(detailFocusId)renderFocusHighlight(detailFocusId);});
   }
+
+  window.marvelRenderDetailFocus=function(id){return renderFocusHighlight(id);};
 
   window.marvelFocusWork=function(id,{center=true}={}){
     if(!nm[id])return false;
