@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -90,6 +91,14 @@ class BrowserSelectionAuditTests(unittest.TestCase):
         self.assertIn("catch", body)
         self.assertIn("stopChrome", body)
         self.assertIn('child.once("error"', body)
+
+    def test_runner_retries_busy_chrome_profile_cleanup(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        match = re.search(r"const CHROME_PROFILE_CLEANUP_RETRIES = (\d+);", source)
+        self.assertIsNotNone(match, "profile cleanup must declare a bounded retry budget")
+        self.assertGreaterEqual(int(match.group(1)), 50)
+        self.assertIn("maxRetries: CHROME_PROFILE_CLEANUP_RETRIES", source)
+        self.assertIn("retryDelay:", source)
 
     @unittest.skipUnless(
         os.environ.get("MARVEL_BROWSER_AUDIT") == "1",

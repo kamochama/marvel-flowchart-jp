@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 const TIERS = ["site-proposal", "complete"];
 const EDGE_CLASSES = ["backhl", "forwardhl", "bothhl", "contexthl"];
 const WAIT_TIMEOUT_MS = 20_000;
+const CHROME_PROFILE_CLEANUP_RETRIES = 100;
 
 function usage() {
   return [
@@ -198,16 +199,15 @@ async function stopChrome(processInfo) {
     child.kill();
     await Promise.race([exited, new Promise((resolve) => setTimeout(resolve, 5_000))]);
   }
-  for (let attempt = 0; attempt < 10; attempt += 1) {
-    try {
-      fs.rmSync(processInfo.userDataDir, { recursive: true, force: true });
-      return;
-    } catch (error) {
-      if (error?.code !== "EBUSY" && error?.code !== "EPERM") throw error;
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-  }
-  throw new Error(`Chrome profile cleanup timed out: ${processInfo.userDataDir}`);
+  // Chrome's child processes can briefly leave the profile non-empty after the
+  // browser process exits. Node's recursive remover handles ENOTEMPTY/EBUSY/
+  // EPERM with bounded retries; use a longer window for hosted CI runners.
+  fs.rmSync(processInfo.userDataDir, {
+    recursive: true,
+    force: true,
+    maxRetries: CHROME_PROFILE_CLEANUP_RETRIES,
+    retryDelay: 100,
+  });
 }
 
 class CdpClient {
