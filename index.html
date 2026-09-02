@@ -8099,6 +8099,12 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const f=Math.max(0,Math.min(1,(t-a)/Math.max(1,b-a)));
     return x0+f*w;
   }
+  function releaseCardDateLabel(meta){
+    const raw=String(meta?.displayDate||'');
+    if(meta?.precision==='month')return raw.split('（')[0];
+    if(/中止報道/.test(raw))return '中止報道';
+    return raw.length>12?raw.slice(0,12)+'…':raw;
+  }
   function layoutReleaseLane(ids,era,x0,w,cardW){
     const rows=[],items=[],gap=7,maxX=x0+w-cardW;
     ids.slice().sort(compareReleaseIds).forEach(id=>{
@@ -8160,7 +8166,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
         if(!layout.items.length)out.push(`<text class="release-lane-empty" x="${x0+8}" y="${ly+34}">この時代の収録作品なし</text>`);
         layout.items.forEach(({id,row,cx})=>{
           const n=nm[id],meta=RELEASE_META[id],cy=ly+lanePad+row*(cardH+rowGap),lines=releaseTitleLines(n.title);
-          out.push(`<g class="node release-node" data-release-kind="${esc(meta.releaseKind)}" data-release-precision="${esc(meta.precision)}" data-release-lane="${esc(lane.id)}"><title>${esc(n.id)}</title><path d="${releaseCardPath(cx,cy,cardW,cardH)}"/><text class="release-lane-chip" x="${cx+8}" y="${cy+10}">${esc(lane.label)}</text><text x="${cx+8}" y="${cy+22}" font-size="9.2" font-weight="700">${esc(lines[0])}</text>${lines[1]?`<text x="${cx+8}" y="${cy+33}" font-size="9.2" font-weight="700">${esc(lines[1])}</text>`:''}<text class="release-date" x="${cx+8}" y="${cy+43}" font-size="8.2">${esc(meta.displayDate)}</text><text class="release-kind" x="${cx+92}" y="${cy+43}" font-size="7.5">${esc(releaseKindLabel(meta.releaseKind))}</text></g>`);
+          out.push(`<g class="node release-node" data-release-kind="${esc(meta.releaseKind)}" data-release-precision="${esc(meta.precision)}" data-release-lane="${esc(lane.id)}"><title>${esc(n.id)}</title><path d="${releaseCardPath(cx,cy,cardW,cardH)}"/><text class="release-lane-chip" x="${cx+8}" y="${cy+10}">${esc(lane.label)}</text><text x="${cx+8}" y="${cy+22}" font-size="9.2" font-weight="700">${esc(lines[0])}</text>${lines[1]?`<text x="${cx+8}" y="${cy+33}" font-size="9.2" font-weight="700">${esc(lines[1])}</text>`:''}<text class="release-date" x="${cx+8}" y="${cy+43}" font-size="8.2"><title>${esc(meta.displayDate)}</title>${esc(releaseCardDateLabel(meta))}</text><text class="release-kind" x="${cx+92}" y="${cy+43}" font-size="7.5">${esc(releaseKindLabel(meta.releaseKind))}</text></g>`);
         });
         ly+=laneH+8;
       });
@@ -8348,7 +8354,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
   function buildChronologyView(){
     const panel=document.getElementById('chronology');if(!panel)return false;
-    const cardW=192,cardH=66,startX=186,stepX=228,labelX=24,svgW=3560,svgH=1810;
+    const cardW=192,cardH=66,startX=186,stepX=228,labelX=24,svgW=3560,svgH=1830;
     const rowY={
       spiderRaimi:160,spiderAmazing:248,spiderMcu:336,
       mcuAnchor:474,mcuShared:516,mcuCap:608,mcuCosmic:700,mcuMagic:792,mcuStreet:884,mcuGround:976,mcuOverflow1:1068,mcuOverflow2:1160,
