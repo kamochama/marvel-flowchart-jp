@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d` (PR #32 merge; docs-only baseline updates may follow)
+- latest semantic baseline commit: `fb715e87d5290b73e0ff86139d2554df32fc4a2d` (PR #38 merge; docs-only baseline updates may follow)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -25,6 +25,7 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #28 Avengers: Doomsday production-status evidence promotion batch007: merged as `9b0a754aee920c8ec922142d58d71c5d2665fb9a`
 - PR #30 full release/status evidence audit: merged as `641d16577c847ab5f917e3faea0900536dc0baab`
 - PR #32 HTML design/operation debugging: merged as `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`
+- PR #38 all-work browser selection audit: merged as `fb715e87d5290b73e0ff86139d2554df32fc4a2d`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -75,6 +76,20 @@ Fresh verification for the PR #30-integrated baseline:
 The applied records for the full audit are `data/content_audit/applied/2026-08-30-release-status-audit-dispositions.json` and promotion batches008–015. The inventory is `data/content_audit/release_status_inventory.csv`; conflicts are the YFNSM S2 release and Wonder Man S2 status. No release/status fact derives a graph edge, work-pair reason, production milestone, territory, or Earth identity.
 
 The HTML design/operation debugging pass is complete and recorded in `docs/superpowers/plans/2026-08-30-marvel-library-html-design-operation-debug.md` and `docs/superpowers/reviews/2026-08-30-marvel-library-html-design-operation-debug.md`. Any further viewer change must use a new plan and UI regression contract rather than changing canonical metadata implicitly.
+
+## 0.1.1 Production baseline after the 2026-09-02 browser-audit integration
+
+PR #38 adds an independent Python selection oracle and a Node/Chrome CDP audit that performs real SVG clicks for all `131` works in both public tiers (`site-proposal` and `complete`). The browser job compares directed `source_work_id->target_work_id` sets for `back`, `forward`, and `context` highlights and passed with `0` mismatches. A CI cleanup retry fix was required for hosted Chrome child-process profile locks and is included in the merge.
+
+Fresh verification on merged `main` at `fb715e87d5290b73e0ff86139d2554df32fc4a2d`:
+
+- `379` / `379` library-v5 tests pass locally;
+- real Chrome audit: `131 × 2` selections, exact-set mismatches `0`;
+- build `audit_issue_count=0`, compatibility `361/569/199`, story paths `83/83`;
+- GitHub Actions PR #38 checks `test` and `browser-selection-audit`: both pass;
+- Pages deployment run `33628369828`: success; public URL returns HTTP `200`.
+
+No canonical CSV or persistent review ledger was changed. The next work remains separately bounded: interaction-state browser coverage first, then a distinct chronology/publication-order design and audit.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
