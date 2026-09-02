@@ -333,7 +333,9 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         for token in ("previous1", "combineMode==='and'", "pathMode", "traversable===false"):
             self.assertIn(token, classifier)
         self.assertIn("state?.combineMode==='path'&&ids.length>1", classifier)
-        self.assertIn("normalizePreparationTier", classifier)
+        self.assertIn("const rawTier=state?.tier||state?.prepTier||'complete'", classifier)
+        self.assertIn("rawTier==='official'||rawTier==='site-proposal'||rawTier==='complete'", classifier)
+        self.assertNotIn("normalizePreparationTier", classifier)
         self.assertIn("tierNodeIds", classifier)
         self.assertIn("state?.pathEdges", classifier)
         self.assertRegex(classifier, r"adjacent===incoming[\s\S]{0,260}tierNodeIds")

@@ -4632,7 +4632,10 @@ function classifyChronologySelection(edges,state){
   const classes=new Map();
   const ids=[...(state?.selectedIds||[])];
   if(!ids.length)return classes;
-  const tier=normalizePreparationTier(state?.tier||state?.prepTier||'complete');
+  // Keep this early, standalone classifier independent from the later
+  // preparation-plan script where the shared tier helper is scoped.
+  const rawTier=state?.tier||state?.prepTier||'complete';
+  const tier=rawTier==='official'||rawTier==='site-proposal'||rawTier==='complete'?rawTier:'complete';
   const tierNodeIds=state?.tierNodeIds||new Set();
   const pathMode=state?.pathMode===true||(state?.combineMode==='path'&&ids.length>1);
   const records=[],seenKeys=new Set();
