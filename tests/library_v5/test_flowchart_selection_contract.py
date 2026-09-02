@@ -205,11 +205,22 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         body = function_body(self.source, "directedPartAll")
         self.assertRegex(
             body,
-            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| \(prepTier==='complete' && e\.type_en==='explicit work relation'\)\)",
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| e\.type_en==='explicit work relation'\)",
         )
         self.assertRegex(body, r"if\(!backPropagates\(e\)\) continue")
         self.assertRegex(body, r"if\(!propagates\(e\)\) continue")
         self.assertNotRegex(body, r"prepTier==='complete' \|\| edgeRank\(e\)>=3")
+
+    def test_chart_history_keeps_explicit_story_chain_in_site_proposal(self) -> None:
+        """Selecting Spider-Man 3 must keep the explicit Spider-Man 2 predecessor lit."""
+        body = function_body(self.source, "directedPartAll")
+        self.assertRegex(
+            body,
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| e\.type_en==='explicit work relation'\)",
+        )
+        tier_body = function_body(self.source, "buildTierHighlightState")
+        self.assertIn("baseState.backEdges", tier_body)
+        self.assertIn("explicit work relation", tier_body)
 
     def test_character_filter_is_visual_only_and_does_not_replace_exported_edges(self) -> None:
         body = function_body(self.source, "applyCharacterHighlight")

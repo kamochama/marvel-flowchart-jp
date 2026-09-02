@@ -6070,7 +6070,7 @@ if(flowchartReady)render();
     // Chart selection keeps an explicit reference-level story chain readable
     // (for example 1→2→3); the watch-plan policy remains independently
     // responsible for treating other reference links as direct context.
-    const backPropagates=e=>importanceAllowed(e) && (edgeRank(e)>=3 || (prepTier==='complete' && e.type_en==='explicit work relation')); // complete history follows explicit story chains, not auxiliary reference fan-out
+    const backPropagates=e=>importanceAllowed(e) && (edgeRank(e)>=3 || e.type_en==='explicit work relation'); // chart history follows explicit story chains, not auxiliary reference fan-out
 
     let stack=[id];
     while(stack.length){
@@ -6696,8 +6696,14 @@ if(flowchartReady)render();
     }
     const edgeByKey=new Map(EDGES.map(edge=>[edgeKey(edge),edge]));
     const limitToScope=baseState.scopeMode==='previous1';
+    // Chart selection keeps explicit story predecessors visible even when the
+    // preparation tier classifies their legacy evidence as reference-level.
+    // The watch-plan builder still applies its own importance filter.
+    const chartStoryBackEdges=mode==='complete' ? new Set() : new Set(
+      [...(baseState.backEdges||[])].filter(key=>edgeByKey.get(key)?.type_en==='explicit work relation')
+    );
     const baseBackKeys=new Set([...(baseState.backEdges||[]),...(baseState.contextEdges||[])]);
-    const scopedBackEdges=new Set([...tierBackEdges].filter(key=>!limitToScope||baseBackKeys.has(key)));
+    const scopedBackEdges=new Set([...tierBackEdges,...chartStoryBackEdges].filter(key=>!limitToScope||baseBackKeys.has(key)));
     if(baseState.combineMode==='and'&&baseState.ctx){
       for(const key of [...scopedBackEdges]){
         const edge=edgeByKey.get(key);
