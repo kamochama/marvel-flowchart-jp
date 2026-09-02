@@ -57,9 +57,6 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 390px;min-height:calc(100v
 .prep-provenance-badge{display:inline-flex;align-items:center;min-height:22px;margin-left:7px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:900;vertical-align:middle}
 .prep-provenance-badge.official{border:1px solid #22c55e;background:#14532d;color:#bbf7d0;box-shadow:0 0 0 2px rgba(34,197,94,.12)}
 .prep-provenance-badge.mixed{border:1px solid #a78bfa;background:#312e81;color:#ddd6fe}
-.official-route-toggle{display:inline-flex;align-items:center;min-height:32px;margin-top:7px;padding:5px 9px;border:1px solid #16a34a;border-radius:8px;background:#123524;color:#bbf7d0;font-size:11px;font-weight:800;cursor:pointer}
-.official-route-toggle:hover,.official-route-toggle:focus-visible{border-color:#4ade80;background:#166534;color:#f0fdf4}
-.official-route-toggle.active{border-color:#4ade80;background:#15803d;color:#f0fdf4;box-shadow:0 0 0 2px rgba(74,222,128,.14)}
 
 table{width:100%;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid var(--line);padding:5px;text-align:left;vertical-align:top}th{position:sticky;top:0;background:var(--card)}#edgewrap{max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:8px}
 .svg-wrap svg g.node,.svg-wrap svg g.edge{transition:opacity .15s ease,filter .15s ease}.svg-wrap svg.dim g.node{opacity:.14;filter:grayscale(.62) saturate(.38) brightness(.72)}.svg-wrap svg.dim g.edge{opacity:.035;filter:grayscale(.75) saturate(.22) brightness(.58)}
@@ -804,7 +801,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
     </div>
     <div class="brand-meta" aria-label="サイト情報">
       <span class="stat-chip"><b>131</b> 作品</span><span class="stat-chip"><b>199</b> 有向接続</span>
-      <span class="stat-chip public-release">PUBLIC v5.21.2</span>
+      <span class="stat-chip public-release">PUBLIC v5.21.3</span>
       <button id="publicHelpBtn" class="public-help-btn" type="button">? 使い方</button>
     </div>
   </div>
@@ -824,8 +821,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
   <div id="flowchartStatus" class="muted" role="status" aria-live="polite">データを読み込み中…</div>
   <div class="controls-primary">
     <div class="control-group control-search" aria-label="作品を探す"><input id="q" aria-label="作品を検索" placeholder="邦題・英題・シリーズ名で検索"><select id="branch" aria-label="系統で絞り込み"><option value="">すべての系統</option></select></div>
-    <div class="control-group control-scope"><span class="muted">点灯範囲</span><button class="scope-btn active" data-scope="all" title="strong / very strong の物語方向を前後に辿り、medium は直接隣接だけ表示">関連全体</button><button class="scope-btn" data-scope="previous1" title="選択作品へ直接入る前史だけ表示">1つ前のみ</button><span class="direction-key" title="関連全体では途中で向きを切り替えません"><i class="bk"></i>←前史 <i class="fw"></i>→後続 <i class="cx"></i>直接補助</span></div>
-    <div class="control-group control-importance"><label class="muted" for="chartConnectionTier">つながり</label><select id="chartConnectionTier" class="connection-tier-select chart-tier-select" aria-label="チャートのつながりを選ぶ"><option value="official">公式予習ルート</option><option value="site-proposal" selected>サイト提案ルート</option><option value="complete">完全版</option></select></div>
+    <div class="control-group control-importance"><label class="muted" for="chartConnectionTier">つながり</label><select id="chartConnectionTier" class="connection-tier-select chart-tier-select" aria-label="チャートのつながりを選ぶ"><option value="site-proposal" selected>サイト提案ルート</option><option value="complete">完全版</option></select></div>
     <div class="control-group control-reset"><button id="clear">全解除</button></div>
   </div>
   <div class="controls-featured-row" aria-label="今見るなら"><span id="desktopFeaturedHost" class="desktop-featured-host"></span></div>
@@ -858,9 +854,9 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
     <div class="help-grid">
       <div class="help-step"><b>1. 作品を見る</b><p>PCは作品を左クリックすると右側に詳細と関連ラインを表示します。スマホは作品をタップするとその作品をゴールにして、前史・後続の接続を表示します。作品のあらすじは下の予習プランから開けます。</p></div>
       <div class="help-step"><b>2. 矢印をたどる</b><p>青系は前史、緑系は後続。通常スクロールはページ移動。PCではチャート上のホイールで図をズームできます。スマホではチャート内を1本指で移動、2本指で拡大・縮小できます。ページを動かすときはチャート外をスワイプしてください。</p></div>
-      <div class="help-step"><b>3. 視聴順を決める</b><p>チャート下の大きな「予習・視聴プラン」で、公式予習ルート・サイト提案ルート・完全版、視聴済みチェック、残り時間をまとめて管理できます。</p></div>
+      <div class="help-step"><b>3. 視聴順を決める</b><p>チャート下の大きな「予習・視聴プラン」で、サイト提案ルート・完全版、視聴済みチェック、残り時間をまとめて管理できます。</p></div>
     </div>
-    <div class="help-legend"><span>← 前史</span><span>→ 後続</span><span>予習プラン：公式 / サイト提案 / 完全版</span><span>OR / AND / PATH</span></div>
+    <div class="help-legend"><span>← 前史</span><span>→ 後続</span><span>予習プラン：サイト提案 / 完全版</span><span>OR / AND / PATH</span></div>
     <div class="help-note"><strong>このサイトについて：</strong>もともと自分用に作った相関図を、そのまま公開している個人制作物です。企画・実装・データ整理・監査の多くに生成AI（主にChatGPT）を利用し、人手で確認・調整しています。生成AIの出力には誤りがあり得るため、完全性・正確性は保証しません。継続的な更新・保守・サポートを行うプロジェクトではなく、Issue / Pull Request への対応も保証しません。日本公式邦題を優先した非公式・非商用のファン制作で、接続の「重要度」は独自の視聴ガイド分類です。Marvel / Disney その他の権利は各権利者に帰属します。</div>
   </div>
 </dialog>
@@ -4301,7 +4297,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
 <div id="chronology" class="panel" data-lazy-view="chronology" data-lazy-initialized="0"><div class="stage-a-placeholder"><span class="stage-a-kicker">STAGE C</span><h2>世界線・時系列</h2><p>continuityごとのスイムレーンを、MCU / Raimi / Amazing / SSU / FOX X-MENから監査して追加します。</p><p class="muted">Stage Cで実装予定。Earth番号や絶対年代を推測で固定しません。</p></div></div>
 </section>
 <aside id="right" aria-hidden="true"><button id="desktopSideToggle" class="desktop-side-toggle" type="button" aria-expanded="true" title="詳細パネルを折り畳む">詳細を隠す</button><div class="mobile-sheet-head"><div><b id="mobileDetailsTitle">作品・接続の詳細</b><div class="mobile-sheet-sub">現在のゴールと接続根拠</div></div><button aria-label="詳細を閉じる" id="mobileDetailsClose" type="button">閉じる</button></div><div aria-label="右パネル表示" class="side-tabs" role="tablist"><button id="sideTabWorks" aria-controls="sidePanelWorks" aria-selected="true" class="side-tab-btn active" data-side-tab="works" role="tab" type="button">作品</button><button id="sideTabLinks" aria-controls="sidePanelLinks" aria-selected="false" class="side-tab-btn" data-side-tab="links" role="tab" type="button">接続</button></div><div id="sidePanelWorks" aria-labelledby="sideTabWorks" class="side-tab-panel side-tab-works active" role="tabpanel"><div class="card"><h3>作品一覧</h3><div class="muted" id="count"></div><div class="node-list" id="list" aria-label="作品一覧"></div></div><div class="card"><h3>現在のゴール</h3><div class="muted" id="detail">作品を選ぶと前後の接続を表示します。</div></div></div><div id="sidePanelLinks" aria-labelledby="sideTabLinks" class="side-tab-panel side-tab-links" role="tabpanel"><div class="card path-explain" id="pathExplainCard"><h3>🧭 ゴールを結ぶ経路</h3><div class="muted" id="pathExplain">PATHモードで2作品以上をゴールにすると、採用した有向経路を表示します。</div></div><div class="card"><h3>直接つながる作品</h3><div class="edge-tooltip-note">図の矢印にカーソルを置くと、接続種別・重要度・根拠を確認できます。</div><div id="edgewrap"><table><thead><tr><th>元</th><th>先</th><th>接続</th><th>強さ</th></tr></thead><tbody id="et"></tbody></table></div><div id="edgeReasonExplain" class="edge-reason-explain" aria-live="polite"></div></div></div></aside></main>
-<section id="watchWorkspace" class="watch-workspace" aria-label="予習・視聴プラン"><div class="watch-workspace-head"><div><span class="eyebrow">WATCH PLAN</span><h2>予習・視聴プラン</h2><p>見たい作品を決めて、予習ルート・視聴済み・残り時間を広い画面でまとめて管理できます。</p></div><button id="watchBackToChart" class="watch-back-btn" type="button">↑ チャートへ戻る</button></div><div class="watch-workspace-grid"><div class="card overall-watch-card watch-card-progress"><div id="overallWatchProgress" class="overall-watch-progress" aria-live="polite"></div></div><div class="card watch-card-target" data-ui-role="empty-goal-hint"><span class="watch-target-icon">🎯</span><div><strong>見たい作品をチャートで選ぶ</strong><div class="muted">スマホはチャートの作品をタップするとゴールとして接続を表示します。PCは右クリックでもゴールを追加できます。</div></div></div><div class="card watch-card-plan"><h3>予習プラン</h3><div class="watch-share-tools"><button id="sharePlanImage" type="button">📷 画像で共有</button><button id="sharedRoomOpen" type="button">👥 一緒に見る</button></div><div id="sharedRoomBar" class="shared-room-bar" aria-live="polite"></div><div class="watch-tier-row"><label for="watchConnectionTier">予習プラン</label><select id="watchConnectionTier" class="connection-tier-select watch-tier-select" aria-label="予習プランを選ぶ"><option value="official">公式予習ルート</option><option value="site-proposal" selected>サイト提案ルート</option><option value="complete">完全版</option></select></div><div class="muted" id="prepplan">見たい作品を選ぶと、選択した予習プランで表示します。</div></div><details class="card watch-card-flow"><summary><span>見る順ナビ</span><small>前史・次に見る候補</small></summary><div class="muted" id="flow">作品を選ぶと、「前に見る候補」「次に見る候補」を表示します。</div></details></div></section>
+<section id="watchWorkspace" class="watch-workspace" aria-label="予習・視聴プラン"><div class="watch-workspace-head"><div><span class="eyebrow">WATCH PLAN</span><h2>予習・視聴プラン</h2><p>見たい作品を決めて、予習ルート・視聴済み・残り時間を広い画面でまとめて管理できます。</p></div><button id="watchBackToChart" class="watch-back-btn" type="button">↑ チャートへ戻る</button></div><div class="watch-workspace-grid"><div class="card overall-watch-card watch-card-progress"><div id="overallWatchProgress" class="overall-watch-progress" aria-live="polite"></div></div><div class="card watch-card-target" data-ui-role="empty-goal-hint"><span class="watch-target-icon">🎯</span><div><strong>見たい作品をチャートで選ぶ</strong><div class="muted">スマホはチャートの作品をタップするとゴールとして接続を表示します。PCは右クリックでもゴールを追加できます。</div></div></div><div class="card watch-card-plan"><h3>予習プラン</h3><div class="watch-share-tools"><button id="sharePlanImage" type="button">📷 画像で共有</button><button id="sharedRoomOpen" type="button">👥 一緒に見る</button></div><div id="sharedRoomBar" class="shared-room-bar" aria-live="polite"></div><div class="watch-tier-row"><label for="watchConnectionTier">予習プラン</label><select id="watchConnectionTier" class="connection-tier-select watch-tier-select" aria-label="予習プランを選ぶ"><option value="site-proposal" selected>サイト提案ルート</option><option value="complete">完全版</option></select></div><div class="muted" id="prepplan">見たい作品を選ぶと、選択した予習プランで表示します。</div></div><details class="card watch-card-flow"><summary><span>見る順ナビ</span><small>前史・次に見る候補</small></summary><div class="muted" id="flow">作品を選ぶと、「前に見る候補」「次に見る候補」を表示します。</div></details></div></section>
 <dialog id="sharedRoomDialog"><div class="shared-room-dialog-body"><h3 id="sharedRoomDialogTitle">一緒に見る</h3><p id="sharedRoomDialogText">表示名だけで参加できます。メールアドレスやアカウント登録は不要です。</p><input id="sharedRoomName" maxlength="24" autocomplete="nickname" placeholder="表示名（例：たろう）"><div id="sharedRoomError" class="shared-room-error"></div><div class="shared-room-dialog-actions"><button id="sharedRoomCancel" type="button">キャンセル</button><button id="sharedRoomSubmit" type="button">ルームを作る</button></div></div></dialog>
 <details aria-label="相関図について" class="below-chart-info"><summary class="below-info-summary"><span>この相関図について</span><small>公開日・キャラクター索引・接続ルール</small></summary><div class="below-info-grid"><div class="card info-card"><h3>日本向け今後の注目日</h3>
 <div class="muted">
@@ -4309,7 +4305,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
 2026年10月14日：『VisionQuest』Marvel公式日付（日本配信日は未確認）<br/>
 2026年12月18日：『アベンジャーズ／ドゥームズデイ』日米同時公開<br/>
 2027年12月17日：『Avengers: Secret Wars』Marvel公式予定（日本公開日は未確認）
-</div></div><div class="card info-card"><h3>キャラクター索引</h3><div class="muted" id="charinfo">上部のキャラクター欄から選ぶと、主要出演・物語接続作品だけに絞り込みます。</div></div><div class="card info-card"><h3>接続重要度</h3><div class="importance-summary"><b>中核 91本</b>：本筋として有向に再帰追跡<br/><b>推奨 75本</b>：選択作品へ直接1段だけ付加<br/><b>参照 33本</b>：客演・設定・別宇宙など。「全線」で表示<br/><span class="muted">※ strength（事実上の接続強度）とは別軸です。</span></div></div><div class="card info-card"><h3>日本版ルール</h3><div class="muted">日本の公式邦題を優先。邦題が確認できない未公開作は英題＋「邦題未発表」。英題は検索・監査用に保持しています。日本公開・配信日は公式ソースで確認できたものから順次追加します。作品を選ぶと、関連全体または1つ前のみの範囲で関連作品を点灯します。接続は事実上の強さとは別に「中核／推奨／参照」の視聴重要度を持ち、既定の「全線」は生成JSONに含まれる全接続を表示し、互換性観測値199本を含みます。関連全体では中核のみを有向に再帰し、推奨は選択作品への直接接続だけ付加、参照は直接補助に限定します。複数ゴールでは OR（どれか）／AND（共通）／PATH（ゴール間の有向経路だけ）を切り替えられます。複数のゴールを選ぶと、必要な予習作品を重複除去して1本の視聴順に統合します。v5.7.1では接続を再監査し、120行（119ユニーク矢印）の骨格接続を整理し、66本を追加。追加線は物語・人物・旧映像宇宙・Doomsday公式帰還を区別し、Doomsdayの出演確認線は「直接前日譚」を意味しません。</div></div></details>
+</div></div><div class="card info-card"><h3>キャラクター索引</h3><div class="muted" id="charinfo">上部のキャラクター欄から選ぶと、主要出演・物語接続作品だけに絞り込みます。</div></div><div class="card info-card"><h3>接続重要度</h3><div class="importance-summary"><b>中核 91本</b>：本筋として有向に再帰追跡<br/><b>推奨 75本</b>：選択作品へ直接1段だけ付加<br/><b>参照 33本</b>：客演・設定・別宇宙など。「全線」で表示<br/><span class="muted">※ strength（事実上の接続強度）とは別軸です。</span></div></div><div class="card info-card"><h3>日本版ルール</h3><div class="muted">日本の公式邦題を優先。邦題が確認できない未公開作は英題＋「邦題未発表」。英題は検索・監査用に保持しています。日本公開・配信日は公式ソースで確認できたものから順次追加します。作品を選ぶと、接続重要度と選択条件に応じて関連作品を点灯します。接続は事実上の強さとは別に「中核／推奨／参照」の視聴重要度を持ち、既定の「全線」は生成JSONに含まれる全接続を表示し、互換性観測値199本を含みます。中核は有向に再帰し、推奨は選択作品への直接接続だけ付加、参照は直接補助に限定します。複数ゴールでは OR（どれか）／AND（共通）／PATH（ゴール間の有向経路だけ）を切り替えられます。複数のゴールを選ぶと、必要な予習作品を重複除去して1本の視聴順に統合します。v5.7.1では接続を再監査し、120行（119ユニーク矢印）の骨格接続を整理し、66本を追加。追加線は物語・人物・旧映像宇宙・Doomsday公式帰還を区別し、Doomsdayの出演確認線は「直接前日譚」を意味しません。</div></div></details>
 <div id="mobileBackdrop" class="mobile-backdrop" aria-hidden="true"></div><div class="mobile-graph-actions" aria-label="グラフ操作"><button id="mobileFitBtn" type="button" title="全体表示">全体</button><button id="mobileSelectedBtn" type="button" title="選択作品へ">選択へ</button><button id="mobileDetailsFloat" type="button" aria-expanded="false" aria-controls="right" title="詳細を開く">詳細</button></div>
 <script>
 let NODES=[]; let EDGES=[]; let CHAR_LINKS=[]; let RELEASE_META={}; let CHRONOLOGY_LANES=[]; let CHRONOLOGY_META={};
@@ -5111,7 +5107,7 @@ function initSvgInteraction(){
     const tier=document.createElement('select');
     tier.className='chart-tier-select';
     tier.setAttribute('aria-label','つながりの詳しさ');
-    tier.innerHTML='<option value="official">公式予習ルート</option><option value="site-proposal" selected>サイト提案ルート</option><option value="complete">完全版</option>';
+    tier.innerHTML='<option value="site-proposal" selected>サイト提案ルート</option><option value="complete">完全版</option>';
     tier.addEventListener('pointerdown',e=>e.stopPropagation());
     tier.addEventListener('change',()=>window.marvelSetConnectionTier?.(tier.value));
     const jump=document.createElement('button');
@@ -5859,7 +5855,7 @@ if(flowchartReady)render();
   const IMPORTANCE_MIN={core:3,recommended:2,reference:1};
   function normalizePreparationTier(tier){
     if(tier==='complete') return 'complete';
-    if(tier==='official') return 'official';
+    if(tier==='official') return 'site-proposal';
     // Legacy shared-room values map to the explicit site proposal mode.
     return 'site-proposal';
   }
@@ -6236,7 +6232,7 @@ if(flowchartReady)render();
     const combLabel=combineMode==='and'?'AND（全ゴールに共通）':combineMode==='path'?`PATH（${pathPreference==='shortest'?'最短':'本流優先'}）`:'OR（いずれかのゴール）';
     const disconnectedNote=pathState?.disconnected?.length?`　※有向経路なし：${pathState.disconnected.length}組`:'';
     const tierLabel=({official:'公式予習ルート','site-proposal':'サイト提案ルート',complete:'完全版'})[prepTier]||prepTier;
-    const mode=ids.length>1 ? `<div class="selection-mode-note${combineMode==='path'?' path-note':''}">点灯条件：${combLabel} / ${scopeMode==='all'?'関連全体':'1つ前のみ'} / つながり：${tierLabel}${combineMode==='and'&&scopeMode==='all'?'　※有向の共通範囲を表示します。':''}${disconnectedNote}</div>` : '';
+    const mode=ids.length>1 ? `<div class="selection-mode-note${combineMode==='path'?' path-note':''}">点灯条件：${combLabel} / つながり：${tierLabel}${combineMode==='and'&&scopeMode==='all'?'　※有向の共通範囲を表示します。':''}${disconnectedNote}</div>` : '';
     if(ids.length===1) return mode;
     const target=selected;
     return `<p><b>複数ゴール中 (${ids.length})：</b><br>${ids.map(x=>`<span class="badge selbadge"${x===target?' style="outline:1px solid #f59e0b"':''}><span class="seljump" data-id="${x}" title="このゴールを基準に表示">${x===target?'🎯 ':''}${esc(nm[x]?.title||x)}</span><button class="selremove" data-id="${x}" title="このゴールだけ解除" aria-label="${esc(nm[x]?.title||x)}をゴールから解除">×</button></span>`).join(' ')}</p>${mode}`;
@@ -6556,7 +6552,7 @@ if(flowchartReady)render();
       const core=ancestorSetByImportance(target,false);
       for(const id of siteIds) core.add(id);
       const ids=topologicalOrderByImportance(core,false);
-      return {ids,source:`${siteProposal.source} ＋ 接続重要度「中核」`,sourceUrl:'',sourceCheckedAt:'',routeId:'',kind:siteProposal.kind,provenance:siteProposal.provenance,tierLabel:'サイト提案ルート',tierNote:'公式予習ルートとは分離し、サイト提案ルートと接続重要度「中核」の前史を表示します。客演や参照だけの接続は自動では広げません。'};
+      return {ids,source:`${siteProposal.source} ＋ 接続重要度「中核」`,sourceUrl:'',sourceCheckedAt:'',routeId:'',kind:siteProposal.kind,provenance:siteProposal.provenance,tierLabel:'サイト提案ルート',tierNote:'サイト提案ルートと接続重要度「中核」の前史を表示します。客演や参照だけの接続は自動では広げません。'};
     }
 
     if(prepTier==='complete'){
@@ -6564,7 +6560,7 @@ if(flowchartReady)render();
       // Reference edges are direct context only, never recursive even in complete mode.
       for(const e of (inc[target]||[])) if(importanceOf(e)==='reference') broad.add(e.source);
       const ids=topologicalOrderByImportance(broad,true);
-      return {ids,source:'登録済み接続を再帰追跡 ＋ 直接参照',sourceUrl:'',sourceCheckedAt:'',routeId:'',kind:'complete',provenance:'complete',tierLabel:'完全版',tierNote:'「中核」と「推奨」を再帰的に遡り、視聴目標へ直接つながる「参照」も加えます。公式／サイト提案ルートは混ぜず、参照を踏み台に別系列へは拡散しません。'};
+      return {ids,source:'登録済み接続を再帰追跡 ＋ 直接参照',sourceUrl:'',sourceCheckedAt:'',routeId:'',kind:'complete',provenance:'complete',tierLabel:'完全版',tierNote:'「中核」と「推奨」を再帰的に遡り、視聴目標へ直接つながる「参照」も加えます。参照を踏み台に別系列へは拡散しません。'};
     }
     throw new Error(`未知の予習プランモードです: ${prepTier}`);
   }
@@ -6942,7 +6938,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
         : {key:'official',label:'公式予習ルート',description:'公式が示す予習順だけを使用しています。'};
     }
     if(prepTier==='site-proposal'){
-      return {key:'site-proposal',label:'サイト提案ルート',description:'公式予習ルートとは分離し、接続データからサイトが提案する前史を表示しています。'};
+      return {key:'site-proposal',label:'サイト提案ルート',description:'接続データからサイトが提案する前史を表示しています。'};
     }
     return {key:'complete',label:'完全版',description:'登録済みの中核・推奨接続を再帰的に辿り、直接参照を補助的に表示しています。'};
   }
@@ -6973,10 +6969,6 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
         : provenance.key==='site-proposal'
           ? '<span class="prep-provenance-badge site-proposal">サイト提案</span>'
         : '';
-    const hasOfficialRoute=prepTier==='official' && goals.some(id=>plan.provenanceByGoal?.[id]==='official');
-    const officialToggle=hasOfficialRoute
-      ? `<button type="button" class="official-route-toggle${officialRouteHighlightEnabled?' active':''}" data-official-route-toggle="1" aria-pressed="${officialRouteHighlightEnabled?'true':'false'}">${officialRouteHighlightEnabled?'✓ 公式予習ルートをチャートで表示中':'公式予習ルートをチャートで光らせる'}</button>`
-      : '';
     const heading=`<div class="prep-plan-heading"><strong>${multi?'複数ゴールの統合予習プラン':`${esc(nm[goals[0]]?.title||goals[0])} の予習プラン`}</strong><span class="prep-tier-label">${({minimum:'互換レガシー',recommended:'サイト提案ルート','site-proposal':'サイト提案ルート',official:'公式予習ルート',complete:'完全版'})[prepTier]||prepTier}</span>${provenanceBadge}</div>`;
     const goalBadges=`<div class="multi-goal-summary"><span>🎯 ${goals.length}作品をゴール中</span>${goals.map((id,i)=>`<span class="multi-goal-badge-wrap"><button type="button" class="multi-goal-badge" data-goal-focus="${esc(id)}">ゴール ${i+1}：${esc(nm[id]?.title||id)}</button><button type="button" class="prep-goal-remove" data-id="${esc(id)}" title="このゴールを解除" aria-label="${esc(nm[id]?.title||id)}をゴールから解除">×</button></span>`).join('')}</div>`;
     const progress=prepProgressTools(plan.orderedIds);
@@ -6996,9 +6988,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const tierExplain=tierNotes.length?`<div class="prep-explain">${tierNotes.map(note=>esc(note)).join(' ')}</div>`:'';
     const sourceDetail=sourceLabels.length?`（${sourceLabels.map(label=>esc(label)).join(' ／ ')}）`:'';
     const sourceLinks=sourceRefs.map(ref=>`<a class="prep-source-link" href="${esc(ref.url)}" target="_blank" rel="noopener noreferrer">公式出典${ref.date?`（確認日 ${esc(ref.date)}）`:''}</a>`).join(' ');
-    const provenanceNote=`<div class="prep-source" data-prep-provenance="${provenance.key}"><strong>${esc(provenance.label)}</strong>：${esc(provenance.description)}${sourceDetail}${sourceLinks?` <span class="prep-source-links">${sourceLinks}</span>`:''}<br>${officialToggle} 各ゴールの予習候補を統合し、重複を除いて有向接続順に並べています。参照のみの接続は並び順を強制しません。</div>`;
+    const provenanceNote=`<div class="prep-source" data-prep-provenance="${provenance.key}"><strong>${esc(provenance.label)}</strong>：${esc(provenance.description)}${sourceDetail}${sourceLinks?` <span class="prep-source-links">${sourceLinks}</span>`:''}<br>各ゴールの予習候補を統合し、重複を除いて有向接続順に並べています。参照のみの接続は並び順を強制しません。</div>`;
     prepplan.innerHTML=`${heading}${goalBadges}${progress}${timeSummary}${tierExplain}<ol class="prep-list multi-goal-list">${rows}</ol>${provenanceNote}`;
-    prepplan.querySelector('[data-official-route-toggle]')?.addEventListener('click',()=>window.toggleOfficialRouteHighlight(!officialRouteHighlightEnabled));
     prepplan.querySelectorAll('[data-goal-focus]').forEach(b=>b.onclick=()=>focusGoal(b.dataset.goalFocus));
     prepplan.querySelectorAll('.prep-goal-remove').forEach(b=>b.onclick=e=>{
       e.preventDefault(); e.stopPropagation(); removeGoal(b.dataset.id);
@@ -7858,7 +7849,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
 
 
-<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.21.2 · 2026-09-01</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
+<footer class="public-footer"><div class="footer-row"><div><strong>マーベル作品相関図 日本版</strong> — 自分用に作ったものの公開版です。<strong>継続的な保守・更新・サポートは予定していません。</strong> 非公式・非商用。</div><span class="footer-version">PUBLIC v5.21.3 · 2026-09-02</span></div><div>企画・実装・データ整理・監査の多くに生成AIを利用しています。人手でも確認していますが、情報が古い・誤り・不具合が残る場合があります。Issue / Pull Request への対応も保証しません。Marvel / Disney および各作品・キャラクターに関する商標・著作権は各権利者に帰属し、本サイトは権利者各社とは提携していません。</div></footer>
 
 <script>
 (()=>{

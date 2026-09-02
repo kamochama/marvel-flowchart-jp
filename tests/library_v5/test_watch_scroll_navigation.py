@@ -42,20 +42,12 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("watchWorkspace.scrollIntoView", self.html)
         self.assertIn("window.returnToGraphFromWatch", self.html)
 
-    def test_chart_scope_exposes_full_and_previous1_only(self) -> None:
-        """The chart viewer has one full view and one direct-predecessor view."""
-        scope = re.search(
-            r'<div class="control-group control-scope">.*?</div>',
-            self.html,
-            re.DOTALL,
-        )
-        self.assertIsNotNone(scope)
-        scope_text = scope.group(0)
-        self.assertIn('data-scope="all"', scope_text)
-        self.assertIn('data-scope="previous1"', scope_text)
-        self.assertIn("1つ前のみ", scope_text)
-        self.assertNotIn('data-scope="two"', scope_text)
-        self.assertNotIn("2段階", scope_text)
+    def test_chart_scope_controls_are_not_public(self) -> None:
+        """The public chart no longer exposes a separate lighting-scope selector."""
+        self.assertNotIn('class="control-group control-scope"', self.html)
+        self.assertNotIn("点灯範囲", self.html)
+        self.assertNotIn("関連全体", self.html)
+        self.assertNotIn("1つ前のみ", self.html)
 
     def test_previous1_scope_follows_incoming_edges_only(self) -> None:
         """The one-step chart mode must not light outgoing neighbours."""
@@ -74,8 +66,16 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("サイト提案ルート", self.html)
         self.assertNotIn("監査済み編集ルート", self.html)
 
-    def test_preparation_selector_exposes_three_public_modes(self) -> None:
-        """The watch planner exposes official, site proposal, and complete modes."""
+    def test_readme_describes_the_two_public_modes(self) -> None:
+        readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("v5.21.3", readme)
+        self.assertIn("サイト提案ルート", readme)
+        self.assertIn("完全版", readme)
+        self.assertIn("公式予習ルートの登録データ", readme)
+        self.assertIn("点灯範囲", readme)
+
+    def test_preparation_selector_exposes_two_public_modes(self) -> None:
+        """The watch planner exposes site proposal and complete modes only."""
         tier_select = re.search(
             r'<select id="watchConnectionTier".*?</select>',
             self.html,
@@ -84,9 +84,9 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIsNotNone(tier_select)
         self.assertEqual(
             re.findall(r'<option value="([^"]+)"', tier_select.group(0)),
-            ["official", "site-proposal", "complete"],
+            ["site-proposal", "complete"],
         )
-        self.assertIn("公式予習ルート", tier_select.group(0))
+        self.assertNotIn("公式予習ルート", tier_select.group(0))
         self.assertIn("サイト提案ルート", tier_select.group(0))
         self.assertIn("完全版", tier_select.group(0))
         self.assertNotIn('value="minimum"', tier_select.group(0))
@@ -94,16 +94,34 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertNotIn("2段階", self.html)
 
     def test_chart_connection_selector_matches_watch_modes(self) -> None:
-        """The chart and watch plan expose the same three public tiers."""
+        """The chart and watch plan expose the same two public tiers."""
         selector = re.search(r'<select id="chartConnectionTier".*?</select>', self.html, re.DOTALL)
         self.assertIsNotNone(selector)
         self.assertEqual(
             re.findall(r'<option value="([^"]+)"', selector.group(0)),
-            ["official", "site-proposal", "complete"],
+            ["site-proposal", "complete"],
         )
         self.assertIn("document.querySelectorAll('.chart-tier-select')", self.html)
         self.assertIn("window.marvelSetConnectionTier(sel.value)", self.html)
         self.assertNotIn('data-importance-mode="recommended"', selector.group(0))
+
+    def test_official_route_is_not_exposed_by_public_controls(self) -> None:
+        """Official provenance stays in data, but route controls are not public UI."""
+        self.assertNotIn('<option value="official">公式予習ルート</option>', self.html)
+        self.assertNotIn("data-official-route-toggle", self.html)
+        self.assertNotIn("公式予習ルートをチャートで光らせる", self.html)
+
+    def test_legacy_official_tier_normalizes_to_site_proposal(self) -> None:
+        """Persisted official UI state must not resurrect the removed public mode."""
+        normalizer = re.search(
+            r"function normalizePreparationTier\(tier\)\{.*?\n\s*\}",
+            self.html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(normalizer)
+        self.assertIn("tier==='official'", normalizer.group(0))
+        self.assertNotIn("return 'official'", normalizer.group(0))
+        self.assertIn("return 'site-proposal'", normalizer.group(0))
 
     def test_guide_and_tabs_use_a_viewport_sticky_desktop_nav(self) -> None:
         self.assertIn('<div class="public-nav-sticky">', self.html)
@@ -265,7 +283,7 @@ class WatchScrollNavigationContract(unittest.TestCase):
 
     def test_plan_modes_expose_official_and_site_provenance_boundaries(self) -> None:
         """Curated routes must not be presented as an official prewatch list."""
-        self.assertIn("PUBLIC v5.21.2", self.html)
+        self.assertIn("PUBLIC v5.21.3", self.html)
         self.assertIn("OFFICIAL_PREWATCH_ROUTES_V57", self.html)
         self.assertIn("chooseOfficialPrewatchRoute", self.html)
         self.assertIn("provenance:'official'", self.html)
@@ -310,12 +328,11 @@ class WatchScrollNavigationContract(unittest.TestCase):
         self.assertIn("const officialOrder=[]", self.html)
         self.assertIn("const officialRank=new Map(officialOrder", self.html)
 
-    def test_official_route_can_highlight_existing_chart_edges(self) -> None:
+    def test_official_route_highlight_implementation_is_internal_only(self) -> None:
         self.assertIn("official-route-highlight", self.html)
         self.assertIn("toggleOfficialRouteHighlight", self.html)
         self.assertIn("officialRouteEdges", self.html)
-        self.assertIn("公式予習ルートをチャートで光らせる", self.html)
-        self.assertIn("data-official-route-toggle", self.html)
+        self.assertNotIn("data-official-route-toggle", self.html)
 
     def test_detail_focus_redraw_preserves_official_route_highlight(self) -> None:
         self.assertIn(
