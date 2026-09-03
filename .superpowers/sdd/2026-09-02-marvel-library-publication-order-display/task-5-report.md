@@ -102,3 +102,31 @@ fix round 後の確定検証は次のとおり。
 - library-v5 full suite: `Ran 422 tests in 29.810s`、`OK (skipped=4)`。
 - build: audit issue 0、content-audit issue 0、131 nodes / 361 edges / 569 reasons、SQLite 出力成功。既知の untracked generated outputs は worktree 内の対象を確認して除去した。
 - `node --check`、runner `--help`、`git diff --check`: すべて exit 0。
+
+## Fix round 2: mobile precision parity と排他的 focus
+
+最終レビューで、mobile が dated / TBD の2代表だけで month-only / year-only を実入力監査していないこと、および PC focus/shared selection の検証が包含判定だったことを確認した。
+
+### RED
+
+```powershell
+& $MarvelPython -B -m unittest `
+  tests.library_v5.test_browser_publication_order_audit.BrowserPublicationOrderAuditTests.test_runner_requires_exclusive_desktop_focus_and_no_goal_mutation `
+  tests.library_v5.test_browser_publication_order_audit.BrowserPublicationOrderAuditTests.test_runner_mobile_covers_every_publication_precision_with_year_fixture -v
+```
+
+結果: `Ran 2 tests`、`FAILED (failures=2)`。runner に排他的な `focus=[id]` / desktop `selected=[]` 契約と mobile year fixture / 4 precision case がないため失敗した。
+
+### GREEN
+
+- PC release card の実クリック後と overview / chronology round-trip 後を、sorted `focus === [id]`、shared `selected === []`、detail focus `=== id` で待機・検証する。PC左クリックは詳細閲覧であり、ゴール集合を変更しない契約を明示した。
+- mobile は exact-day / month-only / year-only / TBD の4代表すべてで、実 touch による select / re-tap / background / drag-end の4状態、合計16状態を監査する。選択状態は shared `selected === [id]` と `goals === [id]`、解除状態は `selected === []`、全状態で `nodeBoxes=131` と `overlaySyntheticDrawn=0` を要求する。
+- canonical に year precision がないため、mobile year-only でも `RELEASE_META` をページ内だけで年精度へ変換し、公開 `window.ensureStageAViewInitialized('release')` で release view を再生成する。続けて公開 `activatePanel` で390×844 Canvasを再初期化し、backing card の precision / label と Canvas 131 nodeBoxes を待ってから touch lifecycle を行う。次ケースのページ再読込で元データへ戻す。
+
+fix round 後の確定検証は次のとおり。
+
+- static wrapper tests: `Ran 16 tests in 0.158s`、`OK (skipped=1)`。
+- CI-equivalent real Chrome wrapper: `cards=131, failures=0, syntheticEdges=0`、最終再実行は `Ran 1 test in 26.311s`、`OK`。live wrapper は PC 4 precision の排他的 focus/shared state と mobile 4 precision × 4 lifecycle の exact case set/state を検証した。
+- library-v5 full suite: `Ran 424 tests in 28.626s`、`OK (skipped=4)`。
+- build: audit issue 0、content-audit issue 0、131 nodes / 361 edges / 569 reasons、SQLite 出力成功。既知の untracked generated outputs は worktree 内の対象を確認して除去した。
+- `node --check`: exit 0。

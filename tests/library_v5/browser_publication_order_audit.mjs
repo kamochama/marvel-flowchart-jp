@@ -356,7 +356,7 @@ async function releaseSnapshot(cdp) {
       frames:[...svg?.querySelectorAll('.release-history-era,.release-lane-row')||[]].map(signature),
       lineCount:svg?.querySelectorAll('line').length||0,edgeCount:svg?.querySelectorAll('g.edge').length||0,chronologyEdgeCount:svg?.querySelectorAll('g.chronology-edge').length||0,
       focus:[...svg?.querySelectorAll('g.release-node.focus,g.release-node.detail-focus')||[]].map(g=>g.dataset.releaseWorkId).sort(),
-      selected:audit.selected||[],detailFocus:window.marvelDetailFocusId||null,detailText:document.querySelector('#detail')?.textContent||'',
+      selected:[...(audit.selected||[])].sort(),detailFocus:window.marvelDetailFocusId||null,detailText:document.querySelector('#detail')?.textContent||'',
       relationHighlights:svg?.querySelectorAll('g.edge.hl,g.chronology-edge.hl').length||0};
   `);
 }
@@ -428,7 +428,7 @@ async function waitReleaseState(cdp, id, timeoutMs) {
       // Desktop left-click is the public detail-inspection action; goal
       // selection remains a right-click/mobile concern. Both focus and the
       // shared detail ID must nevertheless target the clicked work.
-      return snapshot.panel === "release" && snapshot.focus.includes(id) && snapshot.detailFocus === id ? snapshot : null;
+      return snapshot.panel === "release" && same(snapshot.focus, [id]) && same(snapshot.selected, []) && snapshot.detailFocus === id ? snapshot : null;
     }, timeoutMs, `release selection ${id}`);
   } catch (error) {
     throw new Error(`${error.message}; last=${JSON.stringify(last)}`);
@@ -526,22 +526,23 @@ async function runDesktopAudit(cdp, url, expected, timeoutMs) {
     if (selectedMeta?.precision !== testCase.precision) invariantFailures.push(`${testCase.name} selected precision mismatch`);
     if (after.relationHighlights !== 0) invariantFailures.push(`${testCase.name} release relation highlights ${after.relationHighlights}`);
     failures.push(...invariantFailures);
-    const releaseFocus = after.focus.includes(testCase.id) && after.detailFocus === testCase.id;
-    if (!releaseFocus) failures.push(`${testCase.name} release focus/detail did not target ${testCase.id}`);
+    const releaseFocus = same(after.focus, [testCase.id]) && same(after.selected, []) && after.detailFocus === testCase.id;
+    if (!releaseFocus) failures.push(`${testCase.name} release focus/shared selection/detail was not exclusive to ${testCase.id}`);
     if (testCase.name === "exact-day") {
       await clickSelector(cdp, '.tab[data-target="overview"]', timeoutMs);
       const overview = await poll(() => pageEvaluate(cdp, `
         const p=document.querySelector('.panel.active'),s=document.querySelector('.panel.active .svg-wrap svg'),a=window.marvelSelectionAudit?.()||{};
         const focus=[...s?.querySelectorAll('g.node.focus')||[]].map(g=>(g.querySelector(':scope > title')?.textContent||'').trim()),edges=s?.querySelectorAll('g.edge.hl,g.chronology-edge.hl').length||0;
-        return p?.id==='overview'&&window.marvelDetailFocusId===${JSON.stringify(testCase.id)}&&focus.includes(${JSON.stringify(testCase.id)})&&edges>0?{panel:p.id,selected:a.selected||[],edges,focus,detailAudit:window.marvelDetailFocusAudit?.()||null,renderType:typeof window.marvelRenderDetailFocus,nodeIds:[...s?.querySelectorAll('g.node')||[]].slice(0,3).map(g=>({id:g.dataset?.releaseWorkId||'',title:(g.querySelector(':scope > title')?.textContent||'').trim()})),hasNode:[...s?.querySelectorAll('g.node')||[]].some(g=>(g.querySelector(':scope > title')?.textContent||'').trim()===${JSON.stringify(testCase.id)})}:null;
+        focus.sort();const selected=[...(a.selected||[])].sort();
+        return p?.id==='overview'&&window.marvelDetailFocusId===${JSON.stringify(testCase.id)}&&JSON.stringify(focus)===JSON.stringify([${JSON.stringify(testCase.id)}])&&selected.length===0&&edges>0?{panel:p.id,selected,edges,focus,detailAudit:window.marvelDetailFocusAudit?.()||null,renderType:typeof window.marvelRenderDetailFocus,nodeIds:[...s?.querySelectorAll('g.node')||[]].slice(0,3).map(g=>({id:g.dataset?.releaseWorkId||'',title:(g.querySelector(':scope > title')?.textContent||'').trim()})),hasNode:[...s?.querySelectorAll('g.node')||[]].some(g=>(g.querySelector(':scope > title')?.textContent||'').trim()===${JSON.stringify(testCase.id)})}:null;
       `), timeoutMs, "overview selection round-trip");
-      if (!overview.focus.includes(testCase.id)) failures.push(`overview did not restore selected focus: ${JSON.stringify(overview)}`);
+      if (!same(overview.focus, [testCase.id]) || !same(overview.selected, [])) failures.push(`overview did not restore exclusive detail focus: ${JSON.stringify(overview)}`);
       if (overview.edges <= 0) failures.push(`overview relation highlights did not return there: ${JSON.stringify(overview)}`);
       roundTrip.release_to_overview = true;
       await clickSelector(cdp, '.tab[data-target="release"]', timeoutMs);
       const returned = await poll(async () => {
         const s = await releaseSnapshot(cdp);
-        return s.panel === "release" && s.focus.includes(testCase.id) && s.detailFocus === testCase.id ? s : null;
+        return s.panel === "release" && same(s.focus, [testCase.id]) && same(s.selected, []) && s.detailFocus === testCase.id ? s : null;
       }, timeoutMs, "overview to release round-trip");
       if (returned.relationHighlights !== 0) failures.push("release relation highlights leaked after round-trip");
       for (const field of invariant) if (!same(before[field], returned[field])) failures.push(`round-trip changed ${field}`);
@@ -549,19 +550,19 @@ async function runDesktopAudit(cdp, url, expected, timeoutMs) {
 
       await clickSelector(cdp, '.tab[data-target="chronology"]', timeoutMs);
       const chronology = await poll(() => pageEvaluate(cdp, `
-        const panel=document.querySelector('.panel.active'),svg=panel?.querySelector('.svg-wrap svg');
+        const panel=document.querySelector('.panel.active'),svg=panel?.querySelector('.svg-wrap svg'),audit=window.marvelSelectionAudit?.()||{};
         const chronologyEdges=svg?.querySelectorAll('g.chronology-edge').length||0;
         const chronologyHighlights=svg?.querySelectorAll('g.chronology-edge.hl').length||0;
-        const focus=[...svg?.querySelectorAll('g.node.focus')||[]].map(g=>(g.querySelector(':scope > title')?.textContent||'').trim());
+        const focus=[...svg?.querySelectorAll('g.node.focus')||[]].map(g=>(g.querySelector(':scope > title')?.textContent||'').trim()).sort(),selected=[...(audit.selected||[])].sort();
         const ready=panel?.id==='chronology'&&panel.dataset.lazyInitialized==='1'&&chronologyEdges > 0;
-        return ready&&window.marvelDetailFocusId===${JSON.stringify(testCase.id)}&&focus.includes(${JSON.stringify(testCase.id)})?{panel:panel.id,ready,chronologyEdges,chronologyHighlights,focus,detailFocus:window.marvelDetailFocusId}:null;
+        return ready&&window.marvelDetailFocusId===${JSON.stringify(testCase.id)}&&JSON.stringify(focus)===JSON.stringify([${JSON.stringify(testCase.id)}])&&selected.length===0?{panel:panel.id,ready,chronologyEdges,chronologyHighlights,focus,selected,detailFocus:window.marvelDetailFocusId}:null;
       `), timeoutMs, "chronology panel readiness");
       roundTrip.release_to_chronology = true;
       roundTrip.chronology = chronology;
       await clickSelector(cdp, '.tab[data-target="release"]', timeoutMs);
       const chronologyReturned = await poll(async () => {
         const snapshot = await releaseSnapshot(cdp);
-        return snapshot.panel === "release" && snapshot.focus.includes(testCase.id) && snapshot.detailFocus === testCase.id ? snapshot : null;
+        return snapshot.panel === "release" && same(snapshot.focus, [testCase.id]) && same(snapshot.selected, []) && snapshot.detailFocus === testCase.id ? snapshot : null;
       }, timeoutMs, "chronology to release round-trip");
       const chronologyFailures = [];
       if (chronologyReturned.relationHighlights !== 0) chronologyFailures.push("chronology round-trip leaked release relation highlights");
@@ -600,7 +601,7 @@ async function mobileSnapshot(cdp) {
   return pageEvaluate(cdp, `
     const audit=window.marvelCanvasAudit?.()||{},selection=window.marvelSelectionAudit?.()||{},detail=window.marvelDetailFocusAudit?.()||{};
     const wrap=document.querySelector('#release .release-view-wrap');
-    return {panel:audit.panel,active:audit.active,nodeBoxes:audit.nodeBoxes||0,selected:selection.selected||[],goals:detail.goals||selection.selected||[],detailFocus:detail.focus||null,overlaySyntheticDrawn:audit.overlaySyntheticDrawn||0,camera:audit.camera||null,wrapRect:(()=>{const r=wrap?.getBoundingClientRect();return r?{left:r.left,right:r.right,top:r.top,bottom:r.bottom}:null;})()};
+    return {panel:audit.panel,active:audit.active,nodeBoxes:audit.nodeBoxes||0,selected:[...(selection.selected||[])].sort(),goals:[...(detail.goals||selection.selected||[])].sort(),detailFocus:detail.focus||null,overlaySyntheticDrawn:audit.overlaySyntheticDrawn||0,camera:audit.camera||null,wrapRect:(()=>{const r=wrap?.getBoundingClientRect();return r?{left:r.left,right:r.right,top:r.top,bottom:r.bottom}:null;})()};
   `);
 }
 
@@ -642,10 +643,29 @@ async function selectMobile(cdp, id, timeoutMs) {
   const point = await mobilePointForWork(cdp, id, timeoutMs);
   await touchTap(cdp, point);
   try {
-    return await waitMobile(cdp, (s) => s.selected.includes(id) && s.goals.includes(id) && s.overlaySyntheticDrawn === 0, timeoutMs, `mobile selection ${id}`);
+    return await waitMobile(cdp, (s) => same(s.selected, [id]) && same(s.goals, [id]) && s.nodeBoxes === WORK_COUNT && s.overlaySyntheticDrawn === 0, timeoutMs, `mobile selection ${id}`);
   } catch (error) {
     throw new Error(`${error.message}; point=${JSON.stringify(point)}; state=${JSON.stringify(await mobileSnapshot(cdp))}`);
   }
+}
+
+async function installSyntheticMobileYearPrecisionFixture(cdp, id, year, timeoutMs) {
+  const installed = await pageEvaluate(cdp, `
+    const meta=RELEASE_META[${JSON.stringify(id)}],panel=document.getElementById('release');
+    if(!meta||!panel)return false;
+    meta.sortDate=${JSON.stringify(year)};meta.displayDate=${JSON.stringify(year)};meta.precision='year';
+    panel.innerHTML='';panel.dataset.lazyInitialized='0';panel.removeAttribute('data-release-camera-ready');
+    const initialized=window.ensureStageAViewInitialized?.('release')===true;
+    if(initialized)window.activatePanel?.('release',{fit:true,restoreSelection:false,exitFeatured:false});
+    return initialized;
+  `);
+  if (!installed) throw new Error(`could not install synthetic mobile year-only fixture for ${id}`);
+  return poll(() => pageEvaluate(cdp, `
+    const panel=document.querySelector('.panel.active'),wrap=panel?.querySelector('.release-view-wrap'),audit=window.marvelCanvasAudit?.()||{};
+    const card=[...(wrap?.querySelectorAll('g.release-node[data-release-work-id]')||[])].find(g=>g.dataset.releaseWorkId===${JSON.stringify(id)});
+    const date=card?.querySelector('.release-date'),label=[...(date?.childNodes||[])].filter(node=>node.nodeType===Node.TEXT_NODE).map(node=>node.textContent).join('').trim();
+    return panel?.id==='release'&&audit.active===true&&audit.panel==='release'&&audit.nodeBoxes===${WORK_COUNT}&&card?.dataset.releasePrecision==='year'&&label===${JSON.stringify(year)}?{id:${JSON.stringify(id)},year:${JSON.stringify(year)},precision:card.dataset.releasePrecision,label,nodeBoxes:audit.nodeBoxes}:null;
+  `), timeoutMs, `synthetic mobile year-only fixture ${id}`);
 }
 
 async function runMobileAudit(cdp, url, expected, timeoutMs) {
@@ -655,42 +675,61 @@ async function runMobileAudit(cdp, url, expected, timeoutMs) {
   const cases = [];
   try {
     await activateMobileRelease(cdp, timeoutMs);
-    const datedId = expected.ids.find((id) => expected.byId.get(id)?.release_sort_date) || expected.ids[0];
+    const available = (precision) => expected.ids.find((id) => (expected.byId.get(id)?.release_precision || "unknown") === precision);
+    const exactDayId = available("day");
+    const monthId = available("month");
+    const yearId = available("year");
     const tbdId = expected.ids.find((id) => !expected.byId.get(id)?.release_sort_date || ["none", "undated", "tbd"].includes(expected.byId.get(id)?.release_precision)) || expected.ids.at(-1);
-    const mobileCases = [["dated-touch", datedId], ["tbd-touch", tbdId]];
+    const mobileCases = [
+      { name: "exact-day-touch", precision: "day", id: exactDayId },
+      { name: "month-only-touch", precision: "month", id: monthId },
+      { name: "year-only-touch", precision: "year", id: yearId },
+      { name: "tbd-touch", precision: "none", id: tbdId },
+    ];
     for (let caseIndex = 0; caseIndex < mobileCases.length; caseIndex += 1) {
-      const [name, id] = mobileCases[caseIndex];
+      const testCase = mobileCases[caseIndex];
       if (caseIndex > 0) {
         await loadPage(cdp, url, timeoutMs);
         await activateMobileRelease(cdp, timeoutMs);
       }
+      let syntheticFixture = null;
+      if (testCase.name === "year-only-touch" && !testCase.id) {
+        const candidate = available("month") || available("day");
+        if (!candidate) throw new Error("no dated work available for the synthetic mobile year-only browser fixture");
+        const year = String(expected.byId.get(candidate)?.release_sort_date || "2026").slice(0, 4);
+        const rendered = await installSyntheticMobileYearPrecisionFixture(cdp, candidate, year, timeoutMs);
+        testCase.id = candidate;
+        syntheticFixture = { kind: "runtime-year-precision", year, rendered };
+      }
+      const { name, id, precision } = testCase;
+      if (!id) throw new Error(`no ${precision} work available for mobile publication-order audit`);
       let state = await selectMobile(cdp, id, timeoutMs);
       if (state.nodeBoxes !== WORK_COUNT) failures.push(`${name} nodeBoxes ${state.nodeBoxes} != ${WORK_COUNT}`);
-      if (!state.goals.includes(id)) failures.push(`${name} mobile goal did not target ${id}`);
+      if (!same(state.selected, [id]) || !same(state.goals, [id])) failures.push(`${name} shared mobile selection/goal was not exclusive to ${id}`);
       if (state.overlaySyntheticDrawn > 0) failures.push(`${name} synthetic overlay drawn: ${state.overlaySyntheticDrawn}`);
-      cases.push({ name: `${name}-select`, id, state });
+      cases.push({ name: `${name}-select`, id, precision, syntheticFixture, state });
       const selectedPoint = await mobilePointForWork(cdp, id, timeoutMs);
       await touchTap(cdp, selectedPoint);
-      state = await waitMobile(cdp, (s) => !s.selected.includes(id) && s.overlaySyntheticDrawn === 0, timeoutMs, `${name} re-tap clear`);
+      state = await waitMobile(cdp, (s) => same(s.selected, []) && same(s.goals, []) && s.nodeBoxes === WORK_COUNT && s.overlaySyntheticDrawn === 0, timeoutMs, `${name} re-tap clear`);
       if (state.overlaySyntheticDrawn > 0) failures.push(`${name} re-tap synthetic overlay drawn: ${state.overlaySyntheticDrawn}`);
-      cases.push({ name: `${name}-re-tap`, id, state });
+      cases.push({ name: `${name}-re-tap`, id, precision, syntheticFixture, state });
       await selectMobile(cdp, id, timeoutMs);
       const background = await mobileBlankPoint(cdp, timeoutMs);
       await touchTap(cdp, background);
-      state = await waitMobile(cdp, (s) => s.selected.length === 0 && s.overlaySyntheticDrawn === 0, timeoutMs, `${name} background clear`);
+      state = await waitMobile(cdp, (s) => same(s.selected, []) && same(s.goals, []) && s.nodeBoxes === WORK_COUNT && s.overlaySyntheticDrawn === 0, timeoutMs, `${name} background clear`);
       if (state.overlaySyntheticDrawn > 0) failures.push(`${name} background synthetic overlay drawn: ${state.overlaySyntheticDrawn}`);
-      cases.push({ name: `${name}-background`, id, state });
+      cases.push({ name: `${name}-background`, id, precision, syntheticFixture, state });
       state = await selectMobile(cdp, id, timeoutMs);
       const dragStart = await mobilePointForWork(cdp, id, timeoutMs);
       const dragEnd = { x: Math.min(370, dragStart.x + 70), y: Math.min(830, dragStart.y + 80) };
       const cameraBeforeDrag = state.camera;
       await touchDrag(cdp, dragStart, dragEnd);
       try {
-        state = await waitMobile(cdp, (s) => s.selected.includes(id) && s.goals.includes(id) && s.nodeBoxes === WORK_COUNT && s.overlaySyntheticDrawn === 0 && !same(s.camera, cameraBeforeDrag), timeoutMs, `${name} drag-end selection preservation`);
+        state = await waitMobile(cdp, (s) => same(s.selected, [id]) && same(s.goals, [id]) && s.nodeBoxes === WORK_COUNT && s.overlaySyntheticDrawn === 0 && !same(s.camera, cameraBeforeDrag), timeoutMs, `${name} drag-end selection preservation`);
       } catch (error) {
         throw new Error(`${error.message}; start=${JSON.stringify(dragStart)}; end=${JSON.stringify(dragEnd)}; before=${JSON.stringify(cameraBeforeDrag)}; after=${JSON.stringify(await mobileSnapshot(cdp))}`);
       }
-      cases.push({ name: `${name}-drag-end`, id, state });
+      cases.push({ name: `${name}-drag-end`, id, precision, syntheticFixture, state });
     }
   } finally {
     await clearMobileViewport(cdp, timeoutMs);
@@ -743,7 +782,7 @@ async function runAudit(args) {
     summary: { cards: desktop?.baseline?.cards?.length || 0, cases: cases.length, failures: failures.length, syntheticEdges },
     structural: { cards: desktop?.baseline?.cards?.length || 0, duplicate_ids: desktop?.baseline ? [...new Set(desktop.baseline.cards)].length !== desktop.baseline.cards.length : true, edge_count: desktop?.baseline?.edgeCount || 0, chronology_edge_count: desktop?.baseline?.chronologyEdgeCount || 0 },
     focus: {
-      desktop: desktopCases.map((item) => ({ id: item.id, focused: item.after?.focus?.includes(item.id) || false, detailWorkId: item.after?.detailFocus || null })),
+      desktop: desktopCases.map((item) => ({ id: item.id, focused: same(item.after?.focus || [], [item.id]), focusIds: item.after?.focus || [], selected: item.after?.selected || [], detailWorkId: item.after?.detailFocus || null })),
       mobile: (mobile?.cases || []).filter((item) => item.name.endsWith("-select")).map((item) => ({ id: item.id, goals: item.state?.goals || [], detailWorkId: item.state?.detailFocus || null })),
     },
     geometry: { viewBox: desktop?.baseline?.viewBox || null, lineCount: desktop?.baseline?.lineCount || 0, failures: failures.filter((failure) => /changed|geometry|viewBox|path|axis|frame|lineCount/.test(failure)) },

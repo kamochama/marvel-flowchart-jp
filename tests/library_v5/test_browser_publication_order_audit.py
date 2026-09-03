@@ -205,6 +205,29 @@ class BrowserPublicationOrderAuditTests(unittest.TestCase):
         ):
             self.assertIn(term, desktop)
 
+    def test_runner_requires_exclusive_desktop_focus_and_no_goal_mutation(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        desktop = source[
+            source.index("async function waitReleaseState") : source.index("async function setMobileViewport")
+        ]
+        self.assertIn("same(snapshot.focus, [id])", desktop)
+        self.assertIn("same(snapshot.selected, [])", desktop)
+        self.assertIn("same(after.focus, [testCase.id])", desktop)
+        self.assertIn("same(after.selected, [])", desktop)
+
+    def test_runner_mobile_covers_every_publication_precision_with_year_fixture(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("async function installSyntheticMobileYearPrecisionFixture", source)
+        mobile = source[
+            source.index("async function installSyntheticMobileYearPrecisionFixture") : source.index(
+                "async function runAudit"
+            )
+        ]
+        self.assertIn("ensureStageAViewInitialized?.('release')", mobile)
+        self.assertIn("installSyntheticMobileYearPrecisionFixture", source[source.index("async function runMobileAudit") :])
+        for name in ("exact-day-touch", "month-only-touch", "year-only-touch", "tbd-touch"):
+            self.assertIn(name, mobile)
+
     def test_runner_checks_mobile_canvas_selection_lifecycle(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         for term in (
@@ -296,6 +319,30 @@ class BrowserPublicationOrderAuditTests(unittest.TestCase):
         )
         self.assertTrue(report["round_trip"]["release_to_chronology"])
         self.assertTrue(report["round_trip"]["chronology_to_release"])
+        desktop_precision_cases = {
+            case["name"]: case
+            for case in report["cases"]
+            if case["name"] in {"exact-day", "month-only", "year-only", "tbd"}
+        }
+        self.assertEqual(set(desktop_precision_cases), {"exact-day", "month-only", "year-only", "tbd"})
+        for case in desktop_precision_cases.values():
+            self.assertEqual(case["after"]["focus"], [case["id"]])
+            self.assertEqual(case["after"]["selected"], [])
+        expected_mobile_states = {
+            f"{precision}-touch-{state}"
+            for precision in ("exact-day", "month-only", "year-only", "tbd")
+            for state in ("select", "re-tap", "background", "drag-end")
+        }
+        mobile_cases = {case["name"]: case for case in report["mobile"]["cases"]}
+        self.assertEqual(set(mobile_cases), expected_mobile_states)
+        for name, case in mobile_cases.items():
+            self.assertEqual(case["state"]["overlaySyntheticDrawn"], 0)
+            self.assertEqual(case["state"]["nodeBoxes"], 131)
+            if name.endswith(("-select", "-drag-end")):
+                self.assertEqual(case["state"]["selected"], [case["id"]])
+                self.assertEqual(case["state"]["goals"], [case["id"]])
+            else:
+                self.assertEqual(case["state"]["selected"], [])
         self.assertEqual(report["failures"], [])
 
 
