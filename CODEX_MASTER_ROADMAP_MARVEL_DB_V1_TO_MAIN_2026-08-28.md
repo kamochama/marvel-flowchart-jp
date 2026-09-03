@@ -592,5 +592,6 @@ Verification at this boundary:
 - graph/export compatibility: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
 - real Chrome/CDP selection `131 × 2`, interaction `6/6`, chronology `7` cases, and publication order `131` cards/`21` cases all pass with zero failures/mismatches and zero synthetic edges;
 - GitHub Actions run `33754915756` passed all five required jobs after rerunning the initial hosted browser-interaction timeout.
+- Pages deployment run `33755956523` succeeded; the public site and generated JSON returned HTTP `200` with `131` nodes, `355` edges, and `562` reasons.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave005.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave005.md`. Remaining legacy relation rows, including Across→Beyond, X-Men: The Animated Series → X-Men '97 S1, and other Spider-Verse/legacy-TV queues, require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.

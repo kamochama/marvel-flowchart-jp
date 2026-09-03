@@ -133,6 +133,7 @@ The latest integrated production/audit baseline after PR #55 is:
 
 - `main` `cf4da128b5b8783a3d635b48470dac413ac35b1d` (merge commit for PR #55)
 - PR #55 required checks: GREEN (`test`, `browser-selection-audit`, `browser-interaction-audit`, `browser-chronology-audit`, and `browser-publication-order-audit`; the first browser-interaction attempt timed out on a representative selection and the failed job rerun passed)
+- Pages deployment run `33755956523` for the docs-integrated baseline succeeded; the public site and generated JSON returned HTTP `200`.
 - 447 / 447 library-v5 unit tests PASS locally (4 browser tests are environment-gated skips in the ordinary suite)
 - real Chrome/CDP audit: 131 works × 2 public tiers, exact-set mismatches `0`
 - real Chrome/CDP interaction audit: 6 / 6 representative cases PASS

@@ -193,6 +193,7 @@ Fresh verification for the merged PR #55 baseline:
 - graph/export: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
 - real Chrome/CDP selection `131 × 2` with zero exact-set mismatches; interaction `6/6`; chronology `7` cases with zero failures; publication order `131` cards/`21` cases with zero failures and zero synthetic edges;
 - GitHub Actions run `33754915756` passed all five required jobs after rerunning the initial hosted browser-interaction timeout.
+- Pages deployment run `33755956523` succeeded; `https://kamochama.github.io/marvel-flowchart-jp/` and its `data/derived/flowchart.json` returned HTTP `200` with `131` nodes, `355` edges, and `562` reasons.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave005.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave005.md`. Across→Beyond, X-Men: The Animated Series → X-Men '97 S1, and other legacy relation rows remain a separate evidence-backed queue; this batch is not a claim that the entire relation audit is complete.
 
