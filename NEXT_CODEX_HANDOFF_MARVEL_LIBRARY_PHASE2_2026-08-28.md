@@ -106,6 +106,21 @@ Fresh verification on merged `main` at `04ff92b633f4da5756f58c96de7b321dac4bb02c
 
 No canonical CSV or persistent review ledger changed. The next bounded work is a written chronology/publication-order display contract and its separate audit; do not infer new semantics from this interaction-test integration.
 
+## 0.1.3 Production baseline after the 2026-09-03 variant fan-out audit
+
+PR #45 (`https://github.com/kamochama/marvel-flowchart-jp/pull/45`) is integrated into `main` at `040c2842a0bf4436ab43194be87cfaff03a283b9`. It adds the source-backed `entity-x-dw-wolverine-variant-2024` entity and a confirmed `variant_of` relation to the original Logan/Wolverine entity. The old Deadpool & Wolverine appearance is retained as `superseded`, while a new source-verified appearance records the recruited variant. This preserves the explicit Logan story link but removes six unsupported shared-entity pair projections from Deadpool & Wolverine; Loki variant splitting remains deferred pending qualifying identity evidence.
+
+Fresh verification for the merged PR #45 baseline:
+
+- `437` / `437` library-v5 tests pass locally (`4` environment-gated browser skips);
+- bundled-Python build: audit/content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- graph/export: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP selection: `131 × 2`, exact-set mismatches `0`;
+- interaction: `6 / 6` pass; chronology: `7` cases, failures `0`; publication order: `131` cards, `21` cases, failures `0`, synthetic edges `0`;
+- GitHub Actions run `33734185633`: `test`, selection, interaction, chronology, and publication-order checks all pass.
+
+The canonical variant boundary is documented in `docs/superpowers/reviews/2026-09-03-marvel-variant-fanout-audit.md`; the official screenplay evidence distinguishes this Wolverine as “the other”/“wrong” Wolverine rather than the exhumed Logan. No Earth number, continuity identity, or new TVA transition was inferred. The next work remains a separately bounded evidence-backed relation/source queue or a Loki identity audit.
+
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
 The static viewer now consumes the committed DB-derived artifact `data/derived/flowchart.json`; the browser does not open SQLite. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups, with all eligible edges visible by default and selection limited to presentation styling.

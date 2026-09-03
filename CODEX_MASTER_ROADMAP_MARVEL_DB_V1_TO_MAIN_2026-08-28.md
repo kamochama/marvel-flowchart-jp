@@ -505,3 +505,17 @@ PR #42 (`https://github.com/kamochama/marvel-flowchart-jp/pull/42`) integrated t
 The GitHub Pages deployment for the merge commit completed with `status=built`, `public=true`, and `https_enforced=true`. The public URL is `https://kamochama.github.io/marvel-flowchart-jp/`, which returned HTTP `200`; the served HTML contains the release relationship-edge guard and release-card attributes. Canonical `data/library/**`, `data/content_audit/reviews.csv`, and derived SQLite/export inputs were unchanged by this milestone.
 
 This is now the production viewer baseline. Any subsequent viewer or semantic change requires its own bounded plan, regression contract, full verification, and explicit merge boundary.
+
+## 17. Variant fan-out audit — production baseline (2026-09-03)
+
+PR #45 (`https://github.com/kamochama/marvel-flowchart-jp/pull/45`) integrated the bounded Deadpool & Wolverine variant fan-out audit into `main` at `040c2842a0bf4436ab43194be87cfaff03a283b9`. The source-backed model introduces `entity-x-dw-wolverine-variant-2024`, a confirmed `variant_of` relation to the original Logan/Wolverine entity, and a new source-verified Deadpool & Wolverine appearance. The pre-existing appearance is retained as `superseded` with an auditable review transition. The explicit Logan story relation remains; six unsupported shared-entity work-pair projections are removed, changing compatibility from `361/569` to `355/562`. Loki is intentionally not split because a qualifying identity/variant source is not yet registered.
+
+Verification at this production boundary:
+
+- bundled-Python full suite: `437` tests pass, `4` environment-gated skips;
+- build/audit: audit issues `0`, content-audit issues `0`, SQLite FK rows `0`, `integrity_check=ok`;
+- graph: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP: selection `131 × 2` with zero exact-set mismatches; interaction `6/6`; chronology `7` cases with zero failures; publication order `131` cards/`21` cases with zero failures and zero synthetic edges;
+- GitHub Actions run `33734185633`: all five required jobs passed.
+
+The implementation plan and review are `docs/superpowers/plans/2026-09-03-marvel-variant-fanout-audit.md` and `docs/superpowers/reviews/2026-09-03-marvel-variant-fanout-audit.md`. The official screenplay evidence distinguishes the recruited Wolverine from the exhumed Logan; no unsupported Earth, continuity, or TVA-transition semantics were added. Future source/relation batches require their own bounded plan, regression contract, evidence/review audit, and merge gate.
