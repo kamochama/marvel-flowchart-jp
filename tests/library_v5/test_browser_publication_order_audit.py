@@ -112,6 +112,12 @@ class BrowserPublicationOrderAuditTests(unittest.TestCase):
             job,
         )
 
+    def test_wrapper_passes_bounded_runner_timeout(self) -> None:
+        source = (ROOT / "tests" / "library_v5" / "test_browser_publication_order_audit.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertRegex(source, r'"--timeout-ms",\s*"8000"')
+
     def test_runner_help_declares_geometry_and_synthetic_contract(self) -> None:
         result = subprocess.run(
             ["node", str(RUNNER), "--help"],
@@ -293,7 +299,16 @@ class BrowserPublicationOrderAuditTests(unittest.TestCase):
             "Chrome/Chromium is required when MARVEL_BROWSER_PUBLICATION_ORDER_AUDIT=1",
         )
         result = subprocess.run(
-            ["node", str(RUNNER), "--root", str(ROOT), "--chrome", str(chrome)],
+            [
+                "node",
+                str(RUNNER),
+                "--root",
+                str(ROOT),
+                "--chrome",
+                str(chrome),
+                "--timeout-ms",
+                "8000",
+            ],
             cwd=ROOT,
             capture_output=True,
             text=True,
