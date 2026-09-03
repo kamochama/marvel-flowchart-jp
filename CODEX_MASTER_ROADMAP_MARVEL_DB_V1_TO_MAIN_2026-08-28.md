@@ -13,6 +13,8 @@ If this roadmap conflicts with a newer explicit user instruction, the newer user
 
 > **Integrated audit note (2026-09-02):** PR #40 (browser interaction state audit) is also merged into `main` at `04ff92b633f4da5756f58c96de7b321dac4bb02c`; it adds representative PC interaction coverage without changing semantic code or canonical data.
 
+> **Current wave008 note (2026-09-03):** PR #62 is merged into `main` at `a38a9e68ed463ab5dc6f7590271486ca0816b8c4`; it is the current semantic baseline. See §25 for the verified relation-evidence promotion results.
+
 ---
 
 ## 1. End goal
@@ -627,3 +629,19 @@ Verification at this boundary:
 - GitHub Actions run `33762363911` passed all five required jobs; Pages deployment run `33762986302` succeeded and the public site and generated JSON returned HTTP `200` with `131` nodes, `355` edges, and `562` reasons.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave007.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave007.md`. Other Spider-Man, X-Men/FOX, Marvel TV, and remaining relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
+
+## 25. Relation evidence promotion wave008 — production baseline (2026-09-03)
+
+PR #62 (`https://github.com/kamochama/marvel-flowchart-jp/pull/62`) integrated the eighth bounded relation-evidence promotion wave into `main` at `a38a9e68ed463ab5dc6f7590271486ca0816b8c4`. It promotes four existing relations: *Doctor Strange* → *Doctor Strange in the Multiverse of Madness*, *Black Panther: Wakanda Forever* → *Ironheart*, *What If...?* Season 1 → *Marvel Zombies*, and *I Am Groot* Season 1 → Season 2. Existing IDs and semantics are preserved; each relation now has relation-specific official-source evidence and a `legacy_seed -> source_verified` review transition. No release/status, chronology, identity, Earth, multiverse-transition, or new work-pair fact was inferred. The *Spider-Man* (2002) → *Spider-Man 2* relation remains deferred under the strict evidence boundary.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `453` tests pass, `4` environment-gated skips;
+- build/audit: audit and content-audit issues `0`, SQLite FK rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`39` source_verified, `122` legacy_seed, `3` superseded); sources/evidence/reviews `76` / `166` / `140`;
+- graph/export compatibility: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- independent connectivity audit: `pass=47`, `deferred=528`, projection mismatches `0`, reason orphans `0`, unsupported transition edges `0`;
+- real Chrome/CDP selection `131 × 2`, interaction `6/6`, chronology `7` cases, and publication order `131` cards/`21` cases all pass with zero failures/mismatches and zero synthetic edges;
+- GitHub Actions run `33765287553` passed all five required jobs after rerunning one transient Chrome target timeout; Pages deployment run `33766116228` succeeded and GitHub Pages reports status `built` for the public site.
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave008.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave008.md`. Remaining legacy relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
