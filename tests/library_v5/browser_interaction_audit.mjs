@@ -318,9 +318,11 @@ async function snapshot(cdp) {
     const active=document.querySelector('.panel.active');
     const svg=active?.querySelector('.svg-wrap svg');
     const canvasAudit=window.marvelCanvasAudit?.()||{};
+    const selectionAudit=window.marvelSelectionAudit?.()||{};
     const title=g=>(g.querySelector(':scope > title')?.textContent||'').trim();
     return {
       panel:active?.id||null,
+      selected:selectionAudit.selected||[],
       focus:[...(svg?.querySelectorAll('g.node.focus')||[])].map(title).sort(),
       dim:!!svg?.classList.contains('dim'),
       chronologyHighlighted:svg?.querySelectorAll('g.chronology-edge.hl').length||0,
@@ -339,6 +341,39 @@ async function waitFor(cdp, predicate, timeoutMs, label) {
 async function clickSelector(cdp, selector, timeoutMs) {
   const point = await poll(() => pointForSelector(cdp, selector), timeoutMs, `selector ${selector}`);
   await clickPoint(cdp, point);
+}
+
+async function setMobileViewport(cdp, timeoutMs) {
+  await cdp.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  await poll(() => pageEvaluate(cdp, "return window.matchMedia('(max-width:760px)').matches"), timeoutMs, "mobile viewport readiness");
+}
+
+async function clearMobileViewport(cdp, timeoutMs) {
+  await cdp.send("Emulation.clearDeviceMetricsOverride");
+  await poll(() => pageEvaluate(cdp, "return !window.matchMedia('(max-width:760px)').matches"), timeoutMs, "desktop viewport restoration");
+}
+
+async function activateMobilePanel(cdp, target, timeoutMs) {
+  await clickSelector(cdp, "#mobileAreaButton", timeoutMs);
+  await clickSelector(cdp, `.mobile-area-sheet [data-mobile-target="${target}"]`, timeoutMs);
+  await poll(() => pageEvaluate(cdp, `return document.querySelector('.panel.active')?.id===${JSON.stringify(target)}`), timeoutMs, `${target} panel activation`);
+}
+
+async function pointForMobileWork(cdp, panel, workId) {
+  return pageEvaluate(cdp, `
+    const wrap=document.querySelector(${JSON.stringify(`#${panel} .svg-wrap`)});
+    if(!wrap)return null;
+    wrap.scrollIntoView({block:"center",inline:"center"});
+    const audit=window.marvelCanvasAudit?.()||{};
+    const cs=wrap&&mobileCanvasStates.get(wrap),st=wrap&&ensureMobileViewBoxState(wrap);
+    const node=cs?.nodeBoxes?.find(item=>item.id===${JSON.stringify(workId)});
+    if(audit.active!==true||audit.panel!==${JSON.stringify(panel)}||!cs||!st||!node)return null;
+    const b=node.box,aspect=mobileViewportAspect(wrap,st),nw=Math.min(st.vbW,Math.max(b.w*8,b.h*8*aspect)),nh=nw/aspect;
+    setMobileViewBox(wrap,st,b.x+b.w/2-nw/2,b.y+b.h/2-nh/2,nw,nh);applyView(wrap);
+    const rect=wrap.getBoundingClientRect(),m=mobileViewBoxMetrics(wrap,st),x=rect.left+m.offsetX+(b.x+b.w/2-st.vbX)*m.pxPerWorld,y=rect.top+m.offsetY+(b.y+b.h/2-st.vbY)*m.pxPerWorld;
+    if(x<rect.left||x>rect.right||y<rect.top||y>rect.bottom)return null;
+    return {x,y};
+  `);
 }
 
 async function selectRepresentative(cdp, timeoutMs) {
@@ -404,11 +439,32 @@ async function runAudit(args) {
       await waitFor(cdp, (state) => state.panel === "overview" && state.focus.includes(CHRONOLOGY_WORK), timeoutMs, "overview focus restore");
     }));
     cases.push(await runCase(cdp, staticServer.url, timeoutMs, "release-round-trip", async () => {
+      try {
+        await setMobileViewport(cdp, timeoutMs);
+        await poll(() => pageEvaluate(cdp, `
+          const canvasAudit=window.marvelCanvasAudit?.()||{};
+          return canvasAudit.active === true && canvasAudit.panel === "overview";
+        `), timeoutMs, "mobile overview Canvas readiness");
+        await activateMobilePanel(cdp, "release", timeoutMs);
+        await poll(() => pageEvaluate(cdp, `
+          const canvasAudit=window.marvelCanvasAudit?.()||{};
+          return canvasAudit.active === true && canvasAudit.panel === "release";
+        `), timeoutMs, "mobile release Canvas readiness");
+        const point = await poll(() => pointForMobileWork(cdp, "release", REPRESENTATIVE_WORK), timeoutMs, `mobile release work ${REPRESENTATIVE_WORK}`);
+        await clickPoint(cdp, point);
+        await waitFor(cdp, (state) => state.panel === "release" && state.selected.includes(REPRESENTATIVE_WORK) && state.overlaySyntheticDrawn === 0, timeoutMs, "mobile release selection without synthetic edges");
+      } finally {
+        await clearMobileViewport(cdp, timeoutMs);
+      }
+      // Preserve the original desktop release round-trip after the mobile
+      // Canvas assertion. Reloading gives it the same clean selection state as
+      // the historical case while retaining the desktop interaction coverage.
+      await loadPage(cdp, staticServer.url, timeoutMs);
       await selectRepresentative(cdp, timeoutMs);
       await clickSelector(cdp, '.tab[data-target="release"]', timeoutMs);
-      await waitFor(cdp, (state) => state.panel === "release" && state.focus.includes(REPRESENTATIVE_WORK) && state.overlaySyntheticDrawn === 0, timeoutMs, "release focus repaint without mobile synthetic edges");
+      await waitFor(cdp, (state) => state.panel === "release" && state.focus.includes(REPRESENTATIVE_WORK), timeoutMs, "release focus repaint");
       await clickSelector(cdp, '.tab[data-target="overview"]', timeoutMs);
-      await waitFor(cdp, (state) => state.panel === "overview" && state.focus.includes(REPRESENTATIVE_WORK), timeoutMs, "overview focus restore after release");
+      await waitFor(cdp, (state) => state.panel === "overview" && state.focus.includes(REPRESENTATIVE_WORK), timeoutMs, "release focus restore");
     }));
     cases.push(await runCase(cdp, staticServer.url, timeoutMs, "side-tab-round-trip", async () => {
       await selectRepresentative(cdp, timeoutMs);
