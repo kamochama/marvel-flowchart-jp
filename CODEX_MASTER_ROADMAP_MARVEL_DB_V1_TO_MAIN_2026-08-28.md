@@ -15,6 +15,8 @@ If this roadmap conflicts with a newer explicit user instruction, the newer user
 
 > **Current wave008 note (2026-09-03):** PR #62 is merged into `main` at `a38a9e68ed463ab5dc6f7590271486ca0816b8c4`; it is the current semantic baseline. See §25 for the verified relation-evidence promotion results.
 
+> **Current wave009 note (2026-09-04):** PR #64 is merged into `main` at `227d589917fdf05610bb22f072aaf076151262bb`; it is the current semantic baseline. See §26 for the verified relation-evidence promotion results.
+
 ---
 
 ## 1. End goal
@@ -645,3 +647,19 @@ Verification at this boundary:
 - GitHub Actions run `33765287553` passed all five required jobs after rerunning one transient Chrome target timeout; Pages deployment run `33766116228` succeeded and GitHub Pages reports status `built` for the public site.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave008.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave008.md`. Remaining legacy relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
+
+## 26. Relation evidence promotion wave009 — production baseline (2026-09-04)
+
+PR #64 (`https://github.com/kamochama/marvel-flowchart-jp/pull/64`) integrated the ninth bounded relation-evidence promotion wave into `main` at `227d589917fdf05610bb22f072aaf076151262bb`. It promotes four existing relations: *Avengers: Endgame* → *Spider-Man: Far From Home*, *WandaVision* → *Doctor Strange in the Multiverse of Madness*, *Ant-Man* → *Ant-Man and the Wasp*, and *X-Men: First Class* → *X-Men: Days of Future Past*. Existing IDs and semantics are preserved; each relation now has relation-specific official-source evidence and a `legacy_seed -> source_verified` review transition. No release/status, chronology, identity, Earth, multiverse-transition, or new work-pair fact was inferred.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `455` tests pass, `4` environment-gated skips;
+- build/audit: audit and content-audit issues `0`, SQLite FK rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`43` source_verified, `118` legacy_seed, `3` superseded); sources/evidence/reviews `80` / `170` / `144`;
+- graph/export compatibility: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- independent connectivity audit: `pass=51`, `deferred=524`, projection mismatches `0`, reason orphans `0`, unsupported transition edges `0`;
+- real Chrome/CDP selection `131 × 2`, interaction `6/6`, chronology `7` cases, and publication order `131` cards/`21` cases all pass with zero failures/mismatches and zero synthetic edges;
+- GitHub Actions run `33777200529` passed all five required jobs after rerunning transient interaction and publication-order harness failures; Pages deployment run `33778256429` succeeded and GitHub Pages reports status `built` for `https://kamochama.github.io/marvel-flowchart-jp/`.
+
+The plan and review are `docs/superpowers/plans/2026-09-04-marvel-relation-evidence-promotion-wave009.md` and `docs/superpowers/reviews/2026-09-04-marvel-relation-evidence-promotion-wave009.md`. Remaining legacy relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.

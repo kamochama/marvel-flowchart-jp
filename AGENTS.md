@@ -6,8 +6,8 @@ This file defines persistent working rules for Codex and other coding agents ope
 
 - Repository: `kamochama/marvel-flowchart-jp`.
 - Production branch: `main`.
-- Latest semantic production baseline after PR #62 is `a38a9e68ed463ab5dc6f7590271486ca0816b8c4`.
-- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), PR #38 (all-work browser selection audit), PR #40 (browser interaction state audit), PR #45 (Deadpool & Wolverine variant fan-out audit), PR #47 (direct relation evidence promotion wave001), PR #49 (direct relation evidence promotion wave002), PR #51 (direct relation evidence promotion wave003), PR #53 (direct relation evidence promotion wave004), PR #55 (direct relation evidence promotion wave005), PR #58 (direct relation evidence promotion wave006), PR #60 (direct relation evidence promotion wave007), and PR #62 (direct relation evidence promotion wave008) are merged into `main`.
+- Latest semantic production baseline after PR #64 is `227d589917fdf05610bb22f072aaf076151262bb`.
+- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), PR #38 (all-work browser selection audit), PR #40 (browser interaction state audit), PR #45 (Deadpool & Wolverine variant fan-out audit), PR #47 (direct relation evidence promotion wave001), PR #49 (direct relation evidence promotion wave002), PR #51 (direct relation evidence promotion wave003), PR #53 (direct relation evidence promotion wave004), PR #55 (direct relation evidence promotion wave005), PR #58 (direct relation evidence promotion wave006), PR #60 (direct relation evidence promotion wave007), PR #62 (direct relation evidence promotion wave008), and PR #64 (direct relation evidence promotion wave009) are merged into `main`.
 - PR #30 promoted 27 release/status facts with exact evidence and review transitions; 240 facts remain deferred and 2 remain in explicit conflict.
 - There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
 - During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
@@ -129,12 +129,12 @@ Examples already established:
 
 ## Current compatibility invariants
 
-The latest integrated production/audit baseline after PR #62 is:
+The latest integrated production/audit baseline after PR #64 is:
 
-- `main` `a38a9e68ed463ab5dc6f7590271486ca0816b8c4` (integrated PR #62)
-- PR #62 required checks: GREEN (`test`, `browser-selection-audit`, `browser-interaction-audit`, `browser-chronology-audit`, and `browser-publication-order-audit`)
-- Pages deployment run `33766116228` for the wave008 baseline succeeded; GitHub Pages API reports status `built` for the public site.
-- 453 / 453 library-v5 unit tests PASS locally (4 browser tests are environment-gated skips in the ordinary suite)
+- `main` `227d589917fdf05610bb22f072aaf076151262bb` (integrated PR #64)
+- PR #64 required checks: GREEN (`test`, `browser-selection-audit`, `browser-interaction-audit`, `browser-chronology-audit`, and `browser-publication-order-audit`; two transient browser harness failures were rerun successfully)
+- Pages deployment run `33778256429` for the wave009 baseline succeeded; GitHub Pages API reports status `built` for the public site.
+- 455 / 455 library-v5 unit tests PASS locally (4 browser tests are environment-gated skips in the ordinary suite)
 - real Chrome/CDP audit: 131 works × 2 public tiers, exact-set mismatches `0`
 - real Chrome/CDP interaction audit: 6 / 6 representative cases PASS
 - real Chrome/CDP chronology audit: 7 cases, failures `0`
@@ -145,11 +145,11 @@ The latest integrated production/audit baseline after PR #62 is:
 - SQLite integrity: `ok`
 - releases: 138 rows (14 `source_verified`, 124 `legacy_seed`)
 - production-status assertions: 131 rows (13 `source_verified`, 118 `legacy_seed`)
-- work relations: 164 rows (39 `source_verified`, 122 `legacy_seed`, 3 `superseded`)
-- sources: 76
-- evidence: 166
-- reviews: 140
-- independent connectivity audit: `pass=47`, `deferred=528`, projection mismatches `0`, reason orphans `0`, unsupported transition edges `0`
+- work relations: 164 rows (43 `source_verified`, 118 `legacy_seed`, 3 `superseded`)
+- sources: 80
+- evidence: 170
+- reviews: 144
+- independent connectivity audit: `pass=51`, `deferred=524`, projection mismatches `0`, reason orphans `0`, unsupported transition edges `0`
 - `work_edges_all`: 355
 - `work_pair_reasons`: 562
 - prewatch edges: 199
@@ -162,7 +162,7 @@ These numbers document the checkpoint. They are not frozen targets except where 
 
 ## Current-plan completion and production integration gate
 
-The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, the full release/status evidence audit (PR #30), the HTML design/operation debugging pass (PR #32), the all-work browser selection audit (PR #38), the representative browser interaction-state audit (PR #40), the Deadpool & Wolverine variant fan-out audit (PR #45), direct relation evidence promotion waves001–007 (PRs #47, #49, #51, #53, #55, #58, and #60), and direct relation evidence promotion wave008 (PR #62) are integrated into `main`. The next viewer or semantic change must use its own bounded plan, RED/UI regression contract, evidence/review audit where applicable, and full verification.
+The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, the full release/status evidence audit (PR #30), the HTML design/operation debugging pass (PR #32), the all-work browser selection audit (PR #38), the representative browser interaction-state audit (PR #40), the Deadpool & Wolverine variant fan-out audit (PR #45), direct relation evidence promotion waves001–007 (PRs #47, #49, #51, #53, #55, #58, and #60), direct relation evidence promotion wave008 (PR #62), and direct relation evidence promotion wave009 (PR #64) are integrated into `main`. The next viewer or semantic change must use its own bounded plan, RED/UI regression contract, evidence/review audit where applicable, and full verification.
 
 For every future branch:
 
