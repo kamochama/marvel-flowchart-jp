@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `1d6c2c04571fbdf124bc2530e92c390808b5345f` (PR #51); latest integrated audit baseline: `1d6c2c04571fbdf124bc2530e92c390808b5345f` (PR #51)
+- latest semantic baseline commit: `e1b352a6345de5c2783544ac585a547fdc635f72` (PR #53); latest integrated audit baseline: `e1b352a6345de5c2783544ac585a547fdc635f72` (PR #53)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -165,6 +165,21 @@ Fresh verification for the merged PR #51 baseline:
 - GitHub Actions run `33749066246` passed all five required jobs after rerunning the initial hosted chronology timeout; Pages deployment run `33750089599` succeeded and the public URL returned HTTP `200`.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave003.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave003.md`. Across→Beyond, X-Men: The Animated Series → X-Men '97 S1, and other legacy relation rows remain a separate evidence-backed queue; this batch is not a claim that the entire relation audit is complete.
+
+## 0.1.7 Production baseline after the 2026-09-03 relation evidence wave004
+
+PR #53 (`https://github.com/kamochama/marvel-flowchart-jp/pull/53`) is integrated into `main` at `e1b352a6345de5c2783544ac585a547fdc635f72`. It promotes four existing relations using official Disney or Marvel sources: *Hawkeye* → *Echo* as a spinoff, *Daredevil: Born Again* Season 1 → Season 2 as a sequel, *Daredevil: Born Again* Season 2 → *The Punisher: One Last Kill* as an indirect crossover, and *The Punisher* Season 1 → Season 2 as a sequel. Existing IDs, directions, relation kinds, directness, continuity scope, and certainty values are preserved; each transition is recorded as `legacy_seed -> source_verified` with exact evidence and review rows. No release/status, chronology, identity, multiverse-transition, or new work-pair fact was added.
+
+Fresh verification for the merged PR #53 baseline:
+
+- `445` / `445` library-v5 tests pass locally (`4` environment-gated browser skips);
+- bundled-Python build: audit/content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`22` source_verified, `139` legacy_seed, `3` superseded); sources/evidence/reviews `59` / `149` / `123`;
+- graph/export: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP selection `131 × 2` with zero exact-set mismatches; interaction `6/6`; chronology `7` cases with zero failures; publication order `131` cards/`21` cases with zero failures and zero synthetic edges;
+- GitHub Actions run `33752229933` passed all five required jobs after rerunning the initial hosted browser-selection timeout.
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave004.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave004.md`. Across→Beyond, X-Men: The Animated Series → X-Men '97 S1, and other legacy relation rows remain a separate evidence-backed queue; this batch is not a claim that the entire relation audit is complete.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 

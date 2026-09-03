@@ -564,3 +564,18 @@ Verification at this boundary:
 - GitHub Actions run `33749066246` passed all five required jobs after rerunning the initial hosted chronology timeout; Pages run `33750089599` succeeded and the public URL returned HTTP `200`.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave003.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave003.md`. Remaining legacy relation rows, including the Daredevil/Echo/Punisher and Spider-Verse queues, require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
+
+## 21. Relation evidence promotion wave004 — production baseline (2026-09-03)
+
+PR #53 (`https://github.com/kamochama/marvel-flowchart-jp/pull/53`) integrated the fourth bounded relation-evidence promotion wave into `main` at `e1b352a6345de5c2783544ac585a547fdc635f72`. It promotes four existing relations: *Hawkeye* → *Echo* (spinoff), *Daredevil: Born Again* Season 1 → Season 2 (sequel), *Daredevil: Born Again* Season 2 → *The Punisher: One Last Kill* (indirect crossover), and *The Punisher* Season 1 → Season 2 (sequel). Existing IDs and semantics are preserved; each relation now has an official-source evidence row and a `legacy_seed -> source_verified` review transition. No release/status, chronology, identity, multiverse-transition, or new work-pair fact was inferred. Across→Beyond remains deferred.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `445` tests pass, `4` environment-gated skips;
+- build/audit: audit and content-audit issues `0`, SQLite FK rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`22` source_verified, `139` legacy_seed, `3` superseded); sources/evidence/reviews `59` / `149` / `123`;
+- graph/export compatibility: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP selection `131 × 2`, interaction `6/6`, chronology `7` cases, and publication order `131` cards/`21` cases all pass with zero failures/mismatches and zero synthetic edges;
+- GitHub Actions run `33752229933` passed all five required jobs after rerunning the initial hosted browser-selection timeout.
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave004.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave004.md`. Remaining legacy relation rows, including Across→Beyond, X-Men: The Animated Series → X-Men '97 S1, and other Spider-Verse/legacy-TV queues, require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
