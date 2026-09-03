@@ -10,6 +10,22 @@
 
 **Spec:** `docs/superpowers/specs/2026-08-27-marvel-library-db-v1-design.md`
 
+## Execution status (2026-09-03)
+
+Tasks 1–4 and Task 6 are complete for the current production baseline. The
+independent audit runner now emits a complete 131-work / 361-pair inventory,
+provenance dispositions, and structural checks. The result is recorded in:
+
+- `docs/superpowers/reviews/2026-09-03-marvel-connection-baseline-audit.md`
+- `docs/superpowers/reviews/2026-09-03-marvel-connection-semantic-audit.md`
+- `docs/superpowers/reviews/2026-09-03-marvel-connection-derived-audit.md`
+- `docs/superpowers/reviews/2026-09-03-marvel-connection-reconciliation.md`
+- `docs/superpowers/reviews/2026-09-03-marvel-connection-final-report.md`
+
+No Task 5 canonical correction batch was warranted by this audit: structural
+failures and export/UI parity failures were zero. Any future variant or source
+promotion work must start a separate bounded RED→GREEN batch.
+
 ## Global Constraints
 
 - canonical factsは`data/library/`、監査履歴は`data/content_audit/`を正本とし、read-only監査では編集しない。
@@ -157,5 +173,4 @@ Confirm audit issues, review-integrity issues, FK rows, and SQLite integrity; re
 - [ ] **Step 3: Produce the final report**
 
 The report must state what was corrected, what remains uncertain, which work pairs were intentionally not added, and whether a separate user approval is required for any remaining batch.
-
 
