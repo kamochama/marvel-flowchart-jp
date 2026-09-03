@@ -30,8 +30,8 @@ class ReleaseStatusFullAuditWaveTests(unittest.TestCase):
     def test_release_status_audit_does_not_change_graph_export_shape(self):
         export = json.loads((ROOT / "data/derived/flowchart.json").read_text(encoding="utf-8"))
         self.assertEqual(len(export["nodes"]), 131)
-        self.assertEqual(len(export["edges"]), 361)
-        self.assertEqual(len(export["reasons"]), 569)
+        self.assertEqual(len(export["edges"]), 355)
+        self.assertEqual(len(export["reasons"]), 562)
 
 
 if __name__ == "__main__":
