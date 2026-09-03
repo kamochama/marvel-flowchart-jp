@@ -4471,7 +4471,7 @@ function canvasPrimitive(svg,el){
     geom=p;
   }else if(tag==='text') geom=canvasTextLines(el); else return null;
   const overlayGroup=el.closest('g.node,g.edge,g.dynamic-edge-overlay'),chronologyGroup=el.closest('g.chronology-edge');
-  let overlayNodeId='',overlayEdgeKey='',overlayIsEdge=false,overlayDynamic=false,overlayChronologyEdge=false,overlayChronologySource='',overlayChronologyTarget='',overlayChronologyTraversable=true;
+  let overlayNodeId='',overlayEdgeKey='',overlayIsEdge=false,overlayDynamic=false,overlayChronologyEdge=false,overlayChronologyEdgeId='',overlayChronologySource='',overlayChronologyTarget='',overlayChronologyDisplayOnly=false,overlayChronologyTraversable=true;
   if(overlayGroup){
     if(overlayGroup.matches('g.node'))overlayNodeId=gt(overlayGroup)||'';
     else{
@@ -4481,12 +4481,14 @@ function canvasPrimitive(svg,el){
     }
   }
   if(chronologyGroup){
+    overlayChronologyEdgeId=chronologyGroup.dataset?.chronologyEdgeId||'';
     overlayChronologySource=chronologyGroup.dataset?.chronologySource||'';
     overlayChronologyTarget=chronologyGroup.dataset?.chronologyTarget||'';
+    overlayChronologyDisplayOnly=chronologyGroup.dataset?.chronologyDisplayOnly==='true';
     overlayChronologyTraversable=chronologyGroup.dataset?.chronologyTraversable!=='false';
     overlayChronologyEdge=!!(overlayChronologySource&&overlayChronologyTarget);
   }
-  return {el,tag,m,bbox,geom,style:null,overlayNodeId,overlayEdgeKey,overlayIsEdge,overlayDynamic,overlayChronologyEdge,overlayChronologySource,overlayChronologyTarget,overlayChronologyTraversable};
+  return {el,tag,m,bbox,geom,style:null,overlayNodeId,overlayEdgeKey,overlayIsEdge,overlayDynamic,overlayChronologyEdge,overlayChronologyEdgeId,overlayChronologySource,overlayChronologyTarget,overlayChronologyDisplayOnly,overlayChronologyTraversable};
 }
 function canvasStylePrimitive(p){
   const cs=getComputedStyle(p.el),gs=canvasGroupState(p.el);
@@ -4628,20 +4630,45 @@ function mobileOverlayEdgeClass(key,state){
 }
 // Chronology lines are a separate view layer from EDGES.  Keep their selection
 // semantics in one pure classifier so SVG and Canvas cannot drift apart.
+// At the render boundary, materialize relation-graph PATH inputs onto the
+// chronology edge IDs that are already present.  This is an explicit mapping,
+// not a chronology search: pair keys may select every matching traversable ID,
+// while display-only/non-traversable records never enter the materialized set.
+// Render boundary materialization only; no search/BFS is performed here.
+function materializeChronologyPathEdgeIds(records,pathEdges){
+  const supplied=new Set([...(pathEdges||[])].map(String)),materialized=new Set();
+  for(const record of (records||[])){
+    const source=record?.source||record?.chronologySource,target=record?.target||record?.chronologyTarget;
+    const edgeId=record?.edge_id||record?.edgeId||record?.key||`${source||''}->${target||''}`;
+    const key=record?.key||`${source||''}->${target||''}`;
+    const traversable=record?.traversable!==false&&record?.display_only!==true&&record?.displayOnly!==true;
+    if(!edgeId||!source||!target||!traversable)continue;
+    if(supplied.has(String(edgeId))||supplied.has(String(key)))materialized.add(String(edgeId));
+  }
+  return materialized;
+}
 function classifyChronologySelection(edges,state){
   const classes=new Map();
   const ids=[...(state?.selectedIds||[])];
   if(!ids.length)return classes;
-  const tier=normalizePreparationTier(state?.tier||state?.prepTier||'complete');
-  const tierNodeIds=state?.tierNodeIds||new Set();
+  // Keep this early, standalone classifier independent from the later
+  // preparation-plan script where the shared tier helper is scoped.
+  const rawTier=state?.tier||state?.prepTier||'complete';
+  // Only the canonical complete value may widen the incoming scope.  Legacy,
+  // official, and unknown values fail safe to the public site-proposal tier.
+  const tier=rawTier==='complete'?'complete':'site-proposal';
+  const tierNodeIds=new Set(state?.tierNodeIds||[]);
   const pathMode=state?.pathMode===true||(state?.combineMode==='path'&&ids.length>1);
-  const records=[],seenKeys=new Set();
-  for(const raw of (edges||[])){
+  const records=(edges||[]).map((raw,index)=>{
     const source=raw?.source||raw?.chronologySource,target=raw?.target||raw?.chronologyTarget;
     const key=raw?.key||`${source||''}->${target||''}`;
-    if(!source||!target||!key||seenKeys.has(key)||raw?.traversable===false)continue;
-    seenKeys.add(key);records.push({source,target,key});
-  }
+    const edgeId=raw?.edge_id||raw?.edgeId||raw?.key||`${source||''}->${target||''}#${index}`;
+    return {edgeId:String(edgeId),source:String(source||''),target:String(target||''),key:String(key),traversable:raw?.traversable!==false&&raw?.display_only!==true&&raw?.displayOnly!==true};
+  }).filter(edge=>{
+    const traversable=edge.traversable;
+    if(traversable===false)return false;
+    return edge.source&&edge.target&&edge.edgeId;
+  });
   if(!records.length)return classes;
   const incoming=new Map(),outgoing=new Map();
   for(const edge of records){
@@ -4649,8 +4676,8 @@ function classifyChronologySelection(edges,state){
     if(!outgoing.has(edge.source))outgoing.set(edge.source,[]);
     incoming.get(edge.target).push(edge);outgoing.get(edge.source).push(edge);
   }
-  for(const links of incoming.values())links.sort((a,b)=>a.key.localeCompare(b.key));
-  for(const links of outgoing.values())links.sort((a,b)=>a.key.localeCompare(b.key));
+  for(const links of incoming.values())links.sort((a,b)=>a.edgeId.localeCompare(b.edgeId));
+  for(const links of outgoing.values())links.sort((a,b)=>a.edgeId.localeCompare(b.edgeId));
   const walk=(goal,adjacent)=>{
     const found=new Map(),seen=new Set([goal]),queue=[goal];
     const directOnly=state?.scopeMode==='previous1';
@@ -4661,7 +4688,7 @@ function classifyChronologySelection(edges,state){
         // chronology remains visible so selecting a work still shows where it
         // leads, matching the main chart directional highlight semantics.
         if(adjacent===incoming && tier!=='complete' && tierNodeIds.size && (!tierNodeIds.has(edge.source)||!tierNodeIds.has(edge.target)))continue;
-        found.set(edge.key,true);
+        found.set(edge.edgeId,true);
         if(directOnly)continue;
         const next=adjacent===incoming?edge.source:edge.target;
         if(!seen.has(next)){seen.add(next);queue.push(next);}
@@ -4672,37 +4699,37 @@ function classifyChronologySelection(edges,state){
   const perGoal=goal=>{
     if(state?.scopeMode==='none')return new Map();
     const result=new Map();
-    for(const key of walk(goal,incoming).keys())result.set(key,1);
-    if(state?.scopeMode!=='previous1')for(const key of walk(goal,outgoing).keys())result.set(key,(result.get(key)||0)|2);
+    for(const edgeId of walk(goal,incoming).keys())result.set(edgeId,1);
+    if(state?.scopeMode!=='previous1')for(const edgeId of walk(goal,outgoing).keys())result.set(edgeId,(result.get(edgeId)||0)|2);
     return result;
   };
   if(pathMode){
     // PATH is already solved against the tier-filtered work graph. Reuse its
-    // directed edge keys here instead of running a second unfiltered BFS over
-    // chronology rows, so SVG/Canvas chronology and the main chart agree.
-    const pathKeys=new Set([...(state?.pathEdges||[])].map(String));
-    const pathPairs=new Set([...pathKeys].filter(key=>key.includes('->')).map(String));
-    for(const edge of records)if(pathKeys.has(edge.key)||pathPairs.has(`${edge.source}->${edge.target}`))classes.set(edge.key,'pathhl');
+    // supplied materialized edge IDs instead of running a second unfiltered BFS
+    // over chronology rows, so SVG/Canvas chronology and the main chart agree.
+    const pathIds=new Set([...(state?.pathEdges||[])].map(String));
+    for(const edge of records)if(pathIds.has(edge.edgeId))classes.set(edge.edgeId,'pathhl');
     return classes;
   }
   const goalMaps=ids.map(perGoal),combined=new Map();
   if(state?.combineMode==='and'&&goalMaps.length>1){
-    const common=[...goalMaps[0].keys()].filter(key=>goalMaps.every(map=>map.has(key)));
-    for(const key of common){let bits=0;for(const map of goalMaps)bits|=map.get(key)||0;combined.set(key,bits);}
+    const common=[...goalMaps[0].keys()].filter(edgeId=>goalMaps.every(map=>map.has(edgeId)));
+    for(const edgeId of common){let bits=0;for(const map of goalMaps)bits|=map.get(edgeId)||0;combined.set(edgeId,bits);}
   }else{
-    for(const map of goalMaps)for(const [key,bits] of map)combined.set(key,(combined.get(key)||0)|bits);
+    for(const map of goalMaps)for(const [edgeId,bits] of map)combined.set(edgeId,(combined.get(edgeId)||0)|bits);
   }
-  for(const [key,bits] of combined)classes.set(key,bits===3?'bothhl':bits===1?'backhl':'forwardhl');
+  for(const [edgeId,bits] of combined)classes.set(edgeId,bits===3?'bothhl':bits===1?'backhl':'forwardhl');
   return classes;
 }
 window.classifyChronologySelection=classifyChronologySelection;
 function mobileOverlayChronologyEdgeClassMap(cs,state){
   const records=[];
-  for(const [key,primitives] of (cs?.overlayChronologyEdgePrimitives||new Map())){
-    const p=primitives?.[0],source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
-    if(source&&target)records.push({key,source,target,traversable:p?.overlayChronologyTraversable!==false});
+  for(const [edgeId,primitives] of (cs?.overlayChronologyEdgePrimitives||new Map())){
+    const p=primitives?.[0],id=p?.overlayChronologyEdgeId||edgeId,source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
+    if(source&&target)records.push({edge_id:id,edgeId:id,key:`${source}->${target}`,source,target,displayOnly:p?.overlayChronologyDisplayOnly===true,traversable:p?.overlayChronologyTraversable!==false});
   }
-  return classifyChronologySelection(records,state);
+  const chronologyState=state?.pathEdges ? {...state,pathEdges:materializeChronologyPathEdgeIds(records,state.pathEdges)}:state;
+  return classifyChronologySelection(records,chronologyState);
 }
 function mobileOverlayCategory(p,state){
   if(p.overlayNodeId)return mobileOverlayNodeClass(p.overlayNodeId,state);
@@ -4740,6 +4767,9 @@ function mobileOverlayCompressedBridges(edgeSet,visible){
 }
 function mobileOverlaySyntheticSpecs(cs,state){
   if(!cs||!state||state.generic)return [];
+  // Chronology/release panels intentionally disable relation edges; their
+  // mobile canvas must not synthesize the overview graph relations.
+  const panel=cs.svg?.closest?.('.panel')?.id||'';if(panel==='release'||cs.svg?.dataset?.relationshipEdges==='off')return [];
   const visible=cs.overlayVisibleNodeIds||new Set(cs.nodeBoxes.map(n=>n.id));
   const staticKeys=cs.overlayStaticEdgeKeys||new Set();
   const specs=[['backhl',state.backEdges],['forwardhl',state.forwardEdges],['contexthl',state.contextEdges],['pathhl',state.pathEdges||new Set()]];
@@ -4835,7 +4865,7 @@ function prepareMobileSelectionWorldResources(wrap){
   for(const p of cs.primitives){
     if(p.overlayNodeId){if(!nodeMap.has(p.overlayNodeId))nodeMap.set(p.overlayNodeId,[]);nodeMap.get(p.overlayNodeId).push(p);}
     else if(p.overlayIsEdge&&p.overlayEdgeKey){if(!edgeMap.has(p.overlayEdgeKey))edgeMap.set(p.overlayEdgeKey,[]);edgeMap.get(p.overlayEdgeKey).push(p);if(!p.overlayDynamic)staticKeys.add(p.overlayEdgeKey);}
-    else if(p.overlayChronologyEdge){const key=`${p.overlayChronologySource}->${p.overlayChronologyTarget}`;if(!chronologyEdgeMap.has(key))chronologyEdgeMap.set(key,[]);chronologyEdgeMap.get(key).push(p);}
+    else if(p.overlayChronologyEdge){const edgeId=p.overlayChronologyEdgeId||`${p.overlayChronologySource}->${p.overlayChronologyTarget}`;if(!chronologyEdgeMap.has(edgeId))chronologyEdgeMap.set(edgeId,[]);chronologyEdgeMap.get(edgeId).push(p);}
   }
   cs.overlayNodePrimitives=nodeMap;cs.overlayEdgePrimitives=edgeMap;cs.overlayChronologyEdgePrimitives=chronologyEdgeMap;
   cs.overlayNodeBoxMap=new Map(cs.nodeBoxes.map(n=>[n.id,n.box]));cs.overlayVisibleNodeIds=new Set(cs.nodeBoxes.map(n=>n.id));cs.overlayStaticEdgeKeys=staticKeys;
@@ -4861,7 +4891,7 @@ function renderMobileSelectionWorldCache(wrap,state){
     for(const p of (cs.overlayEdgePrimitives.get(edgeKey)||[]))if(drawMobileOverlayPrimitive(ctx,p,category,lod,cs))drawn++;
   }
   const chronologyClasses=mobileOverlayChronologyEdgeClassMap(cs,state);
-  for(const [edgeKey,category] of chronologyClasses){for(const p of (cs.overlayChronologyEdgePrimitives?.get(edgeKey)||[]))if(drawMobileOverlayPrimitive(ctx,p,category,lod,cs))drawn++;}
+  for(const [edgeId,category] of chronologyClasses){for(const p of (cs.overlayChronologyEdgePrimitives?.get(edgeId)||[]))if(drawMobileOverlayPrimitive(ctx,p,category,lod,cs))drawn++;}
   const syntheticSpecs=mobileOverlaySyntheticSpecs(cs,state);for(const spec of syntheticSpecs)if(drawMobileSyntheticOverlayEdge(ctx,cs,spec,lod))drawn++;
   cs.overlayWorldReady=true;cs.overlayWorldState=state;cs.overlayWorldSelectionKey=key;cs.overlayWorldSyntheticSpecs=syntheticSpecs;cs.overlayWorldChronologyClasses=chronologyClasses;cs.overlayWorldDrawn=drawn;
   return true;
@@ -4895,7 +4925,7 @@ function drawMobileSelectionOverlay(wrap,state){
     for(const p of (cs.overlayEdgePrimitives.get(edgeKey)||[])){if(!mobileOverlayPrimitiveNearViewport(p,visibleRect))continue;if(drawMobileOverlayPrimitive(ctx,p,category,m.pxPerWorld,cs))n++;}
   }
   const chronologyClasses=cs.overlayWorldChronologyClasses||mobileOverlayChronologyEdgeClassMap(cs,state);
-  for(const [edgeKey,category] of chronologyClasses){for(const p of (cs.overlayChronologyEdgePrimitives?.get(edgeKey)||[])){if(!mobileOverlayPrimitiveNearViewport(p,visibleRect))continue;if(drawMobileOverlayPrimitive(ctx,p,category,m.pxPerWorld,cs))n++;}}
+  for(const [edgeId,category] of chronologyClasses){for(const p of (cs.overlayChronologyEdgePrimitives?.get(edgeId)||[])){if(!mobileOverlayPrimitiveNearViewport(p,visibleRect))continue;if(drawMobileOverlayPrimitive(ctx,p,category,m.pxPerWorld,cs))n++;}}
   let synthetic=0;for(const spec of (cs.overlayWorldSyntheticSpecs||[]))if(mobileOverlaySyntheticNearViewport(cs,spec,visibleRect)&&drawMobileSyntheticOverlayEdge(ctx,cs,spec,m.pxPerWorld))synthetic++;
   cs.overlayActive=true;cs.overlayState=state;cs.overlayCamera={vbX:st.vbX,vbY:st.vbY,vbW:st.vbW,vbH:st.vbH,pxPerWorld:m.pxPerWorld,offsetX:m.offsetX,offsetY:m.offsetY};cs.overlayVersion=(cs.overlayVersion||0)+1;cs.overlayDrawn=n+synthetic;cs.overlaySyntheticDrawn=synthetic;
   return (n+synthetic)>0;
@@ -5952,6 +5982,10 @@ if(flowchartReady)render();
 
   function importanceOf(e){ return e.importance||'recommended'; }
   function importanceAllowed(e){ return !!e; }
+  function hasExplicitWorkRelationReason(e){
+    if(e?.type_en==='explicit work relation') return true;
+    return (e?.reason_ids||[]).some(id=>reasonsById[id]?.reason_kind==='explicit_relation');
+  }
 
   // Backward history should read as a chain when an explicit shortcut and a
   // longer supported route coexist (1→2→3 plus 1→3). Keep the shortcut in
@@ -6067,10 +6101,10 @@ if(flowchartReady)render();
     let backEdges=new Set();
     const forwardEdges=new Set(), contextEdges=new Set();
     const propagates=e=>importanceAllowed(e) && edgeRank(e)>=3; // forward keeps the existing strong/very-strong scope
-    // Chart selection keeps an explicit reference-level story chain readable
-    // (for example 1→2→3); the watch-plan policy remains independently
-    // responsible for treating other reference links as direct context.
-    const backPropagates=e=>importanceAllowed(e) && (edgeRank(e)>=3 || (prepTier==='complete' && e.type_en==='explicit work relation')); // complete history follows explicit story chains, not auxiliary reference fan-out
+    // Chart selection keeps every explicit work-relation predecessor readable
+    // (for example 1→2→3); shared-character/entity shortcuts remain filtered
+    // separately so this does not manufacture a shortcut across a chain.
+    const backPropagates=e=>importanceAllowed(e) && (edgeRank(e)>=3 || e.type_en==='explicit work relation'); // chart history follows explicit work relations while shortcut filtering stays separate
 
     let stack=[id];
     while(stack.length){
@@ -6409,10 +6443,12 @@ if(flowchartReady)render();
     const groups=[...svg.querySelectorAll('g.chronology-edge')];
     groups.forEach(g=>g.classList.remove('hl','backhl','forwardhl','bothhl','pathhl','contexthl'));
     if(!groups.length||!state)return;
-    const records=groups.map(g=>({key:g.dataset.chronologyEdgeKey||`${g.dataset.chronologySource||''}->${g.dataset.chronologyTarget||''}`,source:g.dataset.chronologySource,target:g.dataset.chronologyTarget,traversable:g.dataset.chronologyTraversable!=='false',group:g}));
-    const classes=classifyChronologySelection(records,state);
-    for(const [key,category] of classes){
-      const record=records.find(item=>item.key===key);
+    const records=groups.map((g,index)=>({edgeId:g.dataset?.chronologyEdgeId||g.dataset?.chronologyEdgeKey||`${g.dataset?.chronologySource||''}->${g.dataset?.chronologyTarget||''}#${index}`,key:g.dataset.chronologyEdgeKey||`${g.dataset.chronologySource||''}->${g.dataset.chronologyTarget||''}`,source:g.dataset.chronologySource,target:g.dataset.chronologyTarget,displayOnly:g.dataset?.chronologyDisplayOnly==='true',traversable:g.dataset.chronologyTraversable!=='false',group:g}));
+    const chronologyState=state?.pathEdges ? {...state,pathEdges:materializeChronologyPathEdgeIds(records,state.pathEdges)}:state;
+    const classes=classifyChronologySelection(records,chronologyState);
+    const recordsById=new Map(records.map(record=>[record.edgeId,record]));
+    for(const [edgeId,category] of classes){
+      const record=recordsById.get(edgeId);
       if(!record?.group)continue;
       record.group.classList.add('hl',category);
     }
@@ -6423,11 +6459,26 @@ if(flowchartReady)render();
   // selected work itself is absent, as long as matching context nodes exist.
   function renderSelectionState(svg,state){
     svg.classList.remove('official-route-highlight');
-    svg.querySelectorAll('.hl,.focus,.backhl,.forwardhl,.bothhl,.contexthl,.pathhl,.goal-node,.current-goal,.official-route-node,.official-route-edge').forEach(x=>x.classList.remove('hl','focus','backhl','forwardhl','bothhl','contexthl','pathhl','goal-node','current-goal','official-route-node','official-route-edge'));
+    svg.querySelectorAll('.hl,.focus,.detail-focus,.backhl,.forwardhl,.bothhl,.contexthl,.pathhl,.goal-node,.current-goal,.official-route-node,.official-route-edge').forEach(x=>x.classList.remove('hl','focus','detail-focus','backhl','forwardhl','bothhl','contexthl','pathhl','goal-node','current-goal','official-route-node','official-route-edge'));
     // Reference/curated charts (e.g. tab ⑥) are intentionally independent of
     // work selection made in the main graph. They must stay fully readable.
     if(svg.closest('.panel')?.dataset.selectionScope==='independent'){
       svg.classList.remove('dim','family-mode','char-mode');
+      return;
+    }
+    const releasePanel=svg.closest('.panel')?.id==='release';
+    if(releasePanel){
+      // Publication order is a date axis, not a relationship chart. Keep the
+      // shared work/detail selection visible on matching cards only.
+      svg.classList.remove('dim','family-mode','char-mode');
+      const detailFocusId=window.marvelDetailFocusId;
+      for(const g of svg.querySelectorAll('g.node')){
+        const id=g.dataset?.releaseWorkId||gt(g),isGoal=selectedIds.has(id),isDetailFocus=detailFocusId===id;
+        if(!isGoal&&!isDetailFocus)continue;
+        g.classList.add('focus');
+        if(isGoal)g.classList.add(id===selected?'current-goal':'goal-node');
+        if(isDetailFocus)g.classList.add('detail-focus');
+      }
       return;
     }
     renderChronologySelectionState(svg,state);
@@ -6696,8 +6747,22 @@ if(flowchartReady)render();
     }
     const edgeByKey=new Map(EDGES.map(edge=>[edgeKey(edge),edge]));
     const limitToScope=baseState.scopeMode==='previous1';
+    // Chart selection keeps explicit work-relation predecessors visible even
+    // when the preparation tier classifies their legacy evidence as reference-level.
+    // The watch-plan builder still applies its own importance filter.
+    const chartStoryBackEdges=mode==='complete' ? new Set() : new Set(
+      [...(baseState.backEdges||[])].filter(key=>hasExplicitWorkRelationReason(edgeByKey.get(key)))
+    );
+    for(const key of chartStoryBackEdges){
+      const edge=edgeByKey.get(key);
+      if(!edge)continue;
+      // Chronology is a separate layer, but its incoming lines must agree with
+      // the chart's explicit predecessor set at every tier.
+      tierNodeIds.add(edge.source);
+      tierNodeIds.add(edge.target);
+    }
     const baseBackKeys=new Set([...(baseState.backEdges||[]),...(baseState.contextEdges||[])]);
-    const scopedBackEdges=new Set([...tierBackEdges].filter(key=>!limitToScope||baseBackKeys.has(key)));
+    const scopedBackEdges=new Set([...tierBackEdges,...chartStoryBackEdges].filter(key=>!limitToScope||baseBackKeys.has(key)));
     if(baseState.combineMode==='and'&&baseState.ctx){
       for(const key of [...scopedBackEdges]){
         const edge=edgeByKey.get(key);
@@ -7403,7 +7468,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
      const wrap=node.closest('.svg-wrap');
      const st=typeof ensureViewState==='function'?ensureViewState(wrap):null;
       if(st?.didDrag||st?.moved){ st.didDrag=false;st.moved=false;st.backgroundClickCandidate=false;st.startTarget=null; e.preventDefault(); e.stopImmediatePropagation(); return; }
-      const id=gt(node); if(!id || !nm[id]) return;
+      const id=node.dataset?.releaseWorkId||gt(node); if(!id || !nm[id]) return;
      if(st){st.startTarget=null;st.backgroundClickCandidate=false;}
      e.preventDefault(); e.stopImmediatePropagation();
      select(id,!!(e.ctrlKey||e.metaKey||e.shiftKey));
@@ -8031,7 +8096,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     {id:'fox',label:'FOX X-MEN',sub:'X-MEN / Wolverine / Deadpool',tone:'#a78bfa'},
     {id:'mcu-films',label:'MCU映画',sub:'Marvel Studios theatrical films',tone:'#60a5fa'},
     {id:'tv-street',label:'TV・ストリート',sub:'ABC / Netflix / Hulu / street-led shows',tone:'#34d399'},
-    {id:'disney-animation',label:'Disney+・アニメ',sub:'Marvel Studios series / animation / specials',tone:'#22d3ee'}
+    {id:'disney-animation',label:'Disney+・アニメ',sub:'Marvel Studios series / animation / specials',tone:'#22d3ee'},
+    {id:'upcoming-tbd',label:'Upcoming / date TBD',sub:'公開日未定・確認待ち',tone:'#64748b'}
   ]);
   const RELEASE_HISTORY_ERAS=Object.freeze([
     {id:'licensed-era',label:'各社ライセンス展開期',kicker:'LICENSED PRODUCTIONS',start:'1992',end:'2004',summary:'Marvel自身が映画群を統括する以前。アニメ、Blade、X-MEN、Spider-Manなどが各社・各世界観で並行した時代。',tone:'#334155'},
@@ -8058,6 +8124,15 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return [internalKey,precisionRank,nm[id]?.title||id];
   }
   function compareReleaseIds(a,b){const x=releaseSortTuple(a),y=releaseSortTuple(b);return x[0].localeCompare(y[0])||x[1]-y[1]||x[2].localeCompare(y[2],'ja');}
+  function releaseLayoutMeta(meta,stableSortIndex,workId){
+    const precision=meta?.precision||'unknown';
+    const isTbd=!meta?.sortDate||precision==='undated'||precision==='tbd';
+    const sortKey=isTbd?'9999-99-99':String(meta.sortDate);
+    return {precision,isTbd,sortKey,stableSortIndex,workId};
+  }
+  function compareReleaseItems(a,b){
+    return a.sortKey.localeCompare(b.sortKey)||a.stableSortIndex-b.stableSortIndex||a.workId.localeCompare(b.workId);
+  }
   function releaseCardPath(x,y,w,h){return `M${x+9},${y} H${x+w-9} Q${x+w},${y} ${x+w},${y+9} V${y+h-9} Q${x+w},${y+h} ${x+w-9},${y+h} H${x+9} Q${x},${y+h} ${x},${y+h-9} V${y+9} Q${x},${y} ${x+9},${y} Z`;}
   function releaseTitleLines(title){const a=Array.from(title||'');if(a.length<=13)return [title||''];const first=a.slice(0,13).join('');const rest=a.slice(13);return [first,rest.slice(0,13).join('')+(rest.length>13?'…':'')];}
   function releaseLaneOf(node){
@@ -8096,14 +8171,17 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(/中止報道/.test(raw))return '中止報道';
     return raw.length>12?raw.slice(0,12)+'…':raw;
   }
-  function layoutReleaseLane(ids,era,x0,w,cardW){
+  function layoutReleaseLane(ids,era,x0,w,cardW,stableSortIndexById,itemComparator){
     const rows=[],items=[],gap=7,maxX=x0+w-cardW;
-    ids.slice().sort(compareReleaseIds).forEach(id=>{
-      const meta=RELEASE_META[id],proposed=Math.max(x0,Math.min(maxX,releaseXForMeta(meta,era,x0,w)-cardW/2));
+    ids.map(id=>{
+      const meta=RELEASE_META[id]||{},stableSortIndex=stableSortIndexById?.get(id)??meta.stableSortIndex??0;
+      return {id,layout:releaseLayoutMeta(meta,stableSortIndex,id)};
+    }).sort((a,b)=>(itemComparator||compareReleaseItems)(a.layout,b.layout)).forEach(({id,layout})=>{
+      const meta=RELEASE_META[id]||{},proposed=Math.max(x0,Math.min(maxX,releaseXForMeta(meta,era,x0,w)-cardW/2));
       let row=rows.findIndex(last=>proposed>=last+gap),cx=proposed;
       if(row<0){row=rows.length;rows.push(-Infinity);}else cx=Math.max(proposed,rows[row]+gap);
       if(cx>maxX){row=rows.length;rows.push(-Infinity);cx=maxX;}
-      rows[row]=cx+cardW;items.push({id,row,cx});
+      rows[row]=cx+cardW;items.push({id,row,cx,layout});
     });
     return {items,rows:Math.max(1,rows.length)};
   }
@@ -8119,22 +8197,31 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const panel=document.getElementById('release');
     if(!panel||panel.querySelector('.release-view-wrap'))return false;
     const svgW=1320,x0=220,timelineW=1060,cardW=146,cardH=48,rowGap=6,lanePad=12,sectionGap=24;
-    const laneIndex=new Map(RELEASE_LANES.map((lane,idx)=>[lane.id,idx]));
-    const dated=NODES.filter(n=>RELEASE_META[n.id]?.sortDate).map(n=>n.id);
-    const undated=NODES.filter(n=>!RELEASE_META[n.id]?.sortDate).map(n=>n.id);
+    const releaseLanes=RELEASE_LANES.some(lane=>lane.id==='upcoming-tbd')?RELEASE_LANES:[...RELEASE_LANES,{id:'upcoming-tbd',label:'Upcoming / date TBD',sub:'公開日未定・確認待ち',tone:'#64748b'}];
+    const laneIndex=new Map(releaseLanes.map((lane,idx)=>[lane.id,idx]));
+    const stableSortIndexById=new Map(NODES.map((node,index)=>[node.id,index]));
+    const layoutMetaFor=typeof releaseLayoutMeta==='function'?releaseLayoutMeta:(meta,stableSortIndex,workId)=>{
+      const precision=meta?.precision||'unknown',isTbd=!meta?.sortDate||precision==='undated'||precision==='tbd';
+      return {precision,isTbd,sortKey:isTbd?'9999-99-99':String(meta.sortDate),stableSortIndex,workId};
+    };
+    const releaseItems=NODES.map(node=>({id:node.id,layout:layoutMetaFor(RELEASE_META[node.id],stableSortIndexById.get(node.id),node.id)}));
+    const dated=releaseItems.filter(item=>!item.layout.isTbd).map(item=>item.id);
+    const undated=releaseItems.filter(item=>item.layout.isTbd).map(item=>item.id);
+    const tbdIds=new Set(undated);
     let historyY=18;const out=[];
     RELEASE_HISTORY_ERAS.forEach((era,eraIndex)=>{
       const eraIds=dated.filter(id=>{const y=releaseYearOf(RELEASE_META[id]);return y>=era.start&&y<=era.end;});
       if(eraIndex===RELEASE_HISTORY_ERAS.length-1)eraIds.push(...undated);
-      const byLane=new Map(RELEASE_LANES.map(l=>[l.id,[]]));
-      eraIds.forEach(id=>byLane.get(releaseLaneOf(nm[id]))?.push(id));
+      const eraLanes=eraIndex===RELEASE_HISTORY_ERAS.length-1?releaseLanes:releaseLanes.filter(lane=>lane.id!=='upcoming-tbd');
+      const byLane=new Map(eraLanes.map(l=>[l.id,[]]));
+      eraIds.forEach(id=>byLane.get(tbdIds.has(id)?'upcoming-tbd':releaseLaneOf(nm[id]))?.push(id));
       const markers=RELEASE_HISTORY_MILESTONES.filter(m=>m.date.slice(0,4)>=era.start&&m.date.slice(0,4)<=era.end);
       const markerLayout=layoutHistoryMarkers(markers,era,x0,timelineW);
       const markerH=markers.length?markerLayout.rows*34+10:16;
       const headerH=92+markerH;
       const laneLayouts=[];let lanesH=0;
-      RELEASE_LANES.forEach(lane=>{
-        const layout=layoutReleaseLane(byLane.get(lane.id)||[],era,x0,timelineW,cardW);
+      eraLanes.forEach(lane=>{
+        const layout=layoutReleaseLane(byLane.get(lane.id)||[],era,x0,timelineW,cardW,stableSortIndexById,typeof compareReleaseItems==='function'?compareReleaseItems:undefined);
         const laneH=Math.max(58,lanePad*2+layout.rows*(cardH+rowGap)-rowGap);
         laneLayouts.push({lane,layout,laneH,y:0});lanesH+=laneH+8;
       });
@@ -8155,9 +8242,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       laneLayouts.forEach(({lane,layout,laneH})=>{
         out.push(`<rect class="release-lane-row" x="22" y="${ly}" width="${svgW-44}" height="${laneH}" rx="10"/><rect class="release-lane-accent" x="22" y="${ly}" width="5" height="${laneH}" rx="3" fill="${esc(lane.tone)}"/><text class="release-lane-label" x="34" y="${ly+22}">${esc(lane.label)}</text><text class="release-lane-sub" x="34" y="${ly+37}">${esc(lane.sub)}</text>`);
         if(!layout.items.length)out.push(`<text class="release-lane-empty" x="${x0+8}" y="${ly+34}">この時代の収録作品なし</text>`);
-        layout.items.forEach(({id,row,cx})=>{
-          const n=nm[id],meta=RELEASE_META[id],cy=ly+lanePad+row*(cardH+rowGap),lines=releaseTitleLines(n.title);
-          out.push(`<g class="node release-node" data-release-kind="${esc(meta.releaseKind)}" data-release-precision="${esc(meta.precision)}" data-release-lane="${esc(lane.id)}"><title>${esc(n.id)}</title><path d="${releaseCardPath(cx,cy,cardW,cardH)}"/><text class="release-lane-chip" x="${cx+8}" y="${cy+10}">${esc(lane.label)}</text><text x="${cx+8}" y="${cy+22}" font-size="9.2" font-weight="700">${esc(lines[0])}</text>${lines[1]?`<text x="${cx+8}" y="${cy+33}" font-size="9.2" font-weight="700">${esc(lines[1])}</text>`:''}<text class="release-date" x="${cx+8}" y="${cy+43}" font-size="8.2"><title>${esc(meta.displayDate)}</title>${esc(releaseCardDateLabel(meta))}</text><text class="release-kind" x="${cx+92}" y="${cy+43}" font-size="7.5">${esc(releaseKindLabel(meta.releaseKind))}</text></g>`);
+        layout.items.forEach(({id,row,cx,layout:layoutMeta})=>{
+          const n=nm[id],meta=RELEASE_META[id],cardLayout=layoutMeta||layoutMetaFor(meta,stableSortIndexById.get(id),id),cy=ly+lanePad+row*(cardH+rowGap),lines=releaseTitleLines(n.title);
+          out.push(`<g class="node release-node" data-release-kind="${esc(meta.releaseKind)}" data-release-precision="${esc(cardLayout.precision)}" data-release-sort-key="${esc(cardLayout.sortKey)}" data-release-tbd="${cardLayout.isTbd?'true':'false'}" data-release-work-id="${esc(cardLayout.workId)}" data-release-lane="${esc(lane.id)}"><title>${esc(n.id)}</title><path d="${releaseCardPath(cx,cy,cardW,cardH)}"/><text class="release-lane-chip" x="${cx+8}" y="${cy+10}">${esc(lane.label)}</text><text x="${cx+8}" y="${cy+22}" font-size="9.2" font-weight="700">${esc(lines[0])}</text>${lines[1]?`<text x="${cx+8}" y="${cy+33}" font-size="9.2" font-weight="700">${esc(lines[1])}</text>`:''}<text class="release-date" x="${cx+8}" y="${cy+43}" font-size="8.2"><title>${esc(meta.displayDate)}</title>${esc(releaseCardDateLabel(meta))}</text><text class="release-kind" x="${cx+92}" y="${cy+43}" font-size="7.5">${esc(releaseKindLabel(meta.releaseKind))}</text></g>`);
         });
         ly+=laneH+8;
       });
@@ -8401,27 +8488,32 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
         '</g>');
     }
 
-    function branchBetweenRows(source,target,col,y1,y2,{label='',klass='chronology-branch',traversable=true}={}){
+    function branchBetweenRows(source,target,col,y1,y2,{label='',klass='chronology-branch',row='unknown',kind='branch',traversable=true,displayOnly=false}={}){
       const x=xForCol(col)-16, yTop=mid(y1), yBottom=mid(y2);
-      out.push(chronologyEdgeGroup(source,target,'M '+x+' '+yTop+' V '+yBottom,klass,{traversable}));
+      const edgeId='branch-'+source+'-'+target+'-'+row;
+      out.push(chronologyEdgeGroup(edgeId,source,target,'M '+x+' '+yTop+' V '+yBottom,klass,{kind,traversable,displayOnly}));
       out.push('<circle class="chronology-junction" cx="'+x+'" cy="'+yTop+'" r="3.5"/><circle class="chronology-junction" cx="'+x+'" cy="'+yBottom+'" r="3.5"/>');
       if(label)out.push('<text class="chronology-track-label" x="'+(x+8)+'" y="'+((yTop+yBottom)/2-6)+'">'+esc(label)+'</text>');
     }
     const placedMcu=new Set();
     const addMcu=id=>{if(id&&CHRONOLOGY_META[id]?.lane==='mcu-main')placedMcu.add(id);};
     function drawCard(id,col,y){ if(!nm[id]||!CHRONOLOGY_META[id])return false; out.push(chronologyCard(id,xForCol(col),y,cardW,cardH)); return true; }
-    function chronologyEdgeGroup(source,target,d,klass,{traversable=true}={}){
+    function chronologyEdgeGroup(edgeId,source,target,d,klass,{kind='sequence',traversable=true,displayOnly=false}={}){
+      // displayOnly&&!traversable is the only valid display-only combination.
+      if(displayOnly&&traversable)throw new Error('display-only chronology edge must be non-traversable: '+edgeId);
       const key=source+'->'+target;
-      return '<g class="chronology-edge" data-chronology-source="'+esc(source)+'" data-chronology-target="'+esc(target)+'" data-chronology-edge-key="'+esc(key)+'" data-chronology-traversable="'+(traversable?'true':'false')+'"><title>'+esc(key)+'</title><path class="'+esc(klass)+'" d="'+d+'"/></g>';
+      return '<g class="chronology-edge" data-chronology-edge-id="'+esc(edgeId)+'" data-chronology-source="'+esc(source)+'" data-chronology-target="'+esc(target)+'" data-chronology-edge-key="'+esc(key)+'" data-chronology-kind="'+esc(kind)+'" data-chronology-display-only="'+(displayOnly?'true':'false')+'" data-chronology-traversable="'+(traversable?'true':'false')+'"><title>'+esc(edgeId)+'</title><path class="'+esc(klass)+'" d="'+d+'"/></g>';
     }
-    function drawSequence(ids,startCol,y,{klass='chronology-axis',dashedTracks=[],traversable=true}={}){
+    function drawSequence(ids,startCol,y,{klass='chronology-axis',dashedTracks=[],lane='',kind='sequence',traversable=true,displayOnly=false}={}){
       const use=ids.filter(id=>nm[id]&&CHRONOLOGY_META[id]);
       use.forEach((id,i)=>{
         const col=startCol+i;
         if(i>0){
           const prev=use[i-1], prevCol=startCol+i-1;
           const dashed=dashedTracks.includes(CHRONOLOGY_META[prev].track)||dashedTracks.includes(CHRONOLOGY_META[id].track)?' dashed':'';
-          out.push(chronologyEdgeGroup(prev,id,'M '+(xForCol(prevCol)+cardW)+' '+mid(y)+' H '+xForCol(col),klass+dashed,{traversable}));
+          const edgeLane=lane||CHRONOLOGY_META[prev]?.lane||CHRONOLOGY_META[id]?.lane||'unknown';
+          const edgeId='sequence-'+prev+'-'+id+'-'+edgeLane+'-'+col;
+          out.push(chronologyEdgeGroup(edgeId,prev,id,'M '+(xForCol(prevCol)+cardW)+' '+mid(y)+' H '+xForCol(col),klass+dashed,{kind,traversable,displayOnly}));
         }
         drawCard(id,col,y); addMcu(id);
       });
@@ -8432,7 +8524,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       const seq=drawSequence(ids,startCol,y,{klass:'chronology-spider-line'});
       if(!seq.ids.length)return;
       const lastX=xForCol(seq.end)+cardW,lastY=mid(y),joinX=xForCol(targetCol),joinY=mid(rowY.spiderMcu),spineX=joinX-8;
-      out.push(chronologyEdgeGroup(seq.ids.at(-1),targetId,'M '+lastX+' '+lastY+' H '+spineX+' V '+joinY+' H '+joinX,'chronology-spider-merge'));
+      const edgeId='merge-'+seq.ids.at(-1)+'-'+targetId+'-spider-'+targetCol;
+      out.push(chronologyEdgeGroup(edgeId,seq.ids.at(-1),targetId,'M '+lastX+' '+lastY+' H '+spineX+' V '+joinY+' H '+joinX,'chronology-spider-merge',{kind:'merge'}));
     }
 
     const spiderTone='#ec4899';
@@ -8502,7 +8595,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
     // SSU and FOX blocks
     drawSequence(['venom-2018','venom-let-there-be-carnage-2021','venom-the-last-dance-2024'],8,rowY.ssu,{klass:'chronology-branch'});
-    drawSequence(['morbius-2022','madame-web-2024','kraven-the-hunter-2024'],9,rowY.ssuAlt,{klass:'chronology-axis',dashedTracks:['standalone','ambiguous'],traversable:false});
+    drawSequence(['morbius-2022','madame-web-2024','kraven-the-hunter-2024'],9,rowY.ssuAlt,{klass:'chronology-axis',dashedTracks:['standalone','ambiguous'],traversable:false,displayOnly:true});
     worldFrame(ssuTone,8,11,rowY.ssu,rowY.ssuAlt,{groupKey:'ssu'});
     laneHeader('Venom本線','#a78bfa',8,10,rowY.ssu,rowY.ssu,{navKey:'ssu',headerW:138});
     laneHeader('独立作品','#c084fc',9,11,rowY.ssuAlt,rowY.ssuAlt,{headerW:132});
@@ -8510,9 +8603,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     drawSequence(['x-men-first-class-2011','x-men-origins-wolverine-2009','x-men-2000','x2-x-men-united-2003','x-men-the-last-stand-2006','the-wolverine-2013','x-men-days-of-future-past-2014'],0,rowY.foxOrig,{klass:'chronology-fox-original'});
     const pivotCol=6;
     out.push('<circle class="chronology-pivot" cx="'+(xForCol(pivotCol)+cardW/2)+'" cy="'+(rowY.foxOrig-10)+'" r="6"/><text class="chronology-track-label" x="'+(xForCol(pivotCol)+cardW/2+10)+'" y="'+(rowY.foxOrig-7)+'">分岐点 / Days of Future Past</text>');
-    branchBetweenRows('x-men-days-of-future-past-2014','x-men-apocalypse-2016',pivotCol,rowY.foxOrig,rowY.foxRev,{label:'改変後系列',klass:'chronology-fox-revised'});
+    branchBetweenRows('x-men-days-of-future-past-2014','x-men-apocalypse-2016',pivotCol,rowY.foxOrig,rowY.foxRev,{label:'改変後系列',klass:'chronology-fox-revised',row:'fox-revised'});
     drawSequence(['x-men-apocalypse-2016','dark-phoenix-2019','deadpool-2016','deadpool-2-2018'],pivotCol,rowY.foxRev,{klass:'chronology-fox-revised'});
-    branchBetweenRows('deadpool-2016','logan-2017',pivotCol+2,rowY.foxRev,rowY.foxAmb,{label:'位置づけ慎重',klass:'chronology-branch',traversable:false});
+    branchBetweenRows('deadpool-2016','logan-2017',pivotCol+2,rowY.foxRev,rowY.foxAmb,{label:'位置づけ慎重',klass:'chronology-branch',row:'fox-ambiguous',traversable:false,displayOnly:true});
     drawSequence(['logan-2017','the-new-mutants-2020'],pivotCol+2,rowY.foxAmb,{klass:'chronology-axis',dashedTracks:['ambiguous']});
     worldFrame(foxTone,0,9,rowY.foxOrig,rowY.foxAmb,{groupKey:'fox'});
     laneHeader('旧系列',foxTone,0,6,rowY.foxOrig,rowY.foxOrig,{navKey:'fox',groupKey:'fox-original',headerW:116});
@@ -8522,7 +8615,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     // labels and connectors
 
     const civilX=xForCol(3)+cardW, civilY=mid(rowY.mcuCap), homeX=xForCol(homecomingCol), homeY=mid(rowY.spiderMcu);
-    out.push(chronologyEdgeGroup('captain-america-civil-war-2016','spider-man-homecoming-2017','M '+civilX+' '+civilY+' H '+(civilX+18)+' V '+homeY+' H '+homeX,'chronology-spider-line'));
+    out.push(chronologyEdgeGroup('crossing-captain-america-civil-war-2016-spider-man-homecoming-2017-mcu-spider','captain-america-civil-war-2016','spider-man-homecoming-2017','M '+civilX+' '+civilY+' H '+(civilX+18)+' V '+homeY+' H '+homeX,'chronology-spider-line',{kind:'crossing'}));
 
     panel.innerHTML=chronologyJumpBarHtml()+'<div class="chronology-legend"><span class="badge">大枠＝世界線 / 段＝物語系列</span><span class="badge">同じ世界線でも直接つながらない作品は別段</span><span class="badge">接続は左→右</span><span class="badge">枠内ナビあり</span></div>'+ 
       '<div class="chronology-source-note"><strong>Stage C:</strong> ③「世界線・時系列」は、<strong>同じ世界線でも物語のつながりが薄い作品は別段に分ける</strong> 方向へ再構成しました。特にMCUは1本の横線ではなく、共有イベントの背骨・宇宙サイド・魔術/マルチバース・街/地上サイド・ワカンダ/量子/新世代などの段に分離しています。これにより、同じ世界線だが別の物語系列であることを表しやすくし、横幅も抑えています。Spider-Man系列は Raimi / Amazing / MCU版 を別段化し、<em>No Way Home</em> 付近で交差させています。 <a href="https://www.disneyplus.com/ja-jp/explore/articles/mcu-series" target="_blank" rel="noopener">Disney+公式時系列 ↗</a></div>'+ 
@@ -8598,6 +8691,7 @@ window.ensureStageAViewInitialized=function(target){
         }else fitView(wrap);
       }
       if(wrap&&restoreSelection&&selectedIds.size)refreshSelection(false);
+      else if(wrap&&restoreSelection&&window.marvelDetailFocusId&&typeof window.marvelRenderDetailFocus==='function')window.marvelRenderDetailFocus(window.marvelDetailFocusId);
       else if(wrap){clearSvg();applyCharacterHighlight();if(typeof window.applyFamilyFocus==='function')window.applyFamilyFocus();}
     });
     return true;
@@ -8838,8 +8932,27 @@ window.FEATURED_ROUTE=Object.freeze({
     if(!id||!nm[id])return false;
     clearSvg();
     const svg=activeSvg(); if(!svg)return false;
-    const nodeMap=new Map([...svg.querySelectorAll('g.node')].map(g=>[gt(g),g]));
+    const nodeMap=new Map([...svg.querySelectorAll('g.node')].map(g=>[g.dataset?.releaseWorkId||gt(g),g]));
     if(!nodeMap.has(id))return false;
+    const releasePanel=svg.closest('.panel')?.id==='release';
+    if(releasePanel){
+      // Keep release cards connected to the shared detail/goal state without
+      // borrowing relationship-edge or chronology styling from the overview.
+      svg.classList.remove('dim','family-mode','char-mode');
+      for(const [wid,g] of nodeMap){
+        const isGoal=selectedIds.has(wid);
+        if(wid!==id&&!isGoal)continue;
+        g.classList.add('focus');
+        if(isGoal)g.classList.add(wid===selected?'current-goal':'goal-node');
+        if(wid===id)g.classList.add('detail-focus');
+      }
+      if(typeof window.marvelRenderFocusedDetail==='function')window.marvelRenderFocusedDetail(id);
+      else if(detail){
+        const goals=activeGoalIds().length?`<div class="muted">ゴール${activeGoalIds().length}件は保持中</div>`:'';
+        detail.innerHTML=`<strong>${esc(nm[id].title)}</strong><div class="muted">詳細表示中（ゴールには追加していません）</div>${goals}`;
+      }
+      return true;
+    }
     const part=focusPart(id),ctx=part.nodes||new Set([id]);
     svg.classList.add('dim');
     for(const [wid,g] of nodeMap){
@@ -8877,6 +8990,8 @@ window.FEATURED_ROUTE=Object.freeze({
     if(!detailFocusId||focusPaintRaf)return;
     focusPaintRaf=requestAnimationFrame(()=>{focusPaintRaf=0;if(detailFocusId)renderFocusHighlight(detailFocusId);});
   }
+
+  window.marvelRenderDetailFocus=function(id){return renderFocusHighlight(id);};
 
   window.marvelFocusWork=function(id,{center=true}={}){
     if(!nm[id])return false;
@@ -8958,7 +9073,7 @@ window.FEATURED_ROUTE=Object.freeze({
   document.addEventListener('contextmenu',e=>{
     if(window.matchMedia('(max-width:760px)').matches)return;
     const node=e.target?.closest?.('.svg-wrap svg g.node'); if(!node)return;
-    const id=gt(node); if(!id||!nm[id])return;
+    const id=node.dataset?.releaseWorkId||gt(node); if(!id||!nm[id])return;
     e.preventDefault();
     window.marvelToggleGoal(id);
   },true);

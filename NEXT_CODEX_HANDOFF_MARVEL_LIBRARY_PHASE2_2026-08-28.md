@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d` (PR #32 merge; docs-only baseline updates may follow)
+- latest semantic baseline commit: `fb715e87d5290b73e0ff86139d2554df32fc4a2d` (PR #38); latest integrated audit baseline: `04ff92b633f4da5756f58c96de7b321dac4bb02c` (PR #40)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -25,6 +25,8 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #28 Avengers: Doomsday production-status evidence promotion batch007: merged as `9b0a754aee920c8ec922142d58d71c5d2665fb9a`
 - PR #30 full release/status evidence audit: merged as `641d16577c847ab5f917e3faea0900536dc0baab`
 - PR #32 HTML design/operation debugging: merged as `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`
+- PR #38 all-work browser selection audit: merged as `fb715e87d5290b73e0ff86139d2554df32fc4a2d`
+- PR #40 browser interaction state audit: merged as `04ff92b633f4da5756f58c96de7b321dac4bb02c`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -75,6 +77,34 @@ Fresh verification for the PR #30-integrated baseline:
 The applied records for the full audit are `data/content_audit/applied/2026-08-30-release-status-audit-dispositions.json` and promotion batches008–015. The inventory is `data/content_audit/release_status_inventory.csv`; conflicts are the YFNSM S2 release and Wonder Man S2 status. No release/status fact derives a graph edge, work-pair reason, production milestone, territory, or Earth identity.
 
 The HTML design/operation debugging pass is complete and recorded in `docs/superpowers/plans/2026-08-30-marvel-library-html-design-operation-debug.md` and `docs/superpowers/reviews/2026-08-30-marvel-library-html-design-operation-debug.md`. Any further viewer change must use a new plan and UI regression contract rather than changing canonical metadata implicitly.
+
+## 0.1.1 Production baseline after the 2026-09-02 browser-audit integration
+
+PR #38 adds an independent Python selection oracle and a Node/Chrome CDP audit that performs real SVG clicks for all `131` works in both public tiers (`site-proposal` and `complete`). The browser job compares directed `source_work_id->target_work_id` sets for `back`, `forward`, and `context` highlights and passed with `0` mismatches. A CI cleanup retry fix was required for hosted Chrome child-process profile locks and is included in the merge.
+
+Fresh verification on merged `main` at `fb715e87d5290b73e0ff86139d2554df32fc4a2d`:
+
+- `379` / `379` library-v5 tests pass locally;
+- real Chrome audit: `131 × 2` selections, exact-set mismatches `0`;
+- build `audit_issue_count=0`, compatibility `361/569/199`, story paths `83/83`;
+- GitHub Actions PR #38 checks `test` and `browser-selection-audit`: both pass;
+- Pages deployment run `33628369828`: success; public URL returns HTTP `200`.
+
+No canonical CSV or persistent review ledger was changed. The interaction-state browser coverage is now complete in PR #40; the next work remains separately bounded as a distinct chronology/publication-order design and audit.
+
+## 0.1.2 Production baseline after the 2026-09-02 interaction-state audit
+
+PR #40 adds a separate Node/Chrome CDP smoke audit for representative desktop state transitions: same-work re-click deselection, SVG background clear, drag-end selection preservation, overview↔chronology repaint, overview↔release repaint, and right-panel works↔links preservation. The runner uses real pointer events and observes DOM classes; it does not call production selection functions directly. Chronology repaint additionally requires a highlighted `g.chronology-edge`.
+
+Fresh verification on merged `main` at `04ff92b633f4da5756f58c96de7b321dac4bb02c`:
+
+- `384` / `384` library-v5 tests pass locally (the two browser tests remain environment-gated in the ordinary suite);
+- real Chrome/CDP interaction audit: `6 / 6` representative cases pass;
+- real Chrome/CDP selection audit: `131 × 2` selections, exact-set mismatches `0`;
+- build `audit_issue_count=0`, compatibility `361/569/199`, story paths `83/83`;
+- GitHub Actions run `33630797450` passed `test`, `browser-selection-audit`, and `browser-interaction-audit` after a transient first-run timeout in the existing selection job was rerun successfully.
+
+No canonical CSV or persistent review ledger changed. The next bounded work is a written chronology/publication-order display contract and its separate audit; do not infer new semantics from this interaction-test integration.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
@@ -491,3 +521,55 @@ The release/status public views join only to `works` and do not feed graph deriv
 The full audit plan is `docs/superpowers/plans/2026-08-30-marvel-library-db-v1-full-release-status-audit.md`, with the review report in `docs/superpowers/reviews/2026-08-30-marvel-library-full-release-status-audit.md`. It inventories all 269 normalized release/status facts, promotes only exact source/evidence/review matches, and records every remaining row as `defer` or `conflict`. The merged baseline is `641d16577c847ab5f917e3faea0900536dc0baab`; CI run #285 passed 305 tests, build/audit/review/FK checks are zero, SQLite integrity is `ok`, and graph compatibility remains 361/569/199 with story paths 83/83.
 
 The data-audit boundary and the HTML design/interaction debugging boundary are complete. Do not infer future viewer or semantic work from this completion; select a new bounded plan before changing code or canonical data.
+
+## 13. Chronology display contract — Task 5 audit (2026-09-03)
+
+The separately bounded chronology display plan is implemented through Task 4 on branch `codex/chronology-publication-order-contract`. The implementation HEAD before this documentation handoff is `e141d3da7f26eccea49d3d81a0f51d564f95d06b` (`test: strengthen chronology mode and canvas audits`), covering the range `10726ac..e141d3d`. The Task 5 documentation commit contains only this handoff, the master roadmap, and the chronology review:
+
+- `docs/superpowers/reviews/2026-09-02-marvel-library-chronology-display-contract-review.md`
+- this section;
+- the corresponding chronology boundary in `CODEX_MASTER_ROADMAP_MARVEL_DB_V1_TO_MAIN_2026-08-28.md`.
+
+The display layer now gives every chronology line a stable `data-chronology-edge-id`, while retaining source/target attributes only for compatibility and adjacency. The selection classifier, SVG materialization, and Canvas overlay maps are edge-ID keyed. The `displayOnly:true` / `traversable:false` invariant rejects invalid display-only combinations; the three display-only lines remain visible but never enter selection adjacency or highlight maps. The public classifier modes are `complete`, `site-proposal`, `or`, `and`, and `path`; `previous1` is an internal unit-only contract because no public scope control is exported. PATH pair/ID inputs are materialized to existing traversable chronology IDs at the SVG/Canvas render boundary without a new chronology search or BFS. The browser audit uses a fixed 74-edge fixture and explicitly verifies OR/AND separation plus site-proposal incoming tier filtering.
+
+The independent real Chrome/CDP audit passed with `cases=7`, `failures=0`, `74` chronology edges, duplicate IDs `0`, display-only highlighted `0`, SVG/Canvas ID/category/metadata parity failures `0`, all five display-only endpoint checks, and successful overview↔chronology round trips. `previous1` is explicitly unavailable/skipped because this export has no public scope control; no internal scope state was invoked. The dedicated CI browser job is declared after the interaction audit, but remote CI for this new branch remains a future gate.
+
+Fresh bundled-runtime verification on this branch:
+
+- full unittest: `398` tests, `OK (skipped=3)` (the three opt-in browser tests are environment-gated in the ordinary suite);
+- ordinary build: exit `0`, `audit_issue_count=0`, content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- compatibility: `work_edges_all=361`, `work_pair_reasons=569`, `prewatch_edges=199`, story paths `83/83`;
+- export: `131` nodes, `361` edges, `569` reasons, `42` character groups;
+- canonical DB observations: `events/event_occurrences/multiverse_transitions/transition_participants = 9/9/9/10`, `chronology_assertions=0`.
+
+`data/library/` and `data/content_audit/reviews.csv` are unchanged. Build-only reports, queue, DB manifests/SQLite, and `__pycache__` are transient generated outputs; they are not canonical or persistent review inputs. `git diff --check` is clean for the documentation changes.
+
+The required `git fetch origin` freshness check still fails with `.git/FETCH_HEAD: Permission denied`; no reset, overwrite, or force-update was performed. This branch stops at the merge gate: inspect the complete branch diff, obtain fresh remote CI/public-artifact evidence, and get explicit user approval before merging into `main` or publishing Pages. The unexecuted release-order work remains the separate plan `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md`; it must not be inferred from or started as part of this chronology boundary.
+
+## 15. Publication-order display contract — Task 6 full verification (2026-09-03)
+
+The separately approved publication-order display plan `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md` is implemented through Task 5 on branch `codex/publication-order-display-contract`. The implementation range is `5e159c4236ee03ede4c5175519bff468ff6beb1e..c5e24393904aec6ae50511813b61a300c2a572f1`; the Task 6 documentation handoff adds the publication-order review, this section, and the corresponding master-roadmap boundary.
+
+Publication order is a date-axis/card focus view, not a relation or chronology graph. The release SVG renders all `131` works exactly once with stable `data-release-work-id` values, preserves exact/month/year/TBD precision, and uses a deterministic stable-sort-index then `work_id` tie-break. It declares `data-relationship-edges="off"` and has no `g.edge` or `g.chronology-edge`; the mobile Canvas guard likewise produces no synthetic relation or chronology overlays. Shared `work_id` selection and detail focus remain available across overview, chronology, and release, while release focus does not borrow overview edge styling and overview repaint remains intact.
+
+Local evidence on the branch:
+
+- bundled-Python full suite: `424` tests, `OK (skipped=4)`, exit `0`;
+- ordinary build: exit `0`, `audit_ok=true`, `audit_issue_count=0`, content-audit issue count `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- logical DB fingerprint/equivalence `39917ceee6af94e680acebdf7b570142f1a2995646aec1dd344ec3ed395b5b92`; compatibility `work_edges_all=361`, `work_pair_reasons=569`, prewatch edges `199`, story paths `83/83`;
+- real Chrome/CDP runner: `cards=131`, `cases=21`, `failures=0`, `syntheticEdges=0`, `g.edge=0`, `g.chronology-edge=0`, geometry failures `0`;
+- real `390x844` mobile cases: `nodeBoxes=131`, synthetic overlays `0`; release/overview and release/chronology round trips all true;
+- wrapper summary: `cards=131, failures=0, syntheticEdges=0`;
+- canonical `data/library/**`, `data/content_audit/reviews.csv`, derived SQLite/export inputs, and persistent review history are unchanged. Build-only reports/queue/manifests/SQLite were inspected and removed from the worktree as known transient outputs.
+
+The canonical export currently has `day=127`, `month=2`, `year=0`, `none=2`; therefore the year-only browser case is an explicit runtime fixture and does not assert a canonical year-only release. No real day is invented for month/year precision, and TBD cards remain in the `Upcoming / date TBD` bucket.
+
+The normal-permission local `git fetch origin` freshness check first reported `.git/FETCH_HEAD: Permission denied`, but the authorized elevated retry succeeded. At verification time `origin/main` was `5e159c4236ee03ede4c5175519bff468ff6beb1e` (which contains the AGENTS.md `04ff92b...` baseline as an ancestor); no reset, overwrite, rebase, or force update was performed. This branch stops at the normal explicit-approval merge gate: complete branch diff review, fresh remote CI/public-artifact checks, and user approval remain required before merge into `main` or Pages publication. No canonical data or HTML semantic export change is authorized by this documentation boundary.
+
+## 16. Publication-order display — production integration (2026-09-03)
+
+PR #42 (`https://github.com/kamochama/marvel-flowchart-jp/pull/42`) merged the publication-order display contract into `main` as merge commit `f4d4662383645eec714faf3b73d3fa2e0f2e2ded`. The post-merge main worktree was fast-forwarded to that commit and remains clean.
+
+The merge commit passed the required CI checks: `test`, `browser-selection-audit`, `browser-interaction-audit`, `browser-chronology-audit`, and `browser-publication-order-audit`. The Pages deployment for the same commit completed successfully. GitHub Pages reports `status=built`, `public=true`, `https_enforced=true`, and the public URL is `https://kamochama.github.io/marvel-flowchart-jp/` (HTTP 200). The served HTML contains the release relationship-edge guard and release card markup.
+
+The publication-order branch's canonical CSV, SQLite, and persistent review ledger remained unchanged. The next viewer or semantic change requires a new bounded plan and explicit merge boundary.

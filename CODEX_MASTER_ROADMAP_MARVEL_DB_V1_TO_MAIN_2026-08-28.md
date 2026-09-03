@@ -9,7 +9,9 @@ This file is the long-range execution roadmap for Codex and other coding agents.
 
 If this roadmap conflicts with a newer explicit user instruction, the newer user instruction wins. If a SHA becomes stale, reconcile against fresh remote HEAD; never reset implementation to an older documentation checkpoint.
 
-> **Current semantic production note (2026-08-30):** The historical PR #10/PR #11 gate described below has completed. PR #10 (Events & Multiverse), PR #11 (releases/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), and PR #32 (HTML design/operation debugging) are merged into `main`; the latest semantic baseline is `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`. Later documentation-only commits do not change code/data. The post-merge baseline and the next separately bounded work are recorded in §13.
+> **Current semantic production note (2026-09-02):** The historical PR #10/PR #11 gate described below has completed. PR #10 (Events & Multiverse), PR #11 (releases/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), and PR #38 (all-work browser selection audit) are merged into `main`; the latest semantic baseline is `fb715e87d5290b73e0ff86139d2554df32fc4a2d`. Later documentation-only commits do not change code/data. The post-merge baseline and the next separately bounded work are recorded in §13.
+
+> **Integrated audit note (2026-09-02):** PR #40 (browser interaction state audit) is also merged into `main` at `04ff92b633f4da5756f58c96de7b321dac4bb02c`; it adds representative PC interaction coverage without changing semantic code or canonical data.
 
 ---
 
@@ -450,12 +452,56 @@ PR #28 promoted the existing Avengers: Doomsday announced-status snapshot with o
 
 After batch007, the normalized tables contain 138 releases (6 `source_verified`, 132 `legacy_seed`) and 131 production-status assertions (4 `source_verified`, 127 `legacy_seed`); sources/evidence/reviews are 44/113/88. Compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, prewatch edges `199`, and story paths `83/83`. Remaining seeds require separate evidence-backed batches.
 
-## 13. Post-integration baseline and next execution boundary (2026-08-30)
+## 13. Post-integration baseline and next execution boundary (2026-09-02)
 
-The latest semantic production baseline is `main` at `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`, the merge commit for PR #32. The static Pages viewer still loads the committed DB-derived `data/derived/flowchart.json`; release/status metadata remains outside graph derivation.
+PR #40 is integrated as the representative browser interaction-state audit. Its six real desktop cases cover same-work re-click clear, background clear, drag preservation, overview↔chronology repaint, overview↔release repaint, and right-panel works↔links preservation. The audit runs in a separate dependent CI job and observes real pointer events and DOM state without extending the overview selection oracle.
+
+The latest semantic production baseline is `main` at `fb715e87d5290b73e0ff86139d2554df32fc4a2d`, the merge commit for PR #38. The static Pages viewer still loads the committed DB-derived `data/derived/flowchart.json`; release/status metadata remains outside graph derivation.
 
 PR #30 completed the strict all-fact release/status evidence audit and merged promotion batches008–015. The normalized tables contain `138` releases (`14` `source_verified`, `124` `legacy_seed`) and `131` production-status assertions (`13` `source_verified`, `118` `legacy_seed`). The full disposition ledger covers all `269` facts: `27` promoted, `240` deferred, and `2` conflicts retained as seeds. Sources/evidence/reviews are `49/130/105`. Promoted facts preserve territory, precision, announced/released semantics, and snapshot dates; no graph edge, work-pair reason, production milestone, or Earth identity is inferred.
 
 Fresh verification on PR #30 head (GitHub Actions run #285) passed `305` library-v5 tests. PR #32 then passed its required check (`1 / 1`) with the expanded `318`-test suite. The post-merge build and audit/review checks report zero issues, SQLite foreign-key rows are `0`, `integrity_check=ok`, and compatibility remains `work_edges_all=361`, `work_pair_reasons=569`, prewatch edges `199`, story paths `83/83`. Applied records and the deterministic inventory are recorded under `data/content_audit/applied/` and `data/content_audit/release_status_inventory.csv`.
 
-The data-audit boundary and the HTML design/interaction debugging pass are complete. PR #32 records the official/curated provenance boundary, three tier semantics, chart-return navigation, route highlighting, and desktop/mobile smoke results; the public Pages URL was rechecked after the merge. Any subsequent viewer change requires its own plan, RED/UI regression contract, full verification, and an explicit merge boundary.
+The data-audit boundary and the HTML design/interaction debugging pass are complete. PR #32 records the official/curated provenance boundary, three tier semantics, chart-return navigation, route highlighting, and desktop/mobile smoke results; PR #38 adds the independent all-work selection oracle and real Chrome/CDP DOM exact-set audit for both public tiers, including its required CI job and hosted-runner cleanup handling. The public Pages URL was rechecked after the merge and returned HTTP `200`. Any subsequent viewer change requires its own plan, RED/UI regression contract, full verification, and an explicit merge boundary.
+
+## 14. Chronology display contract boundary (2026-09-03)
+
+The separately approved chronology display plan `docs/superpowers/plans/2026-09-02-marvel-library-chronology-display-contract.md` is complete through its Task 4 implementation and Task 5 local documentation handoff on branch `codex/chronology-publication-order-contract`. The implementation range is `10726ac..e141d3d`, ending at `e141d3da7f26eccea49d3d81a0f51d564f95d06b` (`test: strengthen chronology mode and canvas audits`). The Task 5 commit is documentation-only and records the review, handoff, and this roadmap boundary.
+
+The chronology viewer now materializes stable edge IDs for all `74` display lines, separates display-only lines from traversable adjacency, and classifies selections by edge ID across five public modes: `complete`, `site-proposal`, `or`, `and`, and `path`. `previous1` remains an internal unit-only contract without a public scope control. PATH pair/ID inputs are mapped only at the existing SVG/Canvas render boundary to traversable chronology IDs; no new chronology search or BFS is introduced. SVG `data-chronology-edge-id` and Canvas `overlayChronologyEdgeId` produce equal materialized ID sets, categories, and chronology metadata. A fixed independent fixture makes the OR/AND and site-proposal incoming-tier checks distinguishable. These lines remain a display layer, not canonical relation facts.
+
+Local evidence:
+
+- full bundled-Python suite: `398` tests, `OK (skipped=3)`;
+- ordinary build: exit `0`, audit/review/FK issues `0`, SQLite `integrity_check=ok`;
+- graph compatibility: `361/569`, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP chronology audit: `7` cases, `failures=0`, duplicate IDs `0`, display-only highlighted `0`, SVG/Canvas ID/category/metadata parity failures `0`, all five display-only endpoint checks, and both overview↔chronology round trips true;
+- `previous1` is explicitly unavailable/skipped because the export has no public scope control; no internal scope state was invoked;
+- `chronology_assertions=0`, and canonical `data/library/` plus persistent `data/content_audit/reviews.csv` are unchanged.
+
+The local `git fetch origin` freshness check failed with `.git/FETCH_HEAD: Permission denied`; the checkout was not reset or overwritten. Remote CI, complete branch review, merge into `main`, and Pages publication remain pending explicit approval. The release-order/publication-order plan `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md` is intentionally unexecuted and remains a separate future boundary; no release-order semantics are introduced here.
+
+## 15. Publication-order display contract boundary (2026-09-03)
+
+The separately approved plan `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md` is complete through Task 5 implementation and Task 6 local verification on branch `codex/publication-order-display-contract`. The implementation range is `5e159c4236ee03ede4c5175519bff468ff6beb1e..c5e24393904aec6ae50511813b61a300c2a572f1`; the Task 6 docs-only handoff is recorded in `docs/superpowers/reviews/2026-09-02-marvel-library-publication-order-display-review.md`, this roadmap section, and the corresponding handoff section.
+
+Publication order is now a date-axis/card focus view. It renders all `131` works, preserves exact/month/year/undated-TBD precision without inventing a day, uses deterministic stable-sort-index then `work_id` tie-breaking, and puts TBD works in an explicit `Upcoming / date TBD` lane. The release SVG declares `data-relationship-edges="off"` and creates no `g.edge` or `g.chronology-edge`; relation/chronology lines are likewise prohibited from mobile synthetic Canvas overlays. Shared work selection and detail focus are preserved across overview, chronology, and release, but the release panel does not become a relation graph. The canonical export currently has `day=127 / month=2 / year=0 / none=2`, so the year-only browser case is a runtime fixture only.
+
+Task 6 local evidence:
+
+- bundled-Python full suite: `424` tests, `OK (skipped=4)`, exit `0`;
+- ordinary build: exit `0`, audit issue `0`, content-audit issue `0`, SQLite FK rows `0`, `integrity_check=ok`, logical fingerprint/equivalence `39917ceee6af94e680acebdf7b570142f1a2995646aec1dd344ec3ed395b5b92`;
+- graph/export compatibility: `131` nodes, `361` edges, `569` reasons, `42` character groups, prewatch `199`, story paths `83/83`;
+- direct real Chrome/CDP runner: `cards=131`, `cases=21`, `failures=0`, `syntheticEdges=0`; SVG edges `0/0`, geometry failures `0`, mobile `390x844` nodeBoxes `131`, synthetic overlays `0`;
+- wrapper: `cards=131, failures=0, syntheticEdges=0`; release↔overview and release↔chronology round trips all true;
+- canonical `data/library/**`, persistent `data/content_audit/reviews.csv`, and derived SQLite/export inputs have no branch diff. Build-only outputs were inspected and removed as transient paths.
+
+The normal-permission local `git fetch origin` freshness check first reported `.git/FETCH_HEAD: Permission denied`, but the authorized elevated retry succeeded. At this checkpoint `origin/main` was `5e159c4236ee03ede4c5175519bff468ff6beb1e` (containing the AGENTS.md `04ff92b...` baseline as an ancestor); no reset, overwrite, rebase, or force update was performed. This milestone is locally verified but not production-integrated. Remote CI, full branch review, public artifact/Pages checks, and explicit user approval remain the merge/publication gate. Do not merge, push, publish, or begin another semantic/viewer phase from this boundary without that approval.
+
+## 16. Publication-order display — production baseline (2026-09-03)
+
+PR #42 (`https://github.com/kamochama/marvel-flowchart-jp/pull/42`) integrated the publication-order display contract into `main` at merge commit `f4d4662383645eec714faf3b73d3fa2e0f2e2ded`. The required CI checks all passed, including the dedicated publication-order browser audit. Its real Chrome coverage reported `131` cards, `21` cases, `failures=0`, `syntheticEdges=0`; release/overview and release/chronology round trips were successful.
+
+The GitHub Pages deployment for the merge commit completed with `status=built`, `public=true`, and `https_enforced=true`. The public URL is `https://kamochama.github.io/marvel-flowchart-jp/`, which returned HTTP `200`; the served HTML contains the release relationship-edge guard and release-card attributes. Canonical `data/library/**`, `data/content_audit/reviews.csv`, and derived SQLite/export inputs were unchanged by this milestone.
+
+This is now the production viewer baseline. Any subsequent viewer or semantic change requires its own bounded plan, regression contract, full verification, and explicit merge boundary.

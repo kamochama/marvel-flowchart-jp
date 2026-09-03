@@ -6,8 +6,8 @@ This file defines persistent working rules for Codex and other coding agents ope
 
 - Repository: `kamochama/marvel-flowchart-jp`.
 - Production branch: `main`.
-- Latest semantic production baseline after PR #32: `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`.
-- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), and PR #32 (HTML design/operation debugging) are merged into `main`.
+- Latest semantic production baseline after PR #38: `fb715e87d5290b73e0ff86139d2554df32fc4a2d`; latest integrated audit baseline after PR #40 is `04ff92b633f4da5756f58c96de7b321dac4bb02c`.
+- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), PR #38 (all-work browser selection audit), and PR #40 (browser interaction state audit) are merged into `main`.
 - PR #30 promoted 27 release/status facts with exact evidence and review transitions; 240 facts remain deferred and 2 remain in explicit conflict.
 - There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
 - During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
@@ -48,6 +48,20 @@ Historical documents use overlapping phase names. When reporting status, identif
   & $MarvelPython -m unittest discover -s tests/library_v5 -p 'test_*.py' -v
   & $MarvelPython -m scripts.library_v5.build --repo-root .
   ```
+
+実ブラウザの131作品×2 tier選択監査を行う場合は、Chrome / Chromiumを用意したうえで次を実行する。監査ランナーが一時HTTPサーバーを起動し、独立Pythonオラクルと実SVG点灯を比較する。Chromeを自動検出できない場合は `MARVEL_CHROME_BIN` に絶対パスを設定する。
+
+```powershell
+$env:MARVEL_BROWSER_AUDIT = '1'
+& $MarvelPython -m unittest tests.library_v5.test_browser_selection_audit.BrowserSelectionAuditTests.test_headless_dom_matches_python_oracle_for_both_public_tiers -v
+```
+
+PC版の操作状態を代表ケースで監査する場合は、同じChrome/CDP方式で次を実行する。再クリック解除、背景クリック解除、ドラッグ後の選択維持、公開順・世界線／時系列・右パネル切替後の再点灯を、内部関数を直接呼ばず実操作とDOM状態で確認する。
+
+```powershell
+$env:MARVEL_BROWSER_INTERACTION_AUDIT = '1'
+& $MarvelPython -m unittest tests.library_v5.test_browser_interaction_audit.BrowserInteractionAuditTests.test_headless_interactions_preserve_selection_contract -v
+```
 
 - Keep the `&` before a quoted executable path; without it PowerShell treats the path as text rather than launching it. Prefer repository modules (`-m ...`) over ad-hoc inline scripts. If the bundled path changes, resolve the current workspace runtime before substituting a new path; do not silently fall back to a different Python.
 - For final verification, run the exact commands above from the repository root. The build may create transient audit/DB outputs under `data/content_audit/` and `data/derived/`; inspect the result first, then remove only the known generated paths when the workflow requires a clean working tree. Never delete canonical CSVs or `data/content_audit/reviews.csv`.
@@ -115,11 +129,13 @@ Examples already established:
 
 ## Current compatibility invariants
 
-The latest semantic production baseline after PR #32 is:
+The latest integrated production/audit baseline after PR #40 is:
 
-- `main` `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`
-- PR #32 required check: GREEN (1 / 1)
-- 318 / 318 library-v5 unit tests PASS
+- `main` `04ff92b633f4da5756f58c96de7b321dac4bb02c` (semantic graph/data remains the PR #38 baseline)
+- PR #40 required checks: GREEN (`test`, `browser-selection-audit`, and `browser-interaction-audit`)
+- 384 / 384 library-v5 unit tests PASS locally (2 browser tests are environment-gated skips in the ordinary suite)
+- real Chrome/CDP audit: 131 works × 2 public tiers, exact-set mismatches `0`
+- real Chrome/CDP interaction audit: 6 / 6 representative cases PASS
 - audit issues: 0
 - review-integrity issues: 0
 - FK check rows: 0
@@ -135,13 +151,13 @@ The latest semantic production baseline after PR #32 is:
 - story paths reproduced: 83 / 83
 - events / occurrences / transitions / transition participants: 9 / 9 / 9 / 10
 
-PR #30 also records the strict full-audit disposition for all 269 release/status facts: 27 promoted, 240 deferred, and 2 conflicts retained as seeds. PR #32 records the UI regression contract and desktop/mobile operation audit for the three watch-plan tiers and the official prewatch route highlight.
+PR #30 also records the strict full-audit disposition for all 269 release/status facts: 27 promoted, 240 deferred, and 2 conflicts retained as seeds. PR #32 records the UI regression contract and desktop/mobile operation audit for the three watch-plan tiers and the official prewatch route highlight. PR #38 adds the independent all-work selection oracle, real DOM exact-set audit, and CI browser job; PR #40 adds representative PC interaction-state coverage and a dependent CI browser job; neither changes canonical data.
 
 These numbers document the checkpoint. They are not frozen targets except where a test explicitly encodes semantic compatibility. Future legitimate first-class facts can increase row counts while preserving protected graph compatibility.
 
 ## Current-plan completion and production integration gate
 
-The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, the full release/status evidence audit (PR #30), and the HTML design/operation debugging pass (PR #32) are integrated into `main`. The next viewer or semantic change must use its own bounded plan, RED/UI regression contract, evidence/review audit where applicable, and full verification.
+The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, the full release/status evidence audit (PR #30), the HTML design/operation debugging pass (PR #32), the all-work browser selection audit (PR #38), and the representative browser interaction-state audit (PR #40) are integrated into `main`. The next viewer or semantic change must use its own bounded plan, RED/UI regression contract, evidence/review audit where applicable, and full verification.
 
 For every future branch:
 

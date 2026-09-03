@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import csv
+import json
 import re
+import shutil
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -37,6 +41,14 @@ def function_body(source: str, name: str) -> str:
             if depth == 0:
                 return source[start : index + 1]
     raise AssertionError(f"function {name} has unbalanced braces")
+
+
+def function_source(source: str, name: str) -> str:
+    """Return a complete function declaration for a Node helper fixture."""
+    match = re.search(rf"function\s+{re.escape(name)}\s*\([^)]*\)\s*", source)
+    if not match:
+        raise AssertionError(f"function {name} was not found")
+    return source[match.start() : match.end()] + function_body(source, name)
 
 
 class FlowchartSelectionContractTests(unittest.TestCase):
@@ -76,6 +88,14 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("tierBackEdges", body)
         self.assertIn("tierNodeIds", body)
         self.assertRegex(body, r"forwardEdges\s*:\s*new Set\(baseState\.forwardEdges")
+
+    def test_chart_story_predecessors_use_reason_provenance(self) -> None:
+        """An explicit relation remains a predecessor when another reason wins the display label."""
+        helper = function_body(self.source, "hasExplicitWorkRelationReason")
+        self.assertIn("reason_ids", helper)
+        self.assertIn("reason_kind", helper)
+        body = function_body(self.source, "buildTierHighlightState")
+        self.assertIn("hasExplicitWorkRelationReason", body)
         self.assertIn("routeBackNodeIds", body)
         self.assertIn("goals.includes(edgeByKey.get(key)?.source)", body)
         tagger = function_body(self.source, "tagEdgeImportance")
@@ -205,11 +225,62 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         body = function_body(self.source, "directedPartAll")
         self.assertRegex(
             body,
-            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| \(prepTier==='complete' && e\.type_en==='explicit work relation'\)\)",
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| e\.type_en==='explicit work relation'\)",
         )
         self.assertRegex(body, r"if\(!backPropagates\(e\)\) continue")
         self.assertRegex(body, r"if\(!propagates\(e\)\) continue")
         self.assertNotRegex(body, r"prepTier==='complete' \|\| edgeRank\(e\)>=3")
+
+    def test_chart_history_keeps_explicit_story_chain_in_site_proposal(self) -> None:
+        """Selecting Spider-Man 3 must keep the explicit Spider-Man 2 predecessor lit."""
+        body = function_body(self.source, "directedPartAll")
+        self.assertRegex(
+            body,
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| e\.type_en==='explicit work relation'\)",
+        )
+        tier_body = function_body(self.source, "buildTierHighlightState")
+        self.assertIn("baseState.backEdges", tier_body)
+        self.assertIn("hasExplicitWorkRelationReason", tier_body)
+        self.assertIn("tierNodeIds.add(edge.source)", tier_body)
+        self.assertIn("tierNodeIds.add(edge.target)", tier_body)
+
+    def test_known_sequel_predecessors_remain_in_the_exported_chart_contract(self) -> None:
+        """Both reported Spider-Man chains must remain available to the chart renderer."""
+        payload = json.loads((ROOT / "data" / "derived" / "flowchart.json").read_text(encoding="utf-8"))
+        edges = {
+            (edge["source_work_id"], edge["target_work_id"]): edge
+            for edge in payload["edges"]
+        }
+        for source, target in (
+            ("the-amazing-spider-man-2012", "the-amazing-spider-man-2-2014"),
+            ("spider-man-2-2004", "spider-man-3-2007"),
+        ):
+            edge = edges.get((source, target))
+            self.assertIsNotNone(edge, f"missing exported edge: {source}->{target}")
+            self.assertEqual(edge["type_en"], "explicit work relation")
+        body = function_body(self.source, "directedPartAll")
+        self.assertRegex(
+            body,
+            r"backPropagates=e=>importanceAllowed\(e\) && \(edgeRank\(e\)>=3 \|\| e\.type_en==='explicit work relation'\)",
+        )
+
+    def test_every_active_work_relation_has_an_exported_chart_edge(self) -> None:
+        """The renderer must retain every non-superseded canonical relationship pair."""
+        with (ROOT / "data" / "library" / "work_relations.csv").open(
+            encoding="utf-8-sig", newline=""
+        ) as handle:
+            relations = list(csv.DictReader(handle))
+        expected = {
+            (row["source_work_id"], row["target_work_id"])
+            for row in relations
+            if row["verification_status"] != "superseded"
+        }
+        payload = json.loads((ROOT / "data" / "derived" / "flowchart.json").read_text(encoding="utf-8"))
+        exported = {
+            (edge["source_work_id"], edge["target_work_id"])
+            for edge in payload["edges"]
+        }
+        self.assertTrue(expected <= exported, f"missing exported relationship pairs: {sorted(expected - exported)}")
 
     def test_character_filter_is_visual_only_and_does_not_replace_exported_edges(self) -> None:
         body = function_body(self.source, "applyCharacterHighlight")
@@ -223,11 +294,17 @@ class FlowchartSelectionContractTests(unittest.TestCase):
             "the visual-only filter contract should observe the exported edge collection",
         )
 
-    def test_mobile_canvas_normalizes_stable_edge_ids_to_directed_pair_keys(self) -> None:
+    def test_mobile_canvas_preserves_stable_chronology_edge_ids(self) -> None:
         body = function_body(self.source, "canvasPrimitive")
         self.assertIn("rawEdgeKey=overlayGroup.dataset?.edgeKey", body)
         self.assertIn("window.marvelEdgeKeyFromGroup(overlayGroup)", body)
         self.assertIn("overlayEdgeKey=typeof window.marvelEdgeKeyFromGroup", body)
+        self.assertIn("overlayChronologyEdgeId", body)
+        rebuild = function_body(self.source, "prepareMobileSelectionWorldResources")
+        self.assertIn("overlayChronologyEdgeId", rebuild)
+        self.assertIn("chronologyEdgeMap", rebuild)
+        self.assertIn("const edgeId=p.overlayChronologyEdgeId||", rebuild)
+        self.assertIn("chronologyEdgeMap.has(edgeId)", rebuild)
 
     def test_chronology_sequence_edges_are_explicit_and_selection_aware(self) -> None:
         """Chronology lines must be their own sequence layer, not graph shortcuts."""
@@ -249,7 +326,114 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         """Publication order remains a date axis, not a fabricated work chain."""
         release = function_body(self.source, "buildReleaseView")
         self.assertIn('data-relationship-edges="off"', release)
+        self.assertNotIn("g.edge", release)
         self.assertNotIn("chronology-edge", release)
+
+    def test_release_cards_are_a_complete_line_free_date_axis(self) -> None:
+        """Every release card must expose precision and layout-only TBD metadata."""
+        release = function_body(self.source, "buildReleaseView")
+        self.assertIn('data-relationship-edges="off"', release)
+        self.assertNotIn("g.edge", release)
+        self.assertNotIn("chronology-edge", release)
+        self.assertIn("data-release-precision", release)
+        self.assertIn("data-release-sort-key", release)
+        self.assertIn("data-release-tbd", release)
+
+    def _render_release_fixture_ids(self) -> list[str]:
+        """Execute the real release builder with the canonical node fixture."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "Node.js is required for release builder fixture coverage")
+        if node is None:
+            return []
+        payload = json.loads((ROOT / "data" / "derived" / "flowchart.json").read_text(encoding="utf-8"))
+        nodes = [{"id": row["work_id"], "title": row["title_ja"]} for row in payload["nodes"]]
+        release_meta = {
+            row["work_id"]: {
+                "sortDate": row.get("release_sort_date", ""),
+                "displayDate": row.get("release_display_date", ""),
+                "releaseKind": row.get("release_kind", "other"),
+                "precision": row.get("release_precision", "none"),
+            }
+            for row in payload["nodes"]
+        }
+        builder = function_source(self.source, "buildReleaseView")
+        script = f"""
+const panel = {{innerHTML:'', querySelector:()=>null}};
+const document = {{getElementById:id=>id==='release'?panel:null}};
+const NODES = {json.dumps(nodes, ensure_ascii=False)};
+const nm = Object.fromEntries(NODES.map(row=>[row.id,row]));
+const RELEASE_META = {json.dumps(release_meta, ensure_ascii=False)};
+const RELEASE_HISTORY_ERAS = [{{id:'fixture-era', start:'1900', end:'2100', label:'fixture', kicker:'fixture', summary:'fixture', tone:'#000'}}];
+const RELEASE_LANES = [{{id:'legacy', label:'fixture', sub:'fixture', tone:'#000'}}];
+const RELEASE_HISTORY_MILESTONES = [];
+const esc = value => String(value ?? '');
+const releaseYearOf = meta => meta?.sortDate ? String(meta.sortDate).slice(0,4) : 'undated';
+const eraDateBounds = era => [Date.parse(`${{era.start}}-01-01T00:00:00Z`), Date.parse(`${{era.end}}-12-31T00:00:00Z`)];
+const releaseLaneOf = () => 'legacy';
+const layoutHistoryMarkers = () => ({{items:[], rows:1}});
+const layoutReleaseLane = ids => ({{items:ids.map((id,index)=>({{id,row:0,cx:index}})), rows:1}});
+const releaseTitleLines = title => [title];
+const releaseCardPath = () => 'M';
+const releaseCardDateLabel = meta => meta.displayDate || '';
+const releaseKindLabel = kind => kind;
+const initSvgInteraction = () => {{}};
+{builder}
+buildReleaseView();
+const ids = [...panel.innerHTML.matchAll(/data-release-work-id="([^"]+)"/g)].map(match=>match[1]);
+process.stdout.write(JSON.stringify(ids));
+"""
+        result = subprocess.run(
+            [node, "-"], input=script, capture_output=True, text=True, encoding="utf-8", check=False
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return json.loads(result.stdout)
+
+    def test_release_cards_cover_the_canonical_work_fixture_once(self) -> None:
+        """The release axis must materialize the canonical 131-work set once."""
+        payload = json.loads((ROOT / "data" / "derived" / "flowchart.json").read_text(encoding="utf-8"))
+        work_ids = [row["work_id"] for row in payload["nodes"]]
+        self.assertEqual(len(work_ids), 131)
+        self.assertEqual(len(set(work_ids)), 131)
+        card_ids = self._render_release_fixture_ids()
+        self.assertEqual(len(card_ids), len(work_ids), "release card count must match canonical work count")
+        self.assertEqual(len(card_ids), len(set(card_ids)), "release cards must not duplicate work IDs")
+        self.assertEqual(set(card_ids), set(work_ids), "release cards must cover exactly the canonical work IDs")
+
+    def test_release_cards_use_the_shared_selection_and_detail_focus_path(self) -> None:
+        """A release card must resolve its work ID through the same delegated click path."""
+        self.assertIn("data-release-work-id", function_body(self.source, "buildReleaseView"))
+        click_path = self.source[self.source.index("document.addEventListener('click'"):]
+        self.assertRegex(click_path, r"const id=node\.dataset\?\.releaseWorkId\|\|gt\(node\)")
+        self.assertIn("window.marvelFocusWork", self.source)
+        self.assertIn("window.marvelDetailFocusId", function_body(self.source, "renderSelectionState"))
+
+    def test_release_selection_round_trip_repaints_overview_without_release_edges(self) -> None:
+        """Release focus is card-only; panel activation restores normal overview painting."""
+        render = function_body(self.source, "renderSelectionState")
+        self.assertRegex(render, r"const releasePanel=svg\.closest\('\.panel'\)\?\.id==='release'")
+        self.assertIn("window.marvelDetailFocusId", render)
+        release_start = render.index("const releasePanel=")
+        edge_start = render.index("for(const g of svg.querySelectorAll('g.edge", release_start)
+        release_branch = render[release_start:edge_start]
+        self.assertIn("classList.remove('dim')", release_branch)
+        self.assertRegex(release_branch, r"releasePanel[\s\S]{0,900}return")
+        self.assertNotRegex(release_branch, r"selectedIds\s*=")
+
+        focus = function_body(self.source, "renderFocusHighlight")
+        self.assertRegex(focus, r"svg\.closest\('\.panel'\)\?\.id==='release'")
+        start = self.source.index("window.activatePanel=function")
+        end = self.source.index("\n  };\n\n  document.querySelectorAll('.tab').forEach", start)
+        activate = self.source[start:end]
+        self.assertIn("refreshSelection(false)", activate)
+        self.assertIn("window.marvelRenderDetailFocus(window.marvelDetailFocusId)", activate)
+
+    def test_release_disables_mobile_synthetic_edges_at_the_release_boundary(self) -> None:
+        """A release SVG policy must block synthetic relation overlays on mobile."""
+        synthetic = function_body(self.source, "mobileOverlaySyntheticSpecs")
+        self.assertRegex(synthetic, r"panel\s*=.*release")
+        self.assertRegex(synthetic, r"panel\s*===\s*['\"]release['\"]")
+        self.assertIn("cs.svg?.dataset?.relationshipEdges", synthetic)
+        self.assertRegex(synthetic, r"relationshipEdges.*off|off.*relationshipEdges")
 
     def test_mobile_canvas_preserves_chronology_selection_overlay_metadata(self) -> None:
         """Canvas mode must highlight chronology paths without mixing them into graph edges."""
@@ -280,11 +464,13 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         for token in ("previous1", "combineMode==='and'", "pathMode", "traversable===false"):
             self.assertIn(token, classifier)
         self.assertIn("state?.combineMode==='path'&&ids.length>1", classifier)
-        self.assertIn("normalizePreparationTier", classifier)
+        self.assertIn("const rawTier=state?.tier||state?.prepTier||'complete'", classifier)
+        self.assertIn("const tier=rawTier==='complete'?'complete':'site-proposal'", classifier)
+        self.assertNotIn("normalizePreparationTier", classifier)
         self.assertIn("tierNodeIds", classifier)
         self.assertIn("state?.pathEdges", classifier)
         self.assertRegex(classifier, r"adjacent===incoming[\s\S]{0,260}tierNodeIds")
-        self.assertRegex(classifier, r"pathEdges?\.has|pathPairs")
+        self.assertRegex(classifier, r"pathIds\.has|pathEdges?\.has")
 
     def test_selection_state_exposes_scope_and_combine_mode_to_chronology_layer(self) -> None:
         """The pure classifier must not read hidden module globals for mode semantics."""
@@ -302,6 +488,14 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("renderChronologySelectionState?.(svg,part)", focus)
         self.assertIn("marvelApplyOfficialRouteSvgOverlay?.(svg,part)", focus)
 
+    def test_panel_switch_restores_desktop_detail_focus(self) -> None:
+        """Returning to a chart view must repaint an existing desktop inspection."""
+        start = self.source.index("window.activatePanel=function")
+        end = self.source.index("\n  };\n\n  document.querySelectorAll('.tab').forEach", start)
+        activate = self.source[start:end]
+        self.assertIn("window.marvelDetailFocusId", activate)
+        self.assertIn("window.marvelRenderDetailFocus(window.marvelDetailFocusId)", activate)
+
     def test_chronology_groups_carry_traversability_and_fox_branch_endpoints(self) -> None:
         """Structural branches are selectable; display-only sequences are not traversed."""
         chronology = function_body(self.source, "buildChronologyView")
@@ -312,11 +506,43 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         self.assertIn("traversable", sequence)
         self.assertIn("chronologyEdgeGroup", branch)
         self.assertIn("source,target", self.source)
-        self.assertIn("chronologyEdgeGroup(source,target", branch)
+        self.assertIn("chronologyEdgeGroup(edgeId,source,target", branch)
         self.assertRegex(
             chronology,
             r"drawSequence\(\['morbius-2022','madame-web-2024','kraven-the-hunter-2024'\][\s\S]{0,260}traversable:false",
         )
+
+    def test_chronology_edges_have_stable_identity_and_display_invariant(self) -> None:
+        edge_group = function_body(self.source, "chronologyEdgeGroup")
+        self.assertIn("data-chronology-edge-id", edge_group)
+        self.assertIn("data-chronology-kind", edge_group)
+        self.assertIn("data-chronology-display-only", edge_group)
+        self.assertIn("displayOnly", edge_group)
+        self.assertIn("displayOnly&&!traversable", edge_group)
+
+    def test_chronology_canvas_materialization_uses_edge_id(self) -> None:
+        primitive = function_body(self.source, "canvasPrimitive")
+        mapper = function_body(self.source, "mobileOverlayChronologyEdgeClassMap")
+        self.assertIn("overlayChronologyEdgeId", primitive)
+        self.assertIn("edgeId", mapper)
+
+    def test_chronology_svg_materialization_uses_edge_id(self) -> None:
+        renderer = function_body(self.source, "renderChronologySelectionState")
+        self.assertRegex(renderer, r"dataset(?:\?\.)?chronologyEdgeId")
+        self.assertIn("edgeId", renderer)
+        self.assertIn("recordsById.get(edgeId)", renderer)
+
+    def test_chronology_path_ids_materialize_at_render_boundary(self) -> None:
+        helper = function_body(self.source, "materializeChronologyPathEdgeIds")
+        self.assertIn("supplied", helper)
+        self.assertIn("materialized", helper)
+        self.assertIn("supplied.has(String(edgeId))", helper)
+        self.assertIn("supplied.has(String(key))", helper)
+        self.assertIn("!traversable", helper)
+        renderer = function_body(self.source, "renderChronologySelectionState")
+        mobile = function_body(self.source, "mobileOverlayChronologyEdgeClassMap")
+        self.assertIn("materializeChronologyPathEdgeIds(records,state.pathEdges)", renderer)
+        self.assertIn("materializeChronologyPathEdgeIds(records,state.pathEdges)", mobile)
 
 
 if __name__ == "__main__":
