@@ -121,6 +121,21 @@ Fresh verification for the merged PR #45 baseline:
 
 The canonical variant boundary is documented in `docs/superpowers/reviews/2026-09-03-marvel-variant-fanout-audit.md`; the official screenplay evidence distinguishes this Wolverine as “the other”/“wrong” Wolverine rather than the exhumed Logan. No Earth number, continuity identity, or new TVA transition was inferred. The next work remains a separately bounded evidence-backed relation/source queue or a Loki identity audit.
 
+## 0.1.4 Production baseline after the 2026-09-03 relation evidence wave001
+
+PR #47 (`https://github.com/kamochama/marvel-flowchart-jp/pull/47`) is integrated into `main` at `28941193ec2b5c3fb18a57b02ac3fbc2b2e376c9`. It promotes exactly two existing work relations using already registered official sources: Thunderbolts* → Avengers: Doomsday (`thunderbolts-doomsday` plus its supporting turning-point article), and Spider-Man: No Way Home → Spider-Man: Brand New Day (`bnd-sony-2026`). Each relation retains its original ID, direction, relation kind, and certainty; only `verification_status` changes from `legacy_seed` to `source_verified` with exact evidence/review records.
+
+Fresh verification for the merged PR #47 baseline:
+
+- `439` / `439` library-v5 tests pass locally (`4` environment-gated browser skips);
+- bundled-Python build: audit/content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`9` source_verified, `152` legacy_seed, `3` superseded); evidence `136`; reviews `110`;
+- graph/export: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP selection: `131 × 2`, exact-set mismatches `0`; interaction `6/6`; chronology `7` cases with zero failures; publication order `131` cards/`21` cases with zero failures and zero synthetic edges;
+- GitHub Actions run `33743113994`: all five required jobs pass; Pages deployment run `33743746234` succeeded and the public URL returned HTTP `200`.
+
+The relation-level evidence and non-claims are documented in `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave001.md`. This batch does not promote the related character appearances, release/status metadata, multiverse transitions, or chronology assertions. The next relation candidates remain the VisionQuest trilogy and X-Men '97 S1 → S2, each requiring its own source-specific review.
+
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
 The static viewer now consumes the committed DB-derived artifact `data/derived/flowchart.json`; the browser does not open SQLite. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups, with all eligible edges visible by default and selection limited to presentation styling.
