@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `cf4da128b5b8783a3d635b48470dac413ac35b1d` (PR #55); latest integrated audit baseline: `cf4da128b5b8783a3d635b48470dac413ac35b1d` (PR #55)
+- latest semantic baseline commit: `ee90bf3afcec53a4d3be2f1ba290c1282a90a31a` (PR #58); latest integrated audit baseline: `ee90bf3afcec53a4d3be2f1ba290c1282a90a31a` (PR #58)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -27,6 +27,7 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #32 HTML design/operation debugging: merged as `f90497a0ecd1b4cc66bbf1dabce64b5b6b51825d`
 - PR #38 all-work browser selection audit: merged as `fb715e87d5290b73e0ff86139d2554df32fc4a2d`
 - PR #40 browser interaction state audit: merged as `04ff92b633f4da5756f58c96de7b321dac4bb02c`
+- PR #58 relation evidence promotion wave006: merged as `ee90bf3afcec53a4d3be2f1ba290c1282a90a31a`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -196,6 +197,22 @@ Fresh verification for the merged PR #55 baseline:
 - Pages deployment run `33755956523` succeeded; `https://kamochama.github.io/marvel-flowchart-jp/` and its `data/derived/flowchart.json` returned HTTP `200` with `131` nodes, `355` edges, and `562` reasons.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave005.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave005.md`. Across→Beyond, X-Men: The Animated Series → X-Men '97 S1, and other legacy relation rows remain a separate evidence-backed queue; this batch is not a claim that the entire relation audit is complete.
+
+## 0.1.9 Production baseline after the 2026-09-03 relation evidence wave006
+
+PR #58 (`https://github.com/kamochama/marvel-flowchart-jp/pull/58`) is integrated into `main` at `ee90bf3afcec53a4d3be2f1ba290c1282a90a31a`. It promotes four existing relations with relation-specific official evidence and review transitions: *Spider-Man: Across the Spider-Verse* → *Beyond the Spider-Verse*, *Spider-Man: Into the Spider-Verse* → *Across the Spider-Verse*, *X-Men: The Animated Series* → *X-Men '97* Season 1, and *Spider-Man: Homecoming* → *Far From Home*. Existing IDs, directions, relation kinds, directness, continuity scope, and certainty values are preserved; no release/status, chronology, identity, multiverse-transition, or new work-pair fact was added.
+
+Fresh verification for the merged PR #58 baseline:
+
+- `449` / `449` library-v5 tests pass locally (`4` environment-gated browser skips);
+- bundled-Python build: audit/content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`31` source_verified, `130` legacy_seed, `3` superseded); sources/evidence/reviews `68` / `158` / `132`;
+- graph/export: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- independent connectivity audit: `pass=39`, `deferred=536`, projection mismatches `0`, reason orphans `0`, unsupported transition edges `0`;
+- real Chrome/CDP selection `131 × 2` with zero exact-set mismatches; interaction `6/6`; chronology and publication order pass with zero failures, and publication order reports `131` cards with zero synthetic edges;
+- GitHub Actions run `33758294498` passed all five required jobs after rerunning the initial publication-order harness stdout failure; Pages deployment run `33759982789` succeeded and the public site and generated JSON returned HTTP `200` (`131` nodes, `355` edges, `562` reasons).
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave006.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave006.md`. Other Spider-Verse, X-Men legacy, and remaining relation rows remain a separate evidence-backed queue; this batch is not a claim that the entire relation audit is complete.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
