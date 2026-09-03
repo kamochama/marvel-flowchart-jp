@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `76011e93e260f4e44c2c2f525145c4d96adb0c88` (PR #60); latest integrated audit baseline: `76011e93e260f4e44c2c2f525145c4d96adb0c88` (PR #60)
+- latest semantic baseline commit: `a38a9e68ed463ab5dc6f7590271486ca0816b8c4` (PR #62); latest integrated audit baseline: `a38a9e68ed463ab5dc6f7590271486ca0816b8c4` (PR #62)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -29,6 +29,7 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #40 browser interaction state audit: merged as `04ff92b633f4da5756f58c96de7b321dac4bb02c`
 - PR #58 relation evidence promotion wave006: merged as `ee90bf3afcec53a4d3be2f1ba290c1282a90a31a`
 - PR #60 relation evidence promotion wave007: merged as `76011e93e260f4e44c2c2f525145c4d96adb0c88`
+- PR #62 relation evidence promotion wave008: merged as `a38a9e68ed463ab5dc6f7590271486ca0816b8c4`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -230,6 +231,22 @@ Fresh verification for the merged PR #60 baseline:
 - GitHub Actions run `33762363911` passed all five required jobs; Pages deployment run `33762986302` succeeded and the public site and generated JSON returned HTTP `200` (`131` nodes, `355` edges, `562` reasons).
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave007.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave007.md`. Other Spider-Man, X-Men/FOX, Marvel TV, and remaining relation rows remain a separate evidence-backed queue; this wave is not a claim that the entire relation audit is complete.
+
+## 0.1.11 Production baseline after the 2026-09-03 relation evidence wave008
+
+PR #62 (`https://github.com/kamochama/marvel-flowchart-jp/pull/62`) is integrated into `main` at `a38a9e68ed463ab5dc6f7590271486ca0816b8c4`. It promotes four existing relations with relation-specific official evidence and review transitions: *Doctor Strange* → *Doctor Strange in the Multiverse of Madness*, *Black Panther: Wakanda Forever* → *Ironheart*, *What If...?* Season 1 → *Marvel Zombies*, and *I Am Groot* Season 1 → Season 2. Existing IDs and semantics are preserved; no release/status, chronology, identity, Earth, multiverse-transition, or new work-pair fact was inferred. The *Spider-Man* (2002) → *Spider-Man 2* relation remains deferred under the strict source-specific evidence boundary.
+
+Fresh verification for the merged PR #62 baseline:
+
+- `453` / `453` library-v5 tests pass locally (`4` environment-gated browser skips);
+- bundled-Python build: audit/content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`39` source_verified, `122` legacy_seed, `3` superseded); sources/evidence/reviews `76` / `166` / `140`;
+- graph/export: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- independent connectivity audit: `pass=47`, `deferred=528`, projection mismatches `0`, reason orphans `0`, unsupported transition edges `0`;
+- real Chrome/CDP selection `131 × 2`, interaction `6/6`, chronology `7` cases, and publication order `131` cards/`21` cases all pass with zero failures/mismatches and zero synthetic edges;
+- GitHub Actions run `33765287553` passed all five required jobs after rerunning one transient Chrome target timeout; Pages deployment run `33766116228` succeeded and GitHub Pages reports status `built` for `https://kamochama.github.io/marvel-flowchart-jp/`.
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave008.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave008.md`. Remaining legacy relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
