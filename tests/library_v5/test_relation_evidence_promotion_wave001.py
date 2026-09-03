@@ -33,7 +33,7 @@ class RelationEvidencePromotionWave001Tests(unittest.TestCase):
                 "source_work_id": "thunderbolts-new-avengers-2025",
                 "target_work_id": "avengers-doomsday-2026-12-18",
                 "relation_kind": "lead_in",
-                "directness": "direct",
+                "directness": "strong",
                 "certainty": "confirmed",
             },
             NWH_BND: {
