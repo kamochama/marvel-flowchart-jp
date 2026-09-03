@@ -497,3 +497,11 @@ Task 6 local evidence:
 - canonical `data/library/**`, persistent `data/content_audit/reviews.csv`, and derived SQLite/export inputs have no branch diff. Build-only outputs were inspected and removed as transient paths.
 
 The normal-permission local `git fetch origin` freshness check first reported `.git/FETCH_HEAD: Permission denied`, but the authorized elevated retry succeeded. At this checkpoint `origin/main` was `5e159c4236ee03ede4c5175519bff468ff6beb1e` (containing the AGENTS.md `04ff92b...` baseline as an ancestor); no reset, overwrite, rebase, or force update was performed. This milestone is locally verified but not production-integrated. Remote CI, full branch review, public artifact/Pages checks, and explicit user approval remain the merge/publication gate. Do not merge, push, publish, or begin another semantic/viewer phase from this boundary without that approval.
+
+## 16. Publication-order display — production baseline (2026-09-03)
+
+PR #42 (`https://github.com/kamochama/marvel-flowchart-jp/pull/42`) integrated the publication-order display contract into `main` at merge commit `f4d4662383645eec714faf3b73d3fa2e0f2e2ded`. The required CI checks all passed, including the dedicated publication-order browser audit. Its real Chrome coverage reported `131` cards, `21` cases, `failures=0`, `syntheticEdges=0`; release/overview and release/chronology round trips were successful.
+
+The GitHub Pages deployment for the merge commit completed with `status=built`, `public=true`, and `https_enforced=true`. The public URL is `https://kamochama.github.io/marvel-flowchart-jp/`, which returned HTTP `200`; the served HTML contains the release relationship-edge guard and release-card attributes. Canonical `data/library/**`, `data/content_audit/reviews.csv`, and derived SQLite/export inputs were unchanged by this milestone.
+
+This is now the production viewer baseline. Any subsequent viewer or semantic change requires its own bounded plan, regression contract, full verification, and explicit merge boundary.

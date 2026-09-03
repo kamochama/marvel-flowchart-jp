@@ -565,3 +565,11 @@ Local evidence on the branch:
 The canonical export currently has `day=127`, `month=2`, `year=0`, `none=2`; therefore the year-only browser case is an explicit runtime fixture and does not assert a canonical year-only release. No real day is invented for month/year precision, and TBD cards remain in the `Upcoming / date TBD` bucket.
 
 The normal-permission local `git fetch origin` freshness check first reported `.git/FETCH_HEAD: Permission denied`, but the authorized elevated retry succeeded. At verification time `origin/main` was `5e159c4236ee03ede4c5175519bff468ff6beb1e` (which contains the AGENTS.md `04ff92b...` baseline as an ancestor); no reset, overwrite, rebase, or force update was performed. This branch stops at the normal explicit-approval merge gate: complete branch diff review, fresh remote CI/public-artifact checks, and user approval remain required before merge into `main` or Pages publication. No canonical data or HTML semantic export change is authorized by this documentation boundary.
+
+## 16. Publication-order display — production integration (2026-09-03)
+
+PR #42 (`https://github.com/kamochama/marvel-flowchart-jp/pull/42`) merged the publication-order display contract into `main` as merge commit `f4d4662383645eec714faf3b73d3fa2e0f2e2ded`. The post-merge main worktree was fast-forwarded to that commit and remains clean.
+
+The merge commit passed the required CI checks: `test`, `browser-selection-audit`, `browser-interaction-audit`, `browser-chronology-audit`, and `browser-publication-order-audit`. The Pages deployment for the same commit completed successfully. GitHub Pages reports `status=built`, `public=true`, `https_enforced=true`, and the public URL is `https://kamochama.github.io/marvel-flowchart-jp/` (HTTP 200). The served HTML contains the release relationship-edge guard and release card markup.
+
+The publication-order branch's canonical CSV, SQLite, and persistent review ledger remained unchanged. The next viewer or semantic change requires a new bounded plan and explicit merge boundary.
