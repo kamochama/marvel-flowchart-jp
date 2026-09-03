@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `e1b352a6345de5c2783544ac585a547fdc635f72` (PR #53); latest integrated audit baseline: `e1b352a6345de5c2783544ac585a547fdc635f72` (PR #53)
+- latest semantic baseline commit: `cf4da128b5b8783a3d635b48470dac413ac35b1d` (PR #55); latest integrated audit baseline: `cf4da128b5b8783a3d635b48470dac413ac35b1d` (PR #55)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -180,6 +180,21 @@ Fresh verification for the merged PR #53 baseline:
 - GitHub Actions run `33752229933` passed all five required jobs after rerunning the initial hosted browser-selection timeout.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave004.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave004.md`. Across→Beyond, X-Men: The Animated Series → X-Men '97 S1, and other legacy relation rows remain a separate evidence-backed queue; this batch is not a claim that the entire relation audit is complete.
+
+## 0.1.8 Production baseline after the 2026-09-03 relation evidence wave005
+
+PR #55 (`https://github.com/kamochama/marvel-flowchart-jp/pull/55`) is integrated into `main` at `cf4da128b5b8783a3d635b48470dac413ac35b1d`. It promotes five existing relations using official Paramount, Walt Disney Company, and Marvel sources: *Iron Man* → *Iron Man 2*, *Avengers: Infinity War* → *Avengers: Endgame*, *Daredevil* Season 1 → Season 2, *What If...?* Season 1 → Season 2, and *Loki* Season 1 → Season 2. Existing IDs, directions, relation kinds, directness, continuity scope, and certainty values are preserved; each transition is recorded as `legacy_seed -> source_verified` with exact evidence and review rows. No release/status, chronology, identity, multiverse-transition, or new work-pair fact was added.
+
+Fresh verification for the merged PR #55 baseline:
+
+- `447` / `447` library-v5 tests pass locally (`4` environment-gated browser skips);
+- bundled-Python build: audit/content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`27` source_verified, `134` legacy_seed, `3` superseded); sources/evidence/reviews `64` / `154` / `128`;
+- graph/export: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP selection `131 × 2` with zero exact-set mismatches; interaction `6/6`; chronology `7` cases with zero failures; publication order `131` cards/`21` cases with zero failures and zero synthetic edges;
+- GitHub Actions run `33754915756` passed all five required jobs after rerunning the initial hosted browser-interaction timeout.
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave005.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave005.md`. Across→Beyond, X-Men: The Animated Series → X-Men '97 S1, and other legacy relation rows remain a separate evidence-backed queue; this batch is not a claim that the entire relation audit is complete.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
