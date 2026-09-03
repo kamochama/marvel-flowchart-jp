@@ -399,6 +399,34 @@ process.stdout.write(JSON.stringify(ids));
         self.assertEqual(len(card_ids), len(set(card_ids)), "release cards must not duplicate work IDs")
         self.assertEqual(set(card_ids), set(work_ids), "release cards must cover exactly the canonical work IDs")
 
+    def test_release_cards_use_the_shared_selection_and_detail_focus_path(self) -> None:
+        """A release card must resolve its work ID through the same delegated click path."""
+        self.assertIn("data-release-work-id", function_body(self.source, "buildReleaseView"))
+        click_path = self.source[self.source.index("document.addEventListener('click'"):]
+        self.assertRegex(click_path, r"const id=node\.dataset\?\.releaseWorkId\|\|gt\(node\)")
+        self.assertIn("window.marvelFocusWork", self.source)
+        self.assertIn("window.marvelDetailFocusId", function_body(self.source, "renderSelectionState"))
+
+    def test_release_selection_round_trip_repaints_overview_without_release_edges(self) -> None:
+        """Release focus is card-only; panel activation restores normal overview painting."""
+        render = function_body(self.source, "renderSelectionState")
+        self.assertRegex(render, r"const releasePanel=svg\.closest\('\.panel'\)\?\.id==='release'")
+        self.assertIn("window.marvelDetailFocusId", render)
+        release_start = render.index("const releasePanel=")
+        edge_start = render.index("for(const g of svg.querySelectorAll('g.edge", release_start)
+        release_branch = render[release_start:edge_start]
+        self.assertIn("classList.remove('dim')", release_branch)
+        self.assertRegex(release_branch, r"releasePanel[\s\S]{0,900}return")
+        self.assertNotRegex(release_branch, r"selectedIds\s*=")
+
+        focus = function_body(self.source, "renderFocusHighlight")
+        self.assertRegex(focus, r"svg\.closest\('\.panel'\)\?\.id==='release'")
+        start = self.source.index("window.activatePanel=function")
+        end = self.source.index("\n  };\n\n  document.querySelectorAll('.tab').forEach", start)
+        activate = self.source[start:end]
+        self.assertIn("refreshSelection(false)", activate)
+        self.assertIn("window.marvelRenderDetailFocus(window.marvelDetailFocusId)", activate)
+
     def test_release_disables_mobile_synthetic_edges_at_the_release_boundary(self) -> None:
         """A release SVG policy must block synthetic relation overlays on mobile."""
         synthetic = function_body(self.source, "mobileOverlaySyntheticSpecs")

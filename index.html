@@ -6459,11 +6459,26 @@ if(flowchartReady)render();
   // selected work itself is absent, as long as matching context nodes exist.
   function renderSelectionState(svg,state){
     svg.classList.remove('official-route-highlight');
-    svg.querySelectorAll('.hl,.focus,.backhl,.forwardhl,.bothhl,.contexthl,.pathhl,.goal-node,.current-goal,.official-route-node,.official-route-edge').forEach(x=>x.classList.remove('hl','focus','backhl','forwardhl','bothhl','contexthl','pathhl','goal-node','current-goal','official-route-node','official-route-edge'));
+    svg.querySelectorAll('.hl,.focus,.detail-focus,.backhl,.forwardhl,.bothhl,.contexthl,.pathhl,.goal-node,.current-goal,.official-route-node,.official-route-edge').forEach(x=>x.classList.remove('hl','focus','detail-focus','backhl','forwardhl','bothhl','contexthl','pathhl','goal-node','current-goal','official-route-node','official-route-edge'));
     // Reference/curated charts (e.g. tab ⑥) are intentionally independent of
     // work selection made in the main graph. They must stay fully readable.
     if(svg.closest('.panel')?.dataset.selectionScope==='independent'){
       svg.classList.remove('dim','family-mode','char-mode');
+      return;
+    }
+    const releasePanel=svg.closest('.panel')?.id==='release';
+    if(releasePanel){
+      // Publication order is a date axis, not a relationship chart. Keep the
+      // shared work/detail selection visible on matching cards only.
+      svg.classList.remove('dim','family-mode','char-mode');
+      const detailFocusId=window.marvelDetailFocusId;
+      for(const g of svg.querySelectorAll('g.node')){
+        const id=g.dataset?.releaseWorkId||gt(g),isGoal=selectedIds.has(id),isDetailFocus=detailFocusId===id;
+        if(!isGoal&&!isDetailFocus)continue;
+        g.classList.add('focus');
+        if(isGoal)g.classList.add(id===selected?'current-goal':'goal-node');
+        if(isDetailFocus)g.classList.add('detail-focus');
+      }
       return;
     }
     renderChronologySelectionState(svg,state);
@@ -7453,7 +7468,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
      const wrap=node.closest('.svg-wrap');
      const st=typeof ensureViewState==='function'?ensureViewState(wrap):null;
       if(st?.didDrag||st?.moved){ st.didDrag=false;st.moved=false;st.backgroundClickCandidate=false;st.startTarget=null; e.preventDefault(); e.stopImmediatePropagation(); return; }
-      const id=gt(node); if(!id || !nm[id]) return;
+      const id=node.dataset?.releaseWorkId||gt(node); if(!id || !nm[id]) return;
      if(st){st.startTarget=null;st.backgroundClickCandidate=false;}
      e.preventDefault(); e.stopImmediatePropagation();
      select(id,!!(e.ctrlKey||e.metaKey||e.shiftKey));
@@ -8917,8 +8932,27 @@ window.FEATURED_ROUTE=Object.freeze({
     if(!id||!nm[id])return false;
     clearSvg();
     const svg=activeSvg(); if(!svg)return false;
-    const nodeMap=new Map([...svg.querySelectorAll('g.node')].map(g=>[gt(g),g]));
+    const nodeMap=new Map([...svg.querySelectorAll('g.node')].map(g=>[g.dataset?.releaseWorkId||gt(g),g]));
     if(!nodeMap.has(id))return false;
+    const releasePanel=svg.closest('.panel')?.id==='release';
+    if(releasePanel){
+      // Keep release cards connected to the shared detail/goal state without
+      // borrowing relationship-edge or chronology styling from the overview.
+      svg.classList.remove('dim','family-mode','char-mode');
+      for(const [wid,g] of nodeMap){
+        const isGoal=selectedIds.has(wid);
+        if(wid!==id&&!isGoal)continue;
+        g.classList.add('focus');
+        if(isGoal)g.classList.add(wid===selected?'current-goal':'goal-node');
+        if(wid===id)g.classList.add('detail-focus');
+      }
+      if(typeof window.marvelRenderFocusedDetail==='function')window.marvelRenderFocusedDetail(id);
+      else if(detail){
+        const goals=activeGoalIds().length?`<div class="muted">ゴール${activeGoalIds().length}件は保持中</div>`:'';
+        detail.innerHTML=`<strong>${esc(nm[id].title)}</strong><div class="muted">詳細表示中（ゴールには追加していません）</div>${goals}`;
+      }
+      return true;
+    }
     const part=focusPart(id),ctx=part.nodes||new Set([id]);
     svg.classList.add('dim');
     for(const [wid,g] of nodeMap){
@@ -9039,7 +9073,7 @@ window.FEATURED_ROUTE=Object.freeze({
   document.addEventListener('contextmenu',e=>{
     if(window.matchMedia('(max-width:760px)').matches)return;
     const node=e.target?.closest?.('.svg-wrap svg g.node'); if(!node)return;
-    const id=gt(node); if(!id||!nm[id])return;
+    const id=node.dataset?.releaseWorkId||gt(node); if(!id||!nm[id])return;
     e.preventDefault();
     window.marvelToggleGoal(id);
   },true);
