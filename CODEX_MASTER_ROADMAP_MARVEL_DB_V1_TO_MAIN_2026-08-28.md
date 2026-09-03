@@ -534,3 +534,18 @@ Verification at this boundary:
 - GitHub Actions run `33743113994` passed all five required checks; Pages run `33743746234` succeeded and the public URL returned HTTP `200`.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave001.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave001.md`. The next bounded source queue begins with the three VisionQuest-trilogy relations and X-Men '97 S1 → S2, subject to direct fact-level evidence and separate RED tests.
+
+## 19. Relation evidence promotion wave002 — production baseline (2026-09-03)
+
+PR #49 (`https://github.com/kamochama/marvel-flowchart-jp/pull/49`) integrated the second bounded relation-evidence promotion wave into `main` at `3e25c5b2671ccc29cf551aa51875ae8e48625e64`. It promotes four existing relations: `WandaVision -> Agatha All Along` (official spinoff/segue), the two existing `WandaVision/Agatha All Along -> VisionQuest` trilogy display links, and `X-Men '97 S1 -> S2` (official season continuation). The batch preserves relation IDs, directed pairs, relation kinds, and certainty values, adding only source registration where needed plus exact evidence and `legacy_seed -> source_verified` review transitions. No release/status, chronology, identity, multiverse-transition, or new work-pair fact was inferred. Across→Beyond remains deferred.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `441` tests pass, `4` environment-gated skips;
+- build/audit: audit and content-audit issues `0`, SQLite FK rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`13` source_verified, `148` legacy_seed, `3` superseded); sources/evidence/reviews `50` / `140` / `114`;
+- graph/export compatibility: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP selection `131 × 2`, interaction `6/6`, chronology `7` cases, and publication order `131` cards/`21` cases all pass with zero failures/mismatches and zero synthetic edges;
+- GitHub Actions run `33745660110` passed all five required jobs after a transient hosted selection timeout was rerun; Pages run `33746647857` succeeded and the public URL returned HTTP `200`.
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave002.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave002.md`. Remaining legacy relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation queue is complete.

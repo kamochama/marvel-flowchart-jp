@@ -6,8 +6,8 @@ This file defines persistent working rules for Codex and other coding agents ope
 
 - Repository: `kamochama/marvel-flowchart-jp`.
 - Production branch: `main`.
-- Latest semantic production baseline after PR #47 is `28941193ec2b5c3fb18a57b02ac3fbc2b2e376c9`.
-- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), PR #38 (all-work browser selection audit), PR #40 (browser interaction state audit), PR #45 (Deadpool & Wolverine variant fan-out audit), and PR #47 (direct relation evidence promotion wave001) are merged into `main`.
+- Latest semantic production baseline after PR #49 is `3e25c5b2671ccc29cf551aa51875ae8e48625e64`.
+- PR #10 (Events & Multiverse), PR #11 (release/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), PR #38 (all-work browser selection audit), PR #40 (browser interaction state audit), PR #45 (Deadpool & Wolverine variant fan-out audit), PR #47 (direct relation evidence promotion wave001), and PR #49 (direct relation evidence promotion wave002) are merged into `main`.
 - PR #30 promoted 27 release/status facts with exact evidence and review transitions; 240 facts remain deferred and 2 remain in explicit conflict.
 - There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
 - During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
@@ -129,11 +129,11 @@ Examples already established:
 
 ## Current compatibility invariants
 
-The latest integrated production/audit baseline after PR #47 is:
+The latest integrated production/audit baseline after PR #49 is:
 
-- `main` `28941193ec2b5c3fb18a57b02ac3fbc2b2e376c9` (merge commit for PR #47)
-- PR #47 required checks: GREEN (`test`, `browser-selection-audit`, `browser-interaction-audit`, `browser-chronology-audit`, and `browser-publication-order-audit`)
-- 439 / 439 library-v5 unit tests PASS locally (4 browser tests are environment-gated skips in the ordinary suite)
+- `main` `3e25c5b2671ccc29cf551aa51875ae8e48625e64` (merge commit for PR #49)
+- PR #49 required checks: GREEN (`test`, `browser-selection-audit`, `browser-interaction-audit`, `browser-chronology-audit`, and `browser-publication-order-audit`; the first selection attempt timed out at the hosted 180-second limit and the failed job rerun passed)
+- 441 / 441 library-v5 unit tests PASS locally (4 browser tests are environment-gated skips in the ordinary suite)
 - real Chrome/CDP audit: 131 works × 2 public tiers, exact-set mismatches `0`
 - real Chrome/CDP interaction audit: 6 / 6 representative cases PASS
 - real Chrome/CDP chronology audit: 7 cases, failures `0`
@@ -144,10 +144,10 @@ The latest integrated production/audit baseline after PR #47 is:
 - SQLite integrity: `ok`
 - releases: 138 rows (14 `source_verified`, 124 `legacy_seed`)
 - production-status assertions: 131 rows (13 `source_verified`, 118 `legacy_seed`)
-- work relations: 164 rows (9 `source_verified`, 152 `legacy_seed`, 3 `superseded`)
-- sources: 49
-- evidence: 133
-- reviews: 108
+- work relations: 164 rows (13 `source_verified`, 148 `legacy_seed`, 3 `superseded`)
+- sources: 50
+- evidence: 140
+- reviews: 114
 - `work_edges_all`: 355
 - `work_pair_reasons`: 562
 - prewatch edges: 199
@@ -160,7 +160,7 @@ These numbers document the checkpoint. They are not frozen targets except where 
 
 ## Current-plan completion and production integration gate
 
-The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, the full release/status evidence audit (PR #30), the HTML design/operation debugging pass (PR #32), the all-work browser selection audit (PR #38), the representative browser interaction-state audit (PR #40), the Deadpool & Wolverine variant fan-out audit (PR #45), and direct relation evidence promotion wave001 (PR #47) are integrated into `main`. The next viewer or semantic change must use its own bounded plan, RED/UI regression contract, evidence/review audit where applicable, and full verification.
+The approved Events & Multiverse execution plan (Tasks 1–8), normalized release/status integration, HTML DB export, mobile touch-target fix, X-Men '97 batch005, VisionQuest batch006, Avengers: Doomsday batch007, the full release/status evidence audit (PR #30), the HTML design/operation debugging pass (PR #32), the all-work browser selection audit (PR #38), the representative browser interaction-state audit (PR #40), the Deadpool & Wolverine variant fan-out audit (PR #45), direct relation evidence promotion wave001 (PR #47), and direct relation evidence promotion wave002 (PR #49) are integrated into `main`. The next viewer or semantic change must use its own bounded plan, RED/UI regression contract, evidence/review audit where applicable, and full verification.
 
 For every future branch:
 

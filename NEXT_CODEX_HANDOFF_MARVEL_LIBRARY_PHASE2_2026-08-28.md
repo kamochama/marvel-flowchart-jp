@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `fb715e87d5290b73e0ff86139d2554df32fc4a2d` (PR #38); latest integrated audit baseline: `04ff92b633f4da5756f58c96de7b321dac4bb02c` (PR #40)
+- latest semantic baseline commit: `3e25c5b2671ccc29cf551aa51875ae8e48625e64` (PR #49); latest integrated audit baseline: `3e25c5b2671ccc29cf551aa51875ae8e48625e64` (PR #49)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -135,6 +135,21 @@ Fresh verification for the merged PR #47 baseline:
 - GitHub Actions run `33743113994`: all five required jobs pass; Pages deployment run `33743746234` succeeded and the public URL returned HTTP `200`.
 
 The relation-level evidence and non-claims are documented in `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave001.md`. This batch does not promote the related character appearances, release/status metadata, multiverse transitions, or chronology assertions. The next relation candidates remain the VisionQuest trilogy and X-Men '97 S1 → S2, each requiring its own source-specific review.
+
+## 0.1.5 Production baseline after the 2026-09-03 relation evidence wave002
+
+PR #49 (`https://github.com/kamochama/marvel-flowchart-jp/pull/49`) is integrated into `main` at `3e25c5b2671ccc29cf551aa51875ae8e48625e64`. It promotes four existing work relations using direct official evidence: `WandaVision -> Agatha All Along` as a spinoff, the two existing `WandaVision/Agatha All Along -> VisionQuest` trilogy links, and `X-Men '97 S1 -> S2` as a season continuation. Existing IDs, directions, relation kinds, and certainty values are preserved; each transition is recorded as `legacy_seed -> source_verified` with exact evidence and review rows. No release/status, identity, chronology, or multiverse-transition fact was added.
+
+Fresh verification for the merged PR #49 baseline:
+
+- `441` / `441` library-v5 tests pass locally (`4` environment-gated browser skips);
+- bundled-Python build: audit/content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`13` source_verified, `148` legacy_seed, `3` superseded); sources/evidence/reviews `50` / `140` / `114`;
+- graph/export: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP selection `131 × 2` with zero exact-set mismatches; interaction `6/6`; chronology `7` cases with zero failures; publication order `131` cards/`21` cases with zero failures and zero synthetic edges;
+- GitHub Actions run `33745660110` passed all five required jobs after rerunning the initial hosted browser-selection timeout; Pages deployment run `33746647857` succeeded and the public URL returned HTTP `200`.
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave002.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave002.md`. The Across→Beyond candidate remains deferred because the currently registered source does not directly establish that relation. Other legacy relation rows remain a separate evidence-backed queue; this batch does not claim a complete relation audit.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
