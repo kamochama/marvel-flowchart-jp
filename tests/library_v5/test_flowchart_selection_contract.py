@@ -432,6 +432,7 @@ process.stdout.write(JSON.stringify(ids));
         synthetic = function_body(self.source, "mobileOverlaySyntheticSpecs")
         self.assertRegex(synthetic, r"panel\s*=.*release")
         self.assertRegex(synthetic, r"panel\s*===\s*['\"]release['\"]")
+        self.assertIn("cs.svg?.dataset?.relationshipEdges", synthetic)
         self.assertRegex(synthetic, r"relationshipEdges.*off|off.*relationshipEdges")
 
     def test_mobile_canvas_preserves_chronology_selection_overlay_metadata(self) -> None:

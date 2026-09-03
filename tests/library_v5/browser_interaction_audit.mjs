@@ -317,6 +317,7 @@ async function snapshot(cdp) {
   return pageEvaluate(cdp, `
     const active=document.querySelector('.panel.active');
     const svg=active?.querySelector('.svg-wrap svg');
+    const canvasAudit=window.marvelCanvasAudit?.()||{};
     const title=g=>(g.querySelector(':scope > title')?.textContent||'').trim();
     return {
       panel:active?.id||null,
@@ -324,6 +325,7 @@ async function snapshot(cdp) {
       dim:!!svg?.classList.contains('dim'),
       chronologyHighlighted:svg?.querySelectorAll('g.chronology-edge.hl').length||0,
       goalNodes:svg?.querySelectorAll('g.node.goal-node,g.node.current-goal').length||0,
+      overlaySyntheticDrawn:canvasAudit.overlaySyntheticDrawn||0,
       selectedText:document.querySelector('#detail')?.textContent?.trim()||'',
       sideTab:document.querySelector('.side-tab-btn.active')?.dataset.sideTab||null,
     };
@@ -404,7 +406,7 @@ async function runAudit(args) {
     cases.push(await runCase(cdp, staticServer.url, timeoutMs, "release-round-trip", async () => {
       await selectRepresentative(cdp, timeoutMs);
       await clickSelector(cdp, '.tab[data-target="release"]', timeoutMs);
-      await waitFor(cdp, (state) => state.panel === "release" && state.focus.includes(REPRESENTATIVE_WORK), timeoutMs, "release focus repaint");
+      await waitFor(cdp, (state) => state.panel === "release" && state.focus.includes(REPRESENTATIVE_WORK) && state.overlaySyntheticDrawn === 0, timeoutMs, "release focus repaint without mobile synthetic edges");
       await clickSelector(cdp, '.tab[data-target="overview"]', timeoutMs);
       await waitFor(cdp, (state) => state.panel === "overview" && state.focus.includes(REPRESENTATIVE_WORK), timeoutMs, "overview focus restore after release");
     }));

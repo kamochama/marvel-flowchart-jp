@@ -63,6 +63,12 @@ class BrowserInteractionAuditTests(unittest.TestCase):
         self.assertIn("drag did not change SVG transform", source)
         self.assertIn("chronologyHighlighted > 0", source)
 
+    def test_runner_proves_release_has_no_mobile_synthetic_overlay(self) -> None:
+        """Release selection must expose the mobile no-synthetic-edge contract."""
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("overlaySyntheticDrawn", source)
+        self.assertIn("overlaySyntheticDrawn === 0", source)
+
     @unittest.skipUnless(
         os.environ.get("MARVEL_BROWSER_INTERACTION_AUDIT") == "1",
         "set MARVEL_BROWSER_INTERACTION_AUDIT=1 to run the real headless interaction audit",
