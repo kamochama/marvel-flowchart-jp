@@ -30,12 +30,12 @@ work-relation-agatha-all-along-2024-visionquest-2026-10-14-sequel,agatha-all-alo
 work-relation-wandavision-2021-visionquest-2026-10-14-sequel,wandavision-2021,visionquest-2026-10-14,sequel,story,strong,same_or_intended,confirmed,source_verified,Vision continuation; Marvel explicitly frames the three-title trilogy.
 work-relation-ms-marvel-2022-the-marvels-2023-story-link,ms-marvel-2022,the-marvels-2023,story_link,story,strong,same_or_intended,probable,legacy_seed,Kamala Khan continues into The Marvels.
 work-relation-captain-marvel-2019-the-marvels-2023-sequel,captain-marvel-2019,the-marvels-2023,sequel,story,direct,same_or_intended,probable,legacy_seed,Carol Danvers continues into The Marvels.
-work-relation-hawkeye-2021-echo-2024-spinoff,hawkeye-2021,echo-2024,spinoff,story,strong,same_or_intended,probable,legacy_seed,Maya Lopez/Fisk branch.
+work-relation-hawkeye-2021-echo-2024-spinoff,hawkeye-2021,echo-2024,spinoff,story,strong,same_or_intended,probable,source_verified,Maya Lopez/Fisk branch.
 work-relation-hawkeye-2021-daredevil-born-again-s1-2025-lead-in,hawkeye-2021,daredevil-born-again-s1-2025,lead_in,story,indirect,same_or_intended,probable,legacy_seed,Fisk re-enters MCU before Born Again.
 work-relation-echo-2024-daredevil-born-again-s1-2025-story-link,echo-2024,daredevil-born-again-s1-2025,story_link,story,indirect,same_or_intended,probable,legacy_seed,Fisk/Daredevil street branch.
-work-relation-daredevil-born-again-s1-2025-daredevil-born-again-s2-2026-sequel,daredevil-born-again-s1-2025,daredevil-born-again-s2-2026,sequel,story,direct,same_or_intended,confirmed,legacy_seed,Season continuation.
+work-relation-daredevil-born-again-s1-2025-daredevil-born-again-s2-2026-sequel,daredevil-born-again-s1-2025,daredevil-born-again-s2-2026,sequel,story,direct,same_or_intended,confirmed,source_verified,Season continuation.
 work-relation-daredevil-born-again-s2-2026-daredevil-born-again-s3-tba-sequel,daredevil-born-again-s2-2026,daredevil-born-again-s3-tba,sequel,story,direct,same_or_intended,confirmed,legacy_seed,Marvel lists Season 3.
-work-relation-daredevil-born-again-s2-2026-the-punisher-one-last-kill-2026-05-12-crossover,daredevil-born-again-s2-2026,the-punisher-one-last-kill-2026-05-12,crossover,crossover,indirect,same_or_intended,probable,legacy_seed,Same current Marvel Television street-level branch.
+work-relation-daredevil-born-again-s2-2026-the-punisher-one-last-kill-2026-05-12-crossover,daredevil-born-again-s2-2026,the-punisher-one-last-kill-2026-05-12,crossover,crossover,indirect,same_or_intended,probable,source_verified,Same current Marvel Television street-level branch.
 work-relation-black-panther-2018-black-panther-wakanda-forever-2022-sequel,black-panther-2018,black-panther-wakanda-forever-2022,sequel,story,direct,same_or_intended,confirmed,source_verified,Wakanda sequel.
 work-relation-black-panther-wakanda-forever-2022-ironheart-2025-spinoff,black-panther-wakanda-forever-2022,ironheart-2025,spinoff,story,strong,same_or_intended,probable,legacy_seed,Riri Williams introduced in Wakanda Forever.
 work-relation-black-panther-2018-eyes-of-wakanda-2025-world-lore,black-panther-2018,eyes-of-wakanda-2025,world_lore,world_lore,indirect,same_or_intended,probable,legacy_seed,Animated Wakandan historical stories; not a sequel.
@@ -92,7 +92,7 @@ work-relation-jessica-jones-s1-2015-jessica-jones-s2-2018-sequel,jessica-jones-s
 work-relation-jessica-jones-s2-2018-jessica-jones-s3-2019-sequel,jessica-jones-s2-2018,jessica-jones-s3-2019,sequel,story,direct,same_or_intended,confirmed,legacy_seed,Season continuation.
 work-relation-luke-cage-s1-2016-luke-cage-s2-2018-sequel,luke-cage-s1-2016,luke-cage-s2-2018,sequel,story,direct,same_or_intended,confirmed,legacy_seed,Season continuation.
 work-relation-iron-fist-s1-2017-iron-fist-s2-2018-sequel,iron-fist-s1-2017,iron-fist-s2-2018,sequel,story,direct,same_or_intended,confirmed,legacy_seed,Season continuation.
-work-relation-the-punisher-s1-2017-the-punisher-s2-2019-sequel,the-punisher-s1-2017,the-punisher-s2-2019,sequel,story,direct,same_or_intended,confirmed,legacy_seed,Season continuation.
+work-relation-the-punisher-s1-2017-the-punisher-s2-2019-sequel,the-punisher-s1-2017,the-punisher-s2-2019,sequel,story,direct,same_or_intended,confirmed,source_verified,Season continuation.
 work-relation-x-men-2000-x2-x-men-united-2003-sequel,x-men-2000,x2-x-men-united-2003,sequel,story,direct,same_or_intended,confirmed,legacy_seed,Original Fox X-Men trilogy.
 work-relation-x2-x-men-united-2003-x-men-the-last-stand-2006-sequel,x2-x-men-united-2003,x-men-the-last-stand-2006,sequel,story,direct,same_or_intended,confirmed,legacy_seed,Original Fox X-Men trilogy.
 work-relation-x-men-first-class-2011-x-men-days-of-future-past-2014-crossover,x-men-first-class-2011,x-men-days-of-future-past-2014,crossover,crossover,strong,same_or_intended,probable,legacy_seed,Fox prequel timeline continues and intersects prior cast.
