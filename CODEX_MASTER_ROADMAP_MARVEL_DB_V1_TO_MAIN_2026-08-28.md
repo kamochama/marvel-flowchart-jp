@@ -519,3 +519,18 @@ Verification at this production boundary:
 - GitHub Actions run `33734185633`: all five required jobs passed.
 
 The implementation plan and review are `docs/superpowers/plans/2026-09-03-marvel-variant-fanout-audit.md` and `docs/superpowers/reviews/2026-09-03-marvel-variant-fanout-audit.md`. The official screenplay evidence distinguishes the recruited Wolverine from the exhumed Logan; no unsupported Earth, continuity, or TVA-transition semantics were added. Future source/relation batches require their own bounded plan, regression contract, evidence/review audit, and merge gate.
+
+## 18. Relation evidence promotion wave001 — production baseline (2026-09-03)
+
+PR #47 (`https://github.com/kamochama/marvel-flowchart-jp/pull/47`) integrated the first bounded relation-evidence promotion wave into `main` at `28941193ec2b5c3fb18a57b02ac3fbc2b2e376c9`. It promotes only the existing Thunderbolts* → Avengers: Doomsday lead-in and No Way Home → Brand New Day story-link relations. Existing relation IDs and directed pairs are preserved; each has exact work-relation evidence plus a `legacy_seed -> source_verified` review transition. No new source registry row, entity/appearance, release/status, event, transition, or chronology fact was added.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `439` tests pass, `4` environment-gated skips;
+- build/audit: audit and content-audit issues `0`, SQLite FK rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`9` source_verified, `152` legacy_seed, `3` superseded); evidence `136`; reviews `110`;
+- graph/export compatibility: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP selection, interaction, chronology, and publication-order audits all pass with zero failures/mismatches;
+- GitHub Actions run `33743113994` passed all five required checks; Pages run `33743746234` succeeded and the public URL returned HTTP `200`.
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave001.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave001.md`. The next bounded source queue begins with the three VisionQuest-trilogy relations and X-Men '97 S1 → S2, subject to direct fact-level evidence and separate RED tests.
