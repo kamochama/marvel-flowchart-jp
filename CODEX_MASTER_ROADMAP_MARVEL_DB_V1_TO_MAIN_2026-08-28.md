@@ -549,3 +549,18 @@ Verification at this boundary:
 - GitHub Actions run `33745660110` passed all five required jobs after a transient hosted selection timeout was rerun; Pages run `33746647857` succeeded and the public URL returned HTTP `200`.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave002.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave002.md`. Remaining legacy relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation queue is complete.
+
+## 20. Relation evidence promotion wave003 — production baseline (2026-09-03)
+
+PR #51 (`https://github.com/kamochama/marvel-flowchart-jp/pull/51`) integrated the third bounded relation-evidence promotion wave into `main` at `1d6c2c04571fbdf124bc2530e92c390808b5345f`. It promotes five existing direct sequel relations: *The Avengers* → *Age of Ultron*, *Captain America: The First Avenger* → *The Winter Soldier*, *Thor* → *The Dark World*, *Guardians of the Galaxy* → *Vol. 2*, and *Black Panther* → *Wakanda Forever*. Existing IDs and semantics are preserved; each relation now has an official-source evidence row and a `legacy_seed -> source_verified` review transition. No release/status, chronology, identity, multiverse-transition, or new work-pair fact was inferred. Across→Beyond remains deferred.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `443` tests pass, `4` environment-gated skips;
+- build/audit: audit and content-audit issues `0`, SQLite FK rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`18` source_verified, `143` legacy_seed, `3` superseded); sources/evidence/reviews `55` / `145` / `119`;
+- graph/export compatibility: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- real Chrome/CDP selection `131 × 2`, interaction `6/6`, chronology `7` cases, and publication order `131` cards/`21` cases all pass with zero failures/mismatches and zero synthetic edges;
+- GitHub Actions run `33749066246` passed all five required jobs after rerunning the initial hosted chronology timeout; Pages run `33750089599` succeeded and the public URL returned HTTP `200`.
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave003.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave003.md`. Remaining legacy relation rows, including the Daredevil/Echo/Punisher and Spider-Verse queues, require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
