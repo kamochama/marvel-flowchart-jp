@@ -497,6 +497,13 @@ async function runDesktopAudit(cdp, url, expected, timeoutMs) {
     return !node.release_sort_date || ["none", "undated", "tbd"].includes(node.release_precision);
   });
   const caseReports = [];
+  const roundTrip = {
+    release_to_overview: false,
+    overview_to_release: false,
+    release_to_chronology: false,
+    chronology_to_release: false,
+    chronology: null,
+  };
   for (const testCase of PC_CASES) {
     let syntheticFixture = null;
     if (testCase.name === "year-only" && !testCase.id) {
@@ -530,6 +537,7 @@ async function runDesktopAudit(cdp, url, expected, timeoutMs) {
       `), timeoutMs, "overview selection round-trip");
       if (!overview.focus.includes(testCase.id)) failures.push(`overview did not restore selected focus: ${JSON.stringify(overview)}`);
       if (overview.edges <= 0) failures.push(`overview relation highlights did not return there: ${JSON.stringify(overview)}`);
+      roundTrip.release_to_overview = true;
       await clickSelector(cdp, '.tab[data-target="release"]', timeoutMs);
       const returned = await poll(async () => {
         const s = await releaseSnapshot(cdp);
@@ -537,6 +545,32 @@ async function runDesktopAudit(cdp, url, expected, timeoutMs) {
       }, timeoutMs, "overview to release round-trip");
       if (returned.relationHighlights !== 0) failures.push("release relation highlights leaked after round-trip");
       for (const field of invariant) if (!same(before[field], returned[field])) failures.push(`round-trip changed ${field}`);
+      roundTrip.overview_to_release = true;
+
+      await clickSelector(cdp, '.tab[data-target="chronology"]', timeoutMs);
+      const chronology = await poll(() => pageEvaluate(cdp, `
+        const panel=document.querySelector('.panel.active'),svg=panel?.querySelector('.svg-wrap svg');
+        const chronologyEdges=svg?.querySelectorAll('g.chronology-edge').length||0;
+        const chronologyHighlights=svg?.querySelectorAll('g.chronology-edge.hl').length||0;
+        const focus=[...svg?.querySelectorAll('g.node.focus')||[]].map(g=>(g.querySelector(':scope > title')?.textContent||'').trim());
+        const ready=panel?.id==='chronology'&&panel.dataset.lazyInitialized==='1'&&chronologyEdges > 0;
+        return ready&&window.marvelDetailFocusId===${JSON.stringify(testCase.id)}&&focus.includes(${JSON.stringify(testCase.id)})?{panel:panel.id,ready,chronologyEdges,chronologyHighlights,focus,detailFocus:window.marvelDetailFocusId}:null;
+      `), timeoutMs, "chronology panel readiness");
+      roundTrip.release_to_chronology = true;
+      roundTrip.chronology = chronology;
+      await clickSelector(cdp, '.tab[data-target="release"]', timeoutMs);
+      const chronologyReturned = await poll(async () => {
+        const snapshot = await releaseSnapshot(cdp);
+        return snapshot.panel === "release" && snapshot.focus.includes(testCase.id) && snapshot.detailFocus === testCase.id ? snapshot : null;
+      }, timeoutMs, "chronology to release round-trip");
+      const chronologyFailures = [];
+      if (chronologyReturned.relationHighlights !== 0) chronologyFailures.push("chronology round-trip leaked release relation highlights");
+      if (chronologyReturned.edgeCount !== 0) chronologyFailures.push(`chronology round-trip release g.edge count ${chronologyReturned.edgeCount}`);
+      if (chronologyReturned.chronologyEdgeCount !== 0) chronologyFailures.push(`chronology round-trip release g.chronology-edge count ${chronologyReturned.chronologyEdgeCount}`);
+      for (const field of invariant) if (!same(before[field], chronologyReturned[field])) chronologyFailures.push(`chronology round-trip changed ${field}`);
+      failures.push(...chronologyFailures);
+      roundTrip.chronology_to_release = true;
+      caseReports.push({ name: "chronology-middle-round-trip", id: testCase.id, chronology, after: chronologyReturned, failures: chronologyFailures, ok: chronologyFailures.length === 0 });
     }
     caseReports.push({ name: testCase.name, id: testCase.id, precision: testCase.precision, syntheticFixture, before, after, ok: invariantFailures.length === 0 && releaseFocus });
     await clearReleaseSelection(cdp, timeoutMs);
@@ -549,7 +583,7 @@ async function runDesktopAudit(cdp, url, expected, timeoutMs) {
       }, timeoutMs, "release view restoration after synthetic year fixture");
     }
   }
-  return { baseline, failures, cases: caseReports };
+  return { baseline, failures, cases: caseReports, roundTrip };
 }
 
 async function setMobileViewport(cdp, timeoutMs) {
@@ -695,7 +729,8 @@ async function runAudit(args) {
   const failures = [...(desktop?.failures || []), ...(mobile?.failures || [])];
   const syntheticEdges = Math.max(0, ...cases.map((item) => item.state?.overlaySyntheticDrawn || 0));
   const desktopCases = desktop?.cases?.filter((item) => !item.skipped) || [];
-  const precision = Object.fromEntries(desktopCases.map((item) => [item.name, {
+  const precisionNames = new Set(PC_CASES.map((item) => item.name));
+  const precision = Object.fromEntries(desktopCases.filter((item) => precisionNames.has(item.name)).map((item) => [item.name, {
     id: item.id,
     precision: item.after?.metadata?.[item.id]?.precision || null,
     sortKey: item.after?.metadata?.[item.id]?.sortKey || null,
@@ -716,7 +751,7 @@ async function runAudit(args) {
     precision,
     tbd: tbdCase ? { id: tbdCase.id, metadata: tbdCase.after?.metadata?.[tbdCase.id] || null } : null,
     tie_break: ties,
-    round_trip: { release_to_overview: failures.every((failure) => !/round-trip|overview/.test(failure)), overview_to_release: failures.every((failure) => !/round-trip|overview/.test(failure)) },
+    round_trip: desktop?.roundTrip || { release_to_overview: false, overview_to_release: false, release_to_chronology: false, chronology_to_release: false, chronology: null },
     mobile: { viewport: [390, 844], nodeBoxes: mobile?.cases?.map((item) => item.state?.nodeBoxes || 0) || [], syntheticEdges, cases: mobile?.cases || [] },
     cases,
     failures,

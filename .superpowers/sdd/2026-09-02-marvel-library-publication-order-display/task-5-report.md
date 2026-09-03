@@ -5,7 +5,7 @@
 ## 実装
 
 - `tests/library_v5/browser_publication_order_audit.mjs` を追加した。Node 標準機能だけで一時 HTTP server と Chrome CDP を起動し、PC 公開順 SVG と 390×844 mobile Canvas を実ブラウザ監査する。
-- PC では `g.release-node[data-release-work-id]` の 131作品 exact set と重複なし、`g.edge` / `g.chronology-edge` が 0、カード `path d`、`viewBox`、年軸、時代・lane frame、line count の選択前後不変を確認する。day / month / year / TBD の代表選択、DOM precision / sort key / TBD marker / partial-date label、同一 sort key + lane の stable order、release → overview → release の detail focus と relation highlight の表示層分離も監査する。
+- PC では `g.release-node[data-release-work-id]` の 131作品 exact set と重複なし、`g.edge` / `g.chronology-edge` が 0、カード `path d`、`viewBox`、年軸、時代・lane frame、line count の選択前後不変を確認する。day / month / year / TBD の代表選択、DOM precision / sort key / TBD marker / partial-date label、同一 sort key + lane の stable order、release → overview → release と release → chronology → release の detail focus と表示層分離も監査する。
 - 現行 export は `day=127 / month=2 / none=2 / year=0` のため、year-only ケースだけは browser 内の `RELEASE_META` に既存月精度作品を年精度へ変換する明示的 runtime fixture を置き、公開 `window.ensureStageAViewInitialized('release')` 境界で実 view を再生成した。ケース後はページを再読込して元データへ戻す。canonical file は変更していない。
 - mobile では CDP `Input.dispatchTouchEvent` だけで dated / TBD の選択、再タップ解除、選択中の背景解除、選択を維持する drag を実行する。各状態で `marvelCanvasAudit().active === true`、panel `release`、`nodeBoxes=131`、goal work ID、`overlaySyntheticDrawn=0` を確認し、viewport を最後に解除する。
 - JSON report に `summary`、`cases`、`failures` のほか、`focus`、`geometry`、`line_free`、`precision`、`tbd`、`tie_break`、`round_trip`、`mobile` を含めた。failure または synthetic edge があれば runner は非0終了する。
@@ -72,5 +72,33 @@ git diff --check
 ## Concerns
 
 - canonical export に year precision の作品がないため、year-only browser coverage は明示的 runtime fixture である。fixture の由来と値は JSON report の `precision.year-only.syntheticFixture` に残す。
-- runner の JSON は全カード path・軸・frame snapshot を保持するため約 147 KB。CI は wrapper が capture し、通常ログには3値の summary だけを出す。
+- runner の JSON は全カード path・軸・frame snapshot を保持するため約 166 KB。CI は wrapper が capture し、通常ログには3値の summary だけを出す。
 - canonical CSV、SQLite、persistent review ledger、`index.html` は変更していない。新規 npm dependency もない。
+
+## Fix round 1: chronology を中間に挟む panel round-trip
+
+独立差分確認で、初回実装の panel round-trip が release → overview → release のみで、計画が要求する chronology 中間経路を実行していないことを確認した。
+
+### RED
+
+```powershell
+& $MarvelPython -B -m unittest tests.library_v5.test_browser_publication_order_audit.BrowserPublicationOrderAuditTests.test_runner_round_trip_crosses_real_chronology_panel -v
+```
+
+結果: `Ran 1 test`、`FAIL`。runner の desktop audit 範囲に `chronology-middle-round-trip` と chronology tab click が存在せず失敗した。
+
+### GREEN
+
+- exact-day release card を選択した状態から `.tab[data-target="chronology"]` を実クリックし、lazy panel ready、実 `g.chronology-edge` が 1本以上、同じ work ID の detail focus / node focus を待機する。
+- `.tab[data-target="release"]` を実クリックして戻り、detail focus、カード集合、全 `path d`、`viewBox`、年軸、時代・lane frame、line count の不変と、release 側 `g.edge=0` / `g.chronology-edge=0` / highlight 0 を再確認する。
+- JSON `round_trip` に `release_to_chronology`、`chronology_to_release`、chronology snapshot を記録する。
+
+実 Chrome runner の結果: `cards=131, cases=13, failures=0, syntheticEdges=0`。chronology snapshot は `ready=true`、`chronologyEdges=74`、`chronologyHighlights=9`、focus/detail は `iron-man-2008` だった。
+
+fix round 後の確定検証は次のとおり。
+
+- static wrapper tests: `Ran 14 tests`、`OK (skipped=1)`。skip は opt-in Chrome test のみ。
+- CI-equivalent real Chrome wrapper: `cards=131, failures=0, syntheticEdges=0`、`Ran 1 test in 25.415s`、`OK`。
+- library-v5 full suite: `Ran 422 tests in 29.810s`、`OK (skipped=4)`。
+- build: audit issue 0、content-audit issue 0、131 nodes / 361 edges / 569 reasons、SQLite 出力成功。既知の untracked generated outputs は worktree 内の対象を確認して除去した。
+- `node --check`、runner `--help`、`git diff --check`: すべて exit 0。

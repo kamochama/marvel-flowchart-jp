@@ -189,6 +189,22 @@ class BrowserPublicationOrderAuditTests(unittest.TestCase):
         self.assertIn("invented", source.lower())
         self.assertRegex(source, r"(?:month|year).*day|day.*(?:month|year)")
 
+    def test_runner_round_trip_crosses_real_chronology_panel(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        desktop = source[
+            source.index("async function runDesktopAudit") : source.index("async function setMobileViewport")
+        ]
+        for term in (
+            "chronology-middle-round-trip",
+            '.tab[data-target="chronology"]',
+            "chronology panel readiness",
+            "chronologyEdges > 0",
+            '.tab[data-target="release"]',
+            "chronology to release round-trip",
+            "chronology round-trip changed",
+        ):
+            self.assertIn(term, desktop)
+
     def test_runner_checks_mobile_canvas_selection_lifecycle(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         for term in (
@@ -274,6 +290,12 @@ class BrowserPublicationOrderAuditTests(unittest.TestCase):
         self.assertEqual(report["summary"]["cards"], 131)
         self.assertEqual(report["summary"]["failures"], 0)
         self.assertEqual(report["summary"]["syntheticEdges"], 0)
+        self.assertEqual(
+            set(report["precision"]),
+            {"exact-day", "month-only", "year-only", "tbd"},
+        )
+        self.assertTrue(report["round_trip"]["release_to_chronology"])
+        self.assertTrue(report["round_trip"]["chronology_to_release"])
         self.assertEqual(report["failures"], [])
 
 
