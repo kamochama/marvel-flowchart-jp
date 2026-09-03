@@ -545,3 +545,23 @@ Fresh bundled-runtime verification on this branch:
 `data/library/` and `data/content_audit/reviews.csv` are unchanged. Build-only reports, queue, DB manifests/SQLite, and `__pycache__` are transient generated outputs; they are not canonical or persistent review inputs. `git diff --check` is clean for the documentation changes.
 
 The required `git fetch origin` freshness check still fails with `.git/FETCH_HEAD: Permission denied`; no reset, overwrite, or force-update was performed. This branch stops at the merge gate: inspect the complete branch diff, obtain fresh remote CI/public-artifact evidence, and get explicit user approval before merging into `main` or publishing Pages. The unexecuted release-order work remains the separate plan `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md`; it must not be inferred from or started as part of this chronology boundary.
+
+## 15. Publication-order display contract — Task 6 full verification (2026-09-03)
+
+The separately approved publication-order display plan `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md` is implemented through Task 5 on branch `codex/publication-order-display-contract`. The implementation range is `5e159c4236ee03ede4c5175519bff468ff6beb1e..c5e24393904aec6ae50511813b61a300c2a572f1`; the Task 6 documentation handoff adds the publication-order review, this section, and the corresponding master-roadmap boundary.
+
+Publication order is a date-axis/card focus view, not a relation or chronology graph. The release SVG renders all `131` works exactly once with stable `data-release-work-id` values, preserves exact/month/year/TBD precision, and uses a deterministic stable-sort-index then `work_id` tie-break. It declares `data-relationship-edges="off"` and has no `g.edge` or `g.chronology-edge`; the mobile Canvas guard likewise produces no synthetic relation or chronology overlays. Shared `work_id` selection and detail focus remain available across overview, chronology, and release, while release focus does not borrow overview edge styling and overview repaint remains intact.
+
+Local evidence on the branch:
+
+- bundled-Python full suite: `424` tests, `OK (skipped=4)`, exit `0`;
+- ordinary build: exit `0`, `audit_ok=true`, `audit_issue_count=0`, content-audit issue count `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- logical DB fingerprint/equivalence `39917ceee6af94e680acebdf7b570142f1a2995646aec1dd344ec3ed395b5b92`; compatibility `work_edges_all=361`, `work_pair_reasons=569`, prewatch edges `199`, story paths `83/83`;
+- real Chrome/CDP runner: `cards=131`, `cases=21`, `failures=0`, `syntheticEdges=0`, `g.edge=0`, `g.chronology-edge=0`, geometry failures `0`;
+- real `390x844` mobile cases: `nodeBoxes=131`, synthetic overlays `0`; release/overview and release/chronology round trips all true;
+- wrapper summary: `cards=131, failures=0, syntheticEdges=0`;
+- canonical `data/library/**`, `data/content_audit/reviews.csv`, derived SQLite/export inputs, and persistent review history are unchanged. Build-only reports/queue/manifests/SQLite were inspected and removed from the worktree as known transient outputs.
+
+The canonical export currently has `day=127`, `month=2`, `year=0`, `none=2`; therefore the year-only browser case is an explicit runtime fixture and does not assert a canonical year-only release. No real day is invented for month/year precision, and TBD cards remain in the `Upcoming / date TBD` bucket.
+
+The required local `git fetch origin` freshness check again failed with `.git/FETCH_HEAD: Permission denied`; no reset, overwrite, rebase, or force update was performed. This branch stops at the normal explicit-approval merge gate: complete branch diff review, fresh remote CI/public-artifact checks, and user approval remain required before merge into `main` or Pages publication. No canonical data or HTML semantic export change is authorized by this documentation boundary.
