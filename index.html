@@ -4769,7 +4769,7 @@ function mobileOverlaySyntheticSpecs(cs,state){
   if(!cs||!state||state.generic)return [];
   // Chronology/release panels intentionally disable relation edges; their
   // mobile canvas must not synthesize the overview graph relations.
-  if(cs.svg?.dataset?.relationshipEdges==='off')return [];
+  const panel=cs.svg?.closest?.('.panel')?.id||'';if(panel==='release'||cs.svg?.dataset?.relationshipEdges==='off')return [];
   const visible=cs.overlayVisibleNodeIds||new Set(cs.nodeBoxes.map(n=>n.id));
   const staticKeys=cs.overlayStaticEdgeKeys||new Set();
   const specs=[['backhl',state.backEdges],['forwardhl',state.forwardEdges],['contexthl',state.contextEdges],['pathhl',state.pathEdges||new Set()]];
@@ -8081,7 +8081,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     {id:'fox',label:'FOX X-MEN',sub:'X-MEN / Wolverine / Deadpool',tone:'#a78bfa'},
     {id:'mcu-films',label:'MCU映画',sub:'Marvel Studios theatrical films',tone:'#60a5fa'},
     {id:'tv-street',label:'TV・ストリート',sub:'ABC / Netflix / Hulu / street-led shows',tone:'#34d399'},
-    {id:'disney-animation',label:'Disney+・アニメ',sub:'Marvel Studios series / animation / specials',tone:'#22d3ee'}
+    {id:'disney-animation',label:'Disney+・アニメ',sub:'Marvel Studios series / animation / specials',tone:'#22d3ee'},
+    {id:'upcoming-tbd',label:'Upcoming / date TBD',sub:'公開日未定・確認待ち',tone:'#64748b'}
   ]);
   const RELEASE_HISTORY_ERAS=Object.freeze([
     {id:'licensed-era',label:'各社ライセンス展開期',kicker:'LICENSED PRODUCTIONS',start:'1992',end:'2004',summary:'Marvel自身が映画群を統括する以前。アニメ、Blade、X-MEN、Spider-Manなどが各社・各世界観で並行した時代。',tone:'#334155'},
@@ -8108,6 +8109,15 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return [internalKey,precisionRank,nm[id]?.title||id];
   }
   function compareReleaseIds(a,b){const x=releaseSortTuple(a),y=releaseSortTuple(b);return x[0].localeCompare(y[0])||x[1]-y[1]||x[2].localeCompare(y[2],'ja');}
+  function releaseLayoutMeta(meta,stableSortIndex,workId){
+    const precision=meta?.precision||'unknown';
+    const isTbd=!meta?.sortDate||precision==='undated'||precision==='tbd';
+    const sortKey=isTbd?'9999-99-99':String(meta.sortDate);
+    return {precision,isTbd,sortKey,stableSortIndex,workId};
+  }
+  function compareReleaseItems(a,b){
+    return a.sortKey.localeCompare(b.sortKey)||a.stableSortIndex-b.stableSortIndex||a.workId.localeCompare(b.workId);
+  }
   function releaseCardPath(x,y,w,h){return `M${x+9},${y} H${x+w-9} Q${x+w},${y} ${x+w},${y+9} V${y+h-9} Q${x+w},${y+h} ${x+w-9},${y+h} H${x+9} Q${x},${y+h} ${x},${y+h-9} V${y+9} Q${x},${y} ${x+9},${y} Z`;}
   function releaseTitleLines(title){const a=Array.from(title||'');if(a.length<=13)return [title||''];const first=a.slice(0,13).join('');const rest=a.slice(13);return [first,rest.slice(0,13).join('')+(rest.length>13?'…':'')];}
   function releaseLaneOf(node){
@@ -8146,14 +8156,17 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(/中止報道/.test(raw))return '中止報道';
     return raw.length>12?raw.slice(0,12)+'…':raw;
   }
-  function layoutReleaseLane(ids,era,x0,w,cardW){
+  function layoutReleaseLane(ids,era,x0,w,cardW,stableSortIndexById,itemComparator){
     const rows=[],items=[],gap=7,maxX=x0+w-cardW;
-    ids.slice().sort(compareReleaseIds).forEach(id=>{
-      const meta=RELEASE_META[id],proposed=Math.max(x0,Math.min(maxX,releaseXForMeta(meta,era,x0,w)-cardW/2));
+    ids.map(id=>{
+      const meta=RELEASE_META[id]||{},stableSortIndex=stableSortIndexById?.get(id)??meta.stableSortIndex??0;
+      return {id,layout:releaseLayoutMeta(meta,stableSortIndex,id)};
+    }).sort((a,b)=>(itemComparator||compareReleaseItems)(a.layout,b.layout)).forEach(({id,layout})=>{
+      const meta=RELEASE_META[id]||{},proposed=Math.max(x0,Math.min(maxX,releaseXForMeta(meta,era,x0,w)-cardW/2));
       let row=rows.findIndex(last=>proposed>=last+gap),cx=proposed;
       if(row<0){row=rows.length;rows.push(-Infinity);}else cx=Math.max(proposed,rows[row]+gap);
       if(cx>maxX){row=rows.length;rows.push(-Infinity);cx=maxX;}
-      rows[row]=cx+cardW;items.push({id,row,cx});
+      rows[row]=cx+cardW;items.push({id,row,cx,layout});
     });
     return {items,rows:Math.max(1,rows.length)};
   }
@@ -8169,22 +8182,31 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const panel=document.getElementById('release');
     if(!panel||panel.querySelector('.release-view-wrap'))return false;
     const svgW=1320,x0=220,timelineW=1060,cardW=146,cardH=48,rowGap=6,lanePad=12,sectionGap=24;
-    const laneIndex=new Map(RELEASE_LANES.map((lane,idx)=>[lane.id,idx]));
-    const dated=NODES.filter(n=>RELEASE_META[n.id]?.sortDate).map(n=>n.id);
-    const undated=NODES.filter(n=>!RELEASE_META[n.id]?.sortDate).map(n=>n.id);
+    const releaseLanes=RELEASE_LANES.some(lane=>lane.id==='upcoming-tbd')?RELEASE_LANES:[...RELEASE_LANES,{id:'upcoming-tbd',label:'Upcoming / date TBD',sub:'公開日未定・確認待ち',tone:'#64748b'}];
+    const laneIndex=new Map(releaseLanes.map((lane,idx)=>[lane.id,idx]));
+    const stableSortIndexById=new Map(NODES.map((node,index)=>[node.id,index]));
+    const layoutMetaFor=typeof releaseLayoutMeta==='function'?releaseLayoutMeta:(meta,stableSortIndex,workId)=>{
+      const precision=meta?.precision||'unknown',isTbd=!meta?.sortDate||precision==='undated'||precision==='tbd';
+      return {precision,isTbd,sortKey:isTbd?'9999-99-99':String(meta.sortDate),stableSortIndex,workId};
+    };
+    const releaseItems=NODES.map(node=>({id:node.id,layout:layoutMetaFor(RELEASE_META[node.id],stableSortIndexById.get(node.id),node.id)}));
+    const dated=releaseItems.filter(item=>!item.layout.isTbd).map(item=>item.id);
+    const undated=releaseItems.filter(item=>item.layout.isTbd).map(item=>item.id);
+    const tbdIds=new Set(undated);
     let historyY=18;const out=[];
     RELEASE_HISTORY_ERAS.forEach((era,eraIndex)=>{
       const eraIds=dated.filter(id=>{const y=releaseYearOf(RELEASE_META[id]);return y>=era.start&&y<=era.end;});
       if(eraIndex===RELEASE_HISTORY_ERAS.length-1)eraIds.push(...undated);
-      const byLane=new Map(RELEASE_LANES.map(l=>[l.id,[]]));
-      eraIds.forEach(id=>byLane.get(releaseLaneOf(nm[id]))?.push(id));
+      const eraLanes=eraIndex===RELEASE_HISTORY_ERAS.length-1?releaseLanes:releaseLanes.filter(lane=>lane.id!=='upcoming-tbd');
+      const byLane=new Map(eraLanes.map(l=>[l.id,[]]));
+      eraIds.forEach(id=>byLane.get(tbdIds.has(id)?'upcoming-tbd':releaseLaneOf(nm[id]))?.push(id));
       const markers=RELEASE_HISTORY_MILESTONES.filter(m=>m.date.slice(0,4)>=era.start&&m.date.slice(0,4)<=era.end);
       const markerLayout=layoutHistoryMarkers(markers,era,x0,timelineW);
       const markerH=markers.length?markerLayout.rows*34+10:16;
       const headerH=92+markerH;
       const laneLayouts=[];let lanesH=0;
-      RELEASE_LANES.forEach(lane=>{
-        const layout=layoutReleaseLane(byLane.get(lane.id)||[],era,x0,timelineW,cardW);
+      eraLanes.forEach(lane=>{
+        const layout=layoutReleaseLane(byLane.get(lane.id)||[],era,x0,timelineW,cardW,stableSortIndexById,typeof compareReleaseItems==='function'?compareReleaseItems:undefined);
         const laneH=Math.max(58,lanePad*2+layout.rows*(cardH+rowGap)-rowGap);
         laneLayouts.push({lane,layout,laneH,y:0});lanesH+=laneH+8;
       });
@@ -8205,9 +8227,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       laneLayouts.forEach(({lane,layout,laneH})=>{
         out.push(`<rect class="release-lane-row" x="22" y="${ly}" width="${svgW-44}" height="${laneH}" rx="10"/><rect class="release-lane-accent" x="22" y="${ly}" width="5" height="${laneH}" rx="3" fill="${esc(lane.tone)}"/><text class="release-lane-label" x="34" y="${ly+22}">${esc(lane.label)}</text><text class="release-lane-sub" x="34" y="${ly+37}">${esc(lane.sub)}</text>`);
         if(!layout.items.length)out.push(`<text class="release-lane-empty" x="${x0+8}" y="${ly+34}">この時代の収録作品なし</text>`);
-        layout.items.forEach(({id,row,cx})=>{
-          const n=nm[id],meta=RELEASE_META[id],cy=ly+lanePad+row*(cardH+rowGap),lines=releaseTitleLines(n.title);
-          out.push(`<g class="node release-node" data-release-kind="${esc(meta.releaseKind)}" data-release-precision="${esc(meta.precision)}" data-release-lane="${esc(lane.id)}"><title>${esc(n.id)}</title><path d="${releaseCardPath(cx,cy,cardW,cardH)}"/><text class="release-lane-chip" x="${cx+8}" y="${cy+10}">${esc(lane.label)}</text><text x="${cx+8}" y="${cy+22}" font-size="9.2" font-weight="700">${esc(lines[0])}</text>${lines[1]?`<text x="${cx+8}" y="${cy+33}" font-size="9.2" font-weight="700">${esc(lines[1])}</text>`:''}<text class="release-date" x="${cx+8}" y="${cy+43}" font-size="8.2"><title>${esc(meta.displayDate)}</title>${esc(releaseCardDateLabel(meta))}</text><text class="release-kind" x="${cx+92}" y="${cy+43}" font-size="7.5">${esc(releaseKindLabel(meta.releaseKind))}</text></g>`);
+        layout.items.forEach(({id,row,cx,layout:layoutMeta})=>{
+          const n=nm[id],meta=RELEASE_META[id],cardLayout=layoutMeta||layoutMetaFor(meta,stableSortIndexById.get(id),id),cy=ly+lanePad+row*(cardH+rowGap),lines=releaseTitleLines(n.title);
+          out.push(`<g class="node release-node" data-release-kind="${esc(meta.releaseKind)}" data-release-precision="${esc(cardLayout.precision)}" data-release-sort-key="${esc(cardLayout.sortKey)}" data-release-tbd="${cardLayout.isTbd?'true':'false'}" data-release-work-id="${esc(cardLayout.workId)}" data-release-lane="${esc(lane.id)}"><title>${esc(n.id)}</title><path d="${releaseCardPath(cx,cy,cardW,cardH)}"/><text class="release-lane-chip" x="${cx+8}" y="${cy+10}">${esc(lane.label)}</text><text x="${cx+8}" y="${cy+22}" font-size="9.2" font-weight="700">${esc(lines[0])}</text>${lines[1]?`<text x="${cx+8}" y="${cy+33}" font-size="9.2" font-weight="700">${esc(lines[1])}</text>`:''}<text class="release-date" x="${cx+8}" y="${cy+43}" font-size="8.2"><title>${esc(meta.displayDate)}</title>${esc(releaseCardDateLabel(meta))}</text><text class="release-kind" x="${cx+92}" y="${cy+43}" font-size="7.5">${esc(releaseKindLabel(meta.releaseKind))}</text></g>`);
         });
         ly+=laneH+8;
       });
