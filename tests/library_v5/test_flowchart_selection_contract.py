@@ -3,6 +3,8 @@ from __future__ import annotations
 import csv
 import json
 import re
+import shutil
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -39,6 +41,14 @@ def function_body(source: str, name: str) -> str:
             if depth == 0:
                 return source[start : index + 1]
     raise AssertionError(f"function {name} has unbalanced braces")
+
+
+def function_source(source: str, name: str) -> str:
+    """Return a complete function declaration for a Node helper fixture."""
+    match = re.search(rf"function\s+{re.escape(name)}\s*\([^)]*\)\s*", source)
+    if not match:
+        raise AssertionError(f"function {name} was not found")
+    return source[match.start() : match.end()] + function_body(source, name)
 
 
 class FlowchartSelectionContractTests(unittest.TestCase):
@@ -316,7 +326,114 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         """Publication order remains a date axis, not a fabricated work chain."""
         release = function_body(self.source, "buildReleaseView")
         self.assertIn('data-relationship-edges="off"', release)
+        self.assertNotIn("g.edge", release)
         self.assertNotIn("chronology-edge", release)
+
+    def test_release_cards_are_a_complete_line_free_date_axis(self) -> None:
+        """Every release card must expose precision and layout-only TBD metadata."""
+        release = function_body(self.source, "buildReleaseView")
+        self.assertIn('data-relationship-edges="off"', release)
+        self.assertNotIn("g.edge", release)
+        self.assertNotIn("chronology-edge", release)
+        self.assertIn("data-release-precision", release)
+        self.assertIn("data-release-sort-key", release)
+        self.assertIn("data-release-tbd", release)
+
+    def _render_release_fixture_ids(self) -> list[str]:
+        """Execute the real release builder with the canonical node fixture."""
+        node = shutil.which("node")
+        self.assertIsNotNone(node, "Node.js is required for release builder fixture coverage")
+        if node is None:
+            return []
+        payload = json.loads((ROOT / "data" / "derived" / "flowchart.json").read_text(encoding="utf-8"))
+        nodes = [{"id": row["work_id"], "title": row["title_ja"]} for row in payload["nodes"]]
+        release_meta = {
+            row["work_id"]: {
+                "sortDate": row.get("release_sort_date", ""),
+                "displayDate": row.get("release_display_date", ""),
+                "releaseKind": row.get("release_kind", "other"),
+                "precision": row.get("release_precision", "none"),
+            }
+            for row in payload["nodes"]
+        }
+        builder = function_source(self.source, "buildReleaseView")
+        script = f"""
+const panel = {{innerHTML:'', querySelector:()=>null}};
+const document = {{getElementById:id=>id==='release'?panel:null}};
+const NODES = {json.dumps(nodes, ensure_ascii=False)};
+const nm = Object.fromEntries(NODES.map(row=>[row.id,row]));
+const RELEASE_META = {json.dumps(release_meta, ensure_ascii=False)};
+const RELEASE_HISTORY_ERAS = [{{id:'fixture-era', start:'1900', end:'2100', label:'fixture', kicker:'fixture', summary:'fixture', tone:'#000'}}];
+const RELEASE_LANES = [{{id:'legacy', label:'fixture', sub:'fixture', tone:'#000'}}];
+const RELEASE_HISTORY_MILESTONES = [];
+const esc = value => String(value ?? '');
+const releaseYearOf = meta => meta?.sortDate ? String(meta.sortDate).slice(0,4) : 'undated';
+const eraDateBounds = era => [Date.parse(`${{era.start}}-01-01T00:00:00Z`), Date.parse(`${{era.end}}-12-31T00:00:00Z`)];
+const releaseLaneOf = () => 'legacy';
+const layoutHistoryMarkers = () => ({{items:[], rows:1}});
+const layoutReleaseLane = ids => ({{items:ids.map((id,index)=>({{id,row:0,cx:index}})), rows:1}});
+const releaseTitleLines = title => [title];
+const releaseCardPath = () => 'M';
+const releaseCardDateLabel = meta => meta.displayDate || '';
+const releaseKindLabel = kind => kind;
+const initSvgInteraction = () => {{}};
+{builder}
+buildReleaseView();
+const ids = [...panel.innerHTML.matchAll(/data-release-work-id="([^"]+)"/g)].map(match=>match[1]);
+process.stdout.write(JSON.stringify(ids));
+"""
+        result = subprocess.run(
+            [node, "-"], input=script, capture_output=True, text=True, encoding="utf-8", check=False
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return json.loads(result.stdout)
+
+    def test_release_cards_cover_the_canonical_work_fixture_once(self) -> None:
+        """The release axis must materialize the canonical 131-work set once."""
+        payload = json.loads((ROOT / "data" / "derived" / "flowchart.json").read_text(encoding="utf-8"))
+        work_ids = [row["work_id"] for row in payload["nodes"]]
+        self.assertEqual(len(work_ids), 131)
+        self.assertEqual(len(set(work_ids)), 131)
+        card_ids = self._render_release_fixture_ids()
+        self.assertEqual(len(card_ids), len(work_ids), "release card count must match canonical work count")
+        self.assertEqual(len(card_ids), len(set(card_ids)), "release cards must not duplicate work IDs")
+        self.assertEqual(set(card_ids), set(work_ids), "release cards must cover exactly the canonical work IDs")
+
+    def test_release_cards_use_the_shared_selection_and_detail_focus_path(self) -> None:
+        """A release card must resolve its work ID through the same delegated click path."""
+        self.assertIn("data-release-work-id", function_body(self.source, "buildReleaseView"))
+        click_path = self.source[self.source.index("document.addEventListener('click'"):]
+        self.assertRegex(click_path, r"const id=node\.dataset\?\.releaseWorkId\|\|gt\(node\)")
+        self.assertIn("window.marvelFocusWork", self.source)
+        self.assertIn("window.marvelDetailFocusId", function_body(self.source, "renderSelectionState"))
+
+    def test_release_selection_round_trip_repaints_overview_without_release_edges(self) -> None:
+        """Release focus is card-only; panel activation restores normal overview painting."""
+        render = function_body(self.source, "renderSelectionState")
+        self.assertRegex(render, r"const releasePanel=svg\.closest\('\.panel'\)\?\.id==='release'")
+        self.assertIn("window.marvelDetailFocusId", render)
+        release_start = render.index("const releasePanel=")
+        edge_start = render.index("for(const g of svg.querySelectorAll('g.edge", release_start)
+        release_branch = render[release_start:edge_start]
+        self.assertIn("classList.remove('dim')", release_branch)
+        self.assertRegex(release_branch, r"releasePanel[\s\S]{0,900}return")
+        self.assertNotRegex(release_branch, r"selectedIds\s*=")
+
+        focus = function_body(self.source, "renderFocusHighlight")
+        self.assertRegex(focus, r"svg\.closest\('\.panel'\)\?\.id==='release'")
+        start = self.source.index("window.activatePanel=function")
+        end = self.source.index("\n  };\n\n  document.querySelectorAll('.tab').forEach", start)
+        activate = self.source[start:end]
+        self.assertIn("refreshSelection(false)", activate)
+        self.assertIn("window.marvelRenderDetailFocus(window.marvelDetailFocusId)", activate)
+
+    def test_release_disables_mobile_synthetic_edges_at_the_release_boundary(self) -> None:
+        """A release SVG policy must block synthetic relation overlays on mobile."""
+        synthetic = function_body(self.source, "mobileOverlaySyntheticSpecs")
+        self.assertRegex(synthetic, r"panel\s*=.*release")
+        self.assertRegex(synthetic, r"panel\s*===\s*['\"]release['\"]")
+        self.assertIn("cs.svg?.dataset?.relationshipEdges", synthetic)
+        self.assertRegex(synthetic, r"relationshipEdges.*off|off.*relationshipEdges")
 
     def test_mobile_canvas_preserves_chronology_selection_overlay_metadata(self) -> None:
         """Canvas mode must highlight chronology paths without mixing them into graph edges."""

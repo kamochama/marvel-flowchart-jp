@@ -480,3 +480,20 @@ Local evidence:
 - `chronology_assertions=0`, and canonical `data/library/` plus persistent `data/content_audit/reviews.csv` are unchanged.
 
 The local `git fetch origin` freshness check failed with `.git/FETCH_HEAD: Permission denied`; the checkout was not reset or overwritten. Remote CI, complete branch review, merge into `main`, and Pages publication remain pending explicit approval. The release-order/publication-order plan `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md` is intentionally unexecuted and remains a separate future boundary; no release-order semantics are introduced here.
+
+## 15. Publication-order display contract boundary (2026-09-03)
+
+The separately approved plan `docs/superpowers/plans/2026-09-02-marvel-library-publication-order-display.md` is complete through Task 5 implementation and Task 6 local verification on branch `codex/publication-order-display-contract`. The implementation range is `5e159c4236ee03ede4c5175519bff468ff6beb1e..c5e24393904aec6ae50511813b61a300c2a572f1`; the Task 6 docs-only handoff is recorded in `docs/superpowers/reviews/2026-09-02-marvel-library-publication-order-display-review.md`, this roadmap section, and the corresponding handoff section.
+
+Publication order is now a date-axis/card focus view. It renders all `131` works, preserves exact/month/year/undated-TBD precision without inventing a day, uses deterministic stable-sort-index then `work_id` tie-breaking, and puts TBD works in an explicit `Upcoming / date TBD` lane. The release SVG declares `data-relationship-edges="off"` and creates no `g.edge` or `g.chronology-edge`; relation/chronology lines are likewise prohibited from mobile synthetic Canvas overlays. Shared work selection and detail focus are preserved across overview, chronology, and release, but the release panel does not become a relation graph. The canonical export currently has `day=127 / month=2 / year=0 / none=2`, so the year-only browser case is a runtime fixture only.
+
+Task 6 local evidence:
+
+- bundled-Python full suite: `424` tests, `OK (skipped=4)`, exit `0`;
+- ordinary build: exit `0`, audit issue `0`, content-audit issue `0`, SQLite FK rows `0`, `integrity_check=ok`, logical fingerprint/equivalence `39917ceee6af94e680acebdf7b570142f1a2995646aec1dd344ec3ed395b5b92`;
+- graph/export compatibility: `131` nodes, `361` edges, `569` reasons, `42` character groups, prewatch `199`, story paths `83/83`;
+- direct real Chrome/CDP runner: `cards=131`, `cases=21`, `failures=0`, `syntheticEdges=0`; SVG edges `0/0`, geometry failures `0`, mobile `390x844` nodeBoxes `131`, synthetic overlays `0`;
+- wrapper: `cards=131, failures=0, syntheticEdges=0`; release↔overview and release↔chronology round trips all true;
+- canonical `data/library/**`, persistent `data/content_audit/reviews.csv`, and derived SQLite/export inputs have no branch diff. Build-only outputs were inspected and removed as transient paths.
+
+The normal-permission local `git fetch origin` freshness check first reported `.git/FETCH_HEAD: Permission denied`, but the authorized elevated retry succeeded. At this checkpoint `origin/main` was `5e159c4236ee03ede4c5175519bff468ff6beb1e` (containing the AGENTS.md `04ff92b...` baseline as an ancestor); no reset, overwrite, rebase, or force update was performed. This milestone is locally verified but not production-integrated. Remote CI, full branch review, public artifact/Pages checks, and explicit user approval remain the merge/publication gate. Do not merge, push, publish, or begin another semantic/viewer phase from this boundary without that approval.
