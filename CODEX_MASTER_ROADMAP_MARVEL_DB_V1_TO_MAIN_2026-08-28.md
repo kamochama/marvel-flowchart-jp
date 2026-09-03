@@ -9,7 +9,7 @@ This file is the long-range execution roadmap for Codex and other coding agents.
 
 If this roadmap conflicts with a newer explicit user instruction, the newer user instruction wins. If a SHA becomes stale, reconcile against fresh remote HEAD; never reset implementation to an older documentation checkpoint.
 
-> **Current semantic production note (2026-09-02):** The historical PR #10/PR #11 gate described below has completed. PR #10 (Events & Multiverse), PR #11 (releases/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday release/status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), and PR #38 (all-work browser selection audit) are merged into `main`; the latest semantic baseline is `fb715e87d5290b73e0ff86139d2554df32fc4a2d`. Later documentation-only commits do not change code/data. The post-merge baseline and the next separately bounded work are recorded in §13.
+> **Current semantic production note (2026-09-03):** The historical PR #10/PR #11 gate described below has completed. PR #10 (Events & Multiverse), PR #11 (releases/status normalization), PR #12 (HTML DB export), PR #13 (Pages artifact fix), PR #21 (mobile touch-target contract), PR #22 (X-Men '97 release/status evidence promotion batch005), PR #26 (VisionQuest production-status evidence promotion batch006), PR #28 (Avengers: Doomsday production-status evidence promotion batch007), PR #30 (full release/status evidence audit), PR #32 (HTML design/operation debugging), PR #38 (all-work browser selection audit), PR #40 (browser interaction state audit), PR #45 (Deadpool & Wolverine variant fan-out audit), PR #47, #49, #51, #53, #55, and #58 (relation evidence promotion waves001–006) are merged into `main`; the latest semantic baseline is `ee90bf3afcec53a4d3be2f1ba290c1282a90a31a`. Later documentation-only commits do not change code/data. The current production baseline and next separately bounded work are recorded in §§17 and 23.
 
 > **Integrated audit note (2026-09-02):** PR #40 (browser interaction state audit) is also merged into `main` at `04ff92b633f4da5756f58c96de7b321dac4bb02c`; it adds representative PC interaction coverage without changing semantic code or canonical data.
 
@@ -595,3 +595,19 @@ Verification at this boundary:
 - Pages deployment run `33755956523` succeeded; the public site and generated JSON returned HTTP `200` with `131` nodes, `355` edges, and `562` reasons.
 
 The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave005.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave005.md`. Remaining legacy relation rows, including Across→Beyond, X-Men: The Animated Series → X-Men '97 S1, and other Spider-Verse/legacy-TV queues, require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
+
+## 23. Relation evidence promotion wave006 — production baseline (2026-09-03)
+
+PR #58 (`https://github.com/kamochama/marvel-flowchart-jp/pull/58`) integrated the sixth bounded relation-evidence promotion wave into `main` at `ee90bf3afcec53a4d3be2f1ba290c1282a90a31a`. It promotes four existing relations: *Spider-Man: Across the Spider-Verse* → *Beyond the Spider-Verse*, *Spider-Man: Into the Spider-Verse* → *Across the Spider-Verse*, *X-Men: The Animated Series* → *X-Men '97* Season 1, and *Spider-Man: Homecoming* → *Far From Home*. Existing IDs and semantics are preserved; each relation now has relation-specific official-source evidence and a `legacy_seed -> source_verified` review transition. No release/status, chronology, identity, multiverse-transition, or new work-pair fact was inferred.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `449` tests pass, `4` environment-gated skips;
+- build/audit: audit and content-audit issues `0`, SQLite FK rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`31` source_verified, `130` legacy_seed, `3` superseded); sources/evidence/reviews `68` / `158` / `132`;
+- graph/export compatibility: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- independent connectivity audit: `pass=39`, `deferred=536`, projection mismatches `0`, reason orphans `0`, unsupported transition edges `0`;
+- real Chrome/CDP selection `131 × 2` with zero exact-set mismatches; interaction `6/6`; chronology and publication order pass with zero failures, and publication order reports `131` cards with zero synthetic edges;
+- GitHub Actions run `33758294498` passed all five required jobs after rerunning the initial publication-order harness stdout failure; Pages deployment run `33759982789` succeeded and the public site and generated JSON returned HTTP `200` with `131` nodes, `355` edges, and `562` reasons.
+
+The plan and review are `docs/superpowers/plans/2026-09-03-marvel-relation-evidence-promotion-wave006.md` and `docs/superpowers/reviews/2026-09-03-marvel-relation-evidence-promotion-wave006.md`. Other Spider-Verse, X-Men legacy, and remaining relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
