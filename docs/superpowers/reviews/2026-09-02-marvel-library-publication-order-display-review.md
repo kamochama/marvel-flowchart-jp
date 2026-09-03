@@ -84,6 +84,6 @@ BASE `5e159c4236ee03ede4c5175519bff468ff6beb1e` から HEAD `c5e24393904aec6ae50
 
 ## Freshness と merge gate
 
-開始時の `git fetch origin` は linked worktree の `.git/worktrees/publication-order-display-contract/FETCH_HEAD` に対する `Permission denied` で失敗した。HEAD は `c5e24393904aec6ae50511813b61a300c2a572f1` のまま確認し、reset、overwrite、rebase、force update は実施していない。
+通常権限での開始時 `git fetch origin` は linked worktree の `.git/worktrees/publication-order-display-contract/FETCH_HEAD` に対する `Permission denied` だったが、権限付きの再実行で取得に成功した。確認時点の `origin/main` は `5e159c4236ee03ede4c5175519bff468ff6beb1e`（AGENTS.md記載の `04ff92b...` を祖先に含む）であり、HEAD `c5e24393904aec6ae50511813b61a300c2a572f1` はそれを上書きしていない。reset、overwrite、rebase、force update は実施していない。
 
 この Task6 は docs-only handoff commit を作成して停止する。push、PR merge、`main` への統合、Pages 公開は行わない。次の gate は、ユーザーの明示的 approval の下で、完全な branch diff、fresh remote CI、公開 artifact／Pages 動作を確認してから通常の merge／publish 手順へ進むことである。
