@@ -14,17 +14,19 @@ class ConnectivityAuditOracleTests(unittest.TestCase):
         report = audit_repository(ROOT)
 
         self.assertEqual(report["counts"]["works"], 131)
-        self.assertEqual(report["counts"]["edges"], 361)
-        self.assertEqual(report["counts"]["reasons"], 569)
+        # The D&W Wolverine variant boundary removes six unsupported pair
+        # projections while retaining the explicit Logan story-link pair.
+        self.assertEqual(report["counts"]["edges"], 355)
+        self.assertEqual(report["counts"]["reasons"], 562)
         self.assertEqual(report["summary"]["verdicts"].get("fail", 0), 0)
         self.assertEqual(report["summary"]["projection"]["edge_pair_mismatches"], 0)
         self.assertEqual(report["summary"]["projection"]["reason_orphans"], 0)
         self.assertEqual(len(report["work_inventory"]), 131)
         self.assertEqual(len({row["work_id"] for row in report["work_inventory"]}), 131)
-        self.assertEqual(len(report["edge_inventory"]), 361)
+        self.assertEqual(len(report["edge_inventory"]), 355)
         self.assertEqual(
             len({(row["source_work_id"], row["target_work_id"]) for row in report["edge_inventory"]}),
-            361,
+            355,
         )
 
         zero_degree = {
