@@ -230,6 +230,28 @@ const releaseLayoutMeta = (meta,index,workId) => ({sortKey:meta.sortDate, precis
         body = function_body(self.source, "buildChronologyView")
         self.assertRegex(body, r"svgW=3560,svgH=18(?:2[4-9]|[3-9][0-9])")
 
+    def test_chronology_lane_headers_reserve_clearance_above_cards(self) -> None:
+        """Series labels must occupy a dedicated band above the card row."""
+        body = function_body(self.source, "buildChronologyView")
+        self.assertIn("chronologyHeaderHeight=22,chronologyHeaderGap=8", body)
+        self.assertRegex(
+            body,
+            r"y=topY-chronologyHeaderGap-chronologyHeaderHeight",
+        )
+
+    def test_chronology_branch_annotations_occlude_lines(self) -> None:
+        """Branch annotations need an opaque backing shape so guide lines stay readable."""
+        body = function_body(self.source, "buildChronologyView")
+        branch = function_body(self.source, "branchBetweenRows")
+        self.assertIn("chronology-track-label-bg", body)
+        self.assertIn("chronologyTrackLabel(label", branch)
+
+    def test_chronology_pivot_annotation_uses_shared_label_component(self) -> None:
+        """The Days of Future Past pivot label must receive the same occluding treatment."""
+        body = function_body(self.source, "buildChronologyView")
+        self.assertIn("function chronologyTrackLabel", body)
+        self.assertRegex(body, r"chronologyTrackLabel\([^)]*Days of Future Past")
+
 
 if __name__ == "__main__":
     unittest.main()
