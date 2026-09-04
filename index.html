@@ -532,10 +532,10 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .svg-wrap svg.dim g.node.current-goal{opacity:1!important;filter:saturate(1.45) brightness(1.25) drop-shadow(0 0 24px #ef4444)!important}
   /* v5.10.20 mobile paint-light mode: dimming uses opacity only.
      Avoid running CSS filter programs across hundreds of SVG groups. */
-  .svg-wrap svg.dim g.node:not(.hl):not(.focus):not(.goal-node):not(.current-goal){opacity:.46!important;filter:none!important}
-  .svg-wrap svg.dim g.edge:not(.hl){opacity:.12!important;filter:none!important}
-  .svg-wrap svg.family-mode g.node{opacity:.44!important;filter:none!important}
-  .svg-wrap svg.family-mode g.edge{opacity:.11!important;filter:none!important}
+  .svg-wrap svg.dim g.node:not(.hl):not(.focus):not(.goal-node):not(.current-goal){opacity:.42!important;filter:none!important}
+  .svg-wrap svg.dim g.edge:not(.hl){opacity:.06!important;filter:none!important}
+  .svg-wrap svg.family-mode g.node{opacity:.42!important;filter:none!important}
+  .svg-wrap svg.family-mode g.edge{opacity:.06!important;filter:none!important}
   .svg-wrap svg.char-mode g.node,.svg-wrap svg.char-mode g.edge{opacity:.46!important}
   .svg-wrap svg g.node.watched-dim:not(.focus){opacity:.34!important;filter:none!important}
   .svg-wrap svg.dim g.node.watched-dim:not(.focus){opacity:.30!important;filter:none!important}
@@ -559,7 +559,10 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 #overview svg.dim g.node[data-map-role="support"].hl,
 #overview svg.dim g.node[data-map-role="support"].focus{opacity:1!important}
 @media(max-width:760px){
+  #overview svg g.node[data-map-role="support"]{opacity:.86!important}
   #overview svg g.node[data-map-role="support"] text{font-weight:600}
+  #overview svg.dim g.node[data-map-role="support"]:not(.hl):not(.focus):not(.goal-node):not(.current-goal){opacity:.42!important;filter:none!important}
+  #overview svg.dim g.map-support-edge:not(.hl){opacity:.06!important;filter:none!important}
 }
 </style>
 <style>
@@ -765,6 +768,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
 </style>
 <style id="chronology-selection-highlight">
   .chronology-edge{pointer-events:none}.chronology-edge path{fill:none;opacity:.72}
+  .chronology-main-spine{stroke:#38bdf8;stroke-width:3.8;fill:none}
   .svg-wrap svg.dim g.chronology-edge.hl{opacity:1;filter:saturate(1.24) brightness(1.14) drop-shadow(0 0 8px #60a5fa)}
   .svg-wrap svg.dim g.chronology-edge.backhl path{stroke:#60a5fa!important;stroke-width:4.2px!important;opacity:1}
   .svg-wrap svg.dim g.chronology-edge.forwardhl path{stroke:#34d399!important;stroke-width:4.2px!important;opacity:1}
@@ -4409,6 +4413,8 @@ function setMobileViewBox(wrap,st,x,y,w,h){
 // The mobile camera uses the viewport aspect ratio so zoom fills the portrait chart area,
 // while pinch/zoom keeps the touched world point anchored under the fingers.
 const mobileCanvasStates=new WeakMap();
+const MOBILE_DIM_NODE_ALPHA=0.42;
+const MOBILE_DIM_EDGE_ALPHA=0.06;
 function mobileCanvasKey(wrap){const p=wrap?.closest('.panel');return (mobileChartMotion.matches&&p&&wrap.querySelector('svg g.node'))?p.id:null;}
 function isMobileCanvasWrap(wrap){return !!mobileCanvasKey(wrap);}
 
@@ -4492,8 +4498,14 @@ function canvasPrimitive(svg,el){
 }
 function canvasStylePrimitive(p){
   const cs=getComputedStyle(p.el),gs=canvasGroupState(p.el);
+  const svg=p.el?.closest?.('svg'),baseAlpha=gs.alpha*Math.max(0,Math.min(1,parseFloat(cs.opacity)||1));
+  // Fast mobile selection intentionally leaves the semantic SVG untouched for
+  // the first frame.  Give the cached background the same dim hierarchy that
+  // the SVG uses; highlighted primitives are then painted by the overlay.
+  const dimmed=!svg?.classList.contains('dim')&&selectedIds.size>0&&
+    (p.overlayNodeId||p.overlayIsEdge||p.overlayChronologyEdge);
   p.style={
-    display:gs.display&&cs.display!=='none',alpha:gs.alpha*Math.max(0,Math.min(1,parseFloat(cs.opacity)||1)),classes:gs.classes,
+    display:gs.display&&cs.display!=='none',alpha:dimmed?(p.overlayNodeId?MOBILE_DIM_NODE_ALPHA:MOBILE_DIM_EDGE_ALPHA):baseAlpha,classes:gs.classes,
     fill:canvasColor(cs.fill),stroke:canvasColor(cs.stroke),lineWidth:parseFloat(cs.strokeWidth)||1,
     dash:canvasDash(cs.strokeDasharray),lineCap:cs.strokeLinecap||'butt',lineJoin:cs.strokeLinejoin||'miter',
     vectorEffect:cs.vectorEffect||'',fontSize:parseFloat(p.el.getAttribute('font-size')||cs.fontSize)||10,
@@ -4520,6 +4532,7 @@ function rebuildMobileCanvas(wrap,geometry=true,preserveOverlay=false){
   }
   for(const p of st.primitives) canvasStylePrimitive(p);
   st.overlayWorldReady=false;st.overlayWorldState=null;st.overlayWorldSelectionKey='';st.overlayWorldSyntheticSpecs=null;st.overlayWorldChronologyClasses=null;
+  st.baseSelectionKey='';
   renderMobileCanvasCache(wrap);
   if(geometry||!st.overlayWorldCache)prepareMobileSelectionWorldResources(wrap);
   st.overlayActive=false;
@@ -4550,7 +4563,7 @@ function initMobileCanvas(wrap){
   wrap.insertBefore(canvas,svg.nextSibling);
   const overlay=document.createElement('canvas');overlay.dataset.marvelMobileHighlight=key;overlay.setAttribute('aria-hidden','true');
   canvas.insertAdjacentElement('afterend',overlay);wrap.classList.add('mobile-canvas-active');
-  cs={wrap,svg,canvas,ctx:canvas.getContext('2d',{alpha:true,desynchronized:true}),overlay,overlayCtx:overlay.getContext('2d',{alpha:true,desynchronized:true}),primitives:[],nodeBoxes:[],chronologyNavBoxes:[],syncRaf:0,needsRebuild:false,dpr:1,frames:0,cullDraws:0,overlayVersion:0,overlayDrawn:0,overlayActive:false,overlayState:null,overlayCamera:null,overlayGestureCache:null,overlayGestureState:null,overlayGestureSelectionKey:'',overlayGestureLod:0,overlayGestureBuildToken:0,overlayGestureBuildKey:'',overlayGestureBuildState:null,overlayLocalPatch:null,overlayLocalPatchState:null,overlayLocalPatchSelectionKey:'',overlayWorldCache:null,overlayWorldCtx:null,overlayWorldLod:.35,overlayWorldReady:false,overlayWorldState:null,overlayWorldSelectionKey:'',overlayWorldSyntheticSpecs:null,overlayWorldChronologyClasses:null,overlayNodePrimitives:null,overlayEdgePrimitives:null,overlayChronologyEdgePrimitives:null,overlayNodeBoxMap:null,overlayVisibleNodeIds:null,overlayStaticEdgeKeys:null,preserveOverlayOnce:false};
+  cs={wrap,svg,canvas,ctx:canvas.getContext('2d',{alpha:true,desynchronized:true}),overlay,overlayCtx:overlay.getContext('2d',{alpha:true,desynchronized:true}),primitives:[],nodeBoxes:[],chronologyNavBoxes:[],syncRaf:0,needsRebuild:false,dpr:1,frames:0,cullDraws:0,overlayVersion:0,overlayDrawn:0,overlayActive:false,overlayState:null,overlayCamera:null,baseSelectionKey:'',overlayGestureCache:null,overlayGestureState:null,overlayGestureSelectionKey:'',overlayGestureLod:0,overlayGestureBuildToken:0,overlayGestureBuildKey:'',overlayGestureBuildState:null,overlayLocalPatch:null,overlayLocalPatchState:null,overlayLocalPatchSelectionKey:'',overlayWorldCache:null,overlayWorldCtx:null,overlayWorldLod:.35,overlayWorldReady:false,overlayWorldState:null,overlayWorldSelectionKey:'',overlayWorldSyntheticSpecs:null,overlayWorldChronologyClasses:null,overlayNodePrimitives:null,overlayEdgePrimitives:null,overlayChronologyEdgePrimitives:null,overlayNodeBoxMap:null,overlayVisibleNodeIds:null,overlayStaticEdgeKeys:null,preserveOverlayOnce:false};
   mobileCanvasStates.set(wrap,cs);
   const observer=new MutationObserver(records=>{
     let geometry=false,style=false;
@@ -4598,6 +4611,13 @@ function renderMobileCanvasCache(wrap){
   }
   cs.cachePixels=total;cs.cacheVersion=(cs.cacheVersion||0)+1;return true;
 }
+function refreshMobileCanvasBase(wrap,state=null){
+  const cs=mobileCanvasStates.get(wrap);if(!cs)return false;
+  const key=selectedIds.size?(state?mobileSelectionWorldKey(state):'active'):'';
+  if(cs.baseSelectionKey===key)return false;
+  for(const p of cs.primitives)canvasStylePrimitive(p);
+  renderMobileCanvasCache(wrap);cs.baseSelectionKey=key;drawMobileCanvas(wrap);return true;
+}
 function chooseMobileCanvasCache(cs,targetDensity){
   const available=[.25,.5,1].filter(x=>cs.caches?.has(x));if(!available.length)return {lod:0,cache:null};
   let lod=available[available.length-1];for(const x of available){if(x>=targetDensity*.92){lod=x;break}}
@@ -4609,8 +4629,9 @@ function clearMobileSelectionOverlay(wrap){
   const cs=mobileCanvasStates.get(wrap);if(!cs?.overlayCtx)return false;
   const c=cs.overlay,ctx=cs.overlayCtx;ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.shadowBlur=0;ctx.clearRect(0,0,c.width,c.height);cs.overlayDrawn=0;cs.overlaySyntheticDrawn=0;return true;
 }
-function mobileOverlayNodeClass(id,state){
+function mobileOverlayNodeClass(id,state,chronologyNodeClasses=null){
   if(selectedIds.has(id)) return id===selected?'current-goal':'goal-node';
+  if(chronologyNodeClasses?.has(id)) return chronologyNodeClasses.get(id);
   if(state?.officialRouteActive&&state.officialRouteIds?.has(id)) return 'official-route';
   if(!state?.ctx?.has(id)) return null;
   if(state.pathMode) return 'pathhl';
@@ -4722,6 +4743,46 @@ function classifyChronologySelection(edges,state){
   return classes;
 }
 window.classifyChronologySelection=classifyChronologySelection;
+// The chronology panel has its own edge layer.  Node paint must therefore be
+// derived from the endpoints of highlighted chronology edges, never from the
+// relationship graph's broader `state.ctx` set.  This keeps node/line paint
+// parity while preserving directional and PATH categories.
+function chronologySelectionNodeClasses(records,state){
+  const list=Array.isArray(records)?records:[],chronologyState=state?.pathEdges?{...state,pathEdges:materializeChronologyPathEdgeIds(list,state.pathEdges)}:state,classes=classifyChronologySelection(list,chronologyState),byId=new Map();
+  for(const raw of list){
+    const source=raw?.source||raw?.chronologySource,target=raw?.target||raw?.chronologyTarget;
+    const edgeId=raw?.edge_id||raw?.edgeId||raw?.key||`${source||''}->${target||''}`;
+    if(edgeId&&source&&target)byId.set(String(edgeId),{source:String(source),target:String(target)});
+  }
+  const bits=new Map();
+  const add=(id,bit)=>{if(!id)return;bits.set(id,(bits.get(id)||0)|bit);};
+  for(const [edgeId,category] of classes){
+    const edge=byId.get(String(edgeId));if(!edge)continue;
+    if(category==='pathhl')add(edge.source,4),add(edge.target,4);
+    else if(category==='bothhl')add(edge.source,3),add(edge.target,3);
+    else if(category==='backhl')add(edge.source,1),add(edge.target,1);
+    else if(category==='forwardhl')add(edge.source,2),add(edge.target,2);
+    else if(category==='contexthl')add(edge.source,8),add(edge.target,8);
+  }
+  const result=new Map();
+  for(const [id,mask] of bits){
+    result.set(id,mask&4?'pathhl':mask&8?'contexthl':mask===3?'bothhl':mask&1?'backhl':'forwardhl');
+  }
+  return result;
+}
+window.chronologySelectionNodeClasses=chronologySelectionNodeClasses;
+function chronologyRecordsFromSvg(svg){
+  return [...(svg?.querySelectorAll?.('g.chronology-edge')||[])].map((g,index)=>({
+    edgeId:g.dataset?.chronologyEdgeId||g.dataset?.chronologyEdgeKey||`${g.dataset?.chronologySource||''}->${g.dataset?.chronologyTarget||''}#${index}`,
+    key:g.dataset?.chronologyEdgeKey||`${g.dataset?.chronologySource||''}->${g.dataset?.chronologyTarget||''}`,
+    source:g.dataset?.chronologySource,target:g.dataset?.chronologyTarget,
+    displayOnly:g.dataset?.chronologyDisplayOnly==='true',traversable:g.dataset?.chronologyTraversable!=='false'
+  }));
+}
+function chronologySelectionNodeClassesForSvg(svg,state){
+  return chronologySelectionNodeClasses(chronologyRecordsFromSvg(svg),state);
+}
+window.chronologySelectionNodeClassesForSvg=chronologySelectionNodeClassesForSvg;
 function mobileOverlayChronologyEdgeClassMap(cs,state){
   const records=[];
   for(const [edgeId,primitives] of (cs?.overlayChronologyEdgePrimitives||new Map())){
@@ -4730,6 +4791,14 @@ function mobileOverlayChronologyEdgeClassMap(cs,state){
   }
   const chronologyState=state?.pathEdges ? {...state,pathEdges:materializeChronologyPathEdgeIds(records,state.pathEdges)}:state;
   return classifyChronologySelection(records,chronologyState);
+}
+function mobileOverlayChronologyNodeClassMap(cs,state){
+  const records=[];
+  for(const [edgeId,primitives] of (cs?.overlayChronologyEdgePrimitives||new Map())){
+    const p=primitives?.[0],id=p?.overlayChronologyEdgeId||edgeId,source=p?.overlayChronologySource,target=p?.overlayChronologyTarget;
+    if(source&&target)records.push({edge_id:id,source,target,key:`${source}->${target}`,displayOnly:p?.overlayChronologyDisplayOnly===true,traversable:p?.overlayChronologyTraversable!==false});
+  }
+  return chronologySelectionNodeClasses(records,state);
 }
 function mobileOverlayCategory(p,state){
   if(p.overlayNodeId)return mobileOverlayNodeClass(p.overlayNodeId,state);
@@ -4848,8 +4917,11 @@ function mobileOverlaySyntheticNearViewport(cs,spec,rect){
 function mobileSelectionWorldKey(state){
   return `${selected||''}::${[...selectedIds].sort().join('|')}::${state?.scopeMode||'all'}::${state?.combineMode||'or'}::${state?.pathPreference||'main'}::${state?.tier||state?.prepTier||'site-proposal'}::${state?.pathMode?'p':'n'}::${state?.generic?'g':'n'}::${state?.officialRouteActive?'o'+[...(state.officialRouteIds||[])].join('|')+'#'+[...(state.officialRouteEdges||[])].join('|'):'n'}`;
 }
-function mobileOverlayRelevantNodeIds(state){
-  const ids=new Set(selectedIds);for(const id of (state?.ctx||[]))ids.add(id);for(const id of (state?.officialRouteIds||[]))ids.add(id);return ids;
+function mobileOverlayRelevantNodeIds(state,chronologyNodeClasses=null){
+  const ids=new Set(selectedIds);
+  if(chronologyNodeClasses)for(const id of chronologyNodeClasses.keys())ids.add(id);
+  else for(const id of (state?.ctx||[]))ids.add(id);
+  for(const id of (state?.officialRouteIds||[]))ids.add(id);return ids;
 }
 function mobileOverlayRelevantEdgeKeys(state){
   const keys=new Set();
@@ -4880,10 +4952,11 @@ function renderMobileSelectionWorldCache(wrap,state){
   const st=ensureMobileViewBoxState(wrap);if(!st?.baseViewBox)return false;
   const key=mobileSelectionWorldKey(state);if(cs.overlayWorldReady&&cs.overlayWorldSelectionKey===key&&cs.overlayWorldState===state)return true;
   const ctx=cs.overlayWorldCtx,cache=cs.overlayWorldCache,lod=cs.overlayWorldLod||MOBILE_SELECTION_WORLD_LOD,b=st.baseViewBox;
+  const chronologyNodeClasses=wrap.closest('.panel')?.id==='chronology'?mobileOverlayChronologyNodeClassMap(cs,state):null;
   ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.shadowBlur=0;ctx.clearRect(0,0,cache.width,cache.height);ctx.setTransform(lod,0,0,lod,-b.x*lod,-b.y*lod);
   let drawn=0;
-  for(const id of mobileOverlayRelevantNodeIds(state)){
-    const category=mobileOverlayNodeClass(id,state);if(!category)continue;
+  for(const id of mobileOverlayRelevantNodeIds(state,chronologyNodeClasses)){
+    const category=mobileOverlayNodeClass(id,state,chronologyNodeClasses);if(!category)continue;
     for(const p of (cs.overlayNodePrimitives.get(id)||[]))if(drawMobileOverlayPrimitive(ctx,p,category,lod,cs))drawn++;
   }
   for(const edgeKey of mobileOverlayRelevantEdgeKeys(state)){
@@ -4912,12 +4985,14 @@ function drawMobileSelectionOverlay(wrap,state){
   const cs=mobileCanvasStates.get(wrap);if(!cs?.overlayCtx||!mobileChartMotion.matches)return false;
   const st=ensureMobileViewBoxState(wrap),m=mobileViewBoxMetrics(wrap,st),ctx=cs.overlayCtx,dpr=cs.dpr||1;if(!st||!m)return false;
   cs.overlay.style.transform='none';clearMobileSelectionOverlay(wrap);
-  if(!selectedIds.size||!state){cs.overlayActive=false;cs.overlayState=null;cs.overlayCamera=null;cs.overlayWorldReady=false;cs.overlayWorldState=null;cs.overlayWorldSelectionKey='';return true;}
+  if(!selectedIds.size||!state){refreshMobileCanvasBase(wrap,null);cs.overlayActive=false;cs.overlayState=null;cs.overlayCamera=null;cs.overlayWorldReady=false;cs.overlayWorldState=null;cs.overlayWorldSelectionKey='';return true;}
+  refreshMobileCanvasBase(wrap,state);
   if(!renderMobileSelectionWorldCache(wrap,state))return false;
   const visibleRect=mobileOverlayViewportRect(st,m);ctx.setTransform(dpr*m.pxPerWorld,0,0,dpr*m.pxPerWorld,dpr*(m.offsetX-st.vbX*m.pxPerWorld),dpr*(m.offsetY-st.vbY*m.pxPerWorld));
   let n=0;
-  for(const id of mobileOverlayRelevantNodeIds(state)){
-    const category=mobileOverlayNodeClass(id,state);if(!category)continue;
+  const chronologyNodeClasses=wrap.closest('.panel')?.id==='chronology'?mobileOverlayChronologyNodeClassMap(cs,state):null;
+  for(const id of mobileOverlayRelevantNodeIds(state,chronologyNodeClasses)){
+    const category=mobileOverlayNodeClass(id,state,chronologyNodeClasses);if(!category)continue;
     for(const p of (cs.overlayNodePrimitives.get(id)||[])){if(!mobileOverlayPrimitiveNearViewport(p,visibleRect))continue;if(drawMobileOverlayPrimitive(ctx,p,category,m.pxPerWorld,cs))n++;}
   }
   for(const edgeKey of mobileOverlayRelevantEdgeKeys(state)){
@@ -6482,6 +6557,8 @@ if(flowchartReady)render();
       return;
     }
     renderChronologySelectionState(svg,state);
+    const chronologyPanel=svg.closest('.panel')?.id==='chronology';
+    const chronologyNodeClasses=chronologyPanel?chronologySelectionNodeClassesForSvg(svg,state):null;
     if(!selectedIds.size){ svg.classList.remove('dim'); return; }
     svg.classList.remove('family-mode','char-mode');
     svg.classList.add('dim');
@@ -6489,6 +6566,10 @@ if(flowchartReady)render();
     for(const g of svg.querySelectorAll('g.node')){
       const id=gt(g);
       if(selectedIds.has(id)){ g.classList.add('focus',id===selected?'current-goal':'goal-node'); continue; }
+      if(chronologyPanel){
+        const category=chronologyNodeClasses?.get(id);if(category)g.classList.add('hl',category);
+        continue;
+      }
       if(!ctx.has(id)) continue;
       g.classList.add('hl');
       if(state.pathMode){ g.classList.add('pathhl'); continue; }
@@ -8435,7 +8516,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const cardW=192,cardH=66,startX=186,stepX=228,labelX=24,svgW=3560,svgH=1830;
     const rowY={
       spiderRaimi:160,spiderAmazing:248,spiderMcu:336,
-      mcuAnchor:474,mcuShared:516,mcuCap:608,mcuCosmic:700,mcuMagic:792,mcuStreet:884,mcuGround:976,mcuOverflow1:1068,mcuOverflow2:1160,
+      mcuAnchor:430,mcuCosmic:500,mcuMagic:590,mcuCap:680,mcuShared:770,mcuStreet:860,mcuGround:950,mcuOverflow1:1040,mcuOverflow2:1130,
       ssu:1308,ssuAlt:1400,
       foxOrig:1548,foxRev:1640,foxAmb:1732
     };
@@ -8545,7 +8626,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     drawSequence(['spider-man-homecoming-2017','spider-man-far-from-home-2019','spider-man-no-way-home-2021','spider-man-brand-new-day-2026-07-31'],homecomingCol,rowY.spiderMcu,{klass:'chronology-spider-line'});
 
     // MCU split rows
-    drawSequence(['captain-america-the-first-avenger-2011','captain-marvel-2019','iron-man-2008','iron-man-2-2010','the-incredible-hulk-2008','thor-2011','the-avengers-2012','avengers-age-of-ultron-2015','avengers-infinity-war-2018','avengers-endgame-2019','avengers-doomsday-2026-12-18','avengers-secret-wars-2027-12-17'],0,rowY.mcuShared);
+    drawSequence(['captain-america-the-first-avenger-2011','captain-marvel-2019','iron-man-2008','iron-man-2-2010','the-incredible-hulk-2008','thor-2011','the-avengers-2012','avengers-age-of-ultron-2015','avengers-infinity-war-2018','avengers-endgame-2019','avengers-doomsday-2026-12-18','avengers-secret-wars-2027-12-17'],0,rowY.mcuShared,{klass:'chronology-main-spine'});
     drawSequence(['captain-america-the-winter-soldier-2014','captain-america-civil-war-2016','black-widow-2021','the-falcon-and-the-winter-soldier-2021','captain-america-brave-new-world-2025','thunderbolts-new-avengers-2025'],2,rowY.mcuCap);
 
     drawSequence(['ms-marvel-2022','secret-invasion-2023','the-marvels-2023'],0,rowY.mcuCosmic,{klass:'chronology-branch'});
@@ -8586,8 +8667,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     laneHeader('Amazing','#fb7185',2,3,rowY.spiderAmazing,rowY.spiderAmazing,{headerW:132});
     laneHeader('MCU Spider-Man','#60a5fa',8,11,rowY.spiderMcu,rowY.spiderMcu,{headerW:172});
 
-    worldFrame(mcuTone,0,13,rowY.mcuShared,rowY.mcuOverflow2);
-    laneHeader('初期アベンジャーズ系','#38bdf8',0,11,rowY.mcuShared,rowY.mcuCap,{navKey:'avengers',groupKey:'avengers',headerW:198});
+    worldFrame(mcuTone,0,13,rowY.mcuAnchor,rowY.mcuOverflow2,{groupKey:'mcu-main'});
+    laneHeader('MCU本流','#38bdf8',0,11,rowY.mcuShared,rowY.mcuShared,{groupKey:'mcu-spine',headerW:168});
+    laneHeader('初期アベンジャーズ系','#38bdf8',0,11,rowY.mcuCap,rowY.mcuShared,{navKey:'avengers',groupKey:'avengers',headerW:198});
     laneHeader('宇宙・マーベルズ系','#8b5cf6',0,11,rowY.mcuCosmic,rowY.mcuCosmic,{navKey:'guardians',groupKey:'guardians',headerW:188});
     laneHeader('魔術・マルチバース系','#06b6d4',0,13,rowY.mcuMagic,rowY.mcuMagic,{navKey:'magic',groupKey:'magic',headerW:190});
     laneHeader('街・地上サイド','#22c55e',0,13,rowY.mcuStreet,rowY.mcuOverflow1,{headerW:154});
@@ -8954,9 +9036,15 @@ window.FEATURED_ROUTE=Object.freeze({
       return true;
     }
     const part=focusPart(id),ctx=part.nodes||new Set([id]);
+    const chronologyPanel=svg.closest('.panel')?.id==='chronology';
+    const chronologyNodeClasses=chronologyPanel?chronologySelectionNodeClassesForSvg(svg,part):null;
     svg.classList.add('dim');
     for(const [wid,g] of nodeMap){
       if(wid===id){g.classList.add('focus','detail-focus');continue;}
+      if(chronologyPanel){
+        const category=chronologyNodeClasses?.get(wid);if(category)g.classList.add('hl',category);
+        continue;
+      }
       if(!ctx.has(wid))continue;
       g.classList.add('hl');
       if(part.generic){g.classList.add('contexthl');continue;}
