@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `227d589917fdf05610bb22f072aaf076151262bb` (PR #64); latest integrated audit baseline: `227d589917fdf05610bb22f072aaf076151262bb` (PR #64)
+- latest semantic baseline commit: `227d589917fdf05610bb22f072aaf076151262bb` (PR #64); latest integrated audit baseline: `431bab8ad25a53b7258e937da919dfd933c072a9` (PR #71)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -31,6 +31,9 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #60 relation evidence promotion wave007: merged as `76011e93e260f4e44c2c2f525145c4d96adb0c88`
 - PR #62 relation evidence promotion wave008: merged as `a38a9e68ed463ab5dc6f7590271486ca0816b8c4`
 - PR #64 relation evidence promotion wave009: merged as `227d589917fdf05610bb22f072aaf076151262bb`
+- PR #66 relation evidence promotion wave010: merged as `696b21b485ee77ce647c5f9206b428afaf84905c`
+- PR #69 chronology node-closure and mobile visual fix: merged as `18b226ead9cf23d1311136fd49442ba0bee1b0f5`
+- PR #71 chronology annotation overlap fix: merged as `431bab8ad25a53b7258e937da919dfd933c072a9`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -295,6 +298,21 @@ Fresh verification for the merged PR #69 baseline:
 - Pages deployment run `33828365412` completed successfully, and the public site `https://kamochama.github.io/marvel-flowchart-jp/` loads the merged viewer (`PUBLIC v5.21.3`).
 
 The mobile relation-map hierarchy intentionally keeps the no-selection support emphasis, while selection-time dimming uses a uniform node alpha (`0.42`) and quieter edge alpha (`0.06`). Any future semantic worldline crossing still requires an independent audited fact; this visual pass does not infer one.
+
+## 0.1.15 Production baseline after the 2026-09-04 chronology annotation overlap fix
+
+PR #71 (`https://github.com/kamochama/marvel-flowchart-jp/pull/71`) is integrated into `main` at merge commit `431bab8ad25a53b7258e937da919dfd933c072a9`. This viewer-only change separates chronology lane headers from card rows with a dedicated 8px clearance band and renders branch/pivot annotations with an opaque shared label background. It addresses the FOX X-MEN / Deadpool screenshots where labels, guide lines, and cards overlapped. Card coordinates, chronology edge IDs, graph semantics, mobile scaling, and selection behavior are unchanged.
+
+Fresh verification for the merged PR #71 baseline:
+
+- bundled-Python full suite: `466` tests pass (`4` environment-gated browser skips);
+- chronology layout contract: `17` tests pass, including header clearance and shared annotation coverage;
+- bundled-Python build: `audit_issue_count=0`, content-audit issue count `0`, story paths `83/83`, SQLite integrity `ok`, foreign-key rows `0`;
+- local real Chrome/CDP chronology audit: pass;
+- GitHub Actions run `33830230670`: all five required jobs pass after rerunning transient Chrome interaction timeout and publication-order empty-output failures;
+- Pages deployment run `33830961858` succeeded and GitHub Pages reports `status=built` for `https://kamochama.github.io/marvel-flowchart-jp/`.
+
+This milestone changes chronology presentation only. It does not add or infer any work relation, worldline crossing, or canonical fact.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 

@@ -19,6 +19,8 @@ If this roadmap conflicts with a newer explicit user instruction, the newer user
 
 > **Current wave010 note (2026-09-04):** PR #66 is merged into `main` at `696b21b485ee77ce647c5f9206b428afaf84905c`; it promotes eleven existing relations with source-specific evidence and review transitions, while one candidate remains deferred. The current production baseline and the hosted-CI exception are recorded in §27 and the handoff's §0.1.13.
 
+> **Current chronology annotation note (2026-09-04):** PR #71 is merged into `main` at `431bab8ad25a53b7258e937da919dfd933c072a9`. It is a viewer-only overlap fix for chronology lane headers and branch/pivot annotations; no canonical facts, chronology edge IDs, graph topology, or selection semantics changed. See §29 and the handoff's §0.1.15.
+
 ---
 
 ## 1. End goal
@@ -696,3 +698,18 @@ Verification at this boundary:
 - Pages deployment run `33828365412` succeeded; public viewer: `https://kamochama.github.io/marvel-flowchart-jp/`.
 
 This milestone changes presentation behavior only. Future additions of X-Men/other-world crossings remain evidence-gated semantic work and are not implied by the new visual lane arrangement.
+
+## 29. Chronology annotation overlap fix — production baseline (2026-09-04)
+
+PR #71 (`https://github.com/kamochama/marvel-flowchart-jp/pull/71`) integrated a viewer-only layout fix into `main` at merge commit `431bab8ad25a53b7258e937da919dfd933c072a9`. Chronology lane headers now occupy a dedicated band with an 8px gap above cards, while branch and `Days of Future Past` pivot labels use a shared opaque background component so guide lines cannot visually run through their text. Existing card coordinates, chronology edge IDs, work relations, graph topology, mobile scaling, and selection semantics are unchanged.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `466` pass, `4` environment-gated skips;
+- chronology layout contract: `17` pass;
+- bundled-Python build: audit/content-audit issues `0`, story paths `83/83`, SQLite integrity `ok`, foreign-key rows `0`;
+- local real Chrome/CDP chronology audit: pass;
+- hosted GitHub Actions run `33830230670`: all five required jobs pass after rerunning transient Chrome harness failures;
+- Pages deployment run `33830961858` succeeded; GitHub Pages reports `status=built` for `https://kamochama.github.io/marvel-flowchart-jp/`.
+
+This milestone changes presentation only. Future worldline/relation additions remain evidence-gated semantic work and are not implied by the layout adjustment.
