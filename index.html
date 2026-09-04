@@ -8212,7 +8212,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const nextIds=new Set(Array.isArray(state?.goalIds)?state.goalIds:[]);
     const orderedIds=[...nextIds];
     const nextSelected=nextIds.has(state?.selectedId)?state.selectedId:(orderedIds.at(-1)||null);
-    const same=selectedIds.size===nextIds.size&&orderedIds.every(id=>selectedIds.has(id))&&selected===nextSelected;
+    const currentIds=[...selectedIds];
+    const same=currentIds.length===orderedIds.length&&currentIds.every((id,index)=>id===orderedIds[index])&&selected===nextSelected;
     if(same)return false;
     // Keep the existing selection semantics in refreshSelection. This adapter
     // only restores the shared store snapshot into the semantic variables.
@@ -8269,13 +8270,13 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return true;
   }
 
-  function closeMobileSheet({restoreFocus=true}={}){
+  function closeMobileSheet({restoreFocus=true,syncHistory=true}={}){
     const sheet=document.getElementById('mobileSheet');
     const store=mobileUiStore();
     const wasOpen=store?.getState().sheet!=='closed';
     store?.setSheet('closed',null);
     if(sheet){sheet.hidden=true;sheet.setAttribute('aria-hidden','true');}
-    if(wasOpen)writeMobileUrlState({replace:true});
+    if(wasOpen&&syncHistory)writeMobileUrlState({replace:true});
     const target=mobileSheetReturnFocus;mobileSheetReturnFocus=null;
     if(restoreFocus&&target?.isConnected)requestAnimationFrame(()=>target.focus());
     return wasOpen;
@@ -8303,7 +8304,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
   function handleMobilePopState(){
     const parsed=readMobileUrlState();
-    if(mobileUiStore()?.getState().sheet!=='closed'&&parsed.sheet==='closed')closeMobileSheet();
+    if(mobileUiStore()?.getState().sheet!=='closed'&&parsed.sheet==='closed')closeMobileSheet({syncHistory:false});
     applyMobileUrlState();
   }
 

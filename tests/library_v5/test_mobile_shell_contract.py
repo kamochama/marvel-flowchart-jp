@@ -155,6 +155,29 @@ class MobileShellContractTests(unittest.TestCase):
             r"store\.setGoals\(parsed\.goalIds,parsed\.selectedId\)[\s\S]{0,180}hydrateMobileSelectionFromStore",
         )
 
+    def test_mobile_url_hydration_restores_goal_order(self) -> None:
+        body = function_body(self.source, "hydrateMobileSelectionFromStore")
+        self.assertRegex(body, r"const currentIds=\[\.\.\.selectedIds\]")
+        self.assertRegex(
+            body,
+            r"currentIds\.every\(\(id,index\)=>id===orderedIds\[index\]\)",
+        )
+
+    def test_mobile_popstate_sheet_close_does_not_rewrite_target_history(self) -> None:
+        close_body = function_body(self.source, "closeMobileSheet")
+        self.assertRegex(
+            self.source,
+            r"function closeMobileSheet\(\{restoreFocus=true,syncHistory=true\}=\{\}\)",
+        )
+        self.assertRegex(close_body, r"if\(wasOpen&&syncHistory\)writeMobileUrlState")
+
+        popstate_body = function_body(self.source, "handleMobilePopState")
+        self.assertIn("closeMobileSheet({syncHistory:false})", popstate_body)
+        self.assertRegex(
+            popstate_body,
+            r"closeMobileSheet\(\{syncHistory:false\}\)[\s\S]*applyMobileUrlState\(\)",
+        )
+
     def test_focus_goal_syncs_store_after_desktop_semantic_update(self) -> None:
         self.assertRegex(
             self.source,
