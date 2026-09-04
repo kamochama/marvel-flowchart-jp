@@ -8097,12 +8097,14 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   const MOBILE_VIEWS=new Set(['chart','search','plan']);
   const MOBILE_SHEETS=new Set(['detail','reason','settings']);
   const MOBILE_VIEW_LABELS={chart:'チャート',search:'作品を探す',plan:'予習プラン'};
+  const MOBILE_CHART_PANEL_IDS=new Set(['overview','release','chronology']);
+  const MOBILE_CHART_PANEL_LABELS={overview:'関係地図',release:'公開順',chronology:'世界線・時系列'};
   const MOBILE_SHEET_LABELS={detail:['作品情報','選択した作品の情報'],reason:['接続理由','この接続の根拠'],settings:['表示設定','モバイル表示の設定']};
   let mobileSheetReturnFocus=null;
   let suppressMobileSheetHistory=false;
-  let mobileChartPanel=null;
-  let mobileChartOriginParent=null;
-  let mobileChartOriginNextSibling=null;
+  const mobileChartPanelOrigins=new Map();
+  let mobileChartMountedPanel=null;
+  let mobileChartLastPanel=null;
   let mobileChartMountedHost=null;
 
   function mobileUiStore(){return window.marvelMobileUiStore||null}
@@ -8146,53 +8148,77 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     });
   }
 
-  function mobileChartPanelElement(){
-    if(mobileChartPanel)return mobileChartPanel;
-    const panel=document.getElementById('overview');
-    if(!panel)return null;
-    mobileChartPanel=panel;
-    mobileChartOriginParent=panel.parentElement;
-    mobileChartOriginNextSibling=panel.nextSibling;
+  function activeMobileChartPanel(){
+    const panel=document.querySelector('.panel.active');
+    if(panel&&MOBILE_CHART_PANEL_IDS.has(panel.id))return panel;
+    if(mobileChartMountedPanel&&MOBILE_CHART_PANEL_IDS.has(mobileChartMountedPanel.id))return mobileChartMountedPanel;
+    return mobileChartLastPanel&&MOBILE_CHART_PANEL_IDS.has(mobileChartLastPanel.id)?mobileChartLastPanel:null;
+  }
+
+  function rememberMobileChartPanel(panel){
+    if(panel&&!mobileChartPanelOrigins.has(panel)&&panel.parentElement){
+      mobileChartPanelOrigins.set(panel,{parent:panel.parentElement,nextSibling:panel.nextSibling});
+    }
     return panel;
   }
 
-  function detachMobileChartPanel(){
-    const panel=mobileChartPanelElement();
+  function detachMobileChartPanel(panel=mobileChartMountedPanel){
     if(!panel)return false;
+    rememberMobileChartPanel(panel);
     if(panel.parentNode)panel.remove();
+    mobileChartLastPanel=panel;
+    if(mobileChartMountedPanel===panel)mobileChartMountedPanel=null;
     mobileChartMountedHost=null;
     return true;
   }
 
-  function restoreMobileChartPanel(){
-    const panel=mobileChartPanelElement();
-    if(!panel||!mobileChartOriginParent)return false;
-    if(panel.parentNode!==mobileChartOriginParent){
-      if(mobileChartOriginNextSibling?.parentNode===mobileChartOriginParent)mobileChartOriginParent.insertBefore(panel,mobileChartOriginNextSibling);
-      else mobileChartOriginParent.append(panel);
+  function restoreMobileChartPanels(){
+    let restored=false;
+    let pending=[...mobileChartPanelOrigins];
+    while(pending.length){
+      let progressed=false;
+      pending=pending.filter(([panel,origin])=>{
+        if(panel.parentNode===origin.parent){progressed=true;return false;}
+        const anchorOrigin=origin.nextSibling&&mobileChartPanelOrigins.get(origin.nextSibling);
+        if(anchorOrigin?.parent===origin.parent&&origin.nextSibling.parentNode!==origin.parent)return true;
+        if(origin.nextSibling?.parentNode===origin.parent)origin.parent.insertBefore(panel,origin.nextSibling);
+        else origin.parent.append(panel);
+        restored=true;progressed=true;return false;
+      });
+      if(!progressed){
+        for(const [panel,origin] of pending)origin.parent.append(panel);
+        restored=true;break;
+      }
     }
+    mobileChartMountedPanel=null;
+    mobileChartLastPanel=null;
     mobileChartMountedHost=null;
-    return true;
+    return restored;
   }
 
   function mobileChartCameraState(wrap){
     return typeof viewStates!=='undefined'&&wrap?viewStates.get(wrap)||ensureViewState(wrap):null;
   }
 
-  function mountMobileChartView(host){
+  function mountMobileChartView(host,panelOverride=null){
     const mobileHost=host||document.getElementById('mobileViewHost');
     if(!mobileHost||!mobileChartMotion.matches)return null;
-    const panel=mobileChartPanelElement(),wrap=panel?.querySelector('.svg-wrap');
+    const panel=rememberMobileChartPanel(panelOverride||activeMobileChartPanel()),wrap=panel?.querySelector('.svg-wrap');
     if(!panel||!wrap)return null;
+    if(mobileChartMountedPanel&&mobileChartMountedPanel!==panel)detachMobileChartPanel(mobileChartMountedPanel);
     const surface=document.createElement('section');
     surface.className='mobile-chart-surface';
     surface.dataset.mobileSurface='chart';
+    surface.dataset.mobilePanel=panel.id;
     surface.setAttribute('aria-labelledby','mobileChartTitle');
-    surface.innerHTML='<h2 id="mobileChartTitle" class="sr-only">チャート</h2><div class="mobile-chart-controls" aria-label="チャート操作"><button type="button" id="mobileChartFit" title="全体表示">全体</button><button type="button" id="mobileChartSelected" title="選択作品へ">選択へ</button><button type="button" id="mobileChartDetails" title="作品詳細を開く">詳細</button><button type="button" id="mobileChartViewButton" title="表示ビューを選ぶ">表示ビュー</button></div>';
+    surface.innerHTML=`<h2 id="mobileChartTitle" class="sr-only">${MOBILE_CHART_PANEL_LABELS[panel.id]||'チャート'}</h2><div class="mobile-chart-controls" aria-label="チャート操作"><button type="button" id="mobileChartFit" title="全体表示">全体</button><button type="button" id="mobileChartSelected" title="選択作品へ">選択へ</button><button type="button" id="mobileChartDetails" title="作品詳細を開く">詳細</button><button type="button" id="mobileChartViewButton" title="表示ビューを選ぶ">表示ビュー</button></div>`;
+    for(const candidate of mobileChartPanelOrigins.keys())candidate.classList.toggle('active',candidate===panel);
     document.querySelectorAll('.panel.active').forEach(active=>{if(active!==panel)active.classList.remove('active');});
     panel.classList.add('active');
     surface.append(panel);
     mobileHost.replaceChildren(surface);
+    mobileChartMountedPanel=panel;
+    mobileChartLastPanel=panel;
     mobileChartMountedHost=mobileHost;
     const camera=mobileChartCameraState(wrap);
     if(typeof viewStates!=='undefined'){
@@ -8200,14 +8226,16 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       viewStates.set(wrap,camera||retained.camera||ensureViewState(wrap));
       viewStates.set('mobile-shell:chart',{...retained,renderer:mobileCanvasStates.get(wrap)||retained.renderer||null,camera:viewStates.get(wrap),wrap});
     }
-    // The existing Canvas/SVG renderer and semantic selection path stay shared.
     const selectionApis={select,clearAllGoalsWithUndo};
-    surface.mobileSelectionApis=selectionApis;
+    // The existing Canvas/SVG renderer and semantic selection path stay shared.
     initMobileCanvas(wrap);
     syncMobileChartCameraSnapshot(wrap);
     surface.querySelector('#mobileChartFit').onclick=()=>fitView(wrap);
     surface.querySelector('#mobileChartSelected').onclick=()=>{
-      if(selected&&activeSvgHasNode(selected))centerNodeInView(selected);else fitView(wrap);
+      const target=selected||mobileUiStore()?.getState().selectedId||null;
+      if(target&&activeSvgHasNode(target)){centerNodeInView(target);return;}
+      if(target)selectionApis.select(target);else selectionApis.clearAllGoalsWithUndo();
+      fitView(wrap);
     };
     surface.querySelector('#mobileChartDetails').onclick=()=>openMobileSheet('detail',selected||mobileUiStore()?.getState().selectedId||null);
     surface.querySelector('#mobileChartViewButton').onclick=()=>document.getElementById('mobileAreaButton')?.click();
@@ -8221,7 +8249,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const host=shell?.querySelector('#mobileViewHost');
     if(!host)return null;
     const normalized=normalizeMobileView(view);
-    if(!mobileChartMotion.matches){restoreMobileChartPanel();host.replaceChildren();syncMobileBottomNav(normalized);return null;}
+    if(!mobileChartMotion.matches){restoreMobileChartPanels();host.replaceChildren();syncMobileBottomNav(normalized);return null;}
     if(normalized==='chart'&&mobileChartMotion.matches)return mountMobileChartView(host);
     if(normalized!=='chart'){
       detachMobileChartPanel();
@@ -8413,7 +8441,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   window.addEventListener('popstate',handleMobilePopState);
   const syncMobileChartForViewport=()=>{
     const host=document.getElementById('mobileViewHost');
-    if(!mobileChartMotion.matches){restoreMobileChartPanel();host?.replaceChildren();return;}
+    if(!mobileChartMotion.matches){restoreMobileChartPanels();host?.replaceChildren();return;}
     if(mobileUiStore()?.getState().view==='chart')mountMobileChartView(host);
   };
   mobileChartMotion.addEventListener?.('change',()=>requestAnimationFrame(syncMobileChartForViewport));
@@ -9209,6 +9237,7 @@ window.ensureStageAViewInitialized=function(target){
     const tab=document.querySelector(`.tab[data-target="${CSS.escape(target)}"]`);
     document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===tab));
     document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x===panel));
+    if(mobileChartMotion.matches&&window.marvelMobileUiStore?.getState().view==='chart'&&['overview','release','chronology'].includes(target))window.mountMobileChartView?.(document.getElementById('mobileViewHost'),panel);
     syncMobileAreaLabel(target);
     requestAnimationFrame(()=>{
       if(wasWatch)panel.scrollIntoView({behavior:'auto',block:'start'});

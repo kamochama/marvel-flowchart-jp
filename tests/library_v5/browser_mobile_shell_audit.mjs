@@ -258,6 +258,8 @@ async function snapshot(cdp) {
     return {
       view:store.view||null,
       chartVisible:!!surface,
+      panelId:surface?.querySelector('.panel')?.id||null,
+      activePanelId:document.querySelector('.panel.active')?.id||null,
       selected:[...(selection.selected||[])],
       camera:surface?.dataset.mobileCamera||null,
       sheetHidden:document.getElementById('mobileSheet')?.hidden!==false,
@@ -267,7 +269,7 @@ async function snapshot(cdp) {
     };
   `);
 }
-async function waitFor(cdp, predicate, timeoutMs, label) { return poll(async () => predicate(await snapshot(cdp)), timeoutMs, label); }
+async function waitFor(cdp, predicate, timeoutMs, label) { return poll(async () => { const state = await snapshot(cdp); return predicate(state) ? state : null; }, timeoutMs, label); }
 async function instrumentRerenders(cdp) {
   await pageEvaluate(cdp, `
     if(!window.__mobileShellAuditInstalled){
@@ -295,7 +297,7 @@ async function runAudit(args) {
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
     sheet: { opened: false, closed: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
-    views: { chartVisible: false, keyboardFocus: false, nonChartRemovesChart: false, chartRestoresCamera: false },
+    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, chartRestoresCamera: false },
     failures,
   };
   try {
@@ -365,6 +367,19 @@ async function runAudit(args) {
     const restored = await snapshot(cdp);
     result.views.chartRestoresCamera = restored.camera === beforeSheet.camera;
     if (!result.views.chartRestoresCamera) failures.push(`chart remount lost camera: before=${beforeSheet.camera} after=${restored.camera}`);
+
+    await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartViewButton"));
+    await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "display view chooser");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="release"]'));
+    const releaseView = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release display view mount");
+    result.views.displayPanel = { selected: releaseView.panelId === "release" && releaseView.activePanelId === "release", panelId: releaseView.panelId };
+    if (!result.views.displayPanel.selected) failures.push(`display view did not mount release panel: ${JSON.stringify(releaseView)}`);
+
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+    await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "release non-chart removal");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
+    const restoredRelease = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release chart return");
+    if (restoredRelease.panelId !== "release" || restoredRelease.activePanelId !== "release") failures.push(`release display view was not restored: ${JSON.stringify(restoredRelease)}`);
   } catch (error) {
     failures.push(String(error?.message || error));
   } finally {

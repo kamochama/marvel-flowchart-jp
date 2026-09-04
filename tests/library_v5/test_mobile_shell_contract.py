@@ -193,6 +193,23 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("mobileViewHost", body)
         self.assertNotIn("NODES.map", body)
         self.assertNotIn("EDGES.map", body)
+        self.assertNotIn("mobileSelectionApis", body)
+
+    def test_mobile_chart_mount_tracks_current_active_panel_and_each_origin(self) -> None:
+        mount_body = function_body(self.source, "mountMobileChartView")
+        self.assertIn("activeMobileChartPanel", mount_body)
+        self.assertIn("mobileChartMountedPanel", mount_body)
+        self.assertIn("panel.id", mount_body)
+        self.assertIn("detachMobileChartPanel", mount_body)
+        self.assertNotIn("mobileChartPanelElement()", mount_body)
+        self.assertIn("mobileChartPanelOrigins", self.source)
+        self.assertIn("restoreMobileChartPanels", self.source)
+
+    def test_mobile_activate_panel_remounts_active_chart_panel(self) -> None:
+        body = function_body(self.source, "activatePanel")
+        self.assertIn("mountMobileChartView", body)
+        self.assertIn("mobileChartMotion.matches", body)
+        self.assertIn("marvelMobileUiStore", body)
 
     def test_mobile_view_mount_only_attaches_chart_surface_for_chart_view(self) -> None:
         body = function_body(self.source, "mountMobileView")
@@ -220,6 +237,11 @@ class MobileShellContractTests(unittest.TestCase):
         source = runner.read_text(encoding="utf-8")
         for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures"):
             self.assertIn(token, source)
+        self.assertIn("mobileAreaSheet", source)
+        self.assertIn('data-mobile-target="release"', source)
+        self.assertIn("panelId", source)
+        self.assertIn("const state = await snapshot(cdp)", source)
+        self.assertIn("return predicate(state) ? state : null", source)
 
 
 if __name__ == "__main__":
