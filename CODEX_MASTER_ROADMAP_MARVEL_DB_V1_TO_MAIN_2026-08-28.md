@@ -682,3 +682,17 @@ Verification at this boundary:
 - Pages deployment run `33823672261` succeeded and GitHub Pages reports `status=built` for `https://kamochama.github.io/marvel-flowchart-jp/`.
 
 The plan and review are `docs/superpowers/plans/2026-09-04-marvel-relation-evidence-promotion-wave010.md` and `docs/superpowers/reviews/2026-09-04-marvel-relation-evidence-promotion-wave010.md`. Remaining legacy relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
+
+## 28. Chronology node-closure and mobile visual fix — production baseline (2026-09-04)
+
+PR #69 (`https://github.com/kamochama/marvel-flowchart-jp/pull/69`) integrated a viewer-only chronology/mobile visual fix into `main` at merge commit `18b226ead9cf23d1311136fd49442ba0bee1b0f5`. Chronology node highlighting now follows the endpoints of highlighted traversable chronology edges, preventing unrelated relationship-graph context from lighting in the worldline view and preserving the full Spider-Man 3 predecessor chain. Mobile Canvas selection repaint now synchronizes the dimmed backing cache, and the chronology layout emphasizes a central horizontal `MCU本流` lane with separate Spider-Man, SSU, and FOX lanes. Existing chronology edge IDs, semantic relation data, and conservative multiverse/worldline boundaries are unchanged.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `463` pass, `4` environment-gated skips;
+- build/audit/content-audit: `0` issues, story paths `83/83`, SQLite FK rows `0`, integrity `ok`;
+- local Chrome/CDP selection, interaction, chronology, and publication-order audits: all pass with zero mismatches/failures and zero synthetic edges;
+- hosted GitHub Actions run `33827868572`: all five required jobs passed;
+- Pages deployment run `33828365412` succeeded; public viewer: `https://kamochama.github.io/marvel-flowchart-jp/`.
+
+This milestone changes presentation behavior only. Future additions of X-Men/other-world crossings remain evidence-gated semantic work and are not implied by the new visual lane arrangement.
