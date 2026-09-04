@@ -5460,6 +5460,41 @@ render();
 <script>
 // v5.5 patch: deselect on second click + multi-select with Ctrl/Cmd/Shift
 var selectedIds = new Set();
+function createMobileUiStore(initialState={}){
+  const initial=initialState&&typeof initialState==='object'?initialState:{};
+  const normalizeView=view=>view==='chart'||view==='search'||view==='plan'?view:'chart';
+  const normalizeSheet=sheet=>sheet==='closed'||sheet==='detail'||sheet==='reason'||sheet==='settings'?sheet:'closed';
+  const knownWork=id=>typeof id==='string'&&(typeof nm==='undefined'||!nm||!!nm[id]);
+  const normalizeGoals=goalIds=>[...new Set((Array.isArray(goalIds)?goalIds:[]).filter(knownWork))];
+  const normalizeState=next=>{
+    const goalIds=normalizeGoals(next.goalIds);
+    return {
+      view:normalizeView(next.view),goalIds,
+      selectedId:typeof next.selectedId==='string'&&goalIds.includes(next.selectedId)?next.selectedId:null,
+      sheet:normalizeSheet(next.sheet),sheetWork:typeof next.sheetWork==='string'&&next.sheetWork?next.sheetWork:null,
+      query:String(next.query||''),filter:String(next.filter||'')
+    };
+  };
+  let state=normalizeState({view:'chart',goalIds:[],selectedId:null,sheet:'closed',sheetWork:null,query:'',filter:'',...initial});
+  const listeners=new Set();
+  const publish=next=>{
+    const previous=state,nextState=normalizeState(next);
+    const changed=previous.view!==nextState.view||previous.selectedId!==nextState.selectedId||previous.sheet!==nextState.sheet||previous.sheetWork!==nextState.sheetWork||previous.query!==nextState.query||previous.filter!==nextState.filter||previous.goalIds.length!==nextState.goalIds.length||previous.goalIds.some((id,index)=>id!==nextState.goalIds[index]);
+    if(!changed)return false;
+    state=nextState;listeners.forEach(fn=>fn(state,previous));return true;
+  };
+  return {
+    getState:()=>({...state,goalIds:[...state.goalIds]}),
+    subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
+    setView(view){return publish({...state,view:view==='search'||view==='plan'?view:'chart'});},
+    setGoals(goalIds,selectedId=null){return publish({...state,goalIds,selectedId});},
+    setSheet(sheet,sheetWork=null){return publish({...state,sheet:['detail','reason','settings'].includes(sheet)?sheet:'closed',sheetWork});},
+    setSearch(query){return publish({...state,query:String(query||'')});},
+    setFilter(filter){return publish({...state,filter:String(filter||'')});}
+  };
+}
+window.marvelMobileUiStore=createMobileUiStore();
+function syncMobileUiGoals(){window.marvelMobileUiStore?.setGoals(orderedGoalIds(),selected);}
 const _origCenterNodeInView = centerNodeInView;
 centerNodeInView = function(id){
   if(!selectedIds.size) return false;
@@ -5543,7 +5578,7 @@ function refreshSelection(center=true){
   const source=n.source_url?`<p><a href="${esc(n.source_url)}" target="_blank" rel="noopener" style="color:#60a5fa">日本向け公式ソースを開く ↗</a><br><span class="muted">${esc(n.source_note)}</span></p>`:'';
   detail.innerHTML=`<strong>${esc(n.title)}</strong><div class="muted">現在の図では関連作品だけ点灯中</div><div class="muted">${esc(n.title_en)} / ${esc(n.release)}</div><p><span class="badge">${esc(n.branch)}</span><span class="badge">${esc(n.ja_status)}</span>${selectedIds.size>1?'<span class="badge">複数ゴール</span>':''}</p>${n.ja_status==='unannounced'?'<p class="warn">日本公式の邦題未発表として扱っています。</p>':''}${jpinfo}${source}${selectionSummaryHtml()}<p><b>直接の強い前提候補：</b><br>${direct.length?direct.map(x=>`<span class="badge pre" data-id="${x}" style="cursor:pointer">${esc(nm[x]?.title||x)}</span>`).join(' '):'<span class="muted">なし</span>'}</p><p><b>強い接続を遡った前提候補：</b><br>${anc.length?anc.slice(0,20).map(x=>`<span class="badge pre" data-id="${x}" style="cursor:pointer">${esc(nm[x]?.title||x)}</span>`).join(' '):'<span class="muted">なし</span>'}</p><p><b>ゴール数：</b> ${selectedIds.size} / <b>接続数：</b>入力 ${ins.length} / 出力 ${outs.length}</p>`;
   detail.querySelectorAll('.pre').forEach(x=>x.onclick=(e)=>select(x.dataset.id, e.ctrlKey||e.metaKey||e.shiftKey));
-  detail.querySelectorAll('.seljump').forEach(x=>x.onclick=()=>{ selected=x.dataset.id; refreshSelection(true); });
+  detail.querySelectorAll('.seljump').forEach(x=>x.onclick=()=>{ selected=x.dataset.id; syncMobileUiGoals(); refreshSelection(true); });
   let prevCand=(ins.filter(e=>edgeRank(e)>=3).sort((a,b)=>edgeRank(b)-edgeRank(a))); if(!prevCand.length) prevCand=ins.slice().sort((a,b)=>edgeRank(b)-edgeRank(a));
   let nextCand=(outs.filter(e=>edgeRank(e)>=3).sort((a,b)=>edgeRank(b)-edgeRank(a))); if(!nextCand.length) nextCand=outs.slice().sort((a,b)=>edgeRank(b)-edgeRank(a));
   prevCand=mergeUniqueEdges(prevCand).slice(0,10); nextCand=mergeUniqueEdges(nextCand).slice(0,10);
@@ -5567,13 +5602,14 @@ cf.addEventListener('change',e=>{
     const allowed=charWorks[cf.value]||new Set();
     selectedIds = new Set(orderedSelectedIds().filter(id=>allowed.has(id)));
     normalizeSelection();
+    syncMobileUiGoals();
     if(!selectedIds.size){ clearSvg(); render(); resetPanels('キャラクターを選択中です。図上で関連作品が点灯します。'); return; }
     refreshSelection(false); return;
   }
   render(); applyCharacterHighlight();
 }, true);
 document.querySelectorAll('.hop').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.hop').forEach(x=>x.classList.remove('active')); b.classList.add('active'); hop=Number(b.dataset.hop); if(selectedIds.size) refreshSelection(false); else { clearSvg(); render(); } });
-document.getElementById('clear').onclick=()=>{ window.invalidateMobileUndo?.(); selected=null; selectedIds=new Set(); q.value=''; bf.value=''; cf.value=''; sf.value=''; refreshSelection(false); };
+document.getElementById('clear').onclick=()=>{ window.invalidateMobileUndo?.(); selected=null; selectedIds=new Set(); syncMobileUiGoals(); q.value=''; bf.value=''; cf.value=''; sf.value=''; refreshSelection(false); };
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active')); b.classList.add('active'); document.getElementById(b.dataset.target).classList.add('active'); requestAnimationFrame(()=>{ fitView(activeWrap()); if(selectedIds.size) refreshSelection(false); else { clearSvg(); applyCharacterHighlight(); if(typeof applyFamilyFocus==='function') applyFamilyFocus(); } }); });
 document.getElementById('zoomSelected').onclick=()=>{ if(selectedIds.size && selected) _origCenterNodeInView(selected); else fitView(activeWrap()); };
 installMultiSelectPatch();
@@ -5802,6 +5838,7 @@ function updatePreparationPlan(){
     const id=x.dataset.id;
     if(!selectedIds.has(id)) selectedIds.add(id);
     selected=id;
+    syncMobileUiGoals();
     refreshSelection(true);
   });
 }
@@ -7240,10 +7277,13 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   const removeGoalBeforeMobileFast=removeGoal;
   function removeGoalMobileFast(id){
     const wrap=activeWrap();
-    if(!(mobileChartMotion.matches&&isMobileCanvasWrap(wrap))) return removeGoalBeforeMobileFast(id);
+    if(!(mobileChartMotion.matches&&isMobileCanvasWrap(wrap))){
+      const result=removeGoalBeforeMobileFast(id);syncMobileUiGoals();return result;
+    }
     if(!selectedIds.has(id)) return false;
     invalidateMobileUndo();
     selectedIds.delete(id);if(selected===id)normalizeSelection();
+    syncMobileUiGoals();
     selectionStateCache=computeSelectionState();
     window.__marvelLastSelectionState=selectionStateCache;
     renderGoalBar();
@@ -7260,9 +7300,12 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   removeGoal=removeGoalMobileFast;
   select=function(id,multi=false){
     const wrap=activeWrap();
-    if(!(mobileChartMotion.matches&&isMobileCanvasWrap(wrap))) return selectBeforeImmediateOverlay(id,multi);
+    if(!(mobileChartMotion.matches&&isMobileCanvasWrap(wrap))){
+      const result=selectBeforeImmediateOverlay(id,multi);syncMobileUiGoals();return result;
+    }
     invalidateMobileUndo();
     toggleSelectionState(id,multi);normalizeSelection();selectionStateCache=computeSelectionState();
+    syncMobileUiGoals();
     window.__marvelLastSelectionState=selectionStateCache;
     renderGoalBar();
     initMobileCanvas(wrap);drawMobileSelectionOverlay(wrap,selectionStateCache);
@@ -7458,6 +7501,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(!selectedIds.has(id)) return false;
     if(!mobileWidth()) return focusGoalBeforeV51511(id);
     selected=id;
+    syncMobileUiGoals();
     mobileGoalStripInteracting=true;
     clearTimeout(mobileGoalStripScrollTimer);
     mobileGoalStripScrollTimer=setTimeout(finishMobileGoalStripInteraction,180);
@@ -7473,6 +7517,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     mobileUndoSnapshot={ids:orderedGoalIds(),focus:selected};
     const wrap=activeWrap();
     selectedIds=new Set();selected=null;selectionStateCache=null;
+    syncMobileUiGoals();
     renderGoalBar();
     if(mobileChartMotion.matches&&isMobileCanvasWrap(wrap)){
       initMobileCanvas(wrap);drawMobileSelectionOverlay(wrap,null);
@@ -7495,6 +7540,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(!mobileUndoSnapshot) return;
     const snap=mobileUndoSnapshot; mobileUndoSnapshot=null; clearTimeout(mobileUndoTimer);
     selectedIds=new Set(snap.ids); selected=(snap.focus&&selectedIds.has(snap.focus))?snap.focus:(snap.ids.at(-1)||null);
+    syncMobileUiGoals();
     selectionStateCache=computeSelectionState();window.__marvelLastSelectionState=selectionStateCache;
     refreshSelection(false);
     const wrap=activeWrap();
@@ -7696,7 +7742,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
         const tier=normalizePreparationTier(rp.tier);
         const creating=kind==='created';
         const differs=tier!==prepTier||JSON.stringify(goals)!==JSON.stringify(orderedGoalIds());
-        if(!creating&&differs){selectedIds=new Set(goals);selected=goals.slice(-1)[0]||null;prepTier=tier;selectionStateCache=null;refreshSelection(false)}
+        if(!creating&&differs){selectedIds=new Set(goals);selected=goals.slice(-1)[0]||null;syncMobileUiGoals();prepTier=tier;selectionStateCache=null;refreshSelection(false)}
         else updatePreparationPlanPreservingView();
         applyWatchedDimming();renderRoomBar();
         lastSentPlan=serverPlanSignature();
