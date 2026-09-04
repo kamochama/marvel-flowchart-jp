@@ -7499,7 +7499,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   }
   focusGoal = function(id){
     if(!selectedIds.has(id)) return false;
-    if(!mobileWidth()) return focusGoalBeforeV51511(id);
+    if(!mobileWidth()){const result=focusGoalBeforeV51511(id);syncMobileUiGoals();return result;}
     selected=id;
     syncMobileUiGoals();
     mobileGoalStripInteracting=true;

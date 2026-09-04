@@ -72,6 +72,12 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("sheet==='closed'", self.source)
         self.assertIn("window.marvelMobileUiStore", self.source)
 
+    def test_focus_goal_syncs_store_after_desktop_semantic_update(self) -> None:
+        self.assertRegex(
+            self.source,
+            r"focusGoal\s*=\s*function\(id\)\{[\s\S]{0,180}if\(!mobileWidth\(\)\)\{const result=focusGoalBeforeV51511\(id\);syncMobileUiGoals\(\);return result;\}",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
