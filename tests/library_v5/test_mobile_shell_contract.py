@@ -284,6 +284,11 @@ class MobileShellContractTests(unittest.TestCase):
         for token in ("title_en", "release", "title"):
             self.assertIn(token, render_body)
 
+    def test_mobile_search_selection_uses_exported_goal_order_adapter(self) -> None:
+        render_body = function_body(self.source, "renderMobileSearchResults")
+        self.assertIn("marvelOrderedGoalIds", render_body)
+        self.assertNotIn("setGoals(orderedGoalIds()", render_body)
+
     def test_mobile_search_typing_only_updates_dom_and_shared_query_filter_state(self) -> None:
         mount_body = function_body(self.source, "mountMobileSearchView")
         render_body = function_body(self.source, "renderMobileSearchResults")
@@ -332,11 +337,62 @@ class MobileShellContractTests(unittest.TestCase):
         for forbidden in ("fitView(", "initMobileCanvas(", "rebuildMobileCanvas(", "mountMobileChartView("):
             self.assertNotIn(forbidden, mount_body)
 
+    def test_mobile_plan_renderer_reuses_shared_plan_and_watch_engines(self) -> None:
+        mount_body = function_body(self.source, "mountMobilePlanView")
+        render_body = function_body(self.source, "renderMobilePlanScreen")
+        shared_body = function_body(self.source, "renderPrepPlan")
+        for token in ("buildMultiGoalPlan", "orderedGoalIds", "prepTier", "renderPrepPlan"):
+            self.assertIn(token, mount_body + render_body)
+        for token in ("marvelWatchProgress", "prep-watched-check", "setWatched", "watchedIds"):
+            self.assertIn(token, render_body + shared_body)
+        self.assertIn("mobileViewHost", mount_body)
+
+    def test_mobile_plan_exposes_only_public_site_and_complete_tiers(self) -> None:
+        mount_body = function_body(self.source, "mountMobilePlanView")
+        render_body = function_body(self.source, "renderMobilePlanScreen")
+        plan_source = mount_body + render_body + function_body(self.source, "renderPrepPlan")
+        self.assertIn("site-proposal", plan_source)
+        self.assertIn("complete", plan_source)
+        self.assertIn("サイト提案ルート", plan_source)
+        self.assertIn("完全版", plan_source)
+        self.assertNotIn("公式予習ルート", plan_source)
+        self.assertNotIn("official", plan_source)
+
+    def test_mobile_plan_has_summary_progress_checklist_sheet_and_chart_return(self) -> None:
+        mount_body = function_body(self.source, "mountMobilePlanView")
+        render_body = function_body(self.source, "renderMobilePlanScreen")
+        plan_source = mount_body + render_body + function_body(self.source, "renderPrepPlan")
+        for token in (
+            "data-mobile-plan-summary",
+            "data-mobile-plan-progress",
+            "data-mobile-plan-item",
+            "data-mobile-plan-detail",
+            "チャートで見る",
+            "openMobileSheet('detail'",
+            "remainingKnownMinutes",
+            "progressbar",
+        ):
+            self.assertIn(token, plan_source)
+
+    def test_mobile_plan_watch_toggle_updates_plan_only_without_chart_rebuild(self) -> None:
+        render_body = function_body(self.source, "renderMobilePlanScreen")
+        mount_body = function_body(self.source, "mountMobilePlanView")
+        self.assertIn("setWatched", render_body)
+        self.assertIn("renderMobilePlanScreen", render_body + mount_body)
+        for forbidden in ("fitView(", "initMobileCanvas(", "rebuildMobileCanvas(", "mountMobileChartView("):
+            self.assertNotIn(forbidden, render_body)
+
+    def test_mobile_plan_view_is_mounted_instead_of_placeholder_and_hides_legacy_panels(self) -> None:
+        body = function_body(self.source, "mountMobileView")
+        self.assertIn("mountMobilePlanView", body)
+        self.assertIn("normalized==='plan'", body)
+        self.assertIn("mobile-chart-host-only", body)
+
     def test_mobile_chart_browser_runner_has_json_scenario_contract(self) -> None:
         runner = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
         self.assertTrue(runner.is_file(), "M3 browser runner must exist")
         source = runner.read_text(encoding="utf-8")
-        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select", "firstCardInViewport", "legacyQuerySync"):
+        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "plan", "mobilePlanSnapshot", "data-mobile-plan-summary", "data-mobile-plan-watched", "data-mobile-plan-detail", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select", "firstCardInViewport", "legacyQuerySync"):
             self.assertIn(token, source)
         self.assertIn("mobileAreaSheet", source)
         self.assertIn('data-mobile-target="release"', source)

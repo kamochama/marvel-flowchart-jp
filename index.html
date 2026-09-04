@@ -653,6 +653,37 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .mobile-search-result-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
   .mobile-search-result-action{min-width:0;min-height:44px;padding:7px 4px;border:1px solid #475569;border-radius:9px;background:#172033;color:#dbeafe;font-size:12px;font-weight:800}
   .mobile-search-result-action:focus-visible,.mobile-search-query:focus-visible,.mobile-search-filter-row select:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
+  .mobile-plan-surface{display:grid;gap:10px;align-content:start;min-height:calc(100dvh - 190px);padding:12px 11px 18px;border:1px solid #263550;border-radius:14px;background:linear-gradient(180deg,rgba(17,27,46,.96),rgba(11,18,32,.96))}
+  .mobile-plan-surface h2{margin:0;font-size:20px;color:#f8fafc}
+  .mobile-plan-tier-row{display:grid;gap:5px;color:#94a3b8;font-size:11px;font-weight:800}
+  .mobile-plan-tier{width:100%;min-height:46px;padding:8px 10px;border:1px solid #64748b;border-radius:10px;background:#0b1322;color:#f8fafc;font-size:15px}
+  .mobile-plan-summary{display:grid;gap:7px;padding:10px;border:1px solid #92400e;border-radius:11px;background:rgba(66,32,6,.36)}
+  .mobile-plan-summary strong{color:#fde68a;font-size:14px}
+  .mobile-plan-summary-goals{display:flex;gap:6px;overflow:auto;padding-bottom:2px}
+  .mobile-plan-goal{flex:0 0 auto;padding:7px 9px;border:1px solid #b45309;border-radius:999px;background:#2b1707;color:#fde68a;font-size:11px;font-weight:800}
+  .mobile-plan-progress{display:grid;gap:6px;padding:10px;border:1px solid #155e75;border-radius:11px;background:rgba(8,47,73,.5)}
+  .mobile-plan-progress-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;color:#bae6fd;font-size:12px}
+  .mobile-plan-progress-bar{height:9px;overflow:hidden;border:1px solid #164e63;border-radius:999px;background:#082f49}
+  .mobile-plan-progress-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,#0891b2,#22d3ee);transition:width .18s ease}
+  .mobile-plan-progress-note{color:#cbd5e1;font-size:12px;line-height:1.45}
+  .mobile-plan-actions{display:grid;grid-template-columns:1fr;gap:7px}
+  .mobile-plan-chart{min-height:46px;border:1px solid #3b82f6;border-radius:10px;background:#172554;color:#dbeafe;font-size:13px;font-weight:850}
+  .mobile-plan-list{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+  .mobile-plan-item{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;padding:9px 8px;border:1px solid #334155;border-radius:11px;background:#0f172a}
+  .mobile-plan-item.is-goal{border-color:#92400e;background:linear-gradient(90deg,rgba(120,53,15,.2),rgba(15,23,42,.45))}
+  .mobile-plan-number{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#172033;color:#93c5fd;font-weight:900;font-size:12px}
+  .mobile-plan-item-main{display:grid;gap:5px;min-width:0}
+  .mobile-plan-item-title{display:flex;align-items:center;gap:5px;min-width:0;color:#f8fafc;font-size:14px;font-weight:850;line-height:1.35}
+  .mobile-plan-item-title strong{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .mobile-plan-item-meta{color:#94a3b8;font-size:11px}
+  .mobile-plan-item-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
+  .mobile-plan-watch-toggle,.mobile-plan-detail{min-width:0;min-height:44px;border:1px solid #475569;border-radius:9px;background:#172033;color:#dbeafe;font-size:12px;font-weight:800}
+  .mobile-plan-watch-toggle{display:flex;align-items:center;justify-content:center;gap:5px}
+  .mobile-plan-watch-toggle input{width:20px;height:20px;accent-color:#22c55e}
+  .mobile-plan-detail{border-color:#334155;color:#cbd5e1}
+  .mobile-plan-empty{padding:12px;border:1px dashed #475569;border-radius:10px;color:#cbd5e1;line-height:1.5}
+  .mobile-plan-source{padding:9px;border-left:3px solid #64748b;color:#94a3b8;font-size:11px;line-height:1.5}
+  .mobile-plan-surface button:focus-visible,.mobile-plan-tier:focus-visible,.mobile-plan-watch-toggle:focus-within{outline:2px solid #93c5fd;outline-offset:2px}
   body.mobile-chart-host-only #left>.panel{display:none!important}
 }
 
@@ -6865,6 +6896,7 @@ if(flowchartReady)render();
     return {orderedIds,goalIds:goals,prepIds,rolesById,sourceByGoal,sourceLabelByGoal,sourceUrlByGoal,sourceCheckedAtByGoal,routeIdByGoal,provenanceByGoal,tierNoteByGoal,unknownOrderingPairs:[]};
   }
   window.marvelBuildMultiGoalPlan=buildMultiGoalPlan;
+  window.marvelOrderedGoalIds=()=>orderedGoalIds();
   window.marvelMultiGoalAudit=()=>({goals:orderedGoalIds(),tier:prepTier,plan:buildMultiGoalPlan(orderedGoalIds(),prepTier)});
 
   function prepImportanceLabel(imp){ return ({core:'中核',recommended:'推奨',reference:'参照'})[imp]||imp; }
@@ -7016,6 +7048,11 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   }
   let watchedIds=loadWatchedIds();
   let dimWatchedOnChart=storageRead(WATCHED_DIM_STORAGE_KEY,'0')==='1';
+  const watchedStateListeners=new Set();
+  function notifyWatchedState(){
+    const snapshot={watched:[...watchedIds],dimOnChart:dimWatchedOnChart};
+    watchedStateListeners.forEach(listener=>{try{listener(snapshot)}catch(_){/* subscriber failures never affect persistence */}});
+  }
   function saveWatchedState(){
     try{localStorage.setItem(WATCHED_STORAGE_KEY,JSON.stringify([...watchedIds]));localStorage.setItem(WATCHED_DIM_STORAGE_KEY,dimWatchedOnChart?'1':'0')}catch(_){}
   }
@@ -7028,7 +7065,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   function setWatched(id,on){
     if(!nm[id]) return;
     if(on) watchedIds.add(id); else watchedIds.delete(id);
-    saveWatchedState(); applyWatchedDimming();
+    saveWatchedState(); applyWatchedDimming(); notifyWatchedState();
   }
   function prepWatchedCheckbox(id,label='視聴済み'){
     const checked=watchedIds.has(id)?' checked':'';
@@ -7071,17 +7108,26 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const dim=prepplan.querySelector('#prepDimWatched');
     if(dim) dim.onchange=()=>{dimWatchedOnChart=dim.checked;saveWatchedState();applyWatchedDimming();};
     const all=prepplan.querySelector('#prepMarkAllWatched');
-    if(all) all.onclick=()=>{planIds.forEach(id=>watchedIds.add(id));saveWatchedState();applyWatchedDimming();updatePreparationPlanPreservingView();};
+    if(all) all.onclick=()=>{planIds.forEach(id=>watchedIds.add(id));saveWatchedState();applyWatchedDimming();notifyWatchedState();updatePreparationPlanPreservingView();};
     const clear=prepplan.querySelector('#prepClearPlanWatched');
-    if(clear) clear.onclick=()=>{planIds.forEach(id=>watchedIds.delete(id));saveWatchedState();applyWatchedDimming();updatePreparationPlanPreservingView();};
+    if(clear) clear.onclick=()=>{planIds.forEach(id=>watchedIds.delete(id));saveWatchedState();applyWatchedDimming();notifyWatchedState();updatePreparationPlanPreservingView();};
   }
   window.marvelWatchProgress={
     get watched(){return [...watchedIds]},
     isWatched:id=>watchedIds.has(id),
     set:(id,on=true)=>{setWatched(id,!!on);updatePreparationPlanPreservingView(id);},
-    clear:()=>{watchedIds.clear();saveWatchedState();applyWatchedDimming();updatePreparationPlanPreservingView();},
+    clear:()=>{watchedIds.clear();saveWatchedState();applyWatchedDimming();notifyWatchedState();updatePreparationPlanPreservingView();},
+    subscribe:listener=>{if(typeof listener!=='function')return()=>{};watchedStateListeners.add(listener);return()=>watchedStateListeners.delete(listener)},
+    stats:ids=>{
+      const items=[...(ids||[])].filter(id=>nm[id]);
+      const watched=items.filter(id=>watchedIds.has(id));
+      const known=items.filter(id=>watchTimeMinutes(id)!==null);
+      const unseenKnown=known.filter(id=>!watchedIds.has(id));
+      const remainingKnownMinutes=unseenKnown.reduce((sum,id)=>sum+watchTimeMinutes(id),0);
+      return {total:items.length,watched:watched.length,known:known.length,unknown:items.length-known.length,remainingKnownMinutes,percent:items.length?watched.length/items.length*100:0};
+    },
     get dimOnChart(){return dimWatchedOnChart},
-    setDim:on=>{dimWatchedOnChart=!!on;saveWatchedState();applyWatchedDimming();updatePreparationPlanPreservingView();}
+    setDim:on=>{dimWatchedOnChart=!!on;saveWatchedState();applyWatchedDimming();notifyWatchedState();updatePreparationPlanPreservingView();}
   };
 
   const WATCH_TIME_MINUTES=Object.freeze({"iron-man-2008":126,"the-incredible-hulk-2008":112,"iron-man-2-2010":125,"thor-2011":114,"captain-america-the-first-avenger-2011":124,"the-avengers-2012":143,"iron-man-3-2013":130,"thor-the-dark-world-2013":112,"captain-america-the-winter-soldier-2014":136,"guardians-of-the-galaxy-2014":122,"avengers-age-of-ultron-2015":141,"ant-man-2015":117,"captain-america-civil-war-2016":147,"doctor-strange-2016":115,"guardians-of-the-galaxy-vol-2-2017":136,"spider-man-homecoming-2017":133,"thor-ragnarok-2017":130,"black-panther-2018":134,"avengers-infinity-war-2018":149,"ant-man-and-the-wasp-2018":118,"captain-marvel-2019":124,"avengers-endgame-2019":181,"spider-man-far-from-home-2019":129,"black-widow-2021":134,"shang-chi-and-the-legend-of-the-ten-rings-2021":132,"eternals-2021":156,"spider-man-no-way-home-2021":148,"doctor-strange-in-the-multiverse-of-madness-2022":126,"thor-love-and-thunder-2022":119,"black-panther-wakanda-forever-2022":161,"ant-man-and-the-wasp-quantumania-2023":124,"guardians-of-the-galaxy-vol-3-2023":150,"the-marvels-2023":105,"deadpool-wolverine-2024":128,"captain-america-brave-new-world-2025":118,"thunderbolts-new-avengers-2025":127,"the-fantastic-four-first-steps-2025":114,"spider-man-brand-new-day-2026-07-31":145,"wandavision-2021":363,"the-falcon-and-the-winter-soldier-2021":330,"loki-s1-2021":302,"what-if-s1-2021":322,"hawkeye-2021":297,"moon-knight-2022":303,"ms-marvel-2022":289,"she-hulk-attorney-at-law-2022":309,"werewolf-by-night-2022":54,"the-guardians-of-the-galaxy-holiday-special-2022":44,"secret-invasion-2023":272,"loki-s2-2023":313,"what-if-s2-2023":292,"echo-2024":215,"x-men-97-s1-2024":344,"agatha-all-along-2024":379,"what-if-s3-2024":254,"your-friendly-neighborhood-spider-man-s1-2025":317,"daredevil-born-again-s1-2025":454,"eyes-of-wakanda-2025":125,"ironheart-2025":289,"i-am-groot-s1-2022":20,"i-am-groot-s2-2023":20,"daredevil-born-again-s2-2026":389,"daredevil-s1-2015":704,"daredevil-s2-2016":702,"daredevil-s3-2018":655,"spider-man-2002":121,"spider-man-2-2004":127,"spider-man-3-2007":139,"the-amazing-spider-man-2012":136,"the-amazing-spider-man-2-2014":142,"spider-man-into-the-spider-verse-2018":117,"spider-man-across-the-spider-verse-2023":140,"x-men-2000":104,"x2-x-men-united-2003":134,"x-men-the-last-stand-2006":104,"x-men-origins-wolverine-2009":107,"x-men-first-class-2011":131,"the-wolverine-2013":126,"x-men-days-of-future-past-2014":132,"deadpool-2016":108,"x-men-apocalypse-2016":144,"logan-2017":137,"deadpool-2-2018":119,"dark-phoenix-2019":113,"the-new-mutants-2020":94,"the-consultant-2011":4,"a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011":4,"item-47-2012":12,"agent-carter-one-shot-2013":15,"all-hail-the-king-2014":14,"the-punisher-one-last-kill-2026-05-12":50});
@@ -8312,13 +8358,13 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       const actions=document.createElement('div');actions.className='mobile-search-result-actions';
       const selectButton=makeAction('選択','data-mobile-search-select',event=>{
         event.preventDefault();event.stopPropagation();
-        select(node.id,false);window.marvelMobileUiStore?.setGoals(orderedGoalIds(),selected);
+        select(node.id,false);window.marvelMobileUiStore?.setGoals(window.marvelOrderedGoalIds?.()||[],selected);
         card.setAttribute('aria-current','true');
       });
       const chartButton=makeAction('チャートで見る','data-mobile-search-chart',event=>{
         event.preventDefault();event.stopPropagation();
         if(!selectedIds.has(node.id))select(node.id,false);else{selected=node.id;syncMobileUiGoals();}
-        window.marvelMobileUiStore?.setGoals(orderedGoalIds(),selected);setMobileView('chart');
+        window.marvelMobileUiStore?.setGoals(window.marvelOrderedGoalIds?.()||[],selected);setMobileView('chart');
       });
       const detailButton=makeAction('詳細','data-mobile-search-detail',event=>{
         event.preventDefault();event.stopPropagation();openMobileSheet('detail',node.id);
@@ -8374,18 +8420,107 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   window.mountMobileSearchView=mountMobileSearchView;
   window.renderMobileSearchResults=renderMobileSearchResults;
 
+  let mobilePlanStoreUnsubscribe=null,mobilePlanWatchUnsubscribe=null;
+  function clearMobilePlanSubscriptions(){
+    mobilePlanStoreUnsubscribe?.();mobilePlanStoreUnsubscribe=null;
+    mobilePlanWatchUnsubscribe?.();mobilePlanWatchUnsubscribe=null;
+  }
+  function renderPrepPlan(plan,goals,tier){
+    const watch=window.marvelWatchProgress;
+    const watchedIds=new Set(watch?.watched||[]);
+    const setWatched=(id,on)=>watch?.set(id,!!on);
+    const goalIds=[...(goals||[])].filter(id=>nm[id]);
+    const orderedIds=[...(plan?.orderedIds||[])];
+    const stats=watch?.stats?.(orderedIds)||{total:orderedIds.length,watched:orderedIds.filter(id=>watchedIds.has(id)).length,remainingKnownMinutes:0,percent:0,unknown:0};
+    const formatMinutes=minutes=>{
+      if(!Number.isFinite(minutes)||minutes<=0)return '0分';
+      const hours=Math.floor(minutes/60),rest=Math.round(minutes%60);
+      return hours?`${hours}時間${rest?`${rest}分`:''}`:`${rest}分`;
+    };
+    const safeTier=tier==='complete'?'complete':'site-proposal';
+    const tierLabel=safeTier==='complete'?'完全版':'サイト提案ルート';
+    const title=goalIds.length===1?`${esc(nm[goalIds[0]]?.title||goalIds[0])} の予習プラン`:'複数ゴールの統合予習プラン';
+    const summary=goalIds.length
+      ? `<div class="mobile-plan-summary" data-mobile-plan-summary><strong>🎯 ${goalIds.length}作品をゴール中</strong><div class="mobile-plan-summary-goals">${goalIds.map((id,index)=>`<span class="mobile-plan-goal">ゴール ${index+1}：${esc(nm[id]?.title||id)}</span>`).join('')}</div></div>`
+      : '<div class="mobile-plan-summary" data-mobile-plan-summary><strong>🎯 ゴール未選択</strong><div class="muted">チャートまたは探す面で作品を選ぶと、ここに予習順を表示します。</div></div>';
+    const percent=Math.round((Number(stats.percent)||0)*10)/10;
+    const progress=`<div class="mobile-plan-progress" data-mobile-plan-progress><div class="mobile-plan-progress-head"><strong>視聴済み ${stats.watched||0}/${stats.total||0}</strong><span>${percent}%</span></div><div class="mobile-plan-progress-bar" role="progressbar" aria-label="予習プランの視聴進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><div class="mobile-plan-progress-fill" style="width:${Math.max(0,Math.min(100,percent))}%"></div></div><div class="mobile-plan-progress-note">${stats.remainingKnownMinutes?`残り時間：約 ${formatMinutes(stats.remainingKnownMinutes)}`:'残り時間：時間登録済みの未視聴作品はありません'}${stats.unknown?`（時間未登録 ${stats.unknown}件）`:''}</div></div>`;
+    const rows=orderedIds.map((id,index)=>{
+      const done=watchedIds.has(id),isGoal=goalIds.includes(id),label=nm[id]?.title||id;
+      return `<li class="mobile-plan-item${isGoal?' is-goal':''}${done?' is-watched':''}" data-mobile-plan-item data-mobile-plan-order="${index+1}" data-mobile-plan-work="${esc(id)}"><span class="mobile-plan-number">${index+1}</span><div class="mobile-plan-item-main"><div class="mobile-plan-item-title"><strong>${esc(label)}</strong>${isGoal?'<span class="prep-goal-badge">ゴール</span>':''}</div><div class="mobile-plan-item-meta">${esc(nm[id]?.release||'')}${done?' · 視聴済み':''}</div><div class="mobile-plan-item-actions"><label class="mobile-plan-watch-toggle"><input class="prep-watched-check" type="checkbox" data-mobile-plan-watched data-id="${esc(id)}"${done?' checked':''} aria-label="${esc(label)}を視聴済みにする"><span>視聴済み</span></label><button type="button" class="mobile-plan-detail" data-mobile-plan-detail data-work-id="${esc(id)}" aria-label="${esc(label)}の詳細">詳細</button></div></div></li>`;
+    }).join('');
+    const empty=orderedIds.length?'':`<div class="mobile-plan-empty">${goalIds.length?'このゴールには表示対象の予習作品がありません。':'ゴールを選ぶと、サイト提案ルートまたは完全版の順序付きチェックリストを作成します。'}</div>`;
+    const source=goalIds.length?`<div class="mobile-plan-source">${tierLabel}：選択したゴールの前提作品を重複除去し、接続順に並べています。</div>`:'';
+    const html=`<span class="mobile-view-kicker">PREPARATION</span><h2 id="mobilePlanTitle">${title}</h2><label class="mobile-plan-tier-row" for="mobilePlanTier">予習プラン<select id="mobilePlanTier" class="mobile-plan-tier" data-mobile-plan-tier aria-label="予習プランを選ぶ"><option value="site-proposal"${safeTier==='site-proposal'?' selected':''}>サイト提案ルート</option><option value="complete"${safeTier==='complete'?' selected':''}>完全版</option></select></label>${summary}${progress}<div class="mobile-plan-actions"><button type="button" class="mobile-plan-chart" id="mobilePlanChartReturn" data-mobile-plan-chart>チャートで見る</button></div><ol class="mobile-plan-list" data-mobile-plan-list aria-label="予習順チェックリスト">${rows}</ol>${empty}${source}`;
+    return {html,plan,goalIds,orderedIds,stats,watchedIds,setWatched};
+  }
+  window.renderPrepPlan=renderPrepPlan;
+
+  function renderMobilePlanScreen(){
+    const surface=document.querySelector('#mobileViewHost [data-mobile-surface="plan"]');
+    if(!surface)return null;
+    const store=mobileUiStore(),state=store?.getState()||{goalIds:[],selectedId:null};
+    const orderedFromStore=Array.isArray(state.goalIds)?state.goalIds.slice():[];
+    // orderedGoalIds remains the semantic ordering adapter; goalIds from the
+    // shared store are the only mobile plan source of truth.
+    const orderedGoalIds=window.marvelOrderedGoalIds?.()||[];
+    const buildMultiGoalPlan=window.marvelBuildMultiGoalPlan;
+    const semanticOrder=orderedGoalIds;
+    const goals=orderedFromStore.length?orderedFromStore:semanticOrder.filter(id=>orderedFromStore.includes(id));
+    const prepTier=window.marvelGetConnectionTier?.()||'site-proposal';
+    const plan=typeof buildMultiGoalPlan==='function'?buildMultiGoalPlan(goals,prepTier):{orderedIds:[],goalIds:goals};
+    const rendered=renderPrepPlan(plan,goals,prepTier);
+    surface.innerHTML=rendered.html;
+    const tier=surface.querySelector('[data-mobile-plan-tier]');
+    tier?.addEventListener('change',()=>{
+      const next=tier.value==='complete'?'complete':'site-proposal';
+      window.marvelSetConnectionTier?.(next);
+      renderMobilePlanScreen();
+    });
+    surface.querySelector('#mobilePlanChartReturn')?.addEventListener('click',()=>setMobileView('chart'));
+    surface.querySelectorAll('[data-mobile-plan-detail]').forEach(button=>button.addEventListener('click',event=>{
+      event.preventDefault();event.stopPropagation();openMobileSheet('detail',button.dataset.workId||null);
+    }));
+    surface.querySelectorAll('[data-mobile-plan-watched]').forEach(box=>box.addEventListener('change',()=>{
+      rendered.setWatched(box.dataset.id,box.checked);
+      if(!window.marvelWatchProgress?.subscribe)renderMobilePlanScreen();
+    }));
+    return rendered;
+  }
+  window.renderMobilePlanScreen=renderMobilePlanScreen;
+
+  function mountMobilePlanView(host){
+    const mobileHost=host||document.getElementById('mobileViewHost');
+    if(!mobileHost||!mobileChartMotion.matches)return null;
+    clearMobilePlanSubscriptions();
+    document.body.classList.add('mobile-chart-host-only');
+    restoreMobileChartPanels();
+    const surface=document.createElement('section');
+    surface.className='mobile-plan-surface';surface.dataset.mobileSurface='plan';surface.setAttribute('aria-labelledby','mobilePlanTitle');
+    mobileHost.replaceChildren(surface);
+    renderMobilePlanScreen();
+    const store=mobileUiStore();
+    mobilePlanStoreUnsubscribe=store?.subscribe?.(next=>{if(next.view==='plan')renderMobilePlanScreen();})||null;
+    mobilePlanWatchUnsubscribe=window.marvelWatchProgress?.subscribe?.(()=>{if(mobileUiStore()?.getState?.().view==='plan')renderMobilePlanScreen();})||null;
+    syncMobileBottomNav('plan');
+    return surface;
+  }
+  window.mountMobilePlanView=mountMobilePlanView;
+
   function mountMobileView(view){
     const shell=ensureMobileShell();
     const host=shell?.querySelector('#mobileViewHost');
     if(!host)return null;
     const normalized=normalizeMobileView(view);
     if(!mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');restoreMobileChartPanels();host.replaceChildren();syncMobileBottomNav(normalized);return null;}
+    if(normalized!=='plan')clearMobilePlanSubscriptions();
     if(normalized==='chart'&&mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');return mountMobileChartView(host);}
     if(normalized==='search'){
       document.body.classList.add('mobile-chart-host-only');
       restoreMobileChartPanels();
       return mountMobileSearchView(host);
     }
+    if(normalized==='plan')return mountMobilePlanView(host);
     if(normalized!=='chart'){
       document.body.classList.add('mobile-chart-host-only');
       restoreMobileChartPanels();
