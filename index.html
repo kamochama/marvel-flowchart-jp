@@ -632,6 +632,12 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .mobile-sheet-head p{margin:3px 0 0;color:#94a3b8;font-size:11px}
   .mobile-sheet-head button{min-width:68px;min-height:44px}
   #mobileSheetBody{min-height:80px;padding:12px;border:1px solid #263550;border-radius:10px;background:#0f172a;color:#cbd5e1;line-height:1.55}
+  .mobile-chart-surface{display:block;min-height:0}
+  .mobile-chart-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 8px}
+  .mobile-chart-controls button{min-width:0;min-height:44px;padding:7px 4px;border:1px solid #334155;border-radius:10px;background:#101827;color:#dbeafe;font-size:11px;font-weight:850}
+  .mobile-chart-controls button:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
+  .mobile-chart-surface>.panel{display:block}
+  .mobile-chart-surface>.panel>.svg-wrap{min-height:calc(100dvh - 210px);height:calc(100dvh - 210px);max-height:none}
 }
 
 
@@ -4449,6 +4455,15 @@ function setMobileViewBox(wrap,st,x,y,w,h){
   st.vbX=x; st.vbY=y; st.vbW=Math.max(.001,w); st.vbH=Math.max(.001,h);
   st.scale=st.baseViewBox.w/st.vbW;
   st.x=st.vbX; st.y=st.vbY;
+  syncMobileChartCameraSnapshot(wrap);
+}
+
+function syncMobileChartCameraSnapshot(wrap){
+  const host=wrap?.closest?.('[data-mobile-surface="chart"]');
+  const st=wrap&&viewStates.get(wrap);
+  if(!host||!st||typeof st.vbX!=='number')return false;
+  host.dataset.mobileCamera=JSON.stringify({x:st.vbX,y:st.vbY,w:st.vbW,h:st.vbH});
+  return true;
 }
 
 // v5.11.4 Canvas renderer: mobile Graphviz tabs. The source SVG remains as the
@@ -5118,9 +5133,10 @@ function applyView(wrap){
   if(mobileChartMotion.matches){
     const ms=ensureMobileViewBoxState(wrap); if(!ms) return;
     if(svg.style.transform!=='none') svg.style.transform='none';
-    if(isMobileCanvasWrap(wrap)){initMobileCanvas(wrap);drawMobileCanvas(wrap);window.syncChronologyStickyLabels?.(wrap);return;}
+    if(isMobileCanvasWrap(wrap)){initMobileCanvas(wrap);drawMobileCanvas(wrap);syncMobileChartCameraSnapshot(wrap);window.syncChronologyStickyLabels?.(wrap);return;}
     const value=`${ms.vbX} ${ms.vbY} ${ms.vbW} ${ms.vbH}`;
     if(ms.lastAppliedViewBox!==value){svg.setAttribute('viewBox',value);ms.lastAppliedViewBox=value}
+    syncMobileChartCameraSnapshot(wrap);
     window.syncChronologyStickyLabels?.(wrap);
     return;
   }
@@ -8084,6 +8100,10 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   const MOBILE_SHEET_LABELS={detail:['作品情報','選択した作品の情報'],reason:['接続理由','この接続の根拠'],settings:['表示設定','モバイル表示の設定']};
   let mobileSheetReturnFocus=null;
   let suppressMobileSheetHistory=false;
+  let mobileChartPanel=null;
+  let mobileChartOriginParent=null;
+  let mobileChartOriginNextSibling=null;
+  let mobileChartMountedHost=null;
 
   function mobileUiStore(){return window.marvelMobileUiStore||null}
   function normalizeMobileView(view){return MOBILE_VIEWS.has(view)?view:'chart'}
@@ -8126,27 +8146,101 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     });
   }
 
+  function mobileChartPanelElement(){
+    if(mobileChartPanel)return mobileChartPanel;
+    const panel=document.getElementById('overview');
+    if(!panel)return null;
+    mobileChartPanel=panel;
+    mobileChartOriginParent=panel.parentElement;
+    mobileChartOriginNextSibling=panel.nextSibling;
+    return panel;
+  }
+
+  function detachMobileChartPanel(){
+    const panel=mobileChartPanelElement();
+    if(!panel)return false;
+    if(panel.parentNode)panel.remove();
+    mobileChartMountedHost=null;
+    return true;
+  }
+
+  function restoreMobileChartPanel(){
+    const panel=mobileChartPanelElement();
+    if(!panel||!mobileChartOriginParent)return false;
+    if(panel.parentNode!==mobileChartOriginParent){
+      if(mobileChartOriginNextSibling?.parentNode===mobileChartOriginParent)mobileChartOriginParent.insertBefore(panel,mobileChartOriginNextSibling);
+      else mobileChartOriginParent.append(panel);
+    }
+    mobileChartMountedHost=null;
+    return true;
+  }
+
+  function mobileChartCameraState(wrap){
+    return typeof viewStates!=='undefined'&&wrap?viewStates.get(wrap)||ensureViewState(wrap):null;
+  }
+
+  function mountMobileChartView(host){
+    const mobileHost=host||document.getElementById('mobileViewHost');
+    if(!mobileHost||!mobileChartMotion.matches)return null;
+    const panel=mobileChartPanelElement(),wrap=panel?.querySelector('.svg-wrap');
+    if(!panel||!wrap)return null;
+    const surface=document.createElement('section');
+    surface.className='mobile-chart-surface';
+    surface.dataset.mobileSurface='chart';
+    surface.setAttribute('aria-labelledby','mobileChartTitle');
+    surface.innerHTML='<h2 id="mobileChartTitle" class="sr-only">チャート</h2><div class="mobile-chart-controls" aria-label="チャート操作"><button type="button" id="mobileChartFit" title="全体表示">全体</button><button type="button" id="mobileChartSelected" title="選択作品へ">選択へ</button><button type="button" id="mobileChartDetails" title="作品詳細を開く">詳細</button><button type="button" id="mobileChartViewButton" title="表示ビューを選ぶ">表示ビュー</button></div>';
+    document.querySelectorAll('.panel.active').forEach(active=>{if(active!==panel)active.classList.remove('active');});
+    panel.classList.add('active');
+    surface.append(panel);
+    mobileHost.replaceChildren(surface);
+    mobileChartMountedHost=mobileHost;
+    const camera=mobileChartCameraState(wrap);
+    if(typeof viewStates!=='undefined'){
+      const retained=viewStates.get('mobile-shell:chart')||{};
+      viewStates.set(wrap,camera||retained.camera||ensureViewState(wrap));
+      viewStates.set('mobile-shell:chart',{...retained,renderer:mobileCanvasStates.get(wrap)||retained.renderer||null,camera:viewStates.get(wrap),wrap});
+    }
+    // The existing Canvas/SVG renderer and semantic selection path stay shared.
+    const selectionApis={select,clearAllGoalsWithUndo};
+    surface.mobileSelectionApis=selectionApis;
+    initMobileCanvas(wrap);
+    syncMobileChartCameraSnapshot(wrap);
+    surface.querySelector('#mobileChartFit').onclick=()=>fitView(wrap);
+    surface.querySelector('#mobileChartSelected').onclick=()=>{
+      if(selected&&activeSvgHasNode(selected))centerNodeInView(selected);else fitView(wrap);
+    };
+    surface.querySelector('#mobileChartDetails').onclick=()=>openMobileSheet('detail',selected||mobileUiStore()?.getState().selectedId||null);
+    surface.querySelector('#mobileChartViewButton').onclick=()=>document.getElementById('mobileAreaButton')?.click();
+    return surface;
+  }
+
+  window.mountMobileChartView=mountMobileChartView;
+
   function mountMobileView(view){
     const shell=ensureMobileShell();
     const host=shell?.querySelector('#mobileViewHost');
     if(!host)return null;
     const normalized=normalizeMobileView(view);
-    // Keep a future chart renderer/camera object alive across view changes. The
-    // current M2 placeholder is intentionally the only mounted view content.
-    if(typeof viewStates!=='undefined'){
-      const key=`mobile-shell:${normalized}`;
-      const retained=viewStates.get(key)||{renderer:null,camera:null};
-      viewStates.set(key,retained);
+    if(!mobileChartMotion.matches){restoreMobileChartPanel();host.replaceChildren();syncMobileBottomNav(normalized);return null;}
+    if(normalized==='chart'&&mobileChartMotion.matches)return mountMobileChartView(host);
+    if(normalized!=='chart'){
+      detachMobileChartPanel();
+      host.replaceChildren();
+      if(typeof viewStates!=='undefined'){
+        const key=`mobile-shell:${normalized}`;
+        const retained=viewStates.get(key)||{renderer:null,camera:null};
+        viewStates.set(key,retained);
+      }
+      const section=document.createElement('section');
+      section.className='mobile-view-placeholder';
+      section.dataset.mobileView=normalized;
+      section.setAttribute('aria-labelledby','mobileViewTitle');
+      section.innerHTML=`<span class="mobile-view-kicker">MOBILE VIEW</span><h2 id="mobileViewTitle">${MOBILE_VIEW_LABELS[normalized]}</h2><p>${normalized==='chart'?'チャート表示領域を準備中です。':normalized==='search'?'作品検索と絞り込みをここで行えます。':'選択した作品の予習プランをここで確認できます。'}</p>`;
+      host.append(section);
+      syncMobileBottomNav(normalized);
+      return section;
     }
-    host.replaceChildren();
-    const section=document.createElement('section');
-    section.className='mobile-view-placeholder';
-    section.dataset.mobileView=normalized;
-    section.setAttribute('aria-labelledby','mobileViewTitle');
-    section.innerHTML=`<span class="mobile-view-kicker">MOBILE VIEW</span><h2 id="mobileViewTitle">${MOBILE_VIEW_LABELS[normalized]}</h2><p>${normalized==='chart'?'チャート表示領域を準備中です。':normalized==='search'?'作品検索と絞り込みをここで行えます。':'選択した作品の予習プランをここで確認できます。'}</p>`;
-    host.append(section);
-    syncMobileBottomNav(normalized);
-    return section;
+    return null;
   }
 
   function readMobileUrlState(){
@@ -8317,6 +8411,12 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   window.writeMobileUrlState=writeMobileUrlState;
   window.marvelMobileHydrateUrlState=applyMobileUrlState;
   window.addEventListener('popstate',handleMobilePopState);
+  const syncMobileChartForViewport=()=>{
+    const host=document.getElementById('mobileViewHost');
+    if(!mobileChartMotion.matches){restoreMobileChartPanel();host?.replaceChildren();return;}
+    if(mobileUiStore()?.getState().view==='chart')mountMobileChartView(host);
+  };
+  mobileChartMotion.addEventListener?.('change',()=>requestAnimationFrame(syncMobileChartForViewport));
   const initializeMobileShell=()=>{
     ensureMobileShell();
     document.getElementById('q')?.addEventListener('input',syncMobileSearchStateFromControls);

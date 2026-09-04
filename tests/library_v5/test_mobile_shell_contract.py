@@ -184,6 +184,43 @@ class MobileShellContractTests(unittest.TestCase):
             r"focusGoal\s*=\s*function\(id\)\{[\s\S]{0,180}if\(!mobileWidth\(\)\)\{const result=focusGoalBeforeV51511\(id\);syncMobileUiGoals\(\);return result;\}",
         )
 
+    def test_mobile_chart_mount_reuses_existing_renderer_and_shared_apis(self) -> None:
+        body = function_body(self.source, "mountMobileChartView")
+        self.assertIn("mobileCanvasStates", body)
+        self.assertIn("viewStates", body)
+        for api in ("select", "clearAllGoalsWithUndo", "fitView", "centerNodeInView"):
+            self.assertIn(api, body)
+        self.assertIn("mobileViewHost", body)
+        self.assertNotIn("NODES.map", body)
+        self.assertNotIn("EDGES.map", body)
+
+    def test_mobile_view_mount_only_attaches_chart_surface_for_chart_view(self) -> None:
+        body = function_body(self.source, "mountMobileView")
+        self.assertRegex(body, r"normalized===['\"]chart['\"]")
+        self.assertIn("mountMobileChartView", body)
+        self.assertIn("replaceChildren", body)
+        self.assertRegex(body, r"normalized!==['\"]chart['\"]")
+
+    def test_mobile_chart_controls_keep_touch_target_contract(self) -> None:
+        self.assertRegex(self.source, r"mobile-chart-controls[\s\S]{0,500}min-height:44px")
+        self.assertIn("mobileChartFit", self.source)
+        self.assertIn("mobileChartSelected", self.source)
+        self.assertIn("mobileChartDetails", self.source)
+        self.assertIn("mobileChartViewButton", self.source)
+
+    def test_mobile_sheet_open_close_have_no_chart_rebuild_path(self) -> None:
+        for name in ("openMobileSheet", "closeMobileSheet"):
+            body = function_body(self.source, name)
+            for forbidden in ("render(", "fitView(", "rebuildMobileCanvas(", "initMobileCanvas(", "mountMobileChartView("):
+                self.assertNotIn(forbidden, body, f"{name} must not rebuild chart state")
+
+    def test_mobile_chart_browser_runner_has_json_scenario_contract(self) -> None:
+        runner = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
+        self.assertTrue(runner.is_file(), "M3 browser runner must exist")
+        source = runner.read_text(encoding="utf-8")
+        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures"):
+            self.assertIn(token, source)
+
 
 if __name__ == "__main__":
     unittest.main()
