@@ -183,6 +183,55 @@ class FlowchartSelectionContractTests(unittest.TestCase):
         render_body = function_body(self.source, "renderSelectionState")
         self.assertRegex(render_body, r"state\.pathEdges\.has\(k\)")
 
+    def test_mobile_relation_map_uses_uniform_dimmed_nodes_and_quieter_edges(self) -> None:
+        """Mobile dimming must not inherit per-priority node opacity or dark edge paint."""
+        self.assertIn("MOBILE_DIM_NODE_ALPHA", self.source)
+        self.assertIn("MOBILE_DIM_EDGE_ALPHA", self.source)
+        self.assertRegex(self.source, r"MOBILE_DIM_NODE_ALPHA\s*=\s*0\.42")
+        self.assertRegex(self.source, r"MOBILE_DIM_EDGE_ALPHA\s*=\s*0\.06")
+        self.assertRegex(
+            self.source,
+            r"#overview svg\.dim g\.node\[data-map-role=\"support\"\].*?opacity:\.42!important",
+        )
+        self.assertRegex(
+            self.source,
+            r"#overview svg\.dim g\.map-support-edge:not\(\.hl\).*?opacity:\.06!important",
+        )
+
+    def test_chronology_nodes_are_derived_from_highlighted_chronology_edges(self) -> None:
+        """Worldline node paint must not reuse unrelated relation-graph context."""
+        body = function_body(self.source, "renderSelectionState")
+        self.assertIn("const chronologyPanel=svg.closest('.panel')?.id==='chronology'", body)
+        self.assertIn("chronologySelectionNodeClasses", body)
+        self.assertRegex(body, r"if\(chronologyPanel\)\{[\s\S]{0,220}chronologyNodeClasses\?\.get\(id\)")
+        self.assertIn("function mobileOverlayChronologyNodeClassMap", self.source)
+        self.assertRegex(
+            self.source,
+            r"mobileOverlayRelevantNodeIds\(state,chronologyNodeClasses\)",
+        )
+
+    def test_chronology_detail_focus_uses_endpoint_node_closure(self) -> None:
+        """Desktop detail inspection must obey the same chronology node boundary."""
+        focus = function_body(self.source, "renderFocusHighlight")
+        self.assertIn("const chronologyPanel=svg.closest('.panel')?.id==='chronology'", focus)
+        self.assertIn("chronologySelectionNodeClassesForSvg(svg,part)", focus)
+        self.assertRegex(
+            focus,
+            r"if\(chronologyPanel\)\{[\s\S]{0,280}chronologyNodeClasses",
+        )
+
+    def test_chronology_layout_marks_a_central_mcu_spine_without_new_edges(self) -> None:
+        """The central MCU row is emphasized while other worlds remain separate lanes."""
+        self.assertIn("chronology-main-spine", self.source)
+        self.assertRegex(
+            self.source,
+            r"drawSequence\(\['captain-america-the-first-avenger-2011'[\s\S]{0,700}rowY\.mcuShared,\{klass:'chronology-main-spine'\}\)",
+        )
+        self.assertRegex(self.source, r"worldFrame\(mcuTone,0,13,rowY\.mcuAnchor,rowY\.mcuOverflow2")
+        self.assertIn("laneHeader('MCU本流'", self.source)
+        self.assertIn("worldFrame(spiderTone", self.source)
+        self.assertIn("worldFrame(foxTone", self.source)
+
     def test_path_mode_applies_connection_tier_to_candidate_edges(self) -> None:
         """PATH must recompute its directed candidates when the public tier changes."""
         self.assertIn("function pathEdgeAllowed", self.source)
@@ -451,6 +500,13 @@ process.stdout.write(JSON.stringify(ids));
         self.assertIn("mobileOverlayChronologyEdgeClass", overlay)
         self.assertIn("overlayChronologyEdgePrimitives", overlay)
 
+    def test_mobile_fast_selection_refreshes_dimmed_base_cache(self) -> None:
+        """Canvas fast-path selection must restyle the cached background."""
+        self.assertIn("function refreshMobileCanvasBase", self.source)
+        overlay = function_body(self.source, "drawMobileSelectionOverlay")
+        self.assertIn("refreshMobileCanvasBase(wrap,state)", overlay)
+        self.assertIn("refreshMobileCanvasBase(wrap,null)", overlay)
+
     def test_chronology_highlight_uses_shared_state_aware_classifier(self) -> None:
         """SVG and Canvas chronology lines must share selection-mode semantics."""
         self.assertIn("classifyChronologySelection", self.source)
@@ -543,6 +599,8 @@ process.stdout.write(JSON.stringify(ids));
         mobile = function_body(self.source, "mobileOverlayChronologyEdgeClassMap")
         self.assertIn("materializeChronologyPathEdgeIds(records,state.pathEdges)", renderer)
         self.assertIn("materializeChronologyPathEdgeIds(records,state.pathEdges)", mobile)
+        node_mapper = function_body(self.source, "chronologySelectionNodeClasses")
+        self.assertIn("materializeChronologyPathEdgeIds(list,state.pathEdges)", node_mapper)
 
 
 if __name__ == "__main__":

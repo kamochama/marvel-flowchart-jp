@@ -86,6 +86,9 @@ class BrowserChronologyAuditTests(unittest.TestCase):
         self.assertIn('coverage:"internal-unit-only"', source)
         self.assertIn("MODE_ORACLE", source)
         self.assertIn("validateModeOracle", source)
+        self.assertIn("validateChronologyNodeClosure", source)
+        self.assertIn("highlightedNodeIds", source)
+        self.assertIn("endpoint", source)
         self.assertIn("ORACLE_EDGE_IDS", source)
         self.assertIn("unexpected highlighted", source)
         self.assertIn("category mismatch", source)
@@ -109,7 +112,7 @@ class BrowserChronologyAuditTests(unittest.TestCase):
         self.assertIn("browser_chronology_fixture.json", source)
         self.assertIn("loadChronologyFixture", source)
         self.assertIn("buildModeOracle", source)
-        validator = source[source.index("function validateModeOracle"):source.index("async function setTier")]
+        validator = source[source.index("function validateModeOracle"):source.index("function validateChronologyNodeClosure")]
         self.assertIn("fixture", validator)
         self.assertNotIn("snapshot.records", validator)
         self.assertNotIn("for (const record of snapshot.records", validator)
@@ -155,6 +158,20 @@ class BrowserChronologyAuditTests(unittest.TestCase):
         endpoint_case = source[start:source.index("await clearSelection(cdp,timeoutMs); await setCombine", start)]
         for work_id in ("morbius-2022", "madame-web-2024", "kraven-the-hunter-2024", "deadpool-2016", "logan-2017"):
             self.assertIn(work_id, endpoint_case)
+
+    def test_spider_man_chain_case_asserts_predecessor_edges_and_nodes(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        start = source.index('"spider-man-3-chain"')
+        case = source[start:source.index('"display-only-endpoint"', start)]
+        for token in (
+            "spider-man-3-2007",
+            "sequence-spider-man-2-2004-spider-man-3-2007-raimi-3",
+            "sequence-spider-man-2002-spider-man-2-2004-raimi-2",
+            "spider-man-2-2004",
+            "spider-man-2002",
+            "validateChronologyNodeClosure",
+        ):
+            self.assertIn(token, case)
 
     @unittest.skipUnless(
         os.environ.get("MARVEL_BROWSER_CHRONOLOGY_AUDIT") == "1",

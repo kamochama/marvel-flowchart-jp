@@ -12,6 +12,7 @@ const PROFILE_RETRIES = 100;
 const CHRONOLOGY_EDGE_COUNT = 74;
 const PRIMARY_WORK = "iron-man-2008";
 const SECONDARY_WORK = "iron-man-2-2010";
+const SPIDER_MAN_3_WORK = "spider-man-3-2007";
 const AND_PRIMARY_WORK = "spider-man-homecoming-2017";
 const AND_SECONDARY_WORK = "spider-man-no-way-home-2021";
 const MOBILE_WORK = "blade-mcu-tba-tba";
@@ -397,7 +398,7 @@ function chronologySnapshot(cdp) {
     const ids=records.map(x=>x.id), seen=new Set(), duplicateIds=[];
     for(const id of ids){if(seen.has(id)&&!duplicateIds.includes(id))duplicateIds.push(id);seen.add(id)}
     return {records,ids,duplicateIds,displayOnlyHighlighted:records.filter(x=>x.displayOnly&&x.classes.includes('hl')).map(x=>x.id),
-      highlighted:records.filter(x=>x.classes.includes('hl')).map(x=>x.id),focus:[...((svg&&svg.querySelectorAll('g.node.focus,g.node.current-goal'))||[])].map(title),
+      highlighted:records.filter(x=>x.classes.includes('hl')).map(x=>x.id),highlightedNodeIds:[...((chronologySvg&&chronologySvg.querySelectorAll('g.node.hl'))||[])].map(title),focus:[...((svg&&svg.querySelectorAll('g.node.focus,g.node.current-goal'))||[])].map(title),
       dim:!!svg?.classList.contains('dim'),panel:document.querySelector('.panel.active')?.id||null};
   `);
 }
@@ -426,6 +427,21 @@ function validateModeOracle(snapshot, mode, fixture) {
   for (const id of actual.keys()) if (!expected.has(id)) failures.push(`${mode}: unexpected highlighted ${id}`);
   const displayOnlyIds = new Set(fixture.filter(record => record.displayOnly).map(record => record.edge_id));
   for (const id of actual.keys()) if (displayOnlyIds.has(id)) failures.push(`${mode}: display-only highlighted ${id}`);
+  if (failures.length) throw new Error(failures.join("; "));
+}
+
+function validateChronologyNodeClosure(snapshot) {
+  const expected = new Set();
+  for (const record of snapshot.records || []) {
+    if (!record.traversable || record.displayOnly || !record.classes.includes("hl")) continue;
+    if (record.source) expected.add(record.source);
+    if (record.target) expected.add(record.target);
+  }
+  const actual = new Set(snapshot.highlightedNodeIds || []);
+  const allowed = new Set([...expected, ...(snapshot.focus || [])]);
+  const failures = [];
+  for (const id of actual) if (!allowed.has(id)) failures.push(`unexpected highlighted chronology node ${id}`);
+  for (const id of expected) if (!actual.has(id) && !(snapshot.focus || []).includes(id)) failures.push(`missing highlighted chronology endpoint ${id}`);
   if (failures.length) throw new Error(failures.join("; "));
 }
 
@@ -550,14 +566,28 @@ async function runAudit(args) {
     cases.push(await runCase(cdp,server.url,timeoutMs,"complete",async()=>{
       await clearSelection(cdp,timeoutMs); await setTier(cdp,"complete",timeoutMs); await clickWork(cdp,PRIMARY_WORK,timeoutMs);
       await waitChronologyState(cdp,s=>s.dim&&s.focus.length>0&&s.highlighted.length>0,timeoutMs,"complete chronology selection");
-      validateModeOracle(await chronologySnapshot(cdp), "complete", fixture);
-      return {snapshot:await chronologySnapshot(cdp)};
+      const state=await chronologySnapshot(cdp); validateModeOracle(state, "complete", fixture); validateChronologyNodeClosure(state);
+      return {snapshot:state};
     }));
     cases.push(await runCase(cdp,server.url,timeoutMs,"site-proposal",async()=>{
       await clearSelection(cdp,timeoutMs); await setTier(cdp,"site-proposal",timeoutMs); await clickWork(cdp,PRIMARY_WORK,timeoutMs);
       await waitChronologyState(cdp,s=>s.dim&&s.focus.length>0&&s.highlighted.length>0,timeoutMs,"site-proposal chronology selection");
-      validateModeOracle(await chronologySnapshot(cdp), "site-proposal", fixture);
-      return {snapshot:await chronologySnapshot(cdp)};
+      const state=await chronologySnapshot(cdp); validateModeOracle(state, "site-proposal", fixture); validateChronologyNodeClosure(state);
+      return {snapshot:state};
+    }));
+    cases.push(await runCase(cdp,server.url,timeoutMs,"spider-man-3-chain",async()=>{
+      await clearSelection(cdp,timeoutMs); await setTier(cdp,"complete",timeoutMs); await clickWork(cdp,SPIDER_MAN_3_WORK,timeoutMs);
+      await waitChronologyState(cdp,s=>s.dim&&s.focus.length>0&&s.highlighted.length>0,timeoutMs,"Spider-Man 3 chronology selection");
+      const state=await chronologySnapshot(cdp),requiredEdges=[
+        "sequence-spider-man-2-2004-spider-man-3-2007-raimi-3",
+        "sequence-spider-man-2002-spider-man-2-2004-raimi-2",
+      ],requiredNodes=["spider-man-2-2004","spider-man-2002"];
+      const edgeSet=new Set(state.highlighted),nodeSet=new Set([...(state.highlightedNodeIds||[]),...(state.focus||[])]),failures=[];
+      for(const edgeId of requiredEdges)if(!edgeSet.has(edgeId))failures.push(`Spider-Man 3: missing predecessor edge ${edgeId}`);
+      for(const nodeId of requiredNodes)if(!nodeSet.has(nodeId))failures.push(`Spider-Man 3: missing predecessor node ${nodeId}`);
+      if(failures.length)throw new Error(failures.join("; "));
+      validateChronologyNodeClosure(state);
+      return {snapshot:state,required_edges:requiredEdges,required_nodes:requiredNodes};
     }));
     cases.push(await runCase(cdp,server.url,timeoutMs,"previous1",async()=>{
       const available=await evaluate(cdp,"return !!document.querySelector('.scope-btn[data-scope=\"previous1\"]')");
@@ -572,7 +602,7 @@ async function runAudit(args) {
         for(const goal of MODE_ORACLE[mode].goals)await clickWork(cdp,goal,timeoutMs,"right");
         await waitChronologyState(cdp,s=>s.dim&&(mode==='and'||s.highlighted.length>0),timeoutMs,`${mode} chronology selection`);
         const state=await chronologySnapshot(cdp); if(state.displayOnlyHighlighted.length)throw new Error(`${mode} highlighted display-only edge`);
-        validateModeOracle(state, mode, fixture);
+        validateModeOracle(state, mode, fixture); validateChronologyNodeClosure(state);
         return {snapshot:state};
       }));
     }
@@ -584,6 +614,7 @@ async function runAudit(args) {
         await clearSelection(cdp,timeoutMs); await clickWork(cdp,endpoint,timeoutMs,"left","chronology");
         const state=await chronologySnapshot(cdp);
         if(state.displayOnlyHighlighted.length)throw new Error(`display-only edge highlighted after endpoint click: ${endpoint}`);
+        validateChronologyNodeClosure(state);
         checked.push({endpoint,display_only_highlighted:state.displayOnlyHighlighted});
       }
       return {display_only_endpoints:checked};

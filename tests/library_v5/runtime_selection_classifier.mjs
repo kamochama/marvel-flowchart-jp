@@ -37,6 +37,7 @@ function loadFunction(name, context = {}) {
 }
 
 const classifyChronologySelection = loadFunction("classifyChronologySelection");
+const chronologySelectionNodeClasses = loadFunction("chronologySelectionNodeClasses", {classifyChronologySelection});
 const materializeChronologyPathEdgeIds = loadFunction("materializeChronologyPathEdgeIds");
 const mobileOverlayCompressedBridges = loadFunction("mobileOverlayCompressedBridges");
 const mobileOverlaySyntheticSpecs = loadFunction("mobileOverlaySyntheticSpecs", {mobileOverlayCompressedBridges});
@@ -79,6 +80,20 @@ const duplicateResult = classifyChronologySelection(duplicateEdges, {
   selectedIds: ["goal"], tier: "complete", combineMode: "or",
 });
 
+const chronologyNodeRecords = [
+  {edge_id: "spider-1-2", source: "spider-1", target: "spider-2", traversable: true},
+  {edge_id: "spider-2-3", source: "spider-2", target: "spider-3", traversable: true},
+  {edge_id: "spider-3-goal", source: "spider-3", target: "goal", traversable: true},
+  {edge_id: "unrelated-a-b", source: "unrelated-a", target: "unrelated-b", traversable: true},
+];
+const chronologyNodeResult = chronologySelectionNodeClasses(chronologyNodeRecords, {
+  selectedIds: ["goal"],
+  tier: "complete",
+  // The relation graph intentionally contains an unrelated component.  The
+  // chronology presentation must derive node paint from chronology edges only.
+  ctx: new Set(["goal", "unrelated-a", "unrelated-b"]),
+});
+
 function fakeClassList(initial = []) {
   const values = new Set(initial);
   return {
@@ -95,6 +110,9 @@ const tierRecords = [
 ];
 
 const report = {
+  chronology_nodes: Object.fromEntries(
+    [...chronologyNodeResult.entries()].sort(([a], [b]) => a.localeCompare(b)),
+  ),
   non_traversable: {
     "site-proposal": classify(
       [{key: "a->goal", source: "a", target: "goal", traversable: false}],

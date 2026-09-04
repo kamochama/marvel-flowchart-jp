@@ -33,6 +33,12 @@ class RuntimeSelectionClassifierTests(unittest.TestCase):
         self.assertEqual(
             report,
             {
+                "chronology_nodes": {
+                    "goal": "backhl",
+                    "spider-1": "backhl",
+                    "spider-2": "backhl",
+                    "spider-3": "backhl",
+                },
                 "non_traversable": {"site-proposal": {}, "complete": {}},
                 "tier_gate": {
                     "site-proposal": {"a->goal": "backhl", "goal->next": "forwardhl"},
