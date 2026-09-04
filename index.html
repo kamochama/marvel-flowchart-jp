@@ -610,6 +610,31 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 }
 
 
+/* M2 mobile shell: one active view host, one bottom navigation, one sheet. */
+.mobile-app-shell{display:none}
+@media(max-width:760px){
+  .mobile-app-shell{display:flex;position:relative;z-index:20;min-height:calc(100dvh - 56px);flex-direction:column;background:#070b16;color:#e5e7eb}
+  .mobile-view-host{flex:1 1 auto;min-height:0;padding:10px 9px calc(72px + env(safe-area-inset-bottom));}
+  .mobile-view-placeholder{display:grid;min-height:calc(100dvh - 190px);align-content:center;justify-items:center;gap:7px;padding:28px 18px;text-align:center;border:1px solid #263550;border-radius:14px;background:radial-gradient(circle at 50% 0,rgba(37,99,235,.14),transparent 52%),#0b1220}
+  .mobile-view-placeholder h2{margin:0;font-size:20px;color:#f8fafc}
+  .mobile-view-placeholder p{max-width:32rem;margin:0;color:#94a3b8;line-height:1.55}
+  .mobile-view-kicker{font-size:10px;font-weight:900;letter-spacing:.14em;color:#60a5fa}
+  #mobileBottomNav{position:fixed;right:0;bottom:0;left:0;z-index:70;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px 9px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #263550;background:rgba(7,11,22,.97);box-shadow:0 -10px 30px rgba(0,0,0,.28)}
+  #mobileBottomNav button{min-height:44px;border:1px solid #334155;border-radius:10px;background:#101827;color:#cbd5e1;font-size:12px;font-weight:850}
+  #mobileBottomNav button[aria-current="page"]{border-color:#60a5fa;background:#172554;color:#dbeafe;box-shadow:0 0 0 1px rgba(96,165,250,.18)}
+  #mobileSheet{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center;background:rgba(2,6,23,.72)}
+  #mobileSheet[hidden]{display:none!important}
+  .mobile-sheet-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;cursor:default}
+  .mobile-sheet-card{position:relative;z-index:1;width:100%;max-height:78dvh;overflow:auto;padding:12px 13px calc(16px + env(safe-area-inset-bottom));border:1px solid #475569;border-bottom:0;border-radius:18px 18px 0 0;background:#0b1322;box-shadow:0 -18px 50px rgba(0,0,0,.48)}
+  .mobile-sheet-card:before{content:"";display:block;width:46px;height:4px;margin:0 auto 10px;border-radius:999px;background:#64748b}
+  .mobile-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .mobile-sheet-head h2{margin:0;font-size:16px;color:#f8fafc}
+  .mobile-sheet-head p{margin:3px 0 0;color:#94a3b8;font-size:11px}
+  .mobile-sheet-head button{min-width:68px;min-height:44px}
+  #mobileSheetBody{min-height:80px;padding:12px;border:1px solid #263550;border-radius:10px;background:#0f172a;color:#cbd5e1;line-height:1.55}
+}
+
+
 /* PUBLIC v5.14.0 — mobile hierarchy: persistent search + one area selector. */
 .mobile-primary-nav{display:none}
 @media(max-width:760px){
@@ -839,6 +864,24 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
   </details>
 </div>
 </header>
+<div id="mobileAppShell" class="mobile-app-shell" aria-label="スマホ用アプリ">
+  <div id="mobileViewHost" class="mobile-view-host" aria-live="polite"></div>
+  <nav id="mobileBottomNav" aria-label="スマホ画面の切り替え">
+    <button type="button" data-mobile-view="chart" aria-current="page">チャート</button>
+    <button type="button" data-mobile-view="search">探す</button>
+    <button type="button" data-mobile-view="plan">予習</button>
+  </nav>
+  <div id="mobileSheet" role="dialog" aria-modal="true" aria-labelledby="mobileSheetTitle" aria-hidden="true" hidden>
+    <button type="button" class="mobile-sheet-backdrop" data-mobile-sheet-dismiss aria-label="シートを閉じる"></button>
+    <section class="mobile-sheet-card" tabindex="-1">
+      <div class="mobile-sheet-head">
+        <div><h2 id="mobileSheetTitle" tabindex="-1">作品情報</h2><p id="mobileSheetSubtitle">選択した作品の情報</p></div>
+        <button id="mobileSheetClose" type="button">閉じる</button>
+      </div>
+      <div id="mobileSheetBody">作品を選ぶと、ここに詳細を表示します。</div>
+    </section>
+  </div>
+</div>
 <div class="public-nav-sticky">
   <div class="public-guide" aria-label="基本操作">
     <span class="guide-lead">はじめかた</span>
@@ -8032,6 +8075,188 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 })();
 </script>
 
+<script>
+// M2: mobile shell lifecycle, one sheet, and URL/history synchronization.
+(()=>{
+  const MOBILE_VIEWS=new Set(['chart','search','plan']);
+  const MOBILE_SHEETS=new Set(['detail','reason','settings']);
+  const MOBILE_VIEW_LABELS={chart:'チャート',search:'作品を探す',plan:'予習プラン'};
+  const MOBILE_SHEET_LABELS={detail:['作品情報','選択した作品の情報'],reason:['接続理由','この接続の根拠'],settings:['表示設定','モバイル表示の設定']};
+  let mobileSheetReturnFocus=null;
+  let suppressMobileSheetHistory=false;
+
+  function mobileUiStore(){return window.marvelMobileUiStore||null}
+  function normalizeMobileView(view){return MOBILE_VIEWS.has(view)?view:'chart'}
+  function normalizeMobileSheet(sheet){return MOBILE_SHEETS.has(sheet)?sheet:'closed'}
+
+  function ensureMobileShell(){
+    const shell=document.getElementById('mobileAppShell');
+    if(!shell)return null;
+    if(shell.dataset.mobileShellWired==='1')return shell;
+    const nav=document.getElementById('mobileBottomNav');
+    const sheet=document.getElementById('mobileSheet');
+    nav?.addEventListener('click',event=>{
+      const button=event.target.closest?.('[data-mobile-view]');
+      if(button)setMobileView(button.dataset.mobileView);
+    });
+    document.getElementById('mobileSheetClose')?.addEventListener('click',()=>closeMobileSheet());
+    sheet?.addEventListener('click',event=>{
+      if(event.target===sheet||event.target.closest?.('[data-mobile-sheet-dismiss]'))closeMobileSheet();
+    });
+    document.addEventListener('keydown',event=>{
+      const state=mobileUiStore()?.getState();
+      if(state?.sheet==='closed')return;
+      if(event.key==='Escape'){event.preventDefault();closeMobileSheet();return;}
+      if(event.key!=='Tab'||!sheet)return;
+      const focusables=[...sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(el=>!el.disabled&&el.offsetParent!==null);
+      if(!focusables.length)return;
+      const first=focusables[0],last=focusables[focusables.length-1];
+      if(!sheet.contains(document.activeElement)){event.preventDefault();(event.shiftKey?last:first).focus();}
+      else if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    });
+    shell.dataset.mobileShellWired='1';
+    return shell;
+  }
+
+  function syncMobileBottomNav(view){
+    document.querySelectorAll('#mobileBottomNav [data-mobile-view]').forEach(button=>{
+      const active=button.dataset.mobileView===view;
+      if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
+    });
+  }
+
+  function mountMobileView(view){
+    const shell=ensureMobileShell();
+    const host=shell?.querySelector('#mobileViewHost');
+    if(!host)return null;
+    const normalized=normalizeMobileView(view);
+    // Keep a future chart renderer/camera object alive across view changes. The
+    // current M2 placeholder is intentionally the only mounted view content.
+    if(typeof viewStates!=='undefined'){
+      const key=`mobile-shell:${normalized}`;
+      const retained=viewStates.get(key)||{renderer:null,camera:null};
+      viewStates.set(key,retained);
+    }
+    host.replaceChildren();
+    const section=document.createElement('section');
+    section.className='mobile-view-placeholder';
+    section.dataset.mobileView=normalized;
+    section.setAttribute('aria-labelledby','mobileViewTitle');
+    section.innerHTML=`<span class="mobile-view-kicker">MOBILE VIEW</span><h2 id="mobileViewTitle">${MOBILE_VIEW_LABELS[normalized]}</h2><p>${normalized==='chart'?'チャート表示領域を準備中です。':normalized==='search'?'作品検索と絞り込みをここで行えます。':'選択した作品の予習プランをここで確認できます。'}</p>`;
+    host.append(section);
+    syncMobileBottomNav(normalized);
+    return section;
+  }
+
+  function readMobileUrlState(){
+    const params=new URLSearchParams(location.search);
+    const view=normalizeMobileView(params.get('mview'));
+    const goalIds=(params.get('goals')||'').split(',').map(id=>id.trim()).filter(Boolean);
+    const sheet=normalizeMobileSheet(params.get('sheet'));
+    return {
+      view,goalIds,selectedId:goalIds[goalIds.length-1]||null,
+      sheet,sheetWork:sheet==='closed'?null:(params.get('sheetWork')||null),
+      query:params.get('q')||'',filter:params.get('mfilter')||''
+    };
+  }
+
+  function writeMobileUrlState({replace=false}={}){
+    const state=mobileUiStore()?.getState();
+    if(!state)return false;
+    const url=new URL(window.location.href);
+    const params=new URLSearchParams(url.search);
+    const setOrDelete=(key,value)=>{if(value)params.set(key,value);else params.delete(key)};
+    setOrDelete('mview',state.view==='chart'?'':normalizeMobileView(state.view));
+    setOrDelete('goals',state.goalIds.join(','));
+    setOrDelete('sheet',state.sheet==='closed'?'':normalizeMobileSheet(state.sheet));
+    setOrDelete('sheetWork',state.sheet==='closed'?'':(state.sheetWork||''));
+    setOrDelete('q',state.query);
+    setOrDelete('mfilter',state.filter);
+    url.search=params.toString();
+    const nextUrl=`${url.pathname}${url.search}${location.hash}`;
+    const historyState={...(window.history.state||{}),mobileUi:state};
+    if(replace)window.history.replaceState(historyState,'',nextUrl);else window.history.pushState(historyState,'',nextUrl);
+    return true;
+  }
+
+  function setMobileView(view,{pushHistory=true}={}){
+    const normalized=normalizeMobileView(view);
+    const store=window.marvelMobileUiStore;
+    if(!store)return normalized;
+    store.setView(normalized);
+    mountMobileView(normalized);
+    syncMobileBottomNav(normalized);
+    if(pushHistory)writeMobileUrlState({replace:false});
+    return normalized;
+  }
+
+  function openMobileSheet(kind,workId){
+    const sheet=document.getElementById('mobileSheet');
+    const store=mobileUiStore();
+    const normalized=normalizeMobileSheet(kind);
+    if(!sheet||!store||normalized==='closed'){closeMobileSheet();return false;}
+    if(store.getState().sheet==='closed')mobileSheetReturnFocus=document.activeElement;
+    const sheetWork=typeof workId==='string'&&workId.trim()?workId.trim():null;
+    store.setSheet(normalized,sheetWork);
+    const [title,subtitle]=MOBILE_SHEET_LABELS[normalized];
+    document.getElementById('mobileSheetTitle').textContent=title;
+    document.getElementById('mobileSheetSubtitle').textContent=subtitle;
+    document.getElementById('mobileSheetBody').textContent=sheetWork?`${sheetWork} の情報を表示します。`:'選択した作品の情報を表示します。';
+    sheet.hidden=false;sheet.setAttribute('aria-hidden','false');sheet.setAttribute('aria-modal','true');
+    if(!suppressMobileSheetHistory)writeMobileUrlState({replace:false});
+    requestAnimationFrame(()=>document.getElementById('mobileSheetTitle')?.focus({preventScroll:true}));
+    return true;
+  }
+
+  function closeMobileSheet({restoreFocus=true}={}){
+    const sheet=document.getElementById('mobileSheet');
+    const store=mobileUiStore();
+    const wasOpen=store?.getState().sheet!=='closed';
+    store?.setSheet('closed',null);
+    if(sheet){sheet.hidden=true;sheet.setAttribute('aria-hidden','true');}
+    if(wasOpen)writeMobileUrlState({replace:true});
+    const target=mobileSheetReturnFocus;mobileSheetReturnFocus=null;
+    if(restoreFocus&&target?.isConnected)requestAnimationFrame(()=>target.focus());
+    return wasOpen;
+  }
+
+  function applyMobileUrlState(){
+    const parsed=readMobileUrlState();
+    const store=mobileUiStore();
+    if(!store)return;
+    if(parsed.sheet==='closed'&&store.getState().sheet!=='closed')closeMobileSheet();
+    store.setGoals(parsed.goalIds,parsed.selectedId);
+    store.setSearch(parsed.query);store.setFilter(parsed.filter);
+    setMobileView(parsed.view,{pushHistory:false});
+    if(parsed.sheet!=='closed'&&store.getState().sheet!==parsed.sheet){
+      const previousSuppression=suppressMobileSheetHistory;suppressMobileSheetHistory=true;
+      openMobileSheet(parsed.sheet,parsed.sheetWork);
+      suppressMobileSheetHistory=previousSuppression;
+    }
+    if(typeof flowchartReady!=='undefined'&&flowchartReady)writeMobileUrlState({replace:true});
+  }
+
+  function handleMobilePopState(){
+    const parsed=readMobileUrlState();
+    if(mobileUiStore()?.getState().sheet!=='closed'&&parsed.sheet==='closed')closeMobileSheet();
+    applyMobileUrlState();
+  }
+
+  window.ensureMobileShell=ensureMobileShell;
+  window.mountMobileView=mountMobileView;
+  window.setMobileView=setMobileView;
+  window.openMobileSheet=openMobileSheet;
+  window.closeMobileSheet=closeMobileSheet;
+  window.readMobileUrlState=readMobileUrlState;
+  window.writeMobileUrlState=writeMobileUrlState;
+  window.marvelMobileHydrateUrlState=applyMobileUrlState;
+  window.addEventListener('popstate',handleMobilePopState);
+  const initializeMobileShell=()=>{ensureMobileShell();applyMobileUrlState();};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initializeMobileShell,{once:true});else initializeMobileShell();
+})();
+</script>
+
 
 
 
@@ -9367,6 +9592,7 @@ function initializeFlowchartData(payload){
   if(typeof renderGoalBar==='function')renderGoalBar();
   if(typeof updatePreparationPlan==='function')updatePreparationPlan();
   if(typeof updateOverallWatchProgress==='function')updateOverallWatchProgress();
+  if(typeof window.marvelMobileHydrateUrlState==='function')window.marvelMobileHydrateUrlState();
   return payload;
 }
 
