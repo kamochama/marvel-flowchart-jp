@@ -8161,6 +8161,53 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     };
   }
 
+  function decodeMobileFilter(filter){
+    const values={branch:'',character:'',status:''};
+    if(!filter)return values;
+    const params=new URLSearchParams(filter);
+    values.branch=params.get('branch')||'';
+    values.character=params.get('character')||'';
+    values.status=params.get('status')||'';
+    if(values.branch||values.character||values.status)return values;
+    try{
+      const legacy=JSON.parse(filter);
+      for(const key of Object.keys(values))if(typeof legacy?.[key]==='string')values[key]=legacy[key];
+    }catch(_){/* Unknown filter encodings are intentionally ignored. */}
+    return values;
+  }
+
+  function encodeMobileFilter(){
+    const params=new URLSearchParams();
+    const branch=document.getElementById('branch')?.value||'';
+    const character=document.getElementById('character')?.value||'';
+    const status=document.getElementById('status')?.value||'';
+    if(branch)params.set('branch',branch);
+    if(character)params.set('character',character);
+    if(status)params.set('status',status);
+    return params.toString();
+  }
+
+  function syncMobileSearchControls(state){
+    const q=document.getElementById('q');
+    const branch=document.getElementById('branch');
+    const character=document.getElementById('character');
+    const status=document.getElementById('status');
+    const filter=decodeMobileFilter(state?.filter||'');
+    if(q)q.value=state?.query||'';
+    if(branch)branch.value=filter.branch;
+    if(character)character.value=filter.character;
+    if(status)status.value=filter.status;
+  }
+
+  function syncMobileSearchStateFromControls(){
+    const store=window.marvelMobileUiStore;
+    if(!store)return;
+    const q=document.getElementById('q');
+    const mfilter=encodeMobileFilter();
+    store.setSearch(q?.value||'');
+    store.setFilter(mfilter);
+  }
+
   function writeMobileUrlState({replace=false}={}){
     const state=mobileUiStore()?.getState();
     if(!state)return false;
@@ -8225,15 +8272,18 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const parsed=readMobileUrlState();
     const store=mobileUiStore();
     if(!store)return;
-    if(parsed.sheet==='closed'&&store.getState().sheet!=='closed')closeMobileSheet();
+    const current=store.getState();
+    if(parsed.sheet==='closed'&&current.sheet!=='closed')closeMobileSheet();
     store.setGoals(parsed.goalIds,parsed.selectedId);
     store.setSearch(parsed.query);store.setFilter(parsed.filter);
+    syncMobileSearchControls(parsed);
     setMobileView(parsed.view,{pushHistory:false});
-    if(parsed.sheet!=='closed'&&store.getState().sheet!==parsed.sheet){
+    if(parsed.sheet!=='closed'&&(current.sheet!==parsed.sheet||current.sheetWork!==parsed.sheetWork)){
       const previousSuppression=suppressMobileSheetHistory;suppressMobileSheetHistory=true;
       openMobileSheet(parsed.sheet,parsed.sheetWork);
       suppressMobileSheetHistory=previousSuppression;
     }
+    if(typeof flowchartReady!=='undefined'&&flowchartReady&&typeof render==='function')render();
     if(typeof flowchartReady!=='undefined'&&flowchartReady)writeMobileUrlState({replace:true});
   }
 
@@ -8252,7 +8302,15 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   window.writeMobileUrlState=writeMobileUrlState;
   window.marvelMobileHydrateUrlState=applyMobileUrlState;
   window.addEventListener('popstate',handleMobilePopState);
-  const initializeMobileShell=()=>{ensureMobileShell();applyMobileUrlState();};
+  const initializeMobileShell=()=>{
+    ensureMobileShell();
+    document.getElementById('q')?.addEventListener('input',syncMobileSearchStateFromControls);
+    document.getElementById('branch')?.addEventListener('change',syncMobileSearchStateFromControls);
+    document.getElementById('character')?.addEventListener('change',syncMobileSearchStateFromControls);
+    document.getElementById('status')?.addEventListener('change',syncMobileSearchStateFromControls);
+    document.getElementById('clear')?.addEventListener('click',syncMobileSearchStateFromControls);
+    applyMobileUrlState();
+  };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initializeMobileShell,{once:true});else initializeMobileShell();
 })();
 </script>

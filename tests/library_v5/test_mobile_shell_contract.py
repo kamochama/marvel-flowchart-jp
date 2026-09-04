@@ -119,6 +119,30 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("URLSearchParams", write_body)
         self.assertIn("location.hash", write_body)
 
+    def test_mobile_url_reapplies_sheet_work_when_kind_is_unchanged(self) -> None:
+        body = function_body(self.source, "applyMobileUrlState")
+        self.assertRegex(body, r"const current=store\.getState\(\)")
+        self.assertRegex(
+            body,
+            r"current\.sheet!==parsed\.sheet[\s\S]{0,120}current\.sheetWork!==parsed\.sheetWork",
+        )
+
+    def test_mobile_search_url_and_controls_share_store_adapter(self) -> None:
+        project_body = function_body(self.source, "syncMobileSearchControls")
+        self.assertIn("q.value", project_body)
+        self.assertIn("branch.value", project_body)
+        self.assertIn("character.value", project_body)
+        self.assertIn("status.value", project_body)
+
+        input_body = function_body(self.source, "syncMobileSearchStateFromControls")
+        self.assertIn("setSearch", input_body)
+        self.assertIn("setFilter", input_body)
+        self.assertIn("q", input_body)
+        self.assertIn("mfilter", input_body)
+
+        apply_body = function_body(self.source, "applyMobileUrlState")
+        self.assertIn("syncMobileSearchControls", apply_body)
+
     def test_focus_goal_syncs_store_after_desktop_semantic_update(self) -> None:
         self.assertRegex(
             self.source,
