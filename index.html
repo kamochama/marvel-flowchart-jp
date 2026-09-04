@@ -638,6 +638,21 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .mobile-chart-controls button:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
   .mobile-chart-surface>.panel{display:block}
   .mobile-chart-surface>.panel>.svg-wrap{min-height:calc(100dvh - 210px);height:calc(100dvh - 210px);max-height:none}
+  .mobile-search-surface{display:grid;gap:10px;align-content:start;min-height:calc(100dvh - 190px);padding:12px 11px 18px;border:1px solid #263550;border-radius:14px;background:linear-gradient(180deg,rgba(17,27,46,.96),rgba(11,18,32,.96))}
+  .mobile-search-surface h2{margin:0;font-size:20px;color:#f8fafc}
+  .mobile-search-query{width:100%;min-height:48px;padding:10px 12px;border:1px solid #64748b;border-radius:10px;background:#0b1322;color:#f8fafc;font-size:16px}
+  .mobile-search-filter-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .mobile-search-filter-row label{display:grid;gap:4px;color:#94a3b8;font-size:10px;font-weight:750}
+  .mobile-search-filter-row select{width:100%;min-height:44px;font-size:14px}
+  .mobile-search-status{margin:0;color:#cbd5e1;font-size:12px}
+  .mobile-search-empty{margin:0;padding:15px 10px;border:1px dashed #475569;border-radius:10px;color:#fbbf24;font-size:14px;text-align:center}
+  .mobile-search-results{display:grid;gap:8px}
+  .mobile-search-result-card{display:grid;gap:8px;padding:11px;border:1px solid #334155;border-radius:11px;background:#0f172a}
+  .mobile-search-result-card h3{margin:0;font-size:15px;color:#f8fafc;line-height:1.35}
+  .mobile-search-result-card .mobile-search-result-meta{margin:0;color:#94a3b8;font-size:11px;line-height:1.45}
+  .mobile-search-result-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .mobile-search-result-action{min-width:0;min-height:44px;padding:7px 4px;border:1px solid #475569;border-radius:9px;background:#172033;color:#dbeafe;font-size:12px;font-weight:800}
+  .mobile-search-result-action:focus-visible,.mobile-search-query:focus-visible,.mobile-search-filter-row select:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
   body.mobile-chart-host-only #left>.panel{display:none!important}
 }
 
@@ -8249,6 +8264,104 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
   window.mountMobileChartView=mountMobileChartView;
 
+  function renderMobileSearchResults(query='',filter=''){
+    const surface=document.querySelector('#mobileViewHost [data-mobile-surface="search"]');
+    if(!surface)return [];
+    const mfilter=String(filter??'');
+    const filterValues=decodeMobileFilter(mfilter);
+    const legacyQuery=document.getElementById('q');
+    const legacyBranch=document.getElementById('branch');
+    const legacyCharacter=document.getElementById('character');
+    const legacyStatus=document.getElementById('status');
+    if(legacyQuery)legacyQuery.value=String(query??'');
+    if(legacyBranch)legacyBranch.value=filterValues.branch;
+    if(legacyCharacter)legacyCharacter.value=filterValues.character;
+    if(legacyStatus)legacyStatus.value=filterValues.status;
+    const hits=(flowchartReady?NODES.filter(pass):[]).sort((a,b)=>a.title.localeCompare(b.title,'ja'));
+    const resultCount=surface.querySelector('[data-mobile-search-count]');
+    const empty=surface.querySelector('[data-mobile-search-empty]');
+    const results=surface.querySelector('[data-mobile-search-results]');
+    if(resultCount)resultCount.textContent=`${hits.length}件の作品`;
+    if(empty){empty.hidden=hits.length>0;empty.textContent=hits.length?'':'該当なし';}
+    if(!results)return hits;
+    results.replaceChildren();
+    const makeAction=(label,attribute,handler)=>{
+      const button=document.createElement('button');
+      button.type='button';button.className='mobile-search-result-action';
+      button.setAttribute(attribute,'');button.setAttribute('aria-label',`${label}`);button.textContent=label;
+      button.addEventListener('click',handler);return button;
+    };
+    hits.forEach(node=>{
+      const card=document.createElement('article');card.className='mobile-search-result-card';card.dataset.mobileSearchWork=node.id;
+      const heading=document.createElement('h3');heading.textContent=node.title||node.id;
+      const meta=document.createElement('p');meta.className='mobile-search-result-meta';
+      const japan=node.japan_date?` · 日本公開: ${node.japan_date}${node.japan_type?`（${node.japan_type}）`:''}`:'';
+      meta.textContent=`${node.title_en||''} · 公開: ${node.release||'未定'}${japan}`;
+      const actions=document.createElement('div');actions.className='mobile-search-result-actions';
+      const selectButton=makeAction('選択','data-mobile-search-select',event=>{
+        event.preventDefault();event.stopPropagation();
+        select(node.id,false);window.marvelMobileUiStore?.setGoals(orderedGoalIds(),selected);
+        card.setAttribute('aria-current','true');
+      });
+      const chartButton=makeAction('チャートで見る','data-mobile-search-chart',event=>{
+        event.preventDefault();event.stopPropagation();
+        if(!selectedIds.has(node.id))select(node.id,false);else{selected=node.id;syncMobileUiGoals();}
+        window.marvelMobileUiStore?.setGoals(orderedGoalIds(),selected);setMobileView('chart');
+      });
+      const detailButton=makeAction('詳細','data-mobile-search-detail',event=>{
+        event.preventDefault();event.stopPropagation();openMobileSheet('detail',node.id);
+      });
+      actions.append(selectButton,chartButton,detailButton);card.append(heading,meta,actions);results.append(card);
+    });
+    return hits;
+  }
+
+  function mountMobileSearchView(host){
+    const mobileHost=host||document.getElementById('mobileViewHost');
+    if(!mobileHost||!mobileChartMotion.matches)return null;
+    window.closeMobileSearchResults?.();
+    const state=mobileUiStore()?.getState()||{query:'',filter:''};
+    const surface=document.createElement('section');
+    surface.className='mobile-search-surface';surface.setAttribute('data-mobile-surface','search');
+    surface.setAttribute('aria-labelledby','mobileSearchTitle');
+    surface.innerHTML=`<span class="mobile-view-kicker">SEARCH</span><h2 id="mobileSearchTitle">作品を探す</h2><label for="mobileSearchQuery" class="sr-only">作品を検索</label><input id="mobileSearchQuery" class="mobile-search-query" data-mobile-search-query type="search" autocomplete="off" placeholder="邦題・英題・シリーズ名で検索" aria-label="作品を検索"><div class="mobile-search-filter-row" aria-label="検索結果を絞り込む"><label>系統<select data-mobile-search-filter="branch" aria-label="系統で絞り込み"></select></label><label>公開状況<select data-mobile-search-filter="status" aria-label="公開状況で絞り込み"></select></label><label>主要キャラクター<select data-mobile-search-filter="character" aria-label="主要キャラクターで絞り込み"></select></label></div><p class="mobile-search-status" data-mobile-search-count role="status" aria-live="polite">0件の作品</p><p class="mobile-search-empty" data-mobile-search-empty role="status" aria-live="polite" hidden>該当なし</p><div class="mobile-search-results" data-mobile-search-results aria-label="検索結果"></div>`;
+    const copyOptions=(sourceId,target)=>{
+      const source=document.getElementById(sourceId);if(!source||!target)return;
+      target.replaceChildren(...[...source.options].map(option=>option.cloneNode(true)));
+    };
+    copyOptions('branch',surface.querySelector('[data-mobile-search-filter="branch"]'));
+    copyOptions('status',surface.querySelector('[data-mobile-search-filter="status"]'));
+    copyOptions('character',surface.querySelector('[data-mobile-search-filter="character"]'));
+    mobileHost.replaceChildren(surface);
+    const queryInput=surface.querySelector('[data-mobile-search-query]');
+    const branchInput=surface.querySelector('[data-mobile-search-filter="branch"]');
+    const characterInput=surface.querySelector('[data-mobile-search-filter="character"]');
+    const statusInput=surface.querySelector('[data-mobile-search-filter="status"]');
+    const filterForSurface=()=>{
+      const params=new URLSearchParams();
+      if(branchInput?.value)params.set('branch',branchInput.value);
+      if(characterInput?.value)params.set('character',characterInput.value);
+      if(statusInput?.value)params.set('status',statusInput.value);
+      return params.toString();
+    };
+    const filterValues=decodeMobileFilter(state.filter||'');
+    queryInput.value=state.query||'';branchInput.value=filterValues.branch;characterInput.value=filterValues.character;statusInput.value=filterValues.status;
+    const sync=()=>{
+      const store=window.marvelMobileUiStore;const filter=filterForSurface();
+      store?.setSearch(queryInput.value||'');store?.setFilter(filter);
+      syncMobileSearchControls({query:queryInput.value||'',filter});
+      renderMobileSearchResults(queryInput.value,filter);writeMobileUrlState({replace:true});
+    };
+    queryInput.addEventListener('input',sync);
+    [branchInput,characterInput,statusInput].forEach(input=>input?.addEventListener('change',sync));
+    const query=queryInput.value,filter=state.filter||'';
+    renderMobileSearchResults(query,filter);
+    return surface;
+  }
+
+  window.mountMobileSearchView=mountMobileSearchView;
+  window.renderMobileSearchResults=renderMobileSearchResults;
+
   function mountMobileView(view){
     const shell=ensureMobileShell();
     const host=shell?.querySelector('#mobileViewHost');
@@ -8256,6 +8369,11 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const normalized=normalizeMobileView(view);
     if(!mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');restoreMobileChartPanels();host.replaceChildren();syncMobileBottomNav(normalized);return null;}
     if(normalized==='chart'&&mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');return mountMobileChartView(host);}
+    if(normalized==='search'){
+      document.body.classList.add('mobile-chart-host-only');
+      restoreMobileChartPanels();
+      return mountMobileSearchView(host);
+    }
     if(normalized!=='chart'){
       document.body.classList.add('mobile-chart-host-only');
       restoreMobileChartPanels();
@@ -8320,11 +8438,20 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const branch=document.getElementById('branch');
     const character=document.getElementById('character');
     const status=document.getElementById('status');
+    const mobileSurface=document.querySelector('#mobileViewHost [data-mobile-surface="search"]');
+    const mobileQuery=mobileSurface?.querySelector('[data-mobile-search-query]');
+    const mobileBranch=mobileSurface?.querySelector('[data-mobile-search-filter="branch"]');
+    const mobileCharacter=mobileSurface?.querySelector('[data-mobile-search-filter="character"]');
+    const mobileStatus=mobileSurface?.querySelector('[data-mobile-search-filter="status"]');
     const filter=decodeMobileFilter(state?.filter||'');
     if(q)q.value=state?.query||'';
     if(branch)branch.value=filter.branch;
     if(character)character.value=filter.character;
     if(status)status.value=filter.status;
+    if(mobileQuery)mobileQuery.value=state?.query||'';
+    if(mobileBranch)mobileBranch.value=filter.branch;
+    if(mobileCharacter)mobileCharacter.value=filter.character;
+    if(mobileStatus)mobileStatus.value=filter.status;
   }
 
   function syncMobileSearchStateFromControls(){
@@ -8641,7 +8768,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     closeMobileSearchResults();
     return true;
   };
-  window.renderMobileSearchResults=function(){
+  window.renderLegacyMobileSearchResults=function(){
     if(!mobileSearchResults||!window.matchMedia('(max-width:760px)').matches){closeMobileSearchResults();return;}
     const query=(searchInput?.value||'').trim().toLowerCase();
     if(!query){mobileSearchResults.innerHTML='';closeMobileSearchResults();return;}
@@ -9287,8 +9414,8 @@ window.ensureStageAViewInitialized=function(target){
     else if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
   });
-  searchInput?.addEventListener('input',renderMobileSearchResults);
-  searchInput?.addEventListener('focus',renderMobileSearchResults);
+  searchInput?.addEventListener('input',renderLegacyMobileSearchResults);
+  searchInput?.addEventListener('focus',renderLegacyMobileSearchResults);
   document.addEventListener('pointerdown',e=>{if(mobileSearchHost&&!mobileSearchHost.contains(e.target))closeMobileSearchResults();});
   const mq=window.matchMedia('(max-width:760px)');
   mq.addEventListener?.('change',()=>{mountSearchForViewport();closeMobileAreaMenu();closeMobileSearchResults();syncMobileWorkspaceStatus();});

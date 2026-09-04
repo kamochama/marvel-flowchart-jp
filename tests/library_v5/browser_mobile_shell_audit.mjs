@@ -14,8 +14,8 @@ function usage() {
   return [
     "Usage: node browser_mobile_shell_audit.mjs --root <repo> [--chrome <path>]",
     "",
-    "Runs real pointer/focus scenarios against the M3 mobile chart surface.",
-    "The final line is JSON: {viewport,selection,sheet,rerenders,failures}.",
+    "Runs real pointer/focus scenarios against the M3/M4 mobile shell surfaces.",
+    "The final line is JSON: {viewport,selection,sheet,rerenders,views,search,history,failures}.",
     "",
     "Options:",
     "  --root <path>      Repository root to serve over HTTP",
@@ -202,6 +202,35 @@ async function pressTab(cdp) {
 async function focusedElementId(cdp) {
   return pageEvaluate(cdp, "return document.activeElement?.id || null;");
 }
+async function mobileSearchSnapshot(cdp) {
+  return pageEvaluate(cdp, `
+    const store=window.marvelMobileUiStore?.getState?.()||{};
+    const surface=document.querySelector('#mobileViewHost [data-mobile-surface="search"]');
+    const input=surface?.querySelector('[data-mobile-search-query]');
+    const cards=[...(surface?.querySelectorAll('[data-mobile-search-work]')||[])];
+    const empty=surface?.querySelector('[data-mobile-search-empty]');
+    const audit=window.marvelSelectionAudit?.()||{};
+    const actions=cards.flatMap(card=>[...card.querySelectorAll('.mobile-search-result-action')]);
+    return {
+      view:store.view||null,query:store.query||input?.value||'',filter:store.filter||'',
+      searchSurface:!!surface,inputValue:input?.value||'',resultCount:cards.length,
+      firstId:cards[0]?.dataset.mobileSearchWork||null,selected:[...(audit.selected||[])],back:[...(audit.back||[])],
+      emptyText:empty?.textContent||'',emptyVisible:!!empty&&!empty.hidden,
+      actionsReachable:actions.length>0&&actions.every(button=>{const r=button.getBoundingClientRect();return r.width>=44&&r.height>=44;}),
+    };
+  `);
+}
+async function waitForSearch(cdp, predicate, timeoutMs, label) {
+  return poll(async () => { const state=await mobileSearchSnapshot(cdp); return predicate(state)?state:null; }, timeoutMs, label);
+}
+async function selectAllAndBackspace(cdp) {
+  const params={key:"a",code:"KeyA",windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2};
+  await cdp.send("Input.dispatchKeyEvent", { type:"keyDown", ...params });
+  await cdp.send("Input.dispatchKeyEvent", { type:"keyUp", ...params });
+  const backspace={key:"Backspace",code:"Backspace",windowsVirtualKeyCode:8,nativeVirtualKeyCode:8};
+  await cdp.send("Input.dispatchKeyEvent", { type:"keyDown", ...backspace });
+  await cdp.send("Input.dispatchKeyEvent", { type:"keyUp", ...backspace });
+}
 async function controlFocusSequence(cdp) {
   const expected = ["mobileChartFit", "mobileChartSelected", "mobileChartDetails", "mobileChartViewButton"];
   await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartFit"));
@@ -263,6 +292,7 @@ async function snapshot(cdp) {
       activePanelId:document.querySelector('.panel.active')?.id||null,
       legacyPanelVisible:!!legacyPanel&&getComputedStyle(legacyPanel).display!=='none',
       selected:[...(selection.selected||[])],
+      back:[...(selection.back||[])],
       camera:surface?.dataset.mobileCamera||null,
       sheetHidden:document.getElementById('mobileSheet')?.hidden!==false,
       bottomReachable:nav.length===3&&nav.every(button=>{const r=button.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.bottom<=innerHeight+1;}),
@@ -300,6 +330,8 @@ async function runAudit(args) {
     sheet: { opened: false, closed: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
     views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false },
+    search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false },
+    history: { queryOnViewSwitch: false, queryOnPopstate: false },
     failures,
   };
   try {
@@ -436,6 +468,54 @@ async function runAudit(args) {
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
     const responsiveChart = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "characters" && state.activePanelId === "characters", timeoutMs, "responsive characters chart return");
     if (responsiveChart.panelId !== "characters" || responsiveChart.activePanelId !== "characters") failures.push(`responsive chart return lost characters panel: ${JSON.stringify(responsiveChart)}`);
+
+    // M4: search -> select -> chart must preserve the shared goal and its
+    // predecessor highlight.  Query/filter updates are DOM-only while typing.
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+    await waitForSearch(cdp, (state) => state.view === "search" && state.searchSurface, timeoutMs, "mobile search surface");
+    const searchInput=await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-query]');
+    if(!searchInput)throw new Error("mobile search input is not mounted");
+    await clickPoint(cdp, searchInput);
+    await cdp.send("Input.insertText", { text: "Spider-Man 3" });
+    const spider=await waitForSearch(cdp, (state) => state.view === "search" && state.query === "Spider-Man 3" && state.resultCount > 0 && state.firstId === "spider-man-3-2007", timeoutMs, "Spider-Man 3 search results");
+    result.search.queried=true;
+    result.search.resultCount=spider.resultCount;
+    result.search.actionsReachable=spider.actionsReachable;
+    if(!result.search.actionsReachable)failures.push(`mobile search actions are below the 44px contract: ${JSON.stringify(spider)}`);
+    await pageEvaluate(cdp, "document.querySelector('#mobileViewHost [data-mobile-search-work=\\\"spider-man-3-2007\\\"]')?.scrollIntoView({block:'center'}); return true;");
+    const firstSearchSelect=await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-work="spider-man-3-2007"] [data-mobile-search-select]');
+    if(!firstSearchSelect)throw new Error("Spider-Man 3 selection action is not mounted");
+    await clickPoint(cdp, firstSearchSelect);
+    const selectedSearch=await waitForSearch(cdp, (state) => state.selected.includes("spider-man-3-2007"), timeoutMs, "mobile search selection");
+    result.search.selected=true;
+    result.search.predecessorHighlight=selectedSearch.back.includes("spider-man-2-2004");
+    if(!result.search.predecessorHighlight)failures.push(`mobile search selection lost predecessor chain: ${JSON.stringify(selectedSearch)}`);
+    await pageEvaluate(cdp, "document.querySelector('#mobileViewHost [data-mobile-search-work=\\\"spider-man-3-2007\\\"]')?.scrollIntoView({block:'center'}); return true;");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-work="spider-man-3-2007"] [data-mobile-search-chart]'));
+    const searchChart=await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.selected.includes("spider-man-3-2007"), timeoutMs, "mobile search chart navigation");
+    result.search.chartNavigation=true;
+    result.search.predecessorHighlight=result.search.predecessorHighlight && searchChart.back.includes("spider-man-2-2004");
+    if(!result.search.predecessorHighlight)failures.push(`mobile chart return lost predecessor chain: ${JSON.stringify(searchChart)}`);
+
+    // The query is kept in the shared URL state across a view switch and a
+    // browser back/popstate transition.
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+    const searchAgain=await waitForSearch(cdp, (state) => state.view === "search" && state.inputValue === "Spider-Man 3", timeoutMs, "search query after view switch");
+    result.history.queryOnViewSwitch=searchAgain.inputValue === "Spider-Man 3";
+    if(!result.history.queryOnViewSwitch)failures.push(`query was not restored on search view switch: ${JSON.stringify(searchAgain)}`);
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="plan"]'));
+    await waitFor(cdp, (state) => state.view === "plan" && !state.chartVisible, timeoutMs, "plan view after search");
+    await pageEvaluate(cdp, "history.back(); return true;");
+    const searchPop=await waitForSearch(cdp, (state) => state.view === "search" && state.inputValue === "Spider-Man 3", timeoutMs, "search query after popstate");
+    result.history.queryOnPopstate=searchPop.inputValue === "Spider-Man 3";
+    if(!result.history.queryOnPopstate)failures.push(`query was not restored after popstate: ${JSON.stringify(searchPop)}`);
+    await pageEvaluate(cdp, "document.querySelector('#mobileViewHost [data-mobile-search-query]')?.scrollIntoView({block:'center'}); return true;");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-query]'));
+    await selectAllAndBackspace(cdp);
+    await cdp.send("Input.insertText", { text: "No Such Marvel Work" });
+    const emptySearch=await waitForSearch(cdp, (state) => state.emptyVisible && state.emptyText === "該当なし", timeoutMs, "empty mobile search announcement");
+    result.search.emptyAnnounced=emptySearch.emptyVisible && emptySearch.emptyText === "該当なし";
+    if(!result.search.emptyAnnounced)failures.push(`empty search was not announced through aria-live: ${JSON.stringify(emptySearch)}`);
   } catch (error) {
     failures.push(String(error?.message || error));
   } finally {

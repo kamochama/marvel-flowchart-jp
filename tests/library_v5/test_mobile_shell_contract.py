@@ -255,11 +255,62 @@ class MobileShellContractTests(unittest.TestCase):
             for forbidden in ("render(", "fitView(", "rebuildMobileCanvas(", "initMobileCanvas(", "mountMobileChartView("):
                 self.assertNotIn(forbidden, body, f"{name} must not rebuild chart state")
 
+    def test_mobile_search_renderer_has_semantic_surface_and_shared_filter_contract(self) -> None:
+        mount_body = function_body(self.source, "mountMobileSearchView")
+        render_body = function_body(self.source, "renderMobileSearchResults")
+        self.assertIn("data-mobile-surface','search", mount_body)
+        self.assertIn('data-mobile-search-query', mount_body)
+        self.assertIn('aria-live="polite"', mount_body)
+        self.assertIn("renderMobileSearchResults(query,filter)", mount_body)
+        self.assertIn("NODES.filter(pass)", render_body)
+        self.assertIn("decodeMobileFilter", render_body)
+        self.assertIn("mfilter", render_body)
+        self.assertIn("data-mobile-search-count", mount_body)
+
+    def test_mobile_search_results_separate_selection_navigation_and_detail_actions(self) -> None:
+        mount_body = function_body(self.source, "mountMobileSearchView")
+        render_body = function_body(self.source, "renderMobileSearchResults")
+        for token in (
+            "data-mobile-search-select",
+            "data-mobile-search-chart",
+            "data-mobile-search-detail",
+            "setGoals",
+            "setMobileView('chart')",
+            "openMobileSheet('detail'",
+        ):
+            self.assertIn(token, self.source)
+        self.assertIn("setMobileView('chart')", render_body)
+        self.assertIn("openMobileSheet('detail'", render_body)
+        for token in ("title_en", "release", "title"):
+            self.assertIn(token, render_body)
+
+    def test_mobile_search_typing_only_updates_dom_and_shared_query_filter_state(self) -> None:
+        mount_body = function_body(self.source, "mountMobileSearchView")
+        render_body = function_body(self.source, "renderMobileSearchResults")
+        self.assertIn("setSearch", mount_body)
+        self.assertIn("setFilter", mount_body)
+        self.assertIn("renderMobileSearchResults", mount_body)
+        for forbidden in ("fitView(", "initMobileCanvas(", "rebuildMobileCanvas(", "mountMobileChartView("):
+            self.assertNotIn(forbidden, mount_body)
+            self.assertNotIn(forbidden, render_body)
+
+    def test_mobile_search_controls_keep_accessible_touch_target_and_empty_state_contract(self) -> None:
+        self.assertRegex(self.source, r"mobile-search-result-action[\s\S]{0,500}min-height:44px")
+        self.assertRegex(self.source, r"mobile-search-surface[\s\S]{0,700}input")
+        self.assertIn("該当なし", self.source)
+        self.assertIn("aria-live", self.source)
+
+    def test_mobile_search_view_is_mounted_instead_of_placeholder_and_keeps_legacy_panels_hidden(self) -> None:
+        body = function_body(self.source, "mountMobileView")
+        self.assertIn("mountMobileSearchView", body)
+        self.assertIn("normalized==='search'", body)
+        self.assertIn("mobile-chart-host-only", body)
+
     def test_mobile_chart_browser_runner_has_json_scenario_contract(self) -> None:
         runner = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
         self.assertTrue(runner.is_file(), "M3 browser runner must exist")
         source = runner.read_text(encoding="utf-8")
-        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride"):
+        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select"):
             self.assertIn(token, source)
         self.assertIn("mobileAreaSheet", source)
         self.assertIn('data-mobile-target="release"', source)
