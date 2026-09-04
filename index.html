@@ -8208,6 +8208,19 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     store.setFilter(mfilter);
   }
 
+  function hydrateMobileSelectionFromStore(state){
+    const nextIds=new Set(Array.isArray(state?.goalIds)?state.goalIds:[]);
+    const orderedIds=[...nextIds];
+    const nextSelected=nextIds.has(state?.selectedId)?state.selectedId:(orderedIds.at(-1)||null);
+    const same=selectedIds.size===nextIds.size&&orderedIds.every(id=>selectedIds.has(id))&&selected===nextSelected;
+    if(same)return false;
+    // Keep the existing selection semantics in refreshSelection. This adapter
+    // only restores the shared store snapshot into the semantic variables.
+    selectedIds=nextIds;selected=nextSelected;
+    if(typeof flowchartReady!=='undefined'&&flowchartReady&&typeof refreshSelection==='function')refreshSelection(false);
+    return true;
+  }
+
   function writeMobileUrlState({replace=false}={}){
     const state=mobileUiStore()?.getState();
     if(!state)return false;
@@ -8275,6 +8288,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const current=store.getState();
     if(parsed.sheet==='closed'&&current.sheet!=='closed')closeMobileSheet();
     store.setGoals(parsed.goalIds,parsed.selectedId);
+    const selectionHydrated=hydrateMobileSelectionFromStore(store.getState());
     store.setSearch(parsed.query);store.setFilter(parsed.filter);
     syncMobileSearchControls(parsed);
     setMobileView(parsed.view,{pushHistory:false});
@@ -8283,7 +8297,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       openMobileSheet(parsed.sheet,parsed.sheetWork);
       suppressMobileSheetHistory=previousSuppression;
     }
-    if(typeof flowchartReady!=='undefined'&&flowchartReady&&typeof render==='function')render();
+    if(typeof flowchartReady!=='undefined'&&flowchartReady&&!selectionHydrated&&typeof render==='function')render();
     if(typeof flowchartReady!=='undefined'&&flowchartReady)writeMobileUrlState({replace:true});
   }
 

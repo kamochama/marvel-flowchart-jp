@@ -143,6 +143,18 @@ class MobileShellContractTests(unittest.TestCase):
         apply_body = function_body(self.source, "applyMobileUrlState")
         self.assertIn("syncMobileSearchControls", apply_body)
 
+    def test_mobile_url_hydrates_semantic_selection_from_store(self) -> None:
+        hydrate_body = function_body(self.source, "hydrateMobileSelectionFromStore")
+        self.assertIn("selectedIds", hydrate_body)
+        self.assertIn("selected", hydrate_body)
+        self.assertIn("refreshSelection", hydrate_body)
+
+        apply_body = function_body(self.source, "applyMobileUrlState")
+        self.assertRegex(
+            apply_body,
+            r"store\.setGoals\(parsed\.goalIds,parsed\.selectedId\)[\s\S]{0,180}hydrateMobileSelectionFromStore",
+        )
+
     def test_focus_goal_syncs_store_after_desktop_semantic_update(self) -> None:
         self.assertRegex(
             self.source,
