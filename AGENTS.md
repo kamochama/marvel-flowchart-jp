@@ -12,6 +12,7 @@ This file defines persistent working rules for Codex and other coding agents ope
 - There is no currently approved semantic forward branch. Create a new `codex/` branch only after selecting a bounded plan for the next work.
 - During development, **do not commit directly to `main`, publish production changes, rebase the forward history, force-push, or rewrite canonical history unless the user explicitly authorizes it.**
 - `main` is **not permanently frozen**. It is the intended final integration target after the current work is complete, fully audited, and the user explicitly approves the final merge.
+- The user has granted standing authorization for this repository, while the current GitHub authentication is valid, to push normal feature branches, merge reviewed pull requests into `main`, and consult the user's ordinary ChatGPT conversation (not ChatGPT Work) without asking for per-action confirmation. Continue to report CI failures, conflicts, uncertain semantics, and publication effects; this standing authorization does not permit direct commits to `main`, force-pushes, history rewrites, or silently bypassing unresolved risks.
 - At the start of every session, run/fetch a fresh HEAD check. If local HEAD differs from origin, reconcile before editing; never overwrite a newer remote state blindly.
 - The former PR #9 / `library-v5-canonical-freeze` history was already reconciled into the forward line. Do not merge it again.
 
