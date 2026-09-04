@@ -306,11 +306,37 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("normalized==='search'", body)
         self.assertIn("mobile-chart-host-only", body)
 
+    def test_mobile_search_surface_results_are_separate_from_legacy_overlay(self) -> None:
+        mount_body = function_body(self.source, "mountMobileSearchView")
+        render_body = function_body(self.source, "renderMobileSearchResults")
+        self.assertIn("mobile-search-surface-results", mount_body)
+        self.assertIn("mobile-search-surface-results", self.source)
+        self.assertNotIn("className='mobile-search-results'", render_body)
+        self.assertNotRegex(mount_body, r'class="mobile-search-results"')
+
+    def test_mobile_legacy_search_input_syncs_active_surface(self) -> None:
+        body = function_body(self.source, "syncMobileSearchStateFromControls")
+        self.assertIn("marvelMobileUiStore", body)
+        self.assertIn("getState", body)
+        self.assertIn("view==='search'", body)
+        self.assertIn("data-mobile-search-query", body)
+        self.assertIn("scheduleMobileSearchRender", body)
+        self.assertNotIn("renderMobileSearchResults(", body)
+        self.assertIn("window.marvelMobileUiStore?.getState?.().view==='search'", self.source)
+
+    def test_mobile_search_input_debounces_dom_only_rendering(self) -> None:
+        mount_body = function_body(self.source, "mountMobileSearchView")
+        self.assertIn("scheduleMobileSearchRender", mount_body)
+        self.assertIn("requestAnimationFrame", self.source)
+        self.assertRegex(self.source, r"mobileSearchRenderRaf")
+        for forbidden in ("fitView(", "initMobileCanvas(", "rebuildMobileCanvas(", "mountMobileChartView("):
+            self.assertNotIn(forbidden, mount_body)
+
     def test_mobile_chart_browser_runner_has_json_scenario_contract(self) -> None:
         runner = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
         self.assertTrue(runner.is_file(), "M3 browser runner must exist")
         source = runner.read_text(encoding="utf-8")
-        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select"):
+        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select", "firstCardInViewport", "legacyQuerySync"):
             self.assertIn(token, source)
         self.assertIn("mobileAreaSheet", source)
         self.assertIn('data-mobile-target="release"', source)

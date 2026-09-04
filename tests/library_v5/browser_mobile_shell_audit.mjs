@@ -216,6 +216,7 @@ async function mobileSearchSnapshot(cdp) {
       searchSurface:!!surface,inputValue:input?.value||'',resultCount:cards.length,
       firstId:cards[0]?.dataset.mobileSearchWork||null,selected:[...(audit.selected||[])],back:[...(audit.back||[])],
       emptyText:empty?.textContent||'',emptyVisible:!!empty&&!empty.hidden,
+      firstCardInViewport:!!cards[0]&&(()=>{const r=cards[0].getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;})(),
       actionsReachable:actions.length>0&&actions.every(button=>{const r=button.getBoundingClientRect();return r.width>=44&&r.height>=44;}),
     };
   `);
@@ -330,7 +331,7 @@ async function runAudit(args) {
     sheet: { opened: false, closed: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
     views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false },
-    search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false },
+    search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false, firstCardInViewport: false, legacyQuerySync: false },
     history: { queryOnViewSwitch: false, queryOnPopstate: false },
     failures,
   };
@@ -481,7 +482,21 @@ async function runAudit(args) {
     result.search.queried=true;
     result.search.resultCount=spider.resultCount;
     result.search.actionsReachable=spider.actionsReachable;
+    result.search.firstCardInViewport=spider.firstCardInViewport;
+    if(!result.search.firstCardInViewport)failures.push(`mobile search first result is outside the viewport: ${JSON.stringify(spider)}`);
     if(!result.search.actionsReachable)failures.push(`mobile search actions are below the 44px contract: ${JSON.stringify(spider)}`);
+    await pageEvaluate(cdp, "document.getElementById('q')?.scrollIntoView({block:'center'}); return true;");
+    await clickPoint(cdp, await pointForSelector(cdp, '#q'));
+    await selectAllAndBackspace(cdp);
+    await cdp.send("Input.insertText", { text: "Spider-Man" });
+    const legacySearch=await waitForSearch(cdp, (state) => state.view === "search" && state.query === "Spider-Man" && state.inputValue === "Spider-Man" && state.resultCount > 0, timeoutMs, "legacy search input synchronization");
+    result.search.legacyQuerySync=legacySearch.inputValue === "Spider-Man" && legacySearch.query === "Spider-Man";
+    if(!result.search.legacyQuerySync)failures.push(`legacy search input did not sync the M4 surface: ${JSON.stringify(legacySearch)}`);
+    await pageEvaluate(cdp, "document.querySelector('#mobileViewHost [data-mobile-search-query]')?.scrollIntoView({block:'center'}); return true;");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-query]'));
+    await selectAllAndBackspace(cdp);
+    await cdp.send("Input.insertText", { text: "Spider-Man 3" });
+    await waitForSearch(cdp, (state) => state.query === "Spider-Man 3" && state.inputValue === "Spider-Man 3" && state.firstId === "spider-man-3-2007", timeoutMs, "Spider-Man 3 search reset");
     await pageEvaluate(cdp, "document.querySelector('#mobileViewHost [data-mobile-search-work=\\\"spider-man-3-2007\\\"]')?.scrollIntoView({block:'center'}); return true;");
     const firstSearchSelect=await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-work="spider-man-3-2007"] [data-mobile-search-select]');
     if(!firstSearchSelect)throw new Error("Spider-Man 3 selection action is not mounted");

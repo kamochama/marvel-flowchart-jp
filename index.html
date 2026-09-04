@@ -646,7 +646,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .mobile-search-filter-row select{width:100%;min-height:44px;font-size:14px}
   .mobile-search-status{margin:0;color:#cbd5e1;font-size:12px}
   .mobile-search-empty{margin:0;padding:15px 10px;border:1px dashed #475569;border-radius:10px;color:#fbbf24;font-size:14px;text-align:center}
-  .mobile-search-results{display:grid;gap:8px}
+  .mobile-search-surface-results{display:grid;gap:8px;position:static;width:auto;padding:0;border:0;box-shadow:none}
   .mobile-search-result-card{display:grid;gap:8px;padding:11px;border:1px solid #334155;border-radius:11px;background:#0f172a}
   .mobile-search-result-card h3{margin:0;font-size:15px;color:#f8fafc;line-height:1.35}
   .mobile-search-result-card .mobile-search-result-meta{margin:0;color:#94a3b8;font-size:11px;line-height:1.45}
@@ -8264,6 +8264,18 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
   window.mountMobileChartView=mountMobileChartView;
 
+  let mobileSearchRenderRaf=0,mobileSearchRenderPending=null;
+  function scheduleMobileSearchRender(query='',filter=''){
+    mobileSearchRenderPending={query:String(query??''),filter:String(filter??'')};
+    if(mobileSearchRenderRaf)return;
+    const flush=()=>{
+      mobileSearchRenderRaf=0;
+      const next=mobileSearchRenderPending;mobileSearchRenderPending=null;
+      if(next)renderMobileSearchResults(next.query,next.filter);
+    };
+    mobileSearchRenderRaf=typeof requestAnimationFrame==='function'?requestAnimationFrame(flush):setTimeout(flush,0);
+  }
+
   function renderMobileSearchResults(query='',filter=''){
     const surface=document.querySelector('#mobileViewHost [data-mobile-surface="search"]');
     if(!surface)return [];
@@ -8324,7 +8336,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const surface=document.createElement('section');
     surface.className='mobile-search-surface';surface.setAttribute('data-mobile-surface','search');
     surface.setAttribute('aria-labelledby','mobileSearchTitle');
-    surface.innerHTML=`<span class="mobile-view-kicker">SEARCH</span><h2 id="mobileSearchTitle">作品を探す</h2><label for="mobileSearchQuery" class="sr-only">作品を検索</label><input id="mobileSearchQuery" class="mobile-search-query" data-mobile-search-query type="search" autocomplete="off" placeholder="邦題・英題・シリーズ名で検索" aria-label="作品を検索"><div class="mobile-search-filter-row" aria-label="検索結果を絞り込む"><label>系統<select data-mobile-search-filter="branch" aria-label="系統で絞り込み"></select></label><label>公開状況<select data-mobile-search-filter="status" aria-label="公開状況で絞り込み"></select></label><label>主要キャラクター<select data-mobile-search-filter="character" aria-label="主要キャラクターで絞り込み"></select></label></div><p class="mobile-search-status" data-mobile-search-count role="status" aria-live="polite">0件の作品</p><p class="mobile-search-empty" data-mobile-search-empty role="status" aria-live="polite" hidden>該当なし</p><div class="mobile-search-results" data-mobile-search-results aria-label="検索結果"></div>`;
+    surface.innerHTML=`<span class="mobile-view-kicker">SEARCH</span><h2 id="mobileSearchTitle">作品を探す</h2><label for="mobileSearchQuery" class="sr-only">作品を検索</label><input id="mobileSearchQuery" class="mobile-search-query" data-mobile-search-query type="search" autocomplete="off" placeholder="邦題・英題・シリーズ名で検索" aria-label="作品を検索"><div class="mobile-search-filter-row" aria-label="検索結果を絞り込む"><label>系統<select data-mobile-search-filter="branch" aria-label="系統で絞り込み"></select></label><label>公開状況<select data-mobile-search-filter="status" aria-label="公開状況で絞り込み"></select></label><label>主要キャラクター<select data-mobile-search-filter="character" aria-label="主要キャラクターで絞り込み"></select></label></div><p class="mobile-search-status" data-mobile-search-count role="status" aria-live="polite">0件の作品</p><p class="mobile-search-empty" data-mobile-search-empty role="status" aria-live="polite" hidden>該当なし</p><div class="mobile-search-surface-results" data-mobile-search-results aria-label="検索結果"></div>`;
     const copyOptions=(sourceId,target)=>{
       const source=document.getElementById(sourceId);if(!source||!target)return;
       target.replaceChildren(...[...source.options].map(option=>option.cloneNode(true)));
@@ -8350,7 +8362,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       const store=window.marvelMobileUiStore;const filter=filterForSurface();
       store?.setSearch(queryInput.value||'');store?.setFilter(filter);
       syncMobileSearchControls({query:queryInput.value||'',filter});
-      renderMobileSearchResults(queryInput.value,filter);writeMobileUrlState({replace:true});
+      scheduleMobileSearchRender(queryInput.value,filter);writeMobileUrlState({replace:true});
     };
     queryInput.addEventListener('input',sync);
     [branchInput,characterInput,statusInput].forEach(input=>input?.addEventListener('change',sync));
@@ -8461,6 +8473,13 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const mfilter=encodeMobileFilter();
     store.setSearch(q?.value||'');
     store.setFilter(mfilter);
+    const state=store.getState();
+    const mobileSurface=document.querySelector('#mobileViewHost [data-mobile-surface="search"]');
+    if(state.view==='search'&&mobileSurface?.querySelector('[data-mobile-search-query]')){
+      syncMobileSearchControls(state);
+      scheduleMobileSearchRender(state.query,state.filter);
+      writeMobileUrlState({replace:true});
+    }
   }
 
   function hydrateMobileSelectionFromStore(state){
@@ -8769,6 +8788,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return true;
   };
   window.renderLegacyMobileSearchResults=function(){
+    if(window.marvelMobileUiStore?.getState?.().view==='search'){closeMobileSearchResults();return;}
     if(!mobileSearchResults||!window.matchMedia('(max-width:760px)').matches){closeMobileSearchResults();return;}
     const query=(searchInput?.value||'').trim().toLowerCase();
     if(!query){mobileSearchResults.innerHTML='';closeMobileSearchResults();return;}
