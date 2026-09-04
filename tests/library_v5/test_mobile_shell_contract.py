@@ -219,6 +219,19 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("mobileChartLastPanel", body)
         self.assertIn("characters", self.source)
 
+    def test_mobile_viewport_sync_reapplies_non_chart_visibility(self) -> None:
+        match = re.search(
+            r"const syncMobileChartForViewport=\(\)=>\{(?P<body>[\s\S]*?)\n  \};",
+            self.source,
+        )
+        self.assertIsNotNone(match, "viewport sync function must exist")
+        body = match.group("body")
+        self.assertRegex(body, r"mobileUiStore\(\)\?\.getState\(\)\.view")
+        self.assertIn("mobile-chart-host-only", body)
+        self.assertIn("document.body.classList.add('mobile-chart-host-only')", body)
+        self.assertIn("restoreMobileChartPanels", body)
+        self.assertIn("host?.replaceChildren", body)
+
     def test_mobile_view_mount_only_attaches_chart_surface_for_chart_view(self) -> None:
         body = function_body(self.source, "mountMobileView")
         self.assertRegex(body, r"normalized===['\"]chart['\"]")
@@ -246,7 +259,7 @@ class MobileShellContractTests(unittest.TestCase):
         runner = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
         self.assertTrue(runner.is_file(), "M3 browser runner must exist")
         source = runner.read_text(encoding="utf-8")
-        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel"):
+        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride"):
             self.assertIn(token, source)
         self.assertIn("mobileAreaSheet", source)
         self.assertIn('data-mobile-target="release"', source)

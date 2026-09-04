@@ -299,7 +299,7 @@ async function runAudit(args) {
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
     sheet: { opened: false, closed: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
-    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, chartRestoresCamera: false },
+    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false },
     failures,
   };
   try {
@@ -406,9 +406,9 @@ async function runAudit(args) {
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="release"]'));
     await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release chooser reselect");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
-    const charactersNonChart = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "release chooser non-chart removal");
-    if (!charactersNonChart.legacyPanelVisible) result.views.nonChartHidesLegacyPanel = true;
-    else failures.push(`release non-chart view exposed legacy panel: ${JSON.stringify(charactersNonChart)}`);
+    const releaseNonChart = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "release chooser non-chart removal");
+    if (!releaseNonChart.legacyPanelVisible) result.views.nonChartHidesLegacyPanel = true;
+    else failures.push(`release non-chart view exposed legacy panel: ${JSON.stringify(releaseNonChart)}`);
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
     const restoredRelease = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release chart return");
     if (restoredRelease.panelId !== "release" || restoredRelease.activePanelId !== "release") failures.push(`release display view was not restored: ${JSON.stringify(restoredRelease)}`);
@@ -424,6 +424,18 @@ async function runAudit(args) {
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
     const restoredCharacters = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "characters" && state.activePanelId === "characters", timeoutMs, "characters chart return");
     if (restoredCharacters.panelId !== "characters" || restoredCharacters.activePanelId !== "characters") failures.push(`characters display view was not restored: ${JSON.stringify(restoredCharacters)}`);
+
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+    await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "responsive search setup");
+    await cdp.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
+    await poll(() => pageEvaluate(cdp, "return !window.matchMedia('(max-width:760px)').matches;"), timeoutMs, "desktop viewport switch");
+    await cdp.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+    const responsiveSearch = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible && !state.legacyPanelVisible, timeoutMs, "responsive mobile search sync");
+    result.views.responsiveSearchSync = responsiveSearch.view === "search" && !responsiveSearch.chartVisible && !responsiveSearch.legacyPanelVisible;
+    if (!result.views.responsiveSearchSync) failures.push(`responsive mobile search exposed legacy panel: ${JSON.stringify(responsiveSearch)}`);
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
+    const responsiveChart = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "characters" && state.activePanelId === "characters", timeoutMs, "responsive characters chart return");
+    if (responsiveChart.panelId !== "characters" || responsiveChart.activePanelId !== "characters") failures.push(`responsive chart return lost characters panel: ${JSON.stringify(responsiveChart)}`);
   } catch (error) {
     failures.push(String(error?.message || error));
   } finally {

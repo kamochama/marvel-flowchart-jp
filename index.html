@@ -8447,8 +8447,13 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   window.addEventListener('popstate',handleMobilePopState);
   const syncMobileChartForViewport=()=>{
     const host=document.getElementById('mobileViewHost');
+    const view=mobileUiStore()?.getState().view||'chart';
     if(!mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');restoreMobileChartPanels();host?.replaceChildren();return;}
-    if(mobileUiStore()?.getState().view==='chart')mountMobileChartView(host);
+    if(view==='chart'){document.body.classList.remove('mobile-chart-host-only');mountMobileChartView(host);return;}
+    document.body.classList.add('mobile-chart-host-only');
+    restoreMobileChartPanels();
+    host?.replaceChildren();
+    mountMobileView(view);
   };
   mobileChartMotion.addEventListener?.('change',()=>requestAnimationFrame(syncMobileChartForViewport));
   const initializeMobileShell=()=>{
