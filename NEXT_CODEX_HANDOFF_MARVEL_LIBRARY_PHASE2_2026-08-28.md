@@ -282,6 +282,20 @@ Fresh verification on the merged baseline:
 
 The plan and review are `docs/superpowers/plans/2026-09-04-marvel-relation-evidence-promotion-wave010.md` and `docs/superpowers/reviews/2026-09-04-marvel-relation-evidence-promotion-wave010.md`. Remaining legacy relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
 
+## 0.1.14 Production baseline after the 2026-09-04 chronology/mobile visual fix
+
+PR #69 (`https://github.com/kamochama/marvel-flowchart-jp/pull/69`) is integrated into `main` at merge commit `18b226ead9cf23d1311136fd49442ba0bee1b0f5`. This viewer-only change fixes chronology node closure so worldline nodes are derived from highlighted chronology-edge endpoints (including the Spider-Man 3 → Spider-Man 2 → Spider-Man (2002) predecessor chain), synchronizes the mobile Canvas backing cache with selection dimming, and reorganizes the chronology layout around a central horizontal `MCU本流` lane with Spider-Man, SSU, and FOX lanes above/below. No canonical relation, chronology edge ID, or semantic crossing was added; the existing 74 chronology edge IDs and conservative worldline boundaries remain unchanged.
+
+Fresh verification for the merged PR #69 baseline:
+
+- bundled-Python full suite: `463` tests pass (`4` environment-gated browser skips);
+- bundled-Python build: `audit_issue_count=0`, content-audit issue count `0`, story paths `83/83`, SQLite integrity/FK checks `ok/0`;
+- local real Chrome/CDP selection `131 × 2`, interaction `6/6`, chronology (including the Spider-Man 3 chain), and publication-order audits pass with zero mismatches/failures and zero synthetic edges;
+- GitHub Actions run `33827868572`: all `5` required jobs passed;
+- Pages deployment run `33828365412` completed successfully, and the public site `https://kamochama.github.io/marvel-flowchart-jp/` loads the merged viewer (`PUBLIC v5.21.3`).
+
+The mobile relation-map hierarchy intentionally keeps the no-selection support emphasis, while selection-time dimming uses a uniform node alpha (`0.42`) and quieter edge alpha (`0.06`). Any future semantic worldline crossing still requires an independent audited fact; this visual pass does not infer one.
+
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
 The static viewer now consumes the committed DB-derived artifact `data/derived/flowchart.json`; the browser does not open SQLite. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups, with all eligible edges visible by default and selection limited to presentation styling.
