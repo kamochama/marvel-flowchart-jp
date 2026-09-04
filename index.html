@@ -8162,12 +8162,16 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return panel;
   }
 
-  function detachMobileChartPanel(panel=mobileChartMountedPanel){
+  function restoreMobileChartPanel(panel=mobileChartMountedPanel){
     if(!panel)return false;
-    rememberMobileChartPanel(panel);
-    if(panel.parentNode)panel.remove();
-    mobileChartLastPanel=panel;
+    const origin=mobileChartPanelOrigins.get(panel);
+    if(!origin)return false;
+    if(panel.parentNode!==origin.parent){
+      if(origin.nextSibling?.parentNode===origin.parent)origin.parent.insertBefore(panel,origin.nextSibling);
+      else origin.parent.append(panel);
+    }
     if(mobileChartMountedPanel===panel)mobileChartMountedPanel=null;
+    mobileChartLastPanel=panel;
     mobileChartMountedHost=null;
     return true;
   }
@@ -8205,7 +8209,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(!mobileHost||!mobileChartMotion.matches)return null;
     const panel=rememberMobileChartPanel(panelOverride||activeMobileChartPanel()),wrap=panel?.querySelector('.svg-wrap');
     if(!panel||!wrap)return null;
-    if(mobileChartMountedPanel&&mobileChartMountedPanel!==panel)detachMobileChartPanel(mobileChartMountedPanel);
+    if(mobileChartMountedPanel&&mobileChartMountedPanel!==panel)restoreMobileChartPanel(mobileChartMountedPanel);
     const surface=document.createElement('section');
     surface.className='mobile-chart-surface';
     surface.dataset.mobileSurface='chart';
@@ -8252,7 +8256,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(!mobileChartMotion.matches){restoreMobileChartPanels();host.replaceChildren();syncMobileBottomNav(normalized);return null;}
     if(normalized==='chart'&&mobileChartMotion.matches)return mountMobileChartView(host);
     if(normalized!=='chart'){
-      detachMobileChartPanel();
+      restoreMobileChartPanels();
       host.replaceChildren();
       if(typeof viewStates!=='undefined'){
         const key=`mobile-shell:${normalized}`;

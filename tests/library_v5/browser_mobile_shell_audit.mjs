@@ -297,7 +297,7 @@ async function runAudit(args) {
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
     sheet: { opened: false, closed: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
-    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, chartRestoresCamera: false },
+    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, chartRestoresCamera: false },
     failures,
   };
   try {
@@ -377,6 +377,28 @@ async function runAudit(args) {
 
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
     await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "release non-chart removal");
+    const retainedDocumentApis = await pageEvaluate(cdp, `
+      const overviewHasIronMan=window.panelHasWork?.("overview","iron-man-2008")===true;
+      const preferred=window.preferredPanelForWork?.("iron-man-2008")||null;
+      const chooser=!!document.querySelector('#mobileAreaSheet [data-mobile-target="overview"]');
+      return {overviewHasIronMan,preferred,chooser,documentPanels:[...document.querySelectorAll('.panel')].map(panel=>panel.id)};
+    `);
+    result.views.nonChartDocumentPanel = retainedDocumentApis.overviewHasIronMan && ["overview", "release", "chronology"].includes(retainedDocumentApis.preferred) && retainedDocumentApis.chooser;
+    if (!result.views.nonChartDocumentPanel) failures.push(`non-chart document panel APIs failed: ${JSON.stringify(retainedDocumentApis)}`);
+    await clickPoint(cdp, await pointForSelector(cdp, "#mobileAreaButton"));
+    await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "non-chart display view chooser");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="overview"]'));
+    const chooserOverview = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible && state.activePanelId === "overview", timeoutMs, "non-chart display chooser overview");
+    result.views.displayChooser = { selected: chooserOverview.activePanelId === "overview", panelId: chooserOverview.activePanelId };
+    if (!result.views.displayChooser.selected) failures.push(`non-chart display chooser did not select overview: ${JSON.stringify(chooserOverview)}`);
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
+    await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "overview" && state.activePanelId === "overview", timeoutMs, "overview chart return after chooser");
+    await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartViewButton"));
+    await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "release chooser after overview return");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="release"]'));
+    await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release chooser reselect");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+    await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "release chooser non-chart removal");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
     const restoredRelease = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release chart return");
     if (restoredRelease.panelId !== "release" || restoredRelease.activePanelId !== "release") failures.push(`release display view was not restored: ${JSON.stringify(restoredRelease)}`);
