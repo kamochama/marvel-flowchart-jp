@@ -210,6 +210,14 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("mountMobileChartView", body)
         self.assertIn("mobileChartMotion.matches", body)
         self.assertIn("marvelMobileUiStore", body)
+        self.assertIn("panel.querySelector('.svg-wrap')", body)
+
+    def test_mobile_chart_mount_supports_characters_panel(self) -> None:
+        body = function_body(self.source, "activeMobileChartPanel")
+        self.assertIn("querySelector('.svg-wrap')", body)
+        self.assertIn("mobileChartMountedPanel", body)
+        self.assertIn("mobileChartLastPanel", body)
+        self.assertIn("characters", self.source)
 
     def test_mobile_view_mount_only_attaches_chart_surface_for_chart_view(self) -> None:
         body = function_body(self.source, "mountMobileView")
@@ -219,6 +227,7 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertRegex(body, r"normalized!==['\"]chart['\"]")
         self.assertIn("restoreMobileChartPanels", body)
         self.assertNotIn("detachMobileChartPanel()", body)
+        self.assertIn("mobile-chart-host-only", body)
 
     def test_mobile_chart_controls_keep_touch_target_contract(self) -> None:
         self.assertRegex(self.source, r"mobile-chart-controls[\s\S]{0,500}min-height:44px")
@@ -237,7 +246,7 @@ class MobileShellContractTests(unittest.TestCase):
         runner = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
         self.assertTrue(runner.is_file(), "M3 browser runner must exist")
         source = runner.read_text(encoding="utf-8")
-        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "displayChooser"):
+        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel"):
             self.assertIn(token, source)
         self.assertIn("mobileAreaSheet", source)
         self.assertIn('data-mobile-target="release"', source)

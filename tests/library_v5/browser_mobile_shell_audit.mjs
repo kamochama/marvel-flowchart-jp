@@ -254,12 +254,14 @@ async function snapshot(cdp) {
     const store=window.marvelMobileUiStore?.getState?.()||{};
     const selection=window.marvelSelectionAudit?.()||{};
     const surface=document.querySelector('#mobileViewHost [data-mobile-surface="chart"]');
+    const legacyPanel=document.querySelector('#left>.panel.active');
     const nav=[...document.querySelectorAll('#mobileBottomNav button')];
     return {
       view:store.view||null,
       chartVisible:!!surface,
       panelId:surface?.querySelector('.panel')?.id||null,
       activePanelId:document.querySelector('.panel.active')?.id||null,
+      legacyPanelVisible:!!legacyPanel&&getComputedStyle(legacyPanel).display!=='none',
       selected:[...(selection.selected||[])],
       camera:surface?.dataset.mobileCamera||null,
       sheetHidden:document.getElementById('mobileSheet')?.hidden!==false,
@@ -297,7 +299,7 @@ async function runAudit(args) {
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
     sheet: { opened: false, closed: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
-    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, chartRestoresCamera: false },
+    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, chartRestoresCamera: false },
     failures,
   };
   try {
@@ -360,8 +362,14 @@ async function runAudit(args) {
     if (closed.rerenders.render !== beforeSheet.rerenders.render || closed.rerenders.fit !== beforeSheet.rerenders.fit || closed.rerenders.rebuild !== beforeSheet.rerenders.rebuild) failures.push("sheet close rebuilt chart");
 
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
-    await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "non-chart surface removal");
+    const firstNonChart = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "non-chart surface removal");
     result.views.nonChartRemovesChart = true;
+    result.views.nonChartHidesLegacyPanel = !firstNonChart.legacyPanelVisible;
+    if (!result.views.nonChartHidesLegacyPanel) failures.push(`non-chart view exposed legacy panel: ${JSON.stringify(firstNonChart)}`);
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="plan"]'));
+    const planNonChart = await waitFor(cdp, (state) => state.view === "plan" && !state.chartVisible, timeoutMs, "plan surface removal");
+    result.views.nonChartHidesLegacyPanel = result.views.nonChartHidesLegacyPanel && !planNonChart.legacyPanelVisible;
+    if (planNonChart.legacyPanelVisible) failures.push(`plan view exposed legacy panel: ${JSON.stringify(planNonChart)}`);
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
     await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible, timeoutMs, "chart surface restore");
     const restored = await snapshot(cdp);
@@ -398,10 +406,24 @@ async function runAudit(args) {
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="release"]'));
     await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release chooser reselect");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
-    await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "release chooser non-chart removal");
+    const charactersNonChart = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "release chooser non-chart removal");
+    if (!charactersNonChart.legacyPanelVisible) result.views.nonChartHidesLegacyPanel = true;
+    else failures.push(`release non-chart view exposed legacy panel: ${JSON.stringify(charactersNonChart)}`);
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
     const restoredRelease = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release chart return");
     if (restoredRelease.panelId !== "release" || restoredRelease.activePanelId !== "release") failures.push(`release display view was not restored: ${JSON.stringify(restoredRelease)}`);
+
+    await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartViewButton"));
+    await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "characters chooser");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="characters"]'));
+    const charactersView = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "characters" && state.activePanelId === "characters", timeoutMs, "characters display view mount");
+    result.views.charactersPanel = { selected: charactersView.panelId === "characters" && charactersView.activePanelId === "characters", panelId: charactersView.panelId };
+    if (!result.views.charactersPanel.selected) failures.push(`characters display view did not mount: ${JSON.stringify(charactersView)}`);
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+    await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "characters non-chart removal");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
+    const restoredCharacters = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "characters" && state.activePanelId === "characters", timeoutMs, "characters chart return");
+    if (restoredCharacters.panelId !== "characters" || restoredCharacters.activePanelId !== "characters") failures.push(`characters display view was not restored: ${JSON.stringify(restoredCharacters)}`);
   } catch (error) {
     failures.push(String(error?.message || error));
   } finally {

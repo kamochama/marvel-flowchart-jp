@@ -638,6 +638,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .mobile-chart-controls button:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
   .mobile-chart-surface>.panel{display:block}
   .mobile-chart-surface>.panel>.svg-wrap{min-height:calc(100dvh - 210px);height:calc(100dvh - 210px);max-height:none}
+  body.mobile-chart-host-only #left>.panel{display:none!important}
 }
 
 
@@ -8097,8 +8098,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   const MOBILE_VIEWS=new Set(['chart','search','plan']);
   const MOBILE_SHEETS=new Set(['detail','reason','settings']);
   const MOBILE_VIEW_LABELS={chart:'チャート',search:'作品を探す',plan:'予習プラン'};
-  const MOBILE_CHART_PANEL_IDS=new Set(['overview','release','chronology']);
-  const MOBILE_CHART_PANEL_LABELS={overview:'関係地図',release:'公開順',chronology:'世界線・時系列'};
+  const MOBILE_CHART_PANEL_LABELS={overview:'関係地図',release:'公開順',chronology:'世界線・時系列',characters:'人物・組織',watch:'この作品を見るなら'};
   const MOBILE_SHEET_LABELS={detail:['作品情報','選択した作品の情報'],reason:['接続理由','この接続の根拠'],settings:['表示設定','モバイル表示の設定']};
   let mobileSheetReturnFocus=null;
   let suppressMobileSheetHistory=false;
@@ -8150,9 +8150,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
   function activeMobileChartPanel(){
     const panel=document.querySelector('.panel.active');
-    if(panel&&MOBILE_CHART_PANEL_IDS.has(panel.id))return panel;
-    if(mobileChartMountedPanel&&MOBILE_CHART_PANEL_IDS.has(mobileChartMountedPanel.id))return mobileChartMountedPanel;
-    return mobileChartLastPanel&&MOBILE_CHART_PANEL_IDS.has(mobileChartLastPanel.id)?mobileChartLastPanel:null;
+    if(panel?.querySelector('.svg-wrap'))return panel;
+    if(mobileChartMountedPanel?.querySelector('.svg-wrap'))return mobileChartMountedPanel;
+    return mobileChartLastPanel?.querySelector('.svg-wrap')?mobileChartLastPanel:null;
   }
 
   function rememberMobileChartPanel(panel){
@@ -8209,6 +8209,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(!mobileHost||!mobileChartMotion.matches)return null;
     const panel=rememberMobileChartPanel(panelOverride||activeMobileChartPanel()),wrap=panel?.querySelector('.svg-wrap');
     if(!panel||!wrap)return null;
+    document.body.classList.remove('mobile-chart-host-only');
     if(mobileChartMountedPanel&&mobileChartMountedPanel!==panel)restoreMobileChartPanel(mobileChartMountedPanel);
     const surface=document.createElement('section');
     surface.className='mobile-chart-surface';
@@ -8253,9 +8254,10 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const host=shell?.querySelector('#mobileViewHost');
     if(!host)return null;
     const normalized=normalizeMobileView(view);
-    if(!mobileChartMotion.matches){restoreMobileChartPanels();host.replaceChildren();syncMobileBottomNav(normalized);return null;}
-    if(normalized==='chart'&&mobileChartMotion.matches)return mountMobileChartView(host);
+    if(!mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');restoreMobileChartPanels();host.replaceChildren();syncMobileBottomNav(normalized);return null;}
+    if(normalized==='chart'&&mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');return mountMobileChartView(host);}
     if(normalized!=='chart'){
+      document.body.classList.add('mobile-chart-host-only');
       restoreMobileChartPanels();
       host.replaceChildren();
       if(typeof viewStates!=='undefined'){
@@ -8445,7 +8447,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   window.addEventListener('popstate',handleMobilePopState);
   const syncMobileChartForViewport=()=>{
     const host=document.getElementById('mobileViewHost');
-    if(!mobileChartMotion.matches){restoreMobileChartPanels();host?.replaceChildren();return;}
+    if(!mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');restoreMobileChartPanels();host?.replaceChildren();return;}
     if(mobileUiStore()?.getState().view==='chart')mountMobileChartView(host);
   };
   mobileChartMotion.addEventListener?.('change',()=>requestAnimationFrame(syncMobileChartForViewport));
@@ -9241,7 +9243,7 @@ window.ensureStageAViewInitialized=function(target){
     const tab=document.querySelector(`.tab[data-target="${CSS.escape(target)}"]`);
     document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===tab));
     document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x===panel));
-    if(mobileChartMotion.matches&&window.marvelMobileUiStore?.getState().view==='chart'&&['overview','release','chronology'].includes(target))window.mountMobileChartView?.(document.getElementById('mobileViewHost'),panel);
+    if(mobileChartMotion.matches&&window.marvelMobileUiStore?.getState().view==='chart'&&panel.querySelector('.svg-wrap'))window.mountMobileChartView?.(document.getElementById('mobileViewHost'),panel);
     syncMobileAreaLabel(target);
     requestAnimationFrame(()=>{
       if(wasWatch)panel.scrollIntoView({behavior:'auto',block:'start'});
