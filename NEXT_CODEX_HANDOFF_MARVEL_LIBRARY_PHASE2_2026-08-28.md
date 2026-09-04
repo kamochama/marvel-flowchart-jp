@@ -265,6 +265,23 @@ Fresh verification for the merged PR #64 baseline:
 
 The plan and review are `docs/superpowers/plans/2026-09-04-marvel-relation-evidence-promotion-wave009.md` and `docs/superpowers/reviews/2026-09-04-marvel-relation-evidence-promotion-wave009.md`. Remaining legacy relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
 
+## 0.1.13 Production baseline after the 2026-09-04 relation evidence wave010
+
+PR #66 (`https://github.com/kamochama/marvel-flowchart-jp/pull/66`) is integrated into `main` at `696b21b485ee77ce647c5f9206b428afaf84905c` (admin merge authorized by the user after hosted Chrome audit failures). It promotes eleven existing work relations using relation-specific official sources, evidence rows, and `legacy_seed -> source_verified` review transitions: *Avengers: Age of Ultron* → *Captain America: Civil War*, *Thor: Ragnarok* → *Avengers: Infinity War*, *Captain America: Civil War* → *Ant-Man and the Wasp*, *Ms. Marvel* → *The Marvels*, *What If...?* Season 2 → Season 3, *Iron Man 3* → *All Hail the King*, *The Avengers* → *Item 47*, *Jessica Jones* Season 1 → Season 2, *Jessica Jones* Season 2 → Season 3, *Iron Fist* Season 1 → Season 2, and *Cloak & Dagger* → *Runaways*. Existing IDs, directions, relation kinds, certainty, and topology are unchanged. The *X-Men: Days of Future Past* → *X-Men: Apocalypse* candidate remains deferred because the available official page did not directly establish a story relation.
+
+Fresh verification on the merged baseline:
+
+- bundled-Python full suite: `457` tests pass, `4` environment-gated skips;
+- bundled-Python build: audit/content-audit issues `0`, SQLite foreign-key rows `0`, `integrity_check=ok`;
+- relation table: `164` rows (`54` source_verified, `107` legacy_seed, `3` superseded); sources/evidence/reviews `91` / `181` / `155`;
+- graph/export compatibility: `131` nodes, `355` edges, `562` reasons, prewatch `199`, story paths `83/83`;
+- independent connectivity audit: `pass=62`, `deferred=513`, projection mismatches `0`, reason orphans `0`, unsupported transition edges `0`;
+- local real Chrome/CDP selection, interaction, chronology, and publication-order audits all pass with zero mismatches/failures and zero synthetic edges;
+- GitHub Actions run `33821836422`: `test` and selection passed, while the hosted interaction job repeatedly failed from Chrome/DevTools startup or representative-selection timeouts; the user explicitly authorized the admin merge after this risk was reported;
+- Pages deployment run `33823672261` succeeded and GitHub Pages reports `status=built` for `https://kamochama.github.io/marvel-flowchart-jp/`.
+
+The plan and review are `docs/superpowers/plans/2026-09-04-marvel-relation-evidence-promotion-wave010.md` and `docs/superpowers/reviews/2026-09-04-marvel-relation-evidence-promotion-wave010.md`. Remaining legacy relation rows require their own source-specific evidence/review batches; this wave is not a claim that the entire relation audit is complete.
+
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
 The static viewer now consumes the committed DB-derived artifact `data/derived/flowchart.json`; the browser does not open SQLite. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups, with all eligible edges visible by default and selection limited to presentation styling.
