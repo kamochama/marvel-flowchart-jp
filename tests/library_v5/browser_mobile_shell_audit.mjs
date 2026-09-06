@@ -15,7 +15,7 @@ function usage() {
     "Usage: node browser_mobile_shell_audit.mjs --root <repo> [--chrome <path>]",
     "",
     "Runs real pointer/focus scenarios against the M3/M4/M5 mobile shell surfaces.",
-    "The final line is JSON: {viewport,selection,sheet,rerenders,views,search,history,plan,failures}.",
+    "The final line is JSON: {viewport,views,selection,history,sheet,rerenders,search,plan,failures}.",
     "",
     "Options:",
     "  --root <path>      Repository root to serve over HTTP",
@@ -374,13 +374,13 @@ async function runAudit(args) {
   let cdp = null;
   const failures = [];
   const result = {
-      viewport: { width: 390, height: 844 },
+    viewport: { width: 390, height: 844 },
+    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false },
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
+    history: { queryOnViewSwitch: false, queryOnPopstate: false, planClick: null, urlAfterBack: null },
     sheet: { opened: false, closed: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
-    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false },
     search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false, firstCardInViewport: false, legacyQuerySync: false },
-    history: { queryOnViewSwitch: false, queryOnPopstate: false, planClick: null, urlAfterBack: null },
     plan: { surface: false, tiers: false, noOfficialControl: false, summary: false, ordered: false, remaining: false, detailOpened: false, detailClosed: false, watchedToggle: false, multiGoalSummary: false, chartNavigation: false, chartPlanDomAbsent: false, cameraPreserved: false },
     failures,
   };
