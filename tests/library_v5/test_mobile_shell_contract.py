@@ -388,6 +388,28 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("normalized==='plan'", body)
         self.assertIn("mobile-chart-host-only", body)
 
+    def test_mobile_shell_is_the_only_active_mobile_presentation_root(self) -> None:
+        self.assertEqual(self.source.count('id="mobileAppShell"'), 1)
+        self.assertNotIn("mobileBackdrop", self.source)
+        self.assertNotIn("mobile-graph-actions", self.source)
+        self.assertNotIn("mobileDetailsFloat", self.source)
+        self.assertNotIn("mobile-details-open", self.source)
+
+    def test_mobile_right_panel_has_no_legacy_bottom_sheet_transform_path(self) -> None:
+        self.assertNotRegex(self.source, r"body\.mobile-details-open\s+#right")
+        self.assertNotRegex(self.source, r"#right\{[^}]*transform:translateY")
+        self.assertNotIn("setDetails(open)", self.source)
+
+    def test_mobile_shell_mounts_one_heavy_renderer_per_active_view(self) -> None:
+        for name in ("mountMobileChartView", "mountMobileSearchView", "mountMobilePlanView"):
+            body = function_body(self.source, name)
+            self.assertNotIn("mobile-graph-actions", body)
+            self.assertNotIn("mobileDetailsFloat", body)
+        chart_body = function_body(self.source, "mountMobileChartView")
+        self.assertEqual(chart_body.count("mobileHost.replaceChildren"), 1)
+        for name in ("mountMobileSearchView", "mountMobilePlanView"):
+            self.assertIn("mobileHost.replaceChildren", function_body(self.source, name))
+
     def test_mobile_chart_browser_runner_has_json_scenario_contract(self) -> None:
         runner = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
         self.assertTrue(runner.is_file(), "M3 browser runner must exist")

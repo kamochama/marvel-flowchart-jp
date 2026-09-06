@@ -195,16 +195,14 @@ g.edge.fan-verified.fan-hidden{display:none}
 
 .path-pref-wrap{display:inline-flex;gap:4px;align-items:center}.path-pref-btn.active{background:#312e81;border-color:#818cf8;outline:1px solid #a5b4fc}.path-route.active-route{border-color:#8b5cf6;box-shadow:0 0 0 1px #6d28d9 inset}.path-route-alt-note{font-size:11px;color:#94a3b8;margin:3px 0 7px}.path-route-profile{display:inline-block;font-size:11px;margin-left:6px;padding:1px 6px;border-radius:999px;background:#1e1b4b;color:#c4b5fd;border:1px solid #4c1d95}.path-route-profile.active{background:#4c1d95;color:#ede9fe}
 
-/* v5.9.8: responsive mobile UI. Same HTML works on desktop and phones. */
-.mobile-actions,.mobile-sheet-head,.mobile-graph-actions,.mobile-backdrop{display:none}
+/* Responsive layout shared by the desktop shell and the mobile app shell. */
+.mobile-sheet-head{display:none}
 @media(max-width:760px){
   html,body{overscroll-behavior:none}
   body{padding-bottom:0}
   header{padding:9px 10px;z-index:40}
   header h1{font-size:17px;line-height:1.25;padding-right:116px}
   header .sub{font-size:10.5px;line-height:1.35;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .mobile-actions{display:flex;position:absolute;right:9px;top:8px;gap:5px}
-  .mobile-actions button{min-height:36px;padding:6px 9px;font-size:12px;background:#172033}
   header .controls{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #334155;max-height:62dvh;overflow:auto;overscroll-behavior:contain}
   header.controls-open .controls{display:flex}
   .controls>input,.controls>select{flex:1 1 100%;min-width:0}
@@ -224,38 +222,18 @@ g.edge.fan-verified.fan-hidden{display:none}
   .svg-wrap .zoom-hint{left:8px;right:auto;bottom:8px;font-size:10px;padding:4px 7px;max-width:72%;white-space:normal}
   .svg-wrap svg g.node{touch-action:none}
 
-  #right{display:block;position:fixed;left:0;right:0;bottom:0;top:auto;height:min(78dvh,760px);z-index:70;background:#0f172a;border:1px solid #475569;border-bottom:0;border-radius:18px 18px 0 0;padding:0 9px 18px;overflow:auto;overscroll-behavior:contain;box-shadow:0 -14px 40px rgba(0,0,0,.48);transform:translateY(calc(100% + 20px));transition:transform .22s ease;visibility:hidden}
-  body.mobile-details-open #right{transform:translateY(0);visibility:visible}
-  .mobile-sheet-head{display:flex;position:sticky;top:0;z-index:3;align-items:center;justify-content:space-between;gap:10px;background:#0f172a;padding:10px 3px 9px;margin:0 0 8px;border-bottom:1px solid #334155}
-  .mobile-sheet-head:before{content:"";position:absolute;width:46px;height:4px;border-radius:999px;background:#64748b;left:50%;top:5px;transform:translateX(-50%)}
-  .mobile-sheet-head b{font-size:14px}.mobile-sheet-sub{font-size:10px;color:#94a3b8;margin-top:2px}
-  .mobile-sheet-head button{min-width:66px;min-height:38px;font-size:13px}
-  #right .card{padding:10px;margin-bottom:8px;border-radius:10px}
-  #right .node-list{max-height:33dvh}
-  #right input,#right select,#right button{font-size:16px;min-height:42px}
-  #edgewrap{max-height:36dvh;overflow:auto}
-  table{font-size:11px;min-width:520px}
-
-  .mobile-backdrop{display:block;position:fixed;inset:0;background:rgba(2,6,23,.58);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s ease}
-  body.mobile-details-open .mobile-backdrop{opacity:1;pointer-events:auto}
-  .mobile-graph-actions{display:none;position:fixed;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:45;gap:5px;padding:5px;border-radius:12px;background:rgba(15,23,42,.92);border:1px solid #475569;box-shadow:0 5px 18px rgba(0,0,0,.28)}
-  body.mobile-chart-in-view .mobile-graph-actions{display:flex}
-  .mobile-graph-actions button{min-height:40px;padding:7px 9px;font-size:12px}
-  body.mobile-details-open .mobile-graph-actions{display:none}
   .badge,.selbadge{font-size:12px}
   .node-item{padding:10px 9px;font-size:14px}
   .prep-item{padding:9px 0}
 }
 @media(max-width:390px){
   header h1{font-size:16px;padding-right:108px}
-  .mobile-actions button{padding:5px 7px}
   .svg-wrap{height:63dvh;min-height:390px}
   .tabs .tab{padding:7px 9px}
 }
 @media(max-width:760px) and (orientation:landscape){
   header .sub{display:none}
   .svg-wrap{height:72dvh;min-height:300px}
-  #right{height:88dvh}
 }
 
 
@@ -343,7 +321,7 @@ main{max-width:1920px;margin:auto;grid-template-columns:minmax(0,1fr) 374px;min-
   .public-brand{padding:10px 12px}.brand-meta{padding-right:116px}.stat-chip{display:none}.public-release{display:inline-flex}.controls{padding:7px 8px 9px!important}.controls-primary,.advanced-grid{display:flex;flex-direction:column;gap:7px}.control-group{width:100%;padding:7px}.control-search{display:grid;grid-template-columns:1fr 1fr}.control-search #q{grid-column:1/-1}.control-reset{display:none}.advanced-controls>summary{font-size:12px}.public-guide{padding:7px}.guide-tip{display:none}main{display:block}.svg-wrap{min-height:430px!important}.help-grid{grid-template-columns:1fr}.public-footer{padding-bottom:82px}
 }
 @media(max-width:760px){
-  header{padding:0!important}header .controls{display:none!important}header.controls-open .controls{display:block!important}.public-brand{min-height:56px;padding:8px 10px}.brand-kicker{font-size:8px;margin-bottom:2px}.fan-badge{display:none}header h1{font-size:17px!important;padding-right:104px!important}.brand-meta{display:none}header .sub{font-size:9px;max-width:250px}.mobile-actions{top:9px;right:8px}.controls{border-top:1px solid #263550!important}.controls .control-group input,.controls .control-group select,.controls .control-group button{font-size:16px;min-height:42px}.controls .direction-key,.controls .family-key,.controls .audit-edge-key,.controls .fan-edge-key{white-space:normal}.public-guide{padding:6px 7px}.guide-lead{display:none}.guide-step{font-size:10px;padding:4px 7px}.guide-arrow{display:none}.flow-tabs-note{display:none!important}.tabs{padding:1px 0 7px}.svg-wrap{border-radius:12px!important;background-size:22px 22px,22px 22px,auto!important}.public-footer{font-size:9px;padding-inline:12px}.footer-row{display:block}.footer-version{margin-bottom:6px}
+  header{padding:0!important}header .controls{display:none!important}header.controls-open .controls{display:block!important}.public-brand{min-height:56px;padding:8px 10px}.brand-kicker{font-size:8px;margin-bottom:2px}.fan-badge{display:none}header h1{font-size:17px!important;padding-right:104px!important}.brand-meta{display:none}header .sub{font-size:9px;max-width:250px}.controls{border-top:1px solid #263550!important}.controls .control-group input,.controls .control-group select,.controls .control-group button{font-size:16px;min-height:42px}.controls .direction-key,.controls .family-key,.controls .audit-edge-key,.controls .fan-edge-key{white-space:normal}.public-guide{padding:6px 7px}.guide-lead{display:none}.guide-step{font-size:10px;padding:4px 7px}.guide-arrow{display:none}.flow-tabs-note{display:none!important}.tabs{padding:1px 0 7px}.svg-wrap{border-radius:12px!important;background-size:22px 22px,22px 22px,auto!important}.public-footer{font-size:9px;padding-inline:12px}.footer-row{display:block}.footer-version{margin-bottom:6px}
 }
 
 
@@ -373,7 +351,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
  main{grid-template-columns:minmax(0,1fr) 320px}.below-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:760px){
- #right{display:block;position:fixed;top:auto;max-height:none;overflow:auto}
+ #right{display:none!important}
  .side-tabs{position:sticky;top:58px;padding:5px 0 8px;z-index:4}
  .side-tab-panel{overflow:visible}.side-tab-works .node-list{max-height:33dvh}
  .below-chart-info{padding:14px 8px 90px}.below-info-head{display:block;margin-bottom:9px}.below-info-grid{grid-template-columns:1fr}.below-info-grid .card{padding:10px}
@@ -796,8 +774,6 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .prep-inline-detail-section p{margin:0;font-size:11px;line-height:1.58;color:#dbeafe}
 .prep-inline-detail-section.is-map-role{border-left:2px solid #a78bfa;padding-left:8px}
 @media(max-width:760px){
-  #mobileDetailsBtn{display:none!important}
-  .mobile-graph-actions #mobileDetailsFloat{display:inline-flex!important}
   .prep-detail-toggle{min-height:36px;padding:6px 10px;font-size:11px}
   .prep-inline-detail{padding:10px 11px}
   .prep-inline-detail-section p{font-size:12px;line-height:1.62}
@@ -861,7 +837,6 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
   .mobile-primary-nav button,
   .featured-route-control button,
   #mobileFocusShell button,
-  .mobile-graph-actions button,
   .mobile-sheet-head button,
   #right .mobile-sheet-head button,
   .side-tab-btn,
@@ -4406,7 +4381,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
 2026年12月18日：『アベンジャーズ／ドゥームズデイ』日米同時公開<br/>
 2027年12月17日：『Avengers: Secret Wars』Marvel公式予定（日本公開日は未確認）
 </div></div><div class="card info-card"><h3>キャラクター索引</h3><div class="muted" id="charinfo">上部のキャラクター欄から選ぶと、主要出演・物語接続作品だけに絞り込みます。</div></div><div class="card info-card"><h3>接続重要度</h3><div class="importance-summary"><b>中核 91本</b>：本筋として有向に再帰追跡<br/><b>推奨 75本</b>：選択作品へ直接1段だけ付加<br/><b>参照 33本</b>：客演・設定・別宇宙など。「全線」で表示<br/><span class="muted">※ strength（事実上の接続強度）とは別軸です。</span></div></div><div class="card info-card"><h3>日本版ルール</h3><div class="muted">日本の公式邦題を優先。邦題が確認できない未公開作は英題＋「邦題未発表」。英題は検索・監査用に保持しています。日本公開・配信日は公式ソースで確認できたものから順次追加します。作品を選ぶと、接続重要度と選択条件に応じて関連作品を点灯します。接続は事実上の強さとは別に「中核／推奨／参照」の視聴重要度を持ち、既定の「全線」は生成JSONに含まれる全接続を表示し、互換性観測値199本を含みます。中核は有向に再帰し、推奨は選択作品への直接接続だけ付加、参照は直接補助に限定します。複数ゴールでは OR（どれか）／AND（共通）／PATH（ゴール間の有向経路だけ）を切り替えられます。複数のゴールを選ぶと、必要な予習作品を重複除去して1本の視聴順に統合します。v5.7.1では接続を再監査し、120行（119ユニーク矢印）の骨格接続を整理し、66本を追加。追加線は物語・人物・旧映像宇宙・Doomsday公式帰還を区別し、Doomsdayの出演確認線は「直接前日譚」を意味しません。</div></div></details>
-<div id="mobileBackdrop" class="mobile-backdrop" aria-hidden="true"></div><div class="mobile-graph-actions" aria-label="グラフ操作"><button id="mobileFitBtn" type="button" title="全体表示">全体</button><button id="mobileSelectedBtn" type="button" title="選択作品へ">選択へ</button><button id="mobileDetailsFloat" type="button" aria-expanded="false" aria-controls="right" title="詳細を開く">詳細</button></div>
+<!-- The mobile app shell owns chart controls and the single detail sheet. -->
 <script>
 let NODES=[]; let EDGES=[]; let CHAR_LINKS=[]; let RELEASE_META={}; let CHRONOLOGY_LANES=[]; let CHRONOLOGY_META={};
 let nm=Object.create(null), inc=Object.create(null), out=Object.create(null), charWorks=Object.create(null), reasonsById=Object.create(null);
@@ -7741,23 +7716,6 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     });
   })();
 
-  // v5.13.0: graph-only mobile actions. Keep the floating controls off the watch plan/about area.
-  (()=>{
-    let raf=0;
-    const sync=()=>{
-      raf=0;
-      const wrap=document.querySelector('.panel.active .svg-wrap');
-      const r=wrap?.getBoundingClientRect();
-      const visible=!!r && Math.max(0,Math.min(r.bottom,innerHeight)-Math.max(r.top,0))>Math.min(180,r.height*.25);
-      document.body.classList.toggle('mobile-chart-in-view',visible);
-    };
-    const queue=()=>{if(!raf)raf=requestAnimationFrame(sync)};
-    addEventListener('scroll',queue,{passive:true});
-    addEventListener('resize',queue,{passive:true});
-    document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(sync)));
-    sync();
-  })();
-
   ensureMobileFocusShell();
   renderGoalBar();
   document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(()=>{
@@ -8069,47 +8027,12 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
 
 <script>
-// v5.9.8 mobile UI: collapsible controls + bottom details sheet + mobile graph actions.
+// Mobile shell compatibility: keep the existing advanced controls reachable.
 (()=>{
   const mq=window.matchMedia('(max-width:760px)');
   const header=document.querySelector('header');
-  const detailsBtn=document.getElementById('mobileDetailsBtn');
-  const detailsFloat=document.getElementById('mobileDetailsFloat');
-  const detailsClose=document.getElementById('mobileDetailsClose');
-  const backdrop=document.getElementById('mobileBackdrop');
-  const fitBtn=document.getElementById('mobileFitBtn');
-  const selectedBtn=document.getElementById('mobileSelectedBtn');
   const controlsButton=document.getElementById('mobileControlsButton');
   let controlsOpen=false,controlsReturnFocus=null;
-  const right=document.getElementById('right');
-  let detailsReturnFocus=null,detailsOpen=false;
-  const detailsFocusable=()=>[...right?.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')||[]]
-    .filter(el=>!el.disabled&&el.offsetParent!==null);
-  function setDetails(open){
-    if(!mq.matches) open=false;
-    if(open&&!detailsOpen)detailsReturnFocus=document.activeElement;
-    detailsOpen=!!open;
-    document.body.classList.toggle('mobile-details-open',!!open);
-    detailsBtn?.setAttribute('aria-expanded',open?'true':'false');
-    detailsFloat?.setAttribute('aria-expanded',open?'true':'false');
-    right?.setAttribute('aria-hidden',mq.matches?(open?'false':'true'):'false');
-    if(mq.matches&&open){
-      right?.setAttribute('role','dialog');
-      right?.setAttribute('aria-modal','true');
-      right?.setAttribute('aria-labelledby','mobileDetailsTitle');
-    }else{
-      right?.removeAttribute('role');
-      right?.removeAttribute('aria-modal');
-      right?.removeAttribute('aria-labelledby');
-    }
-    backdrop?.setAttribute('aria-hidden',mq.matches&&open?'false':'true');
-    if(open){
-      window.flushMobileSelectionUiIfDirty?.();
-      requestAnimationFrame(()=>detailsFocusable()[0]?.focus());
-    }else if(detailsReturnFocus?.isConnected){
-      const target=detailsReturnFocus;detailsReturnFocus=null;requestAnimationFrame(()=>target.focus());
-    }
-  }
   function setControls(open){
     if(!mq.matches)open=false;
     if(open&&!controlsOpen)controlsReturnFocus=document.activeElement;
@@ -8122,34 +8045,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       const target=controlsReturnFocus;controlsReturnFocus=null;requestAnimationFrame(()=>target.focus());
     }
   }
-  [detailsBtn,detailsFloat].forEach(b=>b?.addEventListener('click',()=>setDetails(true)));
-  [detailsClose,backdrop].forEach(b=>b?.addEventListener('click',()=>setDetails(false)));
   controlsButton?.addEventListener('click',()=>setControls(!controlsOpen));
-  right?.setAttribute('aria-hidden',mq.matches?'true':'false');
-  fitBtn?.addEventListener('click',()=>{fitView(activeWrap());});
-  selectedBtn?.addEventListener('click',()=>{
-    if(selected && activeSvgHasNode(selected)) centerNodeInView(selected);
-    else fitView(activeWrap());
-  });
-  document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
-    if(mq.matches){ setDetails(false); }
-  }));
-  document.addEventListener('keydown',e=>{
-    if(!detailsOpen)return;
-    if(e.key==='Escape'){e.preventDefault();setDetails(false);return;}
-    if(e.key!=='Tab')return;
-    const focusables=detailsFocusable();if(!focusables.length)return;
-    const first=focusables[0],last=focusables[focusables.length-1];
-    if(!right.contains(document.activeElement)){e.preventDefault();(e.shiftKey?last:first).focus();}
-    else if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
-    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
-  });
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&controlsOpen)setControls(false)});
-  mq.addEventListener?.('change',e=>{
-    if(!e.matches){setDetails(false);setControls(false)}
-    setTimeout(()=>{ if(mobileChartMotion.matches) refreshActiveWrapViewportPreservingCamera(); else fitView(activeWrap()); },80);
-  });
-  window.addEventListener('orientationchange',()=>setTimeout(()=>{ if(mobileChartMotion.matches) refreshActiveWrapViewportPreservingCamera(); else fitView(activeWrap()); },180));
+  mq.addEventListener?.('change',e=>{if(!e.matches)setControls(false)});
 })();
 </script>
 
