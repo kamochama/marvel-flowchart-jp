@@ -195,16 +195,14 @@ g.edge.fan-verified.fan-hidden{display:none}
 
 .path-pref-wrap{display:inline-flex;gap:4px;align-items:center}.path-pref-btn.active{background:#312e81;border-color:#818cf8;outline:1px solid #a5b4fc}.path-route.active-route{border-color:#8b5cf6;box-shadow:0 0 0 1px #6d28d9 inset}.path-route-alt-note{font-size:11px;color:#94a3b8;margin:3px 0 7px}.path-route-profile{display:inline-block;font-size:11px;margin-left:6px;padding:1px 6px;border-radius:999px;background:#1e1b4b;color:#c4b5fd;border:1px solid #4c1d95}.path-route-profile.active{background:#4c1d95;color:#ede9fe}
 
-/* v5.9.8: responsive mobile UI. Same HTML works on desktop and phones. */
-.mobile-actions,.mobile-sheet-head,.mobile-graph-actions,.mobile-backdrop{display:none}
+/* Responsive layout shared by the desktop shell and the mobile app shell. */
+.mobile-sheet-head{display:none}
 @media(max-width:760px){
   html,body{overscroll-behavior:none}
   body{padding-bottom:0}
   header{padding:9px 10px;z-index:40}
   header h1{font-size:17px;line-height:1.25;padding-right:116px}
   header .sub{font-size:10.5px;line-height:1.35;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .mobile-actions{display:flex;position:absolute;right:9px;top:8px;gap:5px}
-  .mobile-actions button{min-height:36px;padding:6px 9px;font-size:12px;background:#172033}
   header .controls{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #334155;max-height:62dvh;overflow:auto;overscroll-behavior:contain}
   header.controls-open .controls{display:flex}
   .controls>input,.controls>select{flex:1 1 100%;min-width:0}
@@ -224,38 +222,18 @@ g.edge.fan-verified.fan-hidden{display:none}
   .svg-wrap .zoom-hint{left:8px;right:auto;bottom:8px;font-size:10px;padding:4px 7px;max-width:72%;white-space:normal}
   .svg-wrap svg g.node{touch-action:none}
 
-  #right{display:block;position:fixed;left:0;right:0;bottom:0;top:auto;height:min(78dvh,760px);z-index:70;background:#0f172a;border:1px solid #475569;border-bottom:0;border-radius:18px 18px 0 0;padding:0 9px 18px;overflow:auto;overscroll-behavior:contain;box-shadow:0 -14px 40px rgba(0,0,0,.48);transform:translateY(calc(100% + 20px));transition:transform .22s ease;visibility:hidden}
-  body.mobile-details-open #right{transform:translateY(0);visibility:visible}
-  .mobile-sheet-head{display:flex;position:sticky;top:0;z-index:3;align-items:center;justify-content:space-between;gap:10px;background:#0f172a;padding:10px 3px 9px;margin:0 0 8px;border-bottom:1px solid #334155}
-  .mobile-sheet-head:before{content:"";position:absolute;width:46px;height:4px;border-radius:999px;background:#64748b;left:50%;top:5px;transform:translateX(-50%)}
-  .mobile-sheet-head b{font-size:14px}.mobile-sheet-sub{font-size:10px;color:#94a3b8;margin-top:2px}
-  .mobile-sheet-head button{min-width:66px;min-height:38px;font-size:13px}
-  #right .card{padding:10px;margin-bottom:8px;border-radius:10px}
-  #right .node-list{max-height:33dvh}
-  #right input,#right select,#right button{font-size:16px;min-height:42px}
-  #edgewrap{max-height:36dvh;overflow:auto}
-  table{font-size:11px;min-width:520px}
-
-  .mobile-backdrop{display:block;position:fixed;inset:0;background:rgba(2,6,23,.58);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s ease}
-  body.mobile-details-open .mobile-backdrop{opacity:1;pointer-events:auto}
-  .mobile-graph-actions{display:none;position:fixed;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:45;gap:5px;padding:5px;border-radius:12px;background:rgba(15,23,42,.92);border:1px solid #475569;box-shadow:0 5px 18px rgba(0,0,0,.28)}
-  body.mobile-chart-in-view .mobile-graph-actions{display:flex}
-  .mobile-graph-actions button{min-height:40px;padding:7px 9px;font-size:12px}
-  body.mobile-details-open .mobile-graph-actions{display:none}
   .badge,.selbadge{font-size:12px}
   .node-item{padding:10px 9px;font-size:14px}
   .prep-item{padding:9px 0}
 }
 @media(max-width:390px){
   header h1{font-size:16px;padding-right:108px}
-  .mobile-actions button{padding:5px 7px}
   .svg-wrap{height:63dvh;min-height:390px}
   .tabs .tab{padding:7px 9px}
 }
 @media(max-width:760px) and (orientation:landscape){
   header .sub{display:none}
   .svg-wrap{height:72dvh;min-height:300px}
-  #right{height:88dvh}
 }
 
 
@@ -343,7 +321,7 @@ main{max-width:1920px;margin:auto;grid-template-columns:minmax(0,1fr) 374px;min-
   .public-brand{padding:10px 12px}.brand-meta{padding-right:116px}.stat-chip{display:none}.public-release{display:inline-flex}.controls{padding:7px 8px 9px!important}.controls-primary,.advanced-grid{display:flex;flex-direction:column;gap:7px}.control-group{width:100%;padding:7px}.control-search{display:grid;grid-template-columns:1fr 1fr}.control-search #q{grid-column:1/-1}.control-reset{display:none}.advanced-controls>summary{font-size:12px}.public-guide{padding:7px}.guide-tip{display:none}main{display:block}.svg-wrap{min-height:430px!important}.help-grid{grid-template-columns:1fr}.public-footer{padding-bottom:82px}
 }
 @media(max-width:760px){
-  header{padding:0!important}header .controls{display:none!important}header.controls-open .controls{display:block!important}.public-brand{min-height:56px;padding:8px 10px}.brand-kicker{font-size:8px;margin-bottom:2px}.fan-badge{display:none}header h1{font-size:17px!important;padding-right:104px!important}.brand-meta{display:none}header .sub{font-size:9px;max-width:250px}.mobile-actions{top:9px;right:8px}.controls{border-top:1px solid #263550!important}.controls .control-group input,.controls .control-group select,.controls .control-group button{font-size:16px;min-height:42px}.controls .direction-key,.controls .family-key,.controls .audit-edge-key,.controls .fan-edge-key{white-space:normal}.public-guide{padding:6px 7px}.guide-lead{display:none}.guide-step{font-size:10px;padding:4px 7px}.guide-arrow{display:none}.flow-tabs-note{display:none!important}.tabs{padding:1px 0 7px}.svg-wrap{border-radius:12px!important;background-size:22px 22px,22px 22px,auto!important}.public-footer{font-size:9px;padding-inline:12px}.footer-row{display:block}.footer-version{margin-bottom:6px}
+  header{padding:0!important}header .controls{display:none!important}header.controls-open .controls{display:block!important}.public-brand{min-height:56px;padding:8px 10px}.brand-kicker{font-size:8px;margin-bottom:2px}.fan-badge{display:none}header h1{font-size:17px!important;padding-right:104px!important}.brand-meta{display:none}header .sub{font-size:9px;max-width:250px}.controls{border-top:1px solid #263550!important}.controls .control-group input,.controls .control-group select,.controls .control-group button{font-size:16px;min-height:42px}.controls .direction-key,.controls .family-key,.controls .audit-edge-key,.controls .fan-edge-key{white-space:normal}.public-guide{padding:6px 7px}.guide-lead{display:none}.guide-step{font-size:10px;padding:4px 7px}.guide-arrow{display:none}.flow-tabs-note{display:none!important}.tabs{padding:1px 0 7px}.svg-wrap{border-radius:12px!important;background-size:22px 22px,22px 22px,auto!important}.public-footer{font-size:9px;padding-inline:12px}.footer-row{display:block}.footer-version{margin-bottom:6px}
 }
 
 
@@ -373,7 +351,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
  main{grid-template-columns:minmax(0,1fr) 320px}.below-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:760px){
- #right{display:block;position:fixed;top:auto;max-height:none;overflow:auto}
+ #right{display:none!important}
  .side-tabs{position:sticky;top:58px;padding:5px 0 8px;z-index:4}
  .side-tab-panel{overflow:visible}.side-tab-works .node-list{max-height:33dvh}
  .below-chart-info{padding:14px 8px 90px}.below-info-head{display:block;margin-bottom:9px}.below-info-grid{grid-template-columns:1fr}.below-info-grid .card{padding:10px}
@@ -610,6 +588,84 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 }
 
 
+/* M2 mobile shell: one active view host, one bottom navigation, one sheet. */
+.mobile-app-shell{display:none}
+@media(max-width:760px){
+  .mobile-app-shell{display:flex;position:relative;z-index:20;min-height:calc(100dvh - 56px);flex-direction:column;background:#070b16;color:#e5e7eb}
+  .mobile-view-host{flex:1 1 auto;min-height:0;padding:10px 9px calc(72px + env(safe-area-inset-bottom));}
+  .mobile-view-placeholder{display:grid;min-height:calc(100dvh - 190px);align-content:center;justify-items:center;gap:7px;padding:28px 18px;text-align:center;border:1px solid #263550;border-radius:14px;background:radial-gradient(circle at 50% 0,rgba(37,99,235,.14),transparent 52%),#0b1220}
+  .mobile-view-placeholder h2{margin:0;font-size:20px;color:#f8fafc}
+  .mobile-view-placeholder p{max-width:32rem;margin:0;color:#94a3b8;line-height:1.55}
+  .mobile-view-kicker{font-size:10px;font-weight:900;letter-spacing:.14em;color:#60a5fa}
+  #mobileBottomNav{position:fixed;right:0;bottom:0;left:0;z-index:70;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px 9px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #263550;background:rgba(7,11,22,.97);box-shadow:0 -10px 30px rgba(0,0,0,.28)}
+  #mobileBottomNav button{min-height:44px;border:1px solid #334155;border-radius:10px;background:#101827;color:#cbd5e1;font-size:12px;font-weight:850}
+  #mobileBottomNav button[aria-current="page"]{border-color:#60a5fa;background:#172554;color:#dbeafe;box-shadow:0 0 0 1px rgba(96,165,250,.18)}
+  #mobileSheet{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center;background:rgba(2,6,23,.72)}
+  #mobileSheet[hidden]{display:none!important}
+  .mobile-sheet-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;cursor:default}
+  .mobile-sheet-card{position:relative;z-index:1;width:100%;max-height:78dvh;overflow:auto;padding:12px 13px calc(16px + env(safe-area-inset-bottom));border:1px solid #475569;border-bottom:0;border-radius:18px 18px 0 0;background:#0b1322;box-shadow:0 -18px 50px rgba(0,0,0,.48)}
+  .mobile-sheet-card:before{content:"";display:block;width:46px;height:4px;margin:0 auto 10px;border-radius:999px;background:#64748b}
+  .mobile-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .mobile-sheet-head h2{margin:0;font-size:16px;color:#f8fafc}
+  .mobile-sheet-head p{margin:3px 0 0;color:#94a3b8;font-size:11px}
+  .mobile-sheet-head button{min-width:68px;min-height:44px}
+  #mobileSheetBody{min-height:80px;padding:12px;border:1px solid #263550;border-radius:10px;background:#0f172a;color:#cbd5e1;line-height:1.55}
+  .mobile-chart-surface{display:block;min-height:0}
+  .mobile-chart-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 8px}
+  .mobile-chart-controls button{min-width:0;min-height:44px;padding:7px 4px;border:1px solid #334155;border-radius:10px;background:#101827;color:#dbeafe;font-size:11px;font-weight:850}
+  .mobile-chart-controls button:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
+  .mobile-chart-surface>.panel{display:block}
+  .mobile-chart-surface>.panel>.svg-wrap{min-height:calc(100dvh - 210px);height:calc(100dvh - 210px);max-height:none}
+  .mobile-search-surface{display:grid;gap:10px;align-content:start;min-height:calc(100dvh - 190px);padding:12px 11px 18px;border:1px solid #263550;border-radius:14px;background:linear-gradient(180deg,rgba(17,27,46,.96),rgba(11,18,32,.96))}
+  .mobile-search-surface h2{margin:0;font-size:20px;color:#f8fafc}
+  .mobile-search-query{width:100%;min-height:48px;padding:10px 12px;border:1px solid #64748b;border-radius:10px;background:#0b1322;color:#f8fafc;font-size:16px}
+  .mobile-search-filter-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .mobile-search-filter-row label{display:grid;gap:4px;color:#94a3b8;font-size:10px;font-weight:750}
+  .mobile-search-filter-row select{width:100%;min-height:44px;font-size:14px}
+  .mobile-search-status{margin:0;color:#cbd5e1;font-size:12px}
+  .mobile-search-empty{margin:0;padding:15px 10px;border:1px dashed #475569;border-radius:10px;color:#fbbf24;font-size:14px;text-align:center}
+  .mobile-search-surface-results{display:grid;gap:8px;position:static;width:auto;padding:0;border:0;box-shadow:none}
+  .mobile-search-result-card{display:grid;gap:8px;padding:11px;border:1px solid #334155;border-radius:11px;background:#0f172a}
+  .mobile-search-result-card h3{margin:0;font-size:15px;color:#f8fafc;line-height:1.35}
+  .mobile-search-result-card .mobile-search-result-meta{margin:0;color:#94a3b8;font-size:11px;line-height:1.45}
+  .mobile-search-result-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .mobile-search-result-action{min-width:0;min-height:44px;padding:7px 4px;border:1px solid #475569;border-radius:9px;background:#172033;color:#dbeafe;font-size:12px;font-weight:800}
+  .mobile-search-result-action:focus-visible,.mobile-search-query:focus-visible,.mobile-search-filter-row select:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
+  .mobile-plan-surface{display:grid;gap:10px;align-content:start;min-height:calc(100dvh - 190px);padding:12px 11px 18px;border:1px solid #263550;border-radius:14px;background:linear-gradient(180deg,rgba(17,27,46,.96),rgba(11,18,32,.96))}
+  .mobile-plan-surface h2{margin:0;font-size:20px;color:#f8fafc}
+  .mobile-plan-tier-row{display:grid;gap:5px;color:#94a3b8;font-size:11px;font-weight:800}
+  .mobile-plan-tier{width:100%;min-height:46px;padding:8px 10px;border:1px solid #64748b;border-radius:10px;background:#0b1322;color:#f8fafc;font-size:15px}
+  .mobile-plan-summary{display:grid;gap:7px;padding:10px;border:1px solid #92400e;border-radius:11px;background:rgba(66,32,6,.36)}
+  .mobile-plan-summary strong{color:#fde68a;font-size:14px}
+  .mobile-plan-summary-goals{display:flex;gap:6px;overflow:auto;padding-bottom:2px}
+  .mobile-plan-goal{flex:0 0 auto;padding:7px 9px;border:1px solid #b45309;border-radius:999px;background:#2b1707;color:#fde68a;font-size:11px;font-weight:800}
+  .mobile-plan-progress{display:grid;gap:6px;padding:10px;border:1px solid #155e75;border-radius:11px;background:rgba(8,47,73,.5)}
+  .mobile-plan-progress-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;color:#bae6fd;font-size:12px}
+  .mobile-plan-progress-bar{height:9px;overflow:hidden;border:1px solid #164e63;border-radius:999px;background:#082f49}
+  .mobile-plan-progress-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,#0891b2,#22d3ee);transition:width .18s ease}
+  .mobile-plan-progress-note{color:#cbd5e1;font-size:12px;line-height:1.45}
+  .mobile-plan-actions{display:grid;grid-template-columns:1fr;gap:7px}
+  .mobile-plan-chart{min-height:46px;border:1px solid #3b82f6;border-radius:10px;background:#172554;color:#dbeafe;font-size:13px;font-weight:850}
+  .mobile-plan-list{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+  .mobile-plan-item{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;padding:9px 8px;border:1px solid #334155;border-radius:11px;background:#0f172a}
+  .mobile-plan-item.is-goal{border-color:#92400e;background:linear-gradient(90deg,rgba(120,53,15,.2),rgba(15,23,42,.45))}
+  .mobile-plan-number{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#172033;color:#93c5fd;font-weight:900;font-size:12px}
+  .mobile-plan-item-main{display:grid;gap:5px;min-width:0}
+  .mobile-plan-item-title{display:flex;align-items:center;gap:5px;min-width:0;color:#f8fafc;font-size:14px;font-weight:850;line-height:1.35}
+  .mobile-plan-item-title strong{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .mobile-plan-item-meta{color:#94a3b8;font-size:11px}
+  .mobile-plan-item-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
+  .mobile-plan-watch-toggle,.mobile-plan-detail{min-width:0;min-height:44px;border:1px solid #475569;border-radius:9px;background:#172033;color:#dbeafe;font-size:12px;font-weight:800}
+  .mobile-plan-watch-toggle{display:flex;align-items:center;justify-content:center;gap:5px}
+  .mobile-plan-watch-toggle input{width:20px;height:20px;accent-color:#22c55e}
+  .mobile-plan-detail{border-color:#334155;color:#cbd5e1}
+  .mobile-plan-empty{padding:12px;border:1px dashed #475569;border-radius:10px;color:#cbd5e1;line-height:1.5}
+  .mobile-plan-source{padding:9px;border-left:3px solid #64748b;color:#94a3b8;font-size:11px;line-height:1.5}
+  .mobile-plan-surface button:focus-visible,.mobile-plan-tier:focus-visible,.mobile-plan-watch-toggle:focus-within{outline:2px solid #93c5fd;outline-offset:2px}
+  body.mobile-chart-host-only #left>.panel{display:none!important}
+}
+
+
 /* PUBLIC v5.14.0 — mobile hierarchy: persistent search + one area selector. */
 .mobile-primary-nav{display:none}
 @media(max-width:760px){
@@ -718,8 +774,6 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 .prep-inline-detail-section p{margin:0;font-size:11px;line-height:1.58;color:#dbeafe}
 .prep-inline-detail-section.is-map-role{border-left:2px solid #a78bfa;padding-left:8px}
 @media(max-width:760px){
-  #mobileDetailsBtn{display:none!important}
-  .mobile-graph-actions #mobileDetailsFloat{display:inline-flex!important}
   .prep-detail-toggle{min-height:36px;padding:6px 10px;font-size:11px}
   .prep-inline-detail{padding:10px 11px}
   .prep-inline-detail-section p{font-size:12px;line-height:1.62}
@@ -783,7 +837,6 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
   .mobile-primary-nav button,
   .featured-route-control button,
   #mobileFocusShell button,
-  .mobile-graph-actions button,
   .mobile-sheet-head button,
   #right .mobile-sheet-head button,
   .side-tab-btn,
@@ -839,6 +892,24 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
   </details>
 </div>
 </header>
+<div id="mobileAppShell" class="mobile-app-shell" aria-label="スマホ用アプリ">
+  <div id="mobileViewHost" class="mobile-view-host" aria-live="polite"></div>
+  <nav id="mobileBottomNav" aria-label="スマホ画面の切り替え">
+    <button type="button" data-mobile-view="chart" aria-current="page">チャート</button>
+    <button type="button" data-mobile-view="search">探す</button>
+    <button type="button" data-mobile-view="plan">予習</button>
+  </nav>
+  <div id="mobileSheet" role="dialog" aria-modal="true" aria-labelledby="mobileSheetTitle" aria-hidden="true" hidden>
+    <button type="button" class="mobile-sheet-backdrop" data-mobile-sheet-dismiss aria-label="シートを閉じる"></button>
+    <section class="mobile-sheet-card" tabindex="-1">
+      <div class="mobile-sheet-head">
+        <div><h2 id="mobileSheetTitle" tabindex="-1">作品情報</h2><p id="mobileSheetSubtitle">選択した作品の情報</p></div>
+        <button id="mobileSheetClose" type="button">閉じる</button>
+      </div>
+      <div id="mobileSheetBody">作品を選ぶと、ここに詳細を表示します。</div>
+    </section>
+  </div>
+</div>
 <div class="public-nav-sticky">
   <div class="public-guide" aria-label="基本操作">
     <span class="guide-lead">はじめかた</span>
@@ -4310,7 +4381,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
 2026年12月18日：『アベンジャーズ／ドゥームズデイ』日米同時公開<br/>
 2027年12月17日：『Avengers: Secret Wars』Marvel公式予定（日本公開日は未確認）
 </div></div><div class="card info-card"><h3>キャラクター索引</h3><div class="muted" id="charinfo">上部のキャラクター欄から選ぶと、主要出演・物語接続作品だけに絞り込みます。</div></div><div class="card info-card"><h3>接続重要度</h3><div class="importance-summary"><b>中核 91本</b>：本筋として有向に再帰追跡<br/><b>推奨 75本</b>：選択作品へ直接1段だけ付加<br/><b>参照 33本</b>：客演・設定・別宇宙など。「全線」で表示<br/><span class="muted">※ strength（事実上の接続強度）とは別軸です。</span></div></div><div class="card info-card"><h3>日本版ルール</h3><div class="muted">日本の公式邦題を優先。邦題が確認できない未公開作は英題＋「邦題未発表」。英題は検索・監査用に保持しています。日本公開・配信日は公式ソースで確認できたものから順次追加します。作品を選ぶと、接続重要度と選択条件に応じて関連作品を点灯します。接続は事実上の強さとは別に「中核／推奨／参照」の視聴重要度を持ち、既定の「全線」は生成JSONに含まれる全接続を表示し、互換性観測値199本を含みます。中核は有向に再帰し、推奨は選択作品への直接接続だけ付加、参照は直接補助に限定します。複数ゴールでは OR（どれか）／AND（共通）／PATH（ゴール間の有向経路だけ）を切り替えられます。複数のゴールを選ぶと、必要な予習作品を重複除去して1本の視聴順に統合します。v5.7.1では接続を再監査し、120行（119ユニーク矢印）の骨格接続を整理し、66本を追加。追加線は物語・人物・旧映像宇宙・Doomsday公式帰還を区別し、Doomsdayの出演確認線は「直接前日譚」を意味しません。</div></div></details>
-<div id="mobileBackdrop" class="mobile-backdrop" aria-hidden="true"></div><div class="mobile-graph-actions" aria-label="グラフ操作"><button id="mobileFitBtn" type="button" title="全体表示">全体</button><button id="mobileSelectedBtn" type="button" title="選択作品へ">選択へ</button><button id="mobileDetailsFloat" type="button" aria-expanded="false" aria-controls="right" title="詳細を開く">詳細</button></div>
+<!-- The mobile app shell owns chart controls and the single detail sheet. -->
 <script>
 let NODES=[]; let EDGES=[]; let CHAR_LINKS=[]; let RELEASE_META={}; let CHRONOLOGY_LANES=[]; let CHRONOLOGY_META={};
 let nm=Object.create(null), inc=Object.create(null), out=Object.create(null), charWorks=Object.create(null), reasonsById=Object.create(null);
@@ -4406,6 +4477,15 @@ function setMobileViewBox(wrap,st,x,y,w,h){
   st.vbX=x; st.vbY=y; st.vbW=Math.max(.001,w); st.vbH=Math.max(.001,h);
   st.scale=st.baseViewBox.w/st.vbW;
   st.x=st.vbX; st.y=st.vbY;
+  syncMobileChartCameraSnapshot(wrap);
+}
+
+function syncMobileChartCameraSnapshot(wrap){
+  const host=wrap?.closest?.('[data-mobile-surface="chart"]');
+  const st=wrap&&viewStates.get(wrap);
+  if(!host||!st||typeof st.vbX!=='number')return false;
+  host.dataset.mobileCamera=JSON.stringify({x:st.vbX,y:st.vbY,w:st.vbW,h:st.vbH});
+  return true;
 }
 
 // v5.11.4 Canvas renderer: mobile Graphviz tabs. The source SVG remains as the
@@ -5075,9 +5155,10 @@ function applyView(wrap){
   if(mobileChartMotion.matches){
     const ms=ensureMobileViewBoxState(wrap); if(!ms) return;
     if(svg.style.transform!=='none') svg.style.transform='none';
-    if(isMobileCanvasWrap(wrap)){initMobileCanvas(wrap);drawMobileCanvas(wrap);window.syncChronologyStickyLabels?.(wrap);return;}
+    if(isMobileCanvasWrap(wrap)){initMobileCanvas(wrap);drawMobileCanvas(wrap);syncMobileChartCameraSnapshot(wrap);window.syncChronologyStickyLabels?.(wrap);return;}
     const value=`${ms.vbX} ${ms.vbY} ${ms.vbW} ${ms.vbH}`;
     if(ms.lastAppliedViewBox!==value){svg.setAttribute('viewBox',value);ms.lastAppliedViewBox=value}
+    syncMobileChartCameraSnapshot(wrap);
     window.syncChronologyStickyLabels?.(wrap);
     return;
   }
@@ -5460,6 +5541,41 @@ render();
 <script>
 // v5.5 patch: deselect on second click + multi-select with Ctrl/Cmd/Shift
 var selectedIds = new Set();
+function createMobileUiStore(initialState={}){
+  const initial=initialState&&typeof initialState==='object'?initialState:{};
+  const normalizeView=view=>view==='chart'||view==='search'||view==='plan'?view:'chart';
+  const normalizeSheet=sheet=>sheet==='closed'||sheet==='detail'||sheet==='reason'||sheet==='settings'?sheet:'closed';
+  const knownWork=id=>typeof id==='string'&&(typeof nm==='undefined'||!nm||!!nm[id]);
+  const normalizeGoals=goalIds=>[...new Set((Array.isArray(goalIds)?goalIds:[]).filter(knownWork))];
+  const normalizeState=next=>{
+    const goalIds=normalizeGoals(next.goalIds);
+    return {
+      view:normalizeView(next.view),goalIds,
+      selectedId:typeof next.selectedId==='string'&&goalIds.includes(next.selectedId)?next.selectedId:null,
+      sheet:normalizeSheet(next.sheet),sheetWork:typeof next.sheetWork==='string'&&next.sheetWork?next.sheetWork:null,
+      query:String(next.query||''),filter:String(next.filter||'')
+    };
+  };
+  let state=normalizeState({view:'chart',goalIds:[],selectedId:null,sheet:'closed',sheetWork:null,query:'',filter:'',...initial});
+  const listeners=new Set();
+  const publish=next=>{
+    const previous=state,nextState=normalizeState(next);
+    const changed=previous.view!==nextState.view||previous.selectedId!==nextState.selectedId||previous.sheet!==nextState.sheet||previous.sheetWork!==nextState.sheetWork||previous.query!==nextState.query||previous.filter!==nextState.filter||previous.goalIds.length!==nextState.goalIds.length||previous.goalIds.some((id,index)=>id!==nextState.goalIds[index]);
+    if(!changed)return false;
+    state=nextState;listeners.forEach(fn=>fn(state,previous));return true;
+  };
+  return {
+    getState:()=>({...state,goalIds:[...state.goalIds]}),
+    subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
+    setView(view){return publish({...state,view:view==='search'||view==='plan'?view:'chart'});},
+    setGoals(goalIds,selectedId=null){return publish({...state,goalIds,selectedId});},
+    setSheet(sheet,sheetWork=null){return publish({...state,sheet:['detail','reason','settings'].includes(sheet)?sheet:'closed',sheetWork});},
+    setSearch(query){return publish({...state,query:String(query||'')});},
+    setFilter(filter){return publish({...state,filter:String(filter||'')});}
+  };
+}
+window.marvelMobileUiStore=createMobileUiStore();
+function syncMobileUiGoals(){window.marvelMobileUiStore?.setGoals(orderedGoalIds(),selected);}
 const _origCenterNodeInView = centerNodeInView;
 centerNodeInView = function(id){
   if(!selectedIds.size) return false;
@@ -5543,7 +5659,7 @@ function refreshSelection(center=true){
   const source=n.source_url?`<p><a href="${esc(n.source_url)}" target="_blank" rel="noopener" style="color:#60a5fa">日本向け公式ソースを開く ↗</a><br><span class="muted">${esc(n.source_note)}</span></p>`:'';
   detail.innerHTML=`<strong>${esc(n.title)}</strong><div class="muted">現在の図では関連作品だけ点灯中</div><div class="muted">${esc(n.title_en)} / ${esc(n.release)}</div><p><span class="badge">${esc(n.branch)}</span><span class="badge">${esc(n.ja_status)}</span>${selectedIds.size>1?'<span class="badge">複数ゴール</span>':''}</p>${n.ja_status==='unannounced'?'<p class="warn">日本公式の邦題未発表として扱っています。</p>':''}${jpinfo}${source}${selectionSummaryHtml()}<p><b>直接の強い前提候補：</b><br>${direct.length?direct.map(x=>`<span class="badge pre" data-id="${x}" style="cursor:pointer">${esc(nm[x]?.title||x)}</span>`).join(' '):'<span class="muted">なし</span>'}</p><p><b>強い接続を遡った前提候補：</b><br>${anc.length?anc.slice(0,20).map(x=>`<span class="badge pre" data-id="${x}" style="cursor:pointer">${esc(nm[x]?.title||x)}</span>`).join(' '):'<span class="muted">なし</span>'}</p><p><b>ゴール数：</b> ${selectedIds.size} / <b>接続数：</b>入力 ${ins.length} / 出力 ${outs.length}</p>`;
   detail.querySelectorAll('.pre').forEach(x=>x.onclick=(e)=>select(x.dataset.id, e.ctrlKey||e.metaKey||e.shiftKey));
-  detail.querySelectorAll('.seljump').forEach(x=>x.onclick=()=>{ selected=x.dataset.id; refreshSelection(true); });
+  detail.querySelectorAll('.seljump').forEach(x=>x.onclick=()=>{ selected=x.dataset.id; syncMobileUiGoals(); refreshSelection(true); });
   let prevCand=(ins.filter(e=>edgeRank(e)>=3).sort((a,b)=>edgeRank(b)-edgeRank(a))); if(!prevCand.length) prevCand=ins.slice().sort((a,b)=>edgeRank(b)-edgeRank(a));
   let nextCand=(outs.filter(e=>edgeRank(e)>=3).sort((a,b)=>edgeRank(b)-edgeRank(a))); if(!nextCand.length) nextCand=outs.slice().sort((a,b)=>edgeRank(b)-edgeRank(a));
   prevCand=mergeUniqueEdges(prevCand).slice(0,10); nextCand=mergeUniqueEdges(nextCand).slice(0,10);
@@ -5567,13 +5683,14 @@ cf.addEventListener('change',e=>{
     const allowed=charWorks[cf.value]||new Set();
     selectedIds = new Set(orderedSelectedIds().filter(id=>allowed.has(id)));
     normalizeSelection();
+    syncMobileUiGoals();
     if(!selectedIds.size){ clearSvg(); render(); resetPanels('キャラクターを選択中です。図上で関連作品が点灯します。'); return; }
     refreshSelection(false); return;
   }
   render(); applyCharacterHighlight();
 }, true);
 document.querySelectorAll('.hop').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.hop').forEach(x=>x.classList.remove('active')); b.classList.add('active'); hop=Number(b.dataset.hop); if(selectedIds.size) refreshSelection(false); else { clearSvg(); render(); } });
-document.getElementById('clear').onclick=()=>{ window.invalidateMobileUndo?.(); selected=null; selectedIds=new Set(); q.value=''; bf.value=''; cf.value=''; sf.value=''; refreshSelection(false); };
+document.getElementById('clear').onclick=()=>{ window.invalidateMobileUndo?.(); selected=null; selectedIds=new Set(); syncMobileUiGoals(); q.value=''; bf.value=''; cf.value=''; sf.value=''; refreshSelection(false); };
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active')); b.classList.add('active'); document.getElementById(b.dataset.target).classList.add('active'); requestAnimationFrame(()=>{ fitView(activeWrap()); if(selectedIds.size) refreshSelection(false); else { clearSvg(); applyCharacterHighlight(); if(typeof applyFamilyFocus==='function') applyFamilyFocus(); } }); });
 document.getElementById('zoomSelected').onclick=()=>{ if(selectedIds.size && selected) _origCenterNodeInView(selected); else fitView(activeWrap()); };
 installMultiSelectPatch();
@@ -5802,6 +5919,7 @@ function updatePreparationPlan(){
     const id=x.dataset.id;
     if(!selectedIds.has(id)) selectedIds.add(id);
     selected=id;
+    syncMobileUiGoals();
     refreshSelection(true);
   });
 }
@@ -6753,6 +6871,7 @@ if(flowchartReady)render();
     return {orderedIds,goalIds:goals,prepIds,rolesById,sourceByGoal,sourceLabelByGoal,sourceUrlByGoal,sourceCheckedAtByGoal,routeIdByGoal,provenanceByGoal,tierNoteByGoal,unknownOrderingPairs:[]};
   }
   window.marvelBuildMultiGoalPlan=buildMultiGoalPlan;
+  window.marvelOrderedGoalIds=()=>orderedGoalIds();
   window.marvelMultiGoalAudit=()=>({goals:orderedGoalIds(),tier:prepTier,plan:buildMultiGoalPlan(orderedGoalIds(),prepTier)});
 
   function prepImportanceLabel(imp){ return ({core:'中核',recommended:'推奨',reference:'参照'})[imp]||imp; }
@@ -6904,6 +7023,11 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   }
   let watchedIds=loadWatchedIds();
   let dimWatchedOnChart=storageRead(WATCHED_DIM_STORAGE_KEY,'0')==='1';
+  const watchedStateListeners=new Set();
+  function notifyWatchedState(){
+    const snapshot={watched:[...watchedIds],dimOnChart:dimWatchedOnChart};
+    watchedStateListeners.forEach(listener=>{try{listener(snapshot)}catch(_){/* subscriber failures never affect persistence */}});
+  }
   function saveWatchedState(){
     try{localStorage.setItem(WATCHED_STORAGE_KEY,JSON.stringify([...watchedIds]));localStorage.setItem(WATCHED_DIM_STORAGE_KEY,dimWatchedOnChart?'1':'0')}catch(_){}
   }
@@ -6916,7 +7040,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   function setWatched(id,on){
     if(!nm[id]) return;
     if(on) watchedIds.add(id); else watchedIds.delete(id);
-    saveWatchedState(); applyWatchedDimming();
+    saveWatchedState(); applyWatchedDimming(); notifyWatchedState();
   }
   function prepWatchedCheckbox(id,label='視聴済み'){
     const checked=watchedIds.has(id)?' checked':'';
@@ -6959,17 +7083,26 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const dim=prepplan.querySelector('#prepDimWatched');
     if(dim) dim.onchange=()=>{dimWatchedOnChart=dim.checked;saveWatchedState();applyWatchedDimming();};
     const all=prepplan.querySelector('#prepMarkAllWatched');
-    if(all) all.onclick=()=>{planIds.forEach(id=>watchedIds.add(id));saveWatchedState();applyWatchedDimming();updatePreparationPlanPreservingView();};
+    if(all) all.onclick=()=>{planIds.forEach(id=>watchedIds.add(id));saveWatchedState();applyWatchedDimming();notifyWatchedState();updatePreparationPlanPreservingView();};
     const clear=prepplan.querySelector('#prepClearPlanWatched');
-    if(clear) clear.onclick=()=>{planIds.forEach(id=>watchedIds.delete(id));saveWatchedState();applyWatchedDimming();updatePreparationPlanPreservingView();};
+    if(clear) clear.onclick=()=>{planIds.forEach(id=>watchedIds.delete(id));saveWatchedState();applyWatchedDimming();notifyWatchedState();updatePreparationPlanPreservingView();};
   }
   window.marvelWatchProgress={
     get watched(){return [...watchedIds]},
     isWatched:id=>watchedIds.has(id),
     set:(id,on=true)=>{setWatched(id,!!on);updatePreparationPlanPreservingView(id);},
-    clear:()=>{watchedIds.clear();saveWatchedState();applyWatchedDimming();updatePreparationPlanPreservingView();},
+    clear:()=>{watchedIds.clear();saveWatchedState();applyWatchedDimming();notifyWatchedState();updatePreparationPlanPreservingView();},
+    subscribe:listener=>{if(typeof listener!=='function')return()=>{};watchedStateListeners.add(listener);return()=>watchedStateListeners.delete(listener)},
+    stats:ids=>{
+      const items=[...(ids||[])].filter(id=>nm[id]);
+      const watched=items.filter(id=>watchedIds.has(id));
+      const known=items.filter(id=>watchTimeMinutes(id)!==null);
+      const unseenKnown=known.filter(id=>!watchedIds.has(id));
+      const remainingKnownMinutes=unseenKnown.reduce((sum,id)=>sum+watchTimeMinutes(id),0);
+      return {total:items.length,watched:watched.length,known:known.length,unknown:items.length-known.length,remainingKnownMinutes,percent:items.length?watched.length/items.length*100:0};
+    },
     get dimOnChart(){return dimWatchedOnChart},
-    setDim:on=>{dimWatchedOnChart=!!on;saveWatchedState();applyWatchedDimming();updatePreparationPlanPreservingView();}
+    setDim:on=>{dimWatchedOnChart=!!on;saveWatchedState();applyWatchedDimming();notifyWatchedState();updatePreparationPlanPreservingView();}
   };
 
   const WATCH_TIME_MINUTES=Object.freeze({"iron-man-2008":126,"the-incredible-hulk-2008":112,"iron-man-2-2010":125,"thor-2011":114,"captain-america-the-first-avenger-2011":124,"the-avengers-2012":143,"iron-man-3-2013":130,"thor-the-dark-world-2013":112,"captain-america-the-winter-soldier-2014":136,"guardians-of-the-galaxy-2014":122,"avengers-age-of-ultron-2015":141,"ant-man-2015":117,"captain-america-civil-war-2016":147,"doctor-strange-2016":115,"guardians-of-the-galaxy-vol-2-2017":136,"spider-man-homecoming-2017":133,"thor-ragnarok-2017":130,"black-panther-2018":134,"avengers-infinity-war-2018":149,"ant-man-and-the-wasp-2018":118,"captain-marvel-2019":124,"avengers-endgame-2019":181,"spider-man-far-from-home-2019":129,"black-widow-2021":134,"shang-chi-and-the-legend-of-the-ten-rings-2021":132,"eternals-2021":156,"spider-man-no-way-home-2021":148,"doctor-strange-in-the-multiverse-of-madness-2022":126,"thor-love-and-thunder-2022":119,"black-panther-wakanda-forever-2022":161,"ant-man-and-the-wasp-quantumania-2023":124,"guardians-of-the-galaxy-vol-3-2023":150,"the-marvels-2023":105,"deadpool-wolverine-2024":128,"captain-america-brave-new-world-2025":118,"thunderbolts-new-avengers-2025":127,"the-fantastic-four-first-steps-2025":114,"spider-man-brand-new-day-2026-07-31":145,"wandavision-2021":363,"the-falcon-and-the-winter-soldier-2021":330,"loki-s1-2021":302,"what-if-s1-2021":322,"hawkeye-2021":297,"moon-knight-2022":303,"ms-marvel-2022":289,"she-hulk-attorney-at-law-2022":309,"werewolf-by-night-2022":54,"the-guardians-of-the-galaxy-holiday-special-2022":44,"secret-invasion-2023":272,"loki-s2-2023":313,"what-if-s2-2023":292,"echo-2024":215,"x-men-97-s1-2024":344,"agatha-all-along-2024":379,"what-if-s3-2024":254,"your-friendly-neighborhood-spider-man-s1-2025":317,"daredevil-born-again-s1-2025":454,"eyes-of-wakanda-2025":125,"ironheart-2025":289,"i-am-groot-s1-2022":20,"i-am-groot-s2-2023":20,"daredevil-born-again-s2-2026":389,"daredevil-s1-2015":704,"daredevil-s2-2016":702,"daredevil-s3-2018":655,"spider-man-2002":121,"spider-man-2-2004":127,"spider-man-3-2007":139,"the-amazing-spider-man-2012":136,"the-amazing-spider-man-2-2014":142,"spider-man-into-the-spider-verse-2018":117,"spider-man-across-the-spider-verse-2023":140,"x-men-2000":104,"x2-x-men-united-2003":134,"x-men-the-last-stand-2006":104,"x-men-origins-wolverine-2009":107,"x-men-first-class-2011":131,"the-wolverine-2013":126,"x-men-days-of-future-past-2014":132,"deadpool-2016":108,"x-men-apocalypse-2016":144,"logan-2017":137,"deadpool-2-2018":119,"dark-phoenix-2019":113,"the-new-mutants-2020":94,"the-consultant-2011":4,"a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011":4,"item-47-2012":12,"agent-carter-one-shot-2013":15,"all-hail-the-king-2014":14,"the-punisher-one-last-kill-2026-05-12":50});
@@ -7240,10 +7373,13 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   const removeGoalBeforeMobileFast=removeGoal;
   function removeGoalMobileFast(id){
     const wrap=activeWrap();
-    if(!(mobileChartMotion.matches&&isMobileCanvasWrap(wrap))) return removeGoalBeforeMobileFast(id);
+    if(!(mobileChartMotion.matches&&isMobileCanvasWrap(wrap))){
+      const result=removeGoalBeforeMobileFast(id);syncMobileUiGoals();return result;
+    }
     if(!selectedIds.has(id)) return false;
     invalidateMobileUndo();
     selectedIds.delete(id);if(selected===id)normalizeSelection();
+    syncMobileUiGoals();
     selectionStateCache=computeSelectionState();
     window.__marvelLastSelectionState=selectionStateCache;
     renderGoalBar();
@@ -7260,9 +7396,12 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   removeGoal=removeGoalMobileFast;
   select=function(id,multi=false){
     const wrap=activeWrap();
-    if(!(mobileChartMotion.matches&&isMobileCanvasWrap(wrap))) return selectBeforeImmediateOverlay(id,multi);
+    if(!(mobileChartMotion.matches&&isMobileCanvasWrap(wrap))){
+      const result=selectBeforeImmediateOverlay(id,multi);syncMobileUiGoals();return result;
+    }
     invalidateMobileUndo();
     toggleSelectionState(id,multi);normalizeSelection();selectionStateCache=computeSelectionState();
+    syncMobileUiGoals();
     window.__marvelLastSelectionState=selectionStateCache;
     renderGoalBar();
     initMobileCanvas(wrap);drawMobileSelectionOverlay(wrap,selectionStateCache);
@@ -7456,8 +7595,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   }
   focusGoal = function(id){
     if(!selectedIds.has(id)) return false;
-    if(!mobileWidth()) return focusGoalBeforeV51511(id);
+    if(!mobileWidth()){const result=focusGoalBeforeV51511(id);syncMobileUiGoals();return result;}
     selected=id;
+    syncMobileUiGoals();
     mobileGoalStripInteracting=true;
     clearTimeout(mobileGoalStripScrollTimer);
     mobileGoalStripScrollTimer=setTimeout(finishMobileGoalStripInteraction,180);
@@ -7473,6 +7613,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     mobileUndoSnapshot={ids:orderedGoalIds(),focus:selected};
     const wrap=activeWrap();
     selectedIds=new Set();selected=null;selectionStateCache=null;
+    syncMobileUiGoals();
     renderGoalBar();
     if(mobileChartMotion.matches&&isMobileCanvasWrap(wrap)){
       initMobileCanvas(wrap);drawMobileSelectionOverlay(wrap,null);
@@ -7495,6 +7636,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(!mobileUndoSnapshot) return;
     const snap=mobileUndoSnapshot; mobileUndoSnapshot=null; clearTimeout(mobileUndoTimer);
     selectedIds=new Set(snap.ids); selected=(snap.focus&&selectedIds.has(snap.focus))?snap.focus:(snap.ids.at(-1)||null);
+    syncMobileUiGoals();
     selectionStateCache=computeSelectionState();window.__marvelLastSelectionState=selectionStateCache;
     refreshSelection(false);
     const wrap=activeWrap();
@@ -7572,23 +7714,6 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       btn.title=collapsed?'詳細パネルを開く':'詳細パネルを折り畳む';
       requestAnimationFrame(()=>activeWrap()&&applyView(activeWrap()));
     });
-  })();
-
-  // v5.13.0: graph-only mobile actions. Keep the floating controls off the watch plan/about area.
-  (()=>{
-    let raf=0;
-    const sync=()=>{
-      raf=0;
-      const wrap=document.querySelector('.panel.active .svg-wrap');
-      const r=wrap?.getBoundingClientRect();
-      const visible=!!r && Math.max(0,Math.min(r.bottom,innerHeight)-Math.max(r.top,0))>Math.min(180,r.height*.25);
-      document.body.classList.toggle('mobile-chart-in-view',visible);
-    };
-    const queue=()=>{if(!raf)raf=requestAnimationFrame(sync)};
-    addEventListener('scroll',queue,{passive:true});
-    addEventListener('resize',queue,{passive:true});
-    document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(sync)));
-    sync();
   })();
 
   ensureMobileFocusShell();
@@ -7696,7 +7821,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
         const tier=normalizePreparationTier(rp.tier);
         const creating=kind==='created';
         const differs=tier!==prepTier||JSON.stringify(goals)!==JSON.stringify(orderedGoalIds());
-        if(!creating&&differs){selectedIds=new Set(goals);selected=goals.slice(-1)[0]||null;prepTier=tier;selectionStateCache=null;refreshSelection(false)}
+        if(!creating&&differs){selectedIds=new Set(goals);selected=goals.slice(-1)[0]||null;syncMobileUiGoals();prepTier=tier;selectionStateCache=null;refreshSelection(false)}
         else updatePreparationPlanPreservingView();
         applyWatchedDimming();renderRoomBar();
         lastSentPlan=serverPlanSignature();
@@ -7902,47 +8027,12 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
 
 <script>
-// v5.9.8 mobile UI: collapsible controls + bottom details sheet + mobile graph actions.
+// Mobile shell compatibility: keep the existing advanced controls reachable.
 (()=>{
   const mq=window.matchMedia('(max-width:760px)');
   const header=document.querySelector('header');
-  const detailsBtn=document.getElementById('mobileDetailsBtn');
-  const detailsFloat=document.getElementById('mobileDetailsFloat');
-  const detailsClose=document.getElementById('mobileDetailsClose');
-  const backdrop=document.getElementById('mobileBackdrop');
-  const fitBtn=document.getElementById('mobileFitBtn');
-  const selectedBtn=document.getElementById('mobileSelectedBtn');
   const controlsButton=document.getElementById('mobileControlsButton');
   let controlsOpen=false,controlsReturnFocus=null;
-  const right=document.getElementById('right');
-  let detailsReturnFocus=null,detailsOpen=false;
-  const detailsFocusable=()=>[...right?.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')||[]]
-    .filter(el=>!el.disabled&&el.offsetParent!==null);
-  function setDetails(open){
-    if(!mq.matches) open=false;
-    if(open&&!detailsOpen)detailsReturnFocus=document.activeElement;
-    detailsOpen=!!open;
-    document.body.classList.toggle('mobile-details-open',!!open);
-    detailsBtn?.setAttribute('aria-expanded',open?'true':'false');
-    detailsFloat?.setAttribute('aria-expanded',open?'true':'false');
-    right?.setAttribute('aria-hidden',mq.matches?(open?'false':'true'):'false');
-    if(mq.matches&&open){
-      right?.setAttribute('role','dialog');
-      right?.setAttribute('aria-modal','true');
-      right?.setAttribute('aria-labelledby','mobileDetailsTitle');
-    }else{
-      right?.removeAttribute('role');
-      right?.removeAttribute('aria-modal');
-      right?.removeAttribute('aria-labelledby');
-    }
-    backdrop?.setAttribute('aria-hidden',mq.matches&&open?'false':'true');
-    if(open){
-      window.flushMobileSelectionUiIfDirty?.();
-      requestAnimationFrame(()=>detailsFocusable()[0]?.focus());
-    }else if(detailsReturnFocus?.isConnected){
-      const target=detailsReturnFocus;detailsReturnFocus=null;requestAnimationFrame(()=>target.focus());
-    }
-  }
   function setControls(open){
     if(!mq.matches)open=false;
     if(open&&!controlsOpen)controlsReturnFocus=document.activeElement;
@@ -7955,34 +8045,606 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       const target=controlsReturnFocus;controlsReturnFocus=null;requestAnimationFrame(()=>target.focus());
     }
   }
-  [detailsBtn,detailsFloat].forEach(b=>b?.addEventListener('click',()=>setDetails(true)));
-  [detailsClose,backdrop].forEach(b=>b?.addEventListener('click',()=>setDetails(false)));
   controlsButton?.addEventListener('click',()=>setControls(!controlsOpen));
-  right?.setAttribute('aria-hidden',mq.matches?'true':'false');
-  fitBtn?.addEventListener('click',()=>{fitView(activeWrap());});
-  selectedBtn?.addEventListener('click',()=>{
-    if(selected && activeSvgHasNode(selected)) centerNodeInView(selected);
-    else fitView(activeWrap());
-  });
-  document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
-    if(mq.matches){ setDetails(false); }
-  }));
-  document.addEventListener('keydown',e=>{
-    if(!detailsOpen)return;
-    if(e.key==='Escape'){e.preventDefault();setDetails(false);return;}
-    if(e.key!=='Tab')return;
-    const focusables=detailsFocusable();if(!focusables.length)return;
-    const first=focusables[0],last=focusables[focusables.length-1];
-    if(!right.contains(document.activeElement)){e.preventDefault();(e.shiftKey?last:first).focus();}
-    else if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
-    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
-  });
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&controlsOpen)setControls(false)});
-  mq.addEventListener?.('change',e=>{
-    if(!e.matches){setDetails(false);setControls(false)}
-    setTimeout(()=>{ if(mobileChartMotion.matches) refreshActiveWrapViewportPreservingCamera(); else fitView(activeWrap()); },80);
-  });
-  window.addEventListener('orientationchange',()=>setTimeout(()=>{ if(mobileChartMotion.matches) refreshActiveWrapViewportPreservingCamera(); else fitView(activeWrap()); },180));
+  mq.addEventListener?.('change',e=>{if(!e.matches)setControls(false)});
+})();
+</script>
+
+<script>
+// M2: mobile shell lifecycle, one sheet, and URL/history synchronization.
+(()=>{
+  const MOBILE_VIEWS=new Set(['chart','search','plan']);
+  const MOBILE_SHEETS=new Set(['detail','reason','settings']);
+  const MOBILE_VIEW_LABELS={chart:'チャート',search:'作品を探す',plan:'予習プラン'};
+  const MOBILE_CHART_PANEL_LABELS={overview:'関係地図',release:'公開順',chronology:'世界線・時系列',characters:'人物・組織',watch:'この作品を見るなら'};
+  const MOBILE_SHEET_LABELS={detail:['作品情報','選択した作品の情報'],reason:['接続理由','この接続の根拠'],settings:['表示設定','モバイル表示の設定']};
+  let mobileSheetReturnFocus=null;
+  let suppressMobileSheetHistory=false;
+  const mobileChartPanelOrigins=new Map();
+  let mobileChartMountedPanel=null;
+  let mobileChartLastPanel=null;
+  let mobileChartMountedHost=null;
+
+  function mobileUiStore(){return window.marvelMobileUiStore||null}
+  function normalizeMobileView(view){return MOBILE_VIEWS.has(view)?view:'chart'}
+  function normalizeMobileSheet(sheet){return MOBILE_SHEETS.has(sheet)?sheet:'closed'}
+
+  function ensureMobileShell(){
+    const shell=document.getElementById('mobileAppShell');
+    if(!shell)return null;
+    if(shell.dataset.mobileShellWired==='1')return shell;
+    const nav=document.getElementById('mobileBottomNav');
+    const sheet=document.getElementById('mobileSheet');
+    nav?.addEventListener('click',event=>{
+      const button=event.target.closest?.('[data-mobile-view]');
+      if(button)setMobileView(button.dataset.mobileView);
+    });
+    document.getElementById('mobileSheetClose')?.addEventListener('click',()=>closeMobileSheet());
+    sheet?.addEventListener('click',event=>{
+      if(event.target===sheet||event.target.closest?.('[data-mobile-sheet-dismiss]'))closeMobileSheet();
+    });
+    document.addEventListener('keydown',event=>{
+      const state=mobileUiStore()?.getState();
+      if(state?.sheet==='closed')return;
+      if(event.key==='Escape'){event.preventDefault();closeMobileSheet();return;}
+      if(event.key!=='Tab'||!sheet)return;
+      const focusables=[...sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(el=>!el.disabled&&el.offsetParent!==null);
+      if(!focusables.length)return;
+      const first=focusables[0],last=focusables[focusables.length-1];
+      if(!sheet.contains(document.activeElement)){event.preventDefault();(event.shiftKey?last:first).focus();}
+      else if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    });
+    shell.dataset.mobileShellWired='1';
+    return shell;
+  }
+
+  function syncMobileBottomNav(view){
+    document.querySelectorAll('#mobileBottomNav [data-mobile-view]').forEach(button=>{
+      const active=button.dataset.mobileView===view;
+      if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
+    });
+  }
+
+  function activeMobileChartPanel(){
+    const panel=document.querySelector('.panel.active');
+    if(panel?.querySelector('.svg-wrap'))return panel;
+    if(mobileChartMountedPanel?.querySelector('.svg-wrap'))return mobileChartMountedPanel;
+    return mobileChartLastPanel?.querySelector('.svg-wrap')?mobileChartLastPanel:null;
+  }
+
+  function rememberMobileChartPanel(panel){
+    if(panel&&!mobileChartPanelOrigins.has(panel)&&panel.parentElement){
+      mobileChartPanelOrigins.set(panel,{parent:panel.parentElement,nextSibling:panel.nextSibling});
+    }
+    return panel;
+  }
+
+  function restoreMobileChartPanel(panel=mobileChartMountedPanel){
+    if(!panel)return false;
+    const origin=mobileChartPanelOrigins.get(panel);
+    if(!origin)return false;
+    if(panel.parentNode!==origin.parent){
+      if(origin.nextSibling?.parentNode===origin.parent)origin.parent.insertBefore(panel,origin.nextSibling);
+      else origin.parent.append(panel);
+    }
+    if(mobileChartMountedPanel===panel)mobileChartMountedPanel=null;
+    mobileChartLastPanel=panel;
+    mobileChartMountedHost=null;
+    return true;
+  }
+
+  function restoreMobileChartPanels(){
+    let restored=false;
+    let pending=[...mobileChartPanelOrigins];
+    while(pending.length){
+      let progressed=false;
+      pending=pending.filter(([panel,origin])=>{
+        if(panel.parentNode===origin.parent){progressed=true;return false;}
+        const anchorOrigin=origin.nextSibling&&mobileChartPanelOrigins.get(origin.nextSibling);
+        if(anchorOrigin?.parent===origin.parent&&origin.nextSibling.parentNode!==origin.parent)return true;
+        if(origin.nextSibling?.parentNode===origin.parent)origin.parent.insertBefore(panel,origin.nextSibling);
+        else origin.parent.append(panel);
+        restored=true;progressed=true;return false;
+      });
+      if(!progressed){
+        for(const [panel,origin] of pending)origin.parent.append(panel);
+        restored=true;break;
+      }
+    }
+    mobileChartMountedPanel=null;
+    mobileChartLastPanel=null;
+    mobileChartMountedHost=null;
+    return restored;
+  }
+
+  function mobileChartCameraState(wrap){
+    return typeof viewStates!=='undefined'&&wrap?viewStates.get(wrap)||ensureViewState(wrap):null;
+  }
+
+  function mountMobileChartView(host,panelOverride=null){
+    const mobileHost=host||document.getElementById('mobileViewHost');
+    if(!mobileHost||!mobileChartMotion.matches)return null;
+    const panel=rememberMobileChartPanel(panelOverride||activeMobileChartPanel()),wrap=panel?.querySelector('.svg-wrap');
+    if(!panel||!wrap)return null;
+    document.body.classList.remove('mobile-chart-host-only');
+    if(mobileChartMountedPanel&&mobileChartMountedPanel!==panel)restoreMobileChartPanel(mobileChartMountedPanel);
+    const surface=document.createElement('section');
+    surface.className='mobile-chart-surface';
+    surface.dataset.mobileSurface='chart';
+    surface.dataset.mobilePanel=panel.id;
+    surface.setAttribute('aria-labelledby','mobileChartTitle');
+    surface.innerHTML=`<h2 id="mobileChartTitle" class="sr-only">${MOBILE_CHART_PANEL_LABELS[panel.id]||'チャート'}</h2><div class="mobile-chart-controls" aria-label="チャート操作"><button type="button" id="mobileChartFit" title="全体表示">全体</button><button type="button" id="mobileChartSelected" title="選択作品へ">選択へ</button><button type="button" id="mobileChartDetails" title="作品詳細を開く">詳細</button><button type="button" id="mobileChartViewButton" title="表示ビューを選ぶ">表示ビュー</button></div>`;
+    for(const candidate of mobileChartPanelOrigins.keys())candidate.classList.toggle('active',candidate===panel);
+    document.querySelectorAll('.panel.active').forEach(active=>{if(active!==panel)active.classList.remove('active');});
+    panel.classList.add('active');
+    surface.append(panel);
+    mobileHost.replaceChildren(surface);
+    mobileChartMountedPanel=panel;
+    mobileChartLastPanel=panel;
+    mobileChartMountedHost=mobileHost;
+    const camera=mobileChartCameraState(wrap);
+    if(typeof viewStates!=='undefined'){
+      const retained=viewStates.get('mobile-shell:chart')||{};
+      viewStates.set(wrap,camera||retained.camera||ensureViewState(wrap));
+      viewStates.set('mobile-shell:chart',{...retained,renderer:mobileCanvasStates.get(wrap)||retained.renderer||null,camera:viewStates.get(wrap),wrap});
+    }
+    const selectionApis={select,clearAllGoalsWithUndo};
+    // The existing Canvas/SVG renderer and semantic selection path stay shared.
+    initMobileCanvas(wrap);
+    syncMobileChartCameraSnapshot(wrap);
+    surface.querySelector('#mobileChartFit').onclick=()=>fitView(wrap);
+    surface.querySelector('#mobileChartSelected').onclick=()=>{
+      const target=selected||mobileUiStore()?.getState().selectedId||null;
+      if(target&&activeSvgHasNode(target)){centerNodeInView(target);return;}
+      if(target)selectionApis.select(target);else selectionApis.clearAllGoalsWithUndo();
+      fitView(wrap);
+    };
+    surface.querySelector('#mobileChartDetails').onclick=()=>openMobileSheet('detail',selected||mobileUiStore()?.getState().selectedId||null);
+    surface.querySelector('#mobileChartViewButton').onclick=()=>document.getElementById('mobileAreaButton')?.click();
+    return surface;
+  }
+
+  window.mountMobileChartView=mountMobileChartView;
+
+  let mobileSearchRenderRaf=0,mobileSearchRenderPending=null;
+  function scheduleMobileSearchRender(query='',filter=''){
+    mobileSearchRenderPending={query:String(query??''),filter:String(filter??'')};
+    if(mobileSearchRenderRaf)return;
+    const flush=()=>{
+      mobileSearchRenderRaf=0;
+      const next=mobileSearchRenderPending;mobileSearchRenderPending=null;
+      if(next)renderMobileSearchResults(next.query,next.filter);
+    };
+    mobileSearchRenderRaf=typeof requestAnimationFrame==='function'?requestAnimationFrame(flush):setTimeout(flush,0);
+  }
+
+  function renderMobileSearchResults(query='',filter=''){
+    const surface=document.querySelector('#mobileViewHost [data-mobile-surface="search"]');
+    if(!surface)return [];
+    const mfilter=String(filter??'');
+    const filterValues=decodeMobileFilter(mfilter);
+    const legacyQuery=document.getElementById('q');
+    const legacyBranch=document.getElementById('branch');
+    const legacyCharacter=document.getElementById('character');
+    const legacyStatus=document.getElementById('status');
+    if(legacyQuery)legacyQuery.value=String(query??'');
+    if(legacyBranch)legacyBranch.value=filterValues.branch;
+    if(legacyCharacter)legacyCharacter.value=filterValues.character;
+    if(legacyStatus)legacyStatus.value=filterValues.status;
+    const hits=(flowchartReady?NODES.filter(pass):[]).sort((a,b)=>a.title.localeCompare(b.title,'ja'));
+    const resultCount=surface.querySelector('[data-mobile-search-count]');
+    const empty=surface.querySelector('[data-mobile-search-empty]');
+    const results=surface.querySelector('[data-mobile-search-results]');
+    if(resultCount)resultCount.textContent=`${hits.length}件の作品`;
+    if(empty){empty.hidden=hits.length>0;empty.textContent=hits.length?'':'該当なし';}
+    if(!results)return hits;
+    results.replaceChildren();
+    const makeAction=(label,attribute,handler)=>{
+      const button=document.createElement('button');
+      button.type='button';button.className='mobile-search-result-action';
+      button.setAttribute(attribute,'');button.setAttribute('aria-label',`${label}`);button.textContent=label;
+      button.addEventListener('click',handler);return button;
+    };
+    hits.forEach(node=>{
+      const card=document.createElement('article');card.className='mobile-search-result-card';card.dataset.mobileSearchWork=node.id;
+      const heading=document.createElement('h3');heading.textContent=node.title||node.id;
+      const meta=document.createElement('p');meta.className='mobile-search-result-meta';
+      const japan=node.japan_date?` · 日本公開: ${node.japan_date}${node.japan_type?`（${node.japan_type}）`:''}`:'';
+      meta.textContent=`${node.title_en||''} · 公開: ${node.release||'未定'}${japan}`;
+      const actions=document.createElement('div');actions.className='mobile-search-result-actions';
+      const selectButton=makeAction('選択','data-mobile-search-select',event=>{
+        event.preventDefault();event.stopPropagation();
+        select(node.id,false);window.marvelMobileUiStore?.setGoals(window.marvelOrderedGoalIds?.()||[],selected);
+        card.setAttribute('aria-current','true');
+      });
+      const chartButton=makeAction('チャートで見る','data-mobile-search-chart',event=>{
+        event.preventDefault();event.stopPropagation();
+        if(!selectedIds.has(node.id))select(node.id,false);else{selected=node.id;syncMobileUiGoals();}
+        window.marvelMobileUiStore?.setGoals(window.marvelOrderedGoalIds?.()||[],selected);setMobileView('chart');
+      });
+      const detailButton=makeAction('詳細','data-mobile-search-detail',event=>{
+        event.preventDefault();event.stopPropagation();openMobileSheet('detail',node.id);
+      });
+      actions.append(selectButton,chartButton,detailButton);card.append(heading,meta,actions);results.append(card);
+    });
+    return hits;
+  }
+
+  function mountMobileSearchView(host){
+    const mobileHost=host||document.getElementById('mobileViewHost');
+    if(!mobileHost||!mobileChartMotion.matches)return null;
+    window.closeMobileSearchResults?.();
+    const state=mobileUiStore()?.getState()||{query:'',filter:''};
+    const surface=document.createElement('section');
+    surface.className='mobile-search-surface';surface.setAttribute('data-mobile-surface','search');
+    surface.setAttribute('aria-labelledby','mobileSearchTitle');
+    surface.innerHTML=`<span class="mobile-view-kicker">SEARCH</span><h2 id="mobileSearchTitle">作品を探す</h2><label for="mobileSearchQuery" class="sr-only">作品を検索</label><input id="mobileSearchQuery" class="mobile-search-query" data-mobile-search-query type="search" autocomplete="off" placeholder="邦題・英題・シリーズ名で検索" aria-label="作品を検索"><div class="mobile-search-filter-row" aria-label="検索結果を絞り込む"><label>系統<select data-mobile-search-filter="branch" aria-label="系統で絞り込み"></select></label><label>公開状況<select data-mobile-search-filter="status" aria-label="公開状況で絞り込み"></select></label><label>主要キャラクター<select data-mobile-search-filter="character" aria-label="主要キャラクターで絞り込み"></select></label></div><p class="mobile-search-status" data-mobile-search-count role="status" aria-live="polite">0件の作品</p><p class="mobile-search-empty" data-mobile-search-empty role="status" aria-live="polite" hidden>該当なし</p><div class="mobile-search-surface-results" data-mobile-search-results aria-label="検索結果"></div>`;
+    const copyOptions=(sourceId,target)=>{
+      const source=document.getElementById(sourceId);if(!source||!target)return;
+      target.replaceChildren(...[...source.options].map(option=>option.cloneNode(true)));
+    };
+    copyOptions('branch',surface.querySelector('[data-mobile-search-filter="branch"]'));
+    copyOptions('status',surface.querySelector('[data-mobile-search-filter="status"]'));
+    copyOptions('character',surface.querySelector('[data-mobile-search-filter="character"]'));
+    mobileHost.replaceChildren(surface);
+    const queryInput=surface.querySelector('[data-mobile-search-query]');
+    const branchInput=surface.querySelector('[data-mobile-search-filter="branch"]');
+    const characterInput=surface.querySelector('[data-mobile-search-filter="character"]');
+    const statusInput=surface.querySelector('[data-mobile-search-filter="status"]');
+    const filterForSurface=()=>{
+      const params=new URLSearchParams();
+      if(branchInput?.value)params.set('branch',branchInput.value);
+      if(characterInput?.value)params.set('character',characterInput.value);
+      if(statusInput?.value)params.set('status',statusInput.value);
+      return params.toString();
+    };
+    const filterValues=decodeMobileFilter(state.filter||'');
+    queryInput.value=state.query||'';branchInput.value=filterValues.branch;characterInput.value=filterValues.character;statusInput.value=filterValues.status;
+    const sync=()=>{
+      const store=window.marvelMobileUiStore;const filter=filterForSurface();
+      store?.setSearch(queryInput.value||'');store?.setFilter(filter);
+      syncMobileSearchControls({query:queryInput.value||'',filter});
+      scheduleMobileSearchRender(queryInput.value,filter);writeMobileUrlState({replace:true});
+    };
+    queryInput.addEventListener('input',sync);
+    [branchInput,characterInput,statusInput].forEach(input=>input?.addEventListener('change',sync));
+    const query=queryInput.value,filter=state.filter||'';
+    renderMobileSearchResults(query,filter);
+    return surface;
+  }
+
+  window.mountMobileSearchView=mountMobileSearchView;
+  window.renderMobileSearchResults=renderMobileSearchResults;
+
+  let mobilePlanStoreUnsubscribe=null,mobilePlanWatchUnsubscribe=null;
+  function clearMobilePlanSubscriptions(){
+    mobilePlanStoreUnsubscribe?.();mobilePlanStoreUnsubscribe=null;
+    mobilePlanWatchUnsubscribe?.();mobilePlanWatchUnsubscribe=null;
+  }
+  function renderPrepPlan(plan,goals,tier){
+    const watch=window.marvelWatchProgress;
+    const watchedIds=new Set(watch?.watched||[]);
+    const setWatched=(id,on)=>watch?.set(id,!!on);
+    const goalIds=[...(goals||[])].filter(id=>nm[id]);
+    const orderedIds=[...(plan?.orderedIds||[])];
+    const stats=watch?.stats?.(orderedIds)||{total:orderedIds.length,watched:orderedIds.filter(id=>watchedIds.has(id)).length,remainingKnownMinutes:0,percent:0,unknown:0};
+    const formatMinutes=minutes=>{
+      if(!Number.isFinite(minutes)||minutes<=0)return '0分';
+      const hours=Math.floor(minutes/60),rest=Math.round(minutes%60);
+      return hours?`${hours}時間${rest?`${rest}分`:''}`:`${rest}分`;
+    };
+    const safeTier=tier==='complete'?'complete':'site-proposal';
+    const tierLabel=safeTier==='complete'?'完全版':'サイト提案ルート';
+    const title=goalIds.length===1?`${esc(nm[goalIds[0]]?.title||goalIds[0])} の予習プラン`:'複数ゴールの統合予習プラン';
+    const summary=goalIds.length
+      ? `<div class="mobile-plan-summary" data-mobile-plan-summary><strong>🎯 ${goalIds.length}作品をゴール中</strong><div class="mobile-plan-summary-goals">${goalIds.map((id,index)=>`<span class="mobile-plan-goal">ゴール ${index+1}：${esc(nm[id]?.title||id)}</span>`).join('')}</div></div>`
+      : '<div class="mobile-plan-summary" data-mobile-plan-summary><strong>🎯 ゴール未選択</strong><div class="muted">チャートまたは探す面で作品を選ぶと、ここに予習順を表示します。</div></div>';
+    const percent=Math.round((Number(stats.percent)||0)*10)/10;
+    const progress=`<div class="mobile-plan-progress" data-mobile-plan-progress><div class="mobile-plan-progress-head"><strong>視聴済み ${stats.watched||0}/${stats.total||0}</strong><span>${percent}%</span></div><div class="mobile-plan-progress-bar" role="progressbar" aria-label="予習プランの視聴進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><div class="mobile-plan-progress-fill" style="width:${Math.max(0,Math.min(100,percent))}%"></div></div><div class="mobile-plan-progress-note">${stats.remainingKnownMinutes?`残り時間：約 ${formatMinutes(stats.remainingKnownMinutes)}`:'残り時間：時間登録済みの未視聴作品はありません'}${stats.unknown?`（時間未登録 ${stats.unknown}件）`:''}</div></div>`;
+    const rows=orderedIds.map((id,index)=>{
+      const done=watchedIds.has(id),isGoal=goalIds.includes(id),label=nm[id]?.title||id;
+      return `<li class="mobile-plan-item${isGoal?' is-goal':''}${done?' is-watched':''}" data-mobile-plan-item data-mobile-plan-order="${index+1}" data-mobile-plan-work="${esc(id)}"><span class="mobile-plan-number">${index+1}</span><div class="mobile-plan-item-main"><div class="mobile-plan-item-title"><strong>${esc(label)}</strong>${isGoal?'<span class="prep-goal-badge">ゴール</span>':''}</div><div class="mobile-plan-item-meta">${esc(nm[id]?.release||'')}${done?' · 視聴済み':''}</div><div class="mobile-plan-item-actions"><label class="mobile-plan-watch-toggle"><input class="prep-watched-check" type="checkbox" data-mobile-plan-watched data-id="${esc(id)}"${done?' checked':''} aria-label="${esc(label)}を視聴済みにする"><span>視聴済み</span></label><button type="button" class="mobile-plan-detail" data-mobile-plan-detail data-work-id="${esc(id)}" aria-label="${esc(label)}の詳細">詳細</button></div></div></li>`;
+    }).join('');
+    const empty=orderedIds.length?'':`<div class="mobile-plan-empty">${goalIds.length?'このゴールには表示対象の予習作品がありません。':'ゴールを選ぶと、サイト提案ルートまたは完全版の順序付きチェックリストを作成します。'}</div>`;
+    const source=goalIds.length?`<div class="mobile-plan-source">${tierLabel}：選択したゴールの前提作品を重複除去し、接続順に並べています。</div>`:'';
+    const html=`<span class="mobile-view-kicker">PREPARATION</span><h2 id="mobilePlanTitle">${title}</h2><label class="mobile-plan-tier-row" for="mobilePlanTier">予習プラン<select id="mobilePlanTier" class="mobile-plan-tier" data-mobile-plan-tier aria-label="予習プランを選ぶ"><option value="site-proposal"${safeTier==='site-proposal'?' selected':''}>サイト提案ルート</option><option value="complete"${safeTier==='complete'?' selected':''}>完全版</option></select></label>${summary}${progress}<div class="mobile-plan-actions"><button type="button" class="mobile-plan-chart" id="mobilePlanChartReturn" data-mobile-plan-chart>チャートで見る</button></div><ol class="mobile-plan-list" data-mobile-plan-list aria-label="予習順チェックリスト">${rows}</ol>${empty}${source}`;
+    return {html,plan,goalIds,orderedIds,stats,watchedIds,setWatched};
+  }
+  window.renderPrepPlan=renderPrepPlan;
+
+  function renderMobilePlanScreen(){
+    const surface=document.querySelector('#mobileViewHost [data-mobile-surface="plan"]');
+    if(!surface)return null;
+    const store=mobileUiStore(),state=store?.getState()||{goalIds:[],selectedId:null};
+    const orderedFromStore=Array.isArray(state.goalIds)?state.goalIds.slice():[];
+    // orderedGoalIds remains the semantic ordering adapter; goalIds from the
+    // shared store are the only mobile plan source of truth.
+    const orderedGoalIds=window.marvelOrderedGoalIds?.()||[];
+    const buildMultiGoalPlan=window.marvelBuildMultiGoalPlan;
+    const semanticOrder=orderedGoalIds;
+    const goals=orderedFromStore.length?orderedFromStore:semanticOrder.filter(id=>orderedFromStore.includes(id));
+    const prepTier=window.marvelGetConnectionTier?.()||'site-proposal';
+    const plan=typeof buildMultiGoalPlan==='function'?buildMultiGoalPlan(goals,prepTier):{orderedIds:[],goalIds:goals};
+    const rendered=renderPrepPlan(plan,goals,prepTier);
+    surface.innerHTML=rendered.html;
+    const tier=surface.querySelector('[data-mobile-plan-tier]');
+    tier?.addEventListener('change',()=>{
+      const next=tier.value==='complete'?'complete':'site-proposal';
+      window.marvelSetConnectionTier?.(next);
+      renderMobilePlanScreen();
+    });
+    surface.querySelector('#mobilePlanChartReturn')?.addEventListener('click',()=>setMobileView('chart'));
+    surface.querySelectorAll('[data-mobile-plan-detail]').forEach(button=>button.addEventListener('click',event=>{
+      event.preventDefault();event.stopPropagation();openMobileSheet('detail',button.dataset.workId||null);
+    }));
+    surface.querySelectorAll('[data-mobile-plan-watched]').forEach(box=>box.addEventListener('change',()=>{
+      rendered.setWatched(box.dataset.id,box.checked);
+      if(!window.marvelWatchProgress?.subscribe)renderMobilePlanScreen();
+    }));
+    return rendered;
+  }
+  window.renderMobilePlanScreen=renderMobilePlanScreen;
+
+  function mountMobilePlanView(host){
+    const mobileHost=host||document.getElementById('mobileViewHost');
+    if(!mobileHost||!mobileChartMotion.matches)return null;
+    clearMobilePlanSubscriptions();
+    document.body.classList.add('mobile-chart-host-only');
+    restoreMobileChartPanels();
+    const surface=document.createElement('section');
+    surface.className='mobile-plan-surface';surface.dataset.mobileSurface='plan';surface.setAttribute('aria-labelledby','mobilePlanTitle');
+    mobileHost.replaceChildren(surface);
+    renderMobilePlanScreen();
+    const store=mobileUiStore();
+    mobilePlanStoreUnsubscribe=store?.subscribe?.(next=>{if(next.view==='plan')renderMobilePlanScreen();})||null;
+    mobilePlanWatchUnsubscribe=window.marvelWatchProgress?.subscribe?.(()=>{if(mobileUiStore()?.getState?.().view==='plan')renderMobilePlanScreen();})||null;
+    syncMobileBottomNav('plan');
+    return surface;
+  }
+  window.mountMobilePlanView=mountMobilePlanView;
+
+  function mountMobileView(view){
+    const shell=ensureMobileShell();
+    const host=shell?.querySelector('#mobileViewHost');
+    if(!host)return null;
+    const normalized=normalizeMobileView(view);
+    if(!mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');restoreMobileChartPanels();host.replaceChildren();syncMobileBottomNav(normalized);return null;}
+    if(normalized!=='plan')clearMobilePlanSubscriptions();
+    if(normalized==='chart'&&mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');return mountMobileChartView(host);}
+    if(normalized==='search'){
+      document.body.classList.add('mobile-chart-host-only');
+      restoreMobileChartPanels();
+      return mountMobileSearchView(host);
+    }
+    if(normalized==='plan')return mountMobilePlanView(host);
+    if(normalized!=='chart'){
+      document.body.classList.add('mobile-chart-host-only');
+      restoreMobileChartPanels();
+      host.replaceChildren();
+      if(typeof viewStates!=='undefined'){
+        const key=`mobile-shell:${normalized}`;
+        const retained=viewStates.get(key)||{renderer:null,camera:null};
+        viewStates.set(key,retained);
+      }
+      const section=document.createElement('section');
+      section.className='mobile-view-placeholder';
+      section.dataset.mobileView=normalized;
+      section.setAttribute('aria-labelledby','mobileViewTitle');
+      section.innerHTML=`<span class="mobile-view-kicker">MOBILE VIEW</span><h2 id="mobileViewTitle">${MOBILE_VIEW_LABELS[normalized]}</h2><p>${normalized==='chart'?'チャート表示領域を準備中です。':normalized==='search'?'作品検索と絞り込みをここで行えます。':'選択した作品の予習プランをここで確認できます。'}</p>`;
+      host.append(section);
+      syncMobileBottomNav(normalized);
+      return section;
+    }
+    return null;
+  }
+
+  function readMobileUrlState(){
+    const params=new URLSearchParams(location.search);
+    const view=normalizeMobileView(params.get('mview'));
+    const goalIds=(params.get('goals')||'').split(',').map(id=>id.trim()).filter(Boolean);
+    const sheet=normalizeMobileSheet(params.get('sheet'));
+    return {
+      view,goalIds,selectedId:goalIds[goalIds.length-1]||null,
+      sheet,sheetWork:sheet==='closed'?null:(params.get('sheetWork')||null),
+      query:params.get('q')||'',filter:params.get('mfilter')||''
+    };
+  }
+
+  function decodeMobileFilter(filter){
+    const values={branch:'',character:'',status:''};
+    if(!filter)return values;
+    const params=new URLSearchParams(filter);
+    values.branch=params.get('branch')||'';
+    values.character=params.get('character')||'';
+    values.status=params.get('status')||'';
+    if(values.branch||values.character||values.status)return values;
+    try{
+      const legacy=JSON.parse(filter);
+      for(const key of Object.keys(values))if(typeof legacy?.[key]==='string')values[key]=legacy[key];
+    }catch(_){/* Unknown filter encodings are intentionally ignored. */}
+    return values;
+  }
+
+  function encodeMobileFilter(){
+    const params=new URLSearchParams();
+    const branch=document.getElementById('branch')?.value||'';
+    const character=document.getElementById('character')?.value||'';
+    const status=document.getElementById('status')?.value||'';
+    if(branch)params.set('branch',branch);
+    if(character)params.set('character',character);
+    if(status)params.set('status',status);
+    return params.toString();
+  }
+
+  function syncMobileSearchControls(state){
+    const q=document.getElementById('q');
+    const branch=document.getElementById('branch');
+    const character=document.getElementById('character');
+    const status=document.getElementById('status');
+    const mobileSurface=document.querySelector('#mobileViewHost [data-mobile-surface="search"]');
+    const mobileQuery=mobileSurface?.querySelector('[data-mobile-search-query]');
+    const mobileBranch=mobileSurface?.querySelector('[data-mobile-search-filter="branch"]');
+    const mobileCharacter=mobileSurface?.querySelector('[data-mobile-search-filter="character"]');
+    const mobileStatus=mobileSurface?.querySelector('[data-mobile-search-filter="status"]');
+    const filter=decodeMobileFilter(state?.filter||'');
+    if(q)q.value=state?.query||'';
+    if(branch)branch.value=filter.branch;
+    if(character)character.value=filter.character;
+    if(status)status.value=filter.status;
+    if(mobileQuery)mobileQuery.value=state?.query||'';
+    if(mobileBranch)mobileBranch.value=filter.branch;
+    if(mobileCharacter)mobileCharacter.value=filter.character;
+    if(mobileStatus)mobileStatus.value=filter.status;
+  }
+
+  function syncMobileSearchStateFromControls(){
+    const store=window.marvelMobileUiStore;
+    if(!store)return;
+    const q=document.getElementById('q');
+    const mfilter=encodeMobileFilter();
+    store.setSearch(q?.value||'');
+    store.setFilter(mfilter);
+    const state=store.getState();
+    const mobileSurface=document.querySelector('#mobileViewHost [data-mobile-surface="search"]');
+    if(state.view==='search'&&mobileSurface?.querySelector('[data-mobile-search-query]')){
+      syncMobileSearchControls(state);
+      scheduleMobileSearchRender(state.query,state.filter);
+      writeMobileUrlState({replace:true});
+    }
+  }
+
+  function hydrateMobileSelectionFromStore(state){
+    const nextIds=new Set(Array.isArray(state?.goalIds)?state.goalIds:[]);
+    const orderedIds=[...nextIds];
+    const nextSelected=nextIds.has(state?.selectedId)?state.selectedId:(orderedIds.at(-1)||null);
+    const currentIds=[...selectedIds];
+    const same=currentIds.length===orderedIds.length&&currentIds.every((id,index)=>id===orderedIds[index])&&selected===nextSelected;
+    if(same)return false;
+    // Keep the existing selection semantics in refreshSelection. This adapter
+    // only restores the shared store snapshot into the semantic variables.
+    selectedIds=nextIds;selected=nextSelected;
+    if(typeof flowchartReady!=='undefined'&&flowchartReady&&typeof refreshSelection==='function')refreshSelection(false);
+    return true;
+  }
+
+  function writeMobileUrlState({replace=false}={}){
+    const state=mobileUiStore()?.getState();
+    if(!state)return false;
+    const url=new URL(window.location.href);
+    const params=new URLSearchParams(url.search);
+    const setOrDelete=(key,value)=>{if(value)params.set(key,value);else params.delete(key)};
+    setOrDelete('mview',state.view==='chart'?'':normalizeMobileView(state.view));
+    setOrDelete('goals',state.goalIds.join(','));
+    setOrDelete('sheet',state.sheet==='closed'?'':normalizeMobileSheet(state.sheet));
+    setOrDelete('sheetWork',state.sheet==='closed'?'':(state.sheetWork||''));
+    setOrDelete('q',state.query);
+    setOrDelete('mfilter',state.filter);
+    url.search=params.toString();
+    const nextUrl=`${url.pathname}${url.search}${location.hash}`;
+    const historyState={...(window.history.state||{}),mobileUi:state};
+    if(replace)window.history.replaceState(historyState,'',nextUrl);else window.history.pushState(historyState,'',nextUrl);
+    return true;
+  }
+
+  function setMobileView(view,{pushHistory=true}={}){
+    const normalized=normalizeMobileView(view);
+    const store=window.marvelMobileUiStore;
+    if(!store)return normalized;
+    store.setView(normalized);
+    mountMobileView(normalized);
+    syncMobileBottomNav(normalized);
+    if(pushHistory)writeMobileUrlState({replace:false});
+    return normalized;
+  }
+
+  function openMobileSheet(kind,workId){
+    const sheet=document.getElementById('mobileSheet');
+    const store=mobileUiStore();
+    const normalized=normalizeMobileSheet(kind);
+    if(!sheet||!store||normalized==='closed'){closeMobileSheet();return false;}
+    if(store.getState().sheet==='closed')mobileSheetReturnFocus=document.activeElement;
+    const sheetWork=typeof workId==='string'&&workId.trim()?workId.trim():null;
+    store.setSheet(normalized,sheetWork);
+    const [title,subtitle]=MOBILE_SHEET_LABELS[normalized];
+    document.getElementById('mobileSheetTitle').textContent=title;
+    document.getElementById('mobileSheetSubtitle').textContent=subtitle;
+    document.getElementById('mobileSheetBody').textContent=sheetWork?`${sheetWork} の情報を表示します。`:'選択した作品の情報を表示します。';
+    sheet.hidden=false;sheet.setAttribute('aria-hidden','false');sheet.setAttribute('aria-modal','true');
+    if(!suppressMobileSheetHistory)writeMobileUrlState({replace:false});
+    requestAnimationFrame(()=>document.getElementById('mobileSheetTitle')?.focus({preventScroll:true}));
+    return true;
+  }
+
+  function closeMobileSheet({restoreFocus=true,syncHistory=true}={}){
+    const sheet=document.getElementById('mobileSheet');
+    const store=mobileUiStore();
+    const wasOpen=store?.getState().sheet!=='closed';
+    store?.setSheet('closed',null);
+    if(sheet){sheet.hidden=true;sheet.setAttribute('aria-hidden','true');}
+    if(wasOpen&&syncHistory)writeMobileUrlState({replace:true});
+    const target=mobileSheetReturnFocus;mobileSheetReturnFocus=null;
+    if(restoreFocus&&target?.isConnected)requestAnimationFrame(()=>target.focus());
+    return wasOpen;
+  }
+
+  function applyMobileUrlState(){
+    const parsed=readMobileUrlState();
+    const store=mobileUiStore();
+    if(!store)return;
+    const current=store.getState();
+    if(parsed.sheet==='closed'&&current.sheet!=='closed')closeMobileSheet();
+    store.setGoals(parsed.goalIds,parsed.selectedId);
+    const selectionHydrated=hydrateMobileSelectionFromStore(store.getState());
+    store.setSearch(parsed.query);store.setFilter(parsed.filter);
+    syncMobileSearchControls(parsed);
+    setMobileView(parsed.view,{pushHistory:false});
+    if(parsed.sheet!=='closed'&&(current.sheet!==parsed.sheet||current.sheetWork!==parsed.sheetWork)){
+      const previousSuppression=suppressMobileSheetHistory;suppressMobileSheetHistory=true;
+      openMobileSheet(parsed.sheet,parsed.sheetWork);
+      suppressMobileSheetHistory=previousSuppression;
+    }
+    if(typeof flowchartReady!=='undefined'&&flowchartReady&&!selectionHydrated&&typeof render==='function')render();
+    if(typeof flowchartReady!=='undefined'&&flowchartReady)writeMobileUrlState({replace:true});
+  }
+
+  function handleMobilePopState(){
+    const parsed=readMobileUrlState();
+    if(mobileUiStore()?.getState().sheet!=='closed'&&parsed.sheet==='closed')closeMobileSheet({syncHistory:false});
+    applyMobileUrlState();
+  }
+
+  window.ensureMobileShell=ensureMobileShell;
+  window.mountMobileView=mountMobileView;
+  window.setMobileView=setMobileView;
+  window.openMobileSheet=openMobileSheet;
+  window.closeMobileSheet=closeMobileSheet;
+  window.readMobileUrlState=readMobileUrlState;
+  window.writeMobileUrlState=writeMobileUrlState;
+  window.marvelMobileHydrateUrlState=applyMobileUrlState;
+  window.addEventListener('popstate',handleMobilePopState);
+  const syncMobileChartForViewport=()=>{
+    const host=document.getElementById('mobileViewHost');
+    const view=mobileUiStore()?.getState().view||'chart';
+    if(!mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');restoreMobileChartPanels();host?.replaceChildren();return;}
+    if(view==='chart'){document.body.classList.remove('mobile-chart-host-only');mountMobileChartView(host);return;}
+    document.body.classList.add('mobile-chart-host-only');
+    restoreMobileChartPanels();
+    host?.replaceChildren();
+    mountMobileView(view);
+  };
+  mobileChartMotion.addEventListener?.('change',()=>requestAnimationFrame(syncMobileChartForViewport));
+  const initializeMobileShell=()=>{
+    ensureMobileShell();
+    document.getElementById('q')?.addEventListener('input',syncMobileSearchStateFromControls);
+    document.getElementById('branch')?.addEventListener('change',syncMobileSearchStateFromControls);
+    document.getElementById('character')?.addEventListener('change',syncMobileSearchStateFromControls);
+    document.getElementById('status')?.addEventListener('change',syncMobileSearchStateFromControls);
+    document.getElementById('clear')?.addEventListener('click',syncMobileSearchStateFromControls);
+    applyMobileUrlState();
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initializeMobileShell,{once:true});else initializeMobileShell();
 })();
 </script>
 
@@ -8158,7 +8820,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     closeMobileSearchResults();
     return true;
   };
-  window.renderMobileSearchResults=function(){
+  window.renderLegacyMobileSearchResults=function(){
+    if(window.marvelMobileUiStore?.getState?.().view==='search'){closeMobileSearchResults();return;}
     if(!mobileSearchResults||!window.matchMedia('(max-width:760px)').matches){closeMobileSearchResults();return;}
     const query=(searchInput?.value||'').trim().toLowerCase();
     if(!query){mobileSearchResults.innerHTML='';closeMobileSearchResults();return;}
@@ -8765,6 +9428,7 @@ window.ensureStageAViewInitialized=function(target){
     const tab=document.querySelector(`.tab[data-target="${CSS.escape(target)}"]`);
     document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===tab));
     document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x===panel));
+    if(mobileChartMotion.matches&&window.marvelMobileUiStore?.getState().view==='chart'&&panel.querySelector('.svg-wrap'))window.mountMobileChartView?.(document.getElementById('mobileViewHost'),panel);
     syncMobileAreaLabel(target);
     requestAnimationFrame(()=>{
       if(wasWatch)panel.scrollIntoView({behavior:'auto',block:'start'});
@@ -8803,8 +9467,8 @@ window.ensureStageAViewInitialized=function(target){
     else if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
     else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
   });
-  searchInput?.addEventListener('input',renderMobileSearchResults);
-  searchInput?.addEventListener('focus',renderMobileSearchResults);
+  searchInput?.addEventListener('input',renderLegacyMobileSearchResults);
+  searchInput?.addEventListener('focus',renderLegacyMobileSearchResults);
   document.addEventListener('pointerdown',e=>{if(mobileSearchHost&&!mobileSearchHost.contains(e.target))closeMobileSearchResults();});
   const mq=window.matchMedia('(max-width:760px)');
   mq.addEventListener?.('change',()=>{mountSearchForViewport();closeMobileAreaMenu();closeMobileSearchResults();syncMobileWorkspaceStatus();});
@@ -9321,6 +9985,7 @@ function initializeFlowchartData(payload){
   if(typeof renderGoalBar==='function')renderGoalBar();
   if(typeof updatePreparationPlan==='function')updatePreparationPlan();
   if(typeof updateOverallWatchProgress==='function')updateOverallWatchProgress();
+  if(typeof window.marvelMobileHydrateUrlState==='function')window.marvelMobileHydrateUrlState();
   return payload;
 }
 

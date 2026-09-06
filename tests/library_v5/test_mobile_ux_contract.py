@@ -78,11 +78,8 @@ class MobileUxContractTests(unittest.TestCase):
             ".mobile-primary-nav button",
             ".featured-route-control button",
             "#mobileFocusShell button",
-            ".mobile-graph-actions button",
             ".mobile-sheet-head button",
-            "#right .mobile-sheet-head button",
             ".side-tab-btn",
-            "#right .side-tab-btn",
             "#flowchartControls input",
             "#flowchartControls select",
             "#flowchartControls button",
@@ -109,16 +106,17 @@ class MobileUxContractTests(unittest.TestCase):
         self.assertIn("mobileAreaOpen", self.source)
         self.assertIn("e.key!=='Tab'", self.source)
 
-    def test_mobile_details_panel_manages_dialog_focus(self) -> None:
-        body = function_body(self.source, "setDetails")
+    def test_mobile_sheet_manages_dialog_focus(self) -> None:
+        body = function_body(self.source, "openMobileSheet")
+        close_body = function_body(self.source, "closeMobileSheet")
         self.assertIn("aria-hidden", body)
-        self.assertIn("aria-expanded", body)
-        self.assertIn("role", body)
         self.assertIn("aria-modal", body)
-        self.assertIn("mobileDetailsTitle", self.source)
-        self.assertIn("detailsReturnFocus", body)
-        self.assertIn("detailsOpen", self.source)
-        self.assertIn("e.key!=='Tab'", self.source)
+        self.assertIn("mobileSheetReturnFocus", body)
+        self.assertIn("focus", body)
+        self.assertIn("mobileSheetReturnFocus", close_body)
+        self.assertIn("focus", close_body)
+        self.assertIn('aria-modal="true"', self.source)
+        self.assertIn("e.key==='Escape'", self.source)
 
     def test_side_tabs_expose_active_panel_state(self) -> None:
         body = function_body(self.source, "showSideTab")
