@@ -265,10 +265,18 @@ async function mobilePlanSnapshot(cdp) {
       resultCount:items.length,progressText:progress?.textContent||'',progressValue:progress?.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')||null,
       remainingVisible:/残り時間/.test(progress?.textContent||''),detailReachable:items.length>0&&items.every(item=>{const button=item.querySelector('[data-mobile-plan-detail]');const r=button?.getBoundingClientRect();return !!r&&r.width>=44&&r.height>=44;}),
       goalRemoveCount:surface?.querySelectorAll('[data-mobile-plan-remove-goal]').length||0,
-      layout:surface?(()=>{const r=surface.getBoundingClientRect();const focus=document.getElementById('mobileFocusShell'),watch=document.getElementById('watchWorkspace');return {left:r.left,right:r.right,width:r.width,viewportWidth:innerWidth,focusVisible:!!focus&&getComputedStyle(focus).display!=='none',watchVisible:!!watch&&getComputedStyle(watch).display!=='none',scrollY:scrollY};})():null,
+      layout:surface?(()=>{const r=surface.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,viewportWidth:innerWidth,scrollY:scrollY};})():null,
       chartAction:!!surface?.querySelector('[data-mobile-plan-chart]'),selected:[...(selection.selected||[])],
       rerenders:window.__mobileShellAuditCounters||{render:0,fit:0,rebuild:0},
     };
+  `);
+}
+async function mobilePlanLayoutSnapshot(cdp) {
+  return pageEvaluate(cdp, `
+    const surface=document.querySelector('#mobileViewHost [data-mobile-surface="plan"]');
+    const focus=document.getElementById('mobileFocusShell'),watch=document.getElementById('watchWorkspace');
+    const r=surface?.getBoundingClientRect();
+    return {left:r?.left??null,right:r?.right??null,width:r?.width??null,viewportWidth:innerWidth,focusVisible:!!focus&&getComputedStyle(focus).display!=='none',watchVisible:!!watch&&getComputedStyle(watch).display!=='none',scrollY};
   `);
 }
 async function waitForPlan(cdp, predicate, timeoutMs, label) {
@@ -455,7 +463,8 @@ async function runAudit(args) {
       let jumpedPlan;
       try { jumpedPlan=await waitForPlan(cdp, (state) => state.view === "plan" && state.planSurface, timeoutMs, "legacy mobile prep jump"); }
       catch(error){ failures.push(`legacy prep jump diagnostics: ${JSON.stringify(legacyPrepBefore)} after=${JSON.stringify(await snapshot(cdp))}`); throw error; }
-      result.views.legacyPrepJump=jumpedPlan.planSurface&&!jumpedPlan.layout?.focusVisible&&!jumpedPlan.layout?.watchVisible;
+      const jumpedLayout=await mobilePlanLayoutSnapshot(cdp);
+      result.views.legacyPrepJump=jumpedPlan.planSurface&&!jumpedLayout.focusVisible&&!jumpedLayout.watchVisible;
       if(!result.views.legacyPrepJump)failures.push(`legacy prep jump did not use the mobile plan surface: ${JSON.stringify(jumpedPlan)}`);
       await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
       await waitFor(cdp, (state) => state.view === "chart" && state.selected.includes(node.workId), timeoutMs, "chart restore after legacy prep jump");
@@ -635,13 +644,15 @@ async function runAudit(args) {
     result.plan.summary=initialPlan.summaryText.includes(`${initialPlan.goalIds.length}作品をゴール中`);
     result.plan.ordered=initialPlan.ordered.length===initialPlan.resultCount && initialPlan.ordered.every(Boolean);
     result.plan.remaining=initialPlan.remainingVisible && initialPlan.progressValue!==null;
-    result.plan.layout=!!initialPlan.layout && !initialPlan.layout.focusVisible && !initialPlan.layout.watchVisible && initialPlan.layout.left>=0 && initialPlan.layout.width>=initialPlan.layout.viewportWidth-24;
+    const initialLayout=await mobilePlanLayoutSnapshot(cdp);
+    initialPlan.layout=initialLayout;
+    result.plan.layout=!!initialLayout && !initialLayout.focusVisible && !initialLayout.watchVisible && initialLayout.left>=0 && initialLayout.width>=initialLayout.viewportWidth-24;
     if(!result.plan.tiers)failures.push(`mobile plan exposed unexpected tiers: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.noOfficialControl)failures.push(`mobile plan exposed an official route control: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.summary)failures.push(`mobile plan goal summary is missing: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.ordered)failures.push(`mobile plan checklist order is missing: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.remaining)failures.push(`mobile plan remaining time/progress is missing: ${JSON.stringify(initialPlan)}`);
-    if(!result.plan.layout)failures.push(`mobile plan exposed a narrow or legacy surface: ${JSON.stringify(initialPlan.layout)}`);
+    if(!result.plan.layout)failures.push(`mobile plan exposed a narrow or legacy surface: ${JSON.stringify(initialLayout)}`);
 
     const firstPlanId=initialPlan.ordered[0];
     const removalBefore=initialPlan.rerenders;
