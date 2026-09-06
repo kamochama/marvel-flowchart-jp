@@ -158,7 +158,12 @@ async function stopChrome(processInfo) {
 }
 
 class CdpClient {
-  constructor(url) { this.url = url; this.nextId = 1; this.pending = new Map(); }
+  constructor(url) {
+    this.url = url;
+    this.nextId = 1;
+    this.pending = new Map();
+    this.commandTimeoutMs = Number(process.env.MARVEL_CDP_COMMAND_TIMEOUT_MS || 30_000);
+  }
   async connect() {
     this.socket = new WebSocket(this.url);
     await new Promise((resolve, reject) => {
@@ -171,17 +176,28 @@ class CdpClient {
       const pending = this.pending.get(message.id);
       if (!pending) return;
       this.pending.delete(message.id);
+      clearTimeout(pending.timer);
       if (message.error) pending.reject(new Error(message.error.message || "CDP command failed"));
       else pending.resolve(message.result || {});
     });
     this.socket.addEventListener("close", () => {
-      for (const pending of this.pending.values()) pending.reject(new Error("CDP socket closed"));
+      for (const pending of this.pending.values()) {
+        clearTimeout(pending.timer);
+        pending.reject(new Error("CDP socket closed"));
+      }
       this.pending.clear();
     });
   }
   send(method, params = {}) {
     const id = this.nextId++;
-    return new Promise((resolve, reject) => { this.pending.set(id, { resolve, reject }); this.socket.send(JSON.stringify({ id, method, params })); });
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.pending.delete(id);
+        reject(new Error(`CDP command timed out: ${method}`));
+      }, this.commandTimeoutMs);
+      this.pending.set(id, { resolve, reject, timer });
+      this.socket.send(JSON.stringify({ id, method, params }));
+    });
   }
   async evaluate(expression) {
     const result = await this.send("Runtime.evaluate", { expression, awaitPromise: true, returnByValue: true });
