@@ -396,7 +396,6 @@ async function runAudit(args) {
   const timeoutMs = Number(args.timeout_ms || DEFAULT_TIMEOUT_MS);
   if (!Number.isInteger(timeoutMs) || timeoutMs < 1_000) throw new Error("--timeout-ms must be an integer >= 1000");
   const chrome = locateChrome(args.chrome);
-  const trace = (label) => console.error(`MOBILE_AUDIT_TRACE ${label}`);
   const staticServer = await startStaticServer(path.resolve(args.root || "."));
   let chromeProcess = null;
   let cdp = null;
@@ -413,7 +412,6 @@ async function runAudit(args) {
     failures,
   };
   try {
-    trace("launch");
     chromeProcess = await launchChrome(chrome, timeoutMs);
     cdp = new CdpClient(chromeProcess.webSocketDebuggerUrl);
     await cdp.connect();
@@ -423,7 +421,6 @@ async function runAudit(args) {
     await cdp.send("Page.navigate", { url: staticServer.url });
     await poll(() => pageEvaluate(cdp, "return document.readyState === 'complete'"), timeoutMs, "page load");
     await poll(() => pageEvaluate(cdp, `return !!document.querySelector('#mobileViewHost [data-mobile-surface="chart"] .svg-wrap svg g.node') && document.querySelectorAll('#mobileViewHost [data-mobile-surface="chart"] .svg-wrap svg g.node').length===131`), timeoutMs, "mobile chart readiness");
-    trace("chart-ready");
     await instrumentRerenders(cdp);
     const initial = await waitFor(cdp, (state) => state.chartVisible && state.bottomReachable && state.controlsReachable, timeoutMs, "mobile chart controls");
     result.views.chartVisible = initial.chartVisible;
@@ -454,7 +451,6 @@ async function runAudit(args) {
       throw new Error(`drag camera and selection failed: before=${beforeDrag} after=${JSON.stringify(dragged)}`);
     }
     result.selection.dragPreserves = true;
-    trace("m3-selection-done");
 
     const legacyPrepJump=await pointForSelector(cdp, '#mobilePrepJump');
     if(legacyPrepJump){
@@ -477,7 +473,6 @@ async function runAudit(args) {
       failures.push("legacy mobile prep jump control was not reachable");
     }
 
-    trace("legacy-jump-done");
     const beforeSheet = await snapshot(cdp);
     result.rerenders.before = { ...beforeSheet.rerenders };
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartDetails"));
@@ -493,7 +488,6 @@ async function runAudit(args) {
     result.sheet.closed = true;
     result.rerenders.afterClose = { ...closed.rerenders };
     result.sheet.cameraPreserved = closed.camera === beforeSheet.camera;
-    trace("sheet-done");
     if (!result.sheet.cameraPreserved) failures.push("sheet close changed data-mobile-camera");
     if (closed.rerenders.render !== beforeSheet.rerenders.render || closed.rerenders.fit !== beforeSheet.rerenders.fit || closed.rerenders.rebuild !== beforeSheet.rerenders.rebuild) failures.push("sheet close rebuilt chart");
 
@@ -510,7 +504,6 @@ async function runAudit(args) {
     await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible, timeoutMs, "chart surface restore");
     const restored = await snapshot(cdp);
     result.views.chartRestoresCamera = restored.camera === beforeSheet.camera;
-    trace("view-switch-done");
     if (!result.views.chartRestoresCamera) failures.push(`chart remount lost camera: before=${beforeSheet.camera} after=${restored.camera}`);
 
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartViewButton"));
@@ -639,7 +632,6 @@ async function runAudit(args) {
     const emptySearch=await waitForSearch(cdp, (state) => state.emptyVisible && state.emptyText === "該当なし", timeoutMs, "empty mobile search announcement");
     result.search.emptyAnnounced=emptySearch.emptyVisible && emptySearch.emptyText === "該当なし";
     if(!result.search.emptyAnnounced)failures.push(`empty search was not announced through aria-live: ${JSON.stringify(emptySearch)}`);
-    trace("m4-done");
 
     // M5: the preparation surface is the only plan presentation.  It reuses
     // the shared goals, ordered plan, and watched persistence without mounting
@@ -661,7 +653,6 @@ async function runAudit(args) {
     if(!result.plan.ordered)failures.push(`mobile plan checklist order is missing: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.remaining)failures.push(`mobile plan remaining time/progress is missing: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.layout)failures.push(`mobile plan exposed a narrow or legacy surface: ${JSON.stringify(initialLayout)}`);
-    trace("plan-initial-done");
 
     const firstPlanId=initialPlan.ordered[0];
     const removalBefore=initialPlan.rerenders;
@@ -682,7 +673,6 @@ async function runAudit(args) {
     }
     result.plan.goalRemoval=removedPlan.goalIds.length===expectedGoalCount && (expectedGoalCount===0?removedPlan.resultCount===0:removedPlan.resultCount>0) && JSON.stringify(removedPlan.rerenders)===JSON.stringify(removalBefore);
     if(!result.plan.goalRemoval)failures.push(`mobile plan goal removal did not update only plan state: before=${JSON.stringify(removalBeforeClick)} immediate=${JSON.stringify(removalImmediate)} current=${JSON.stringify(removedPlan)}`);
-    trace("plan-removal-done");
     if(expectedGoalCount===0){
       await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
       await waitForSearch(cdp, (state) => state.searchSurface, timeoutMs, "search after mobile plan goal removal");
@@ -706,7 +696,6 @@ async function runAudit(args) {
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
     await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "plan detail sheet close");
     result.plan.detailClosed=true;
-    trace("plan-detail-done");
 
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
     const chartBeforePlan=await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible, timeoutMs, "chart before plan watch toggle");
@@ -728,7 +717,6 @@ async function runAudit(args) {
     const chartAfterPlan=await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible, timeoutMs, "chart after plan watch toggle");
     result.plan.cameraPreserved=chartAfterPlan.camera===cameraBeforePlan;
     if(!result.plan.cameraPreserved)failures.push(`plan watch toggle changed chart camera: before=${cameraBeforePlan} after=${chartAfterPlan.camera}`);
-    trace("plan-watch-done");
 
     // Exercise the multi-goal contract from a clean single-goal state.  The
     // public search action is a toggle: selecting an already-selected work
@@ -770,7 +758,6 @@ async function runAudit(args) {
     result.plan.chartNavigation=chartFinal.chartVisible;
     result.plan.chartPlanDomAbsent=!chartFinal.planVisible;
     if(!result.plan.chartPlanDomAbsent)failures.push(`plan DOM remained mounted on chart: ${JSON.stringify(chartFinal)}`);
-    trace("audit-done");
   } catch (error) {
     failures.push(String(error?.message || error));
   } finally {
