@@ -293,10 +293,6 @@ jobs:
         env:
           MARVEL_BROWSER_CHRONOLOGY_AUDIT: '1'
         run: python -m unittest tests.library_v5.test_browser_chronology_audit.BrowserChronologyAuditTests.test_headless_chronology_contract -v
-      - name: Print chronology audit JSON summary
-        env:
-          MARVEL_BROWSER_CHRONOLOGY_AUDIT: '1'
-        run: node tests/library_v5/browser_chronology_audit.mjs --root . --chrome "$MARVEL_CHROME_BIN"
 
   browser-publication-order-audit:
     needs: browser-chronology-audit

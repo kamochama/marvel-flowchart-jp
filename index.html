@@ -638,7 +638,10 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .mobile-plan-summary{display:grid;gap:7px;padding:10px;border:1px solid #92400e;border-radius:11px;background:rgba(66,32,6,.36)}
   .mobile-plan-summary strong{color:#fde68a;font-size:14px}
   .mobile-plan-summary-goals{display:flex;gap:6px;overflow:auto;padding-bottom:2px}
-  .mobile-plan-goal{flex:0 0 auto;padding:7px 9px;border:1px solid #b45309;border-radius:999px;background:#2b1707;color:#fde68a;font-size:11px;font-weight:800}
+  .mobile-plan-goal{display:inline-flex;align-items:stretch;flex:0 0 auto;overflow:hidden;border:1px solid #b45309;border-radius:999px;background:#2b1707;color:#fde68a;font-size:11px;font-weight:800}
+  .mobile-plan-goal-label{padding:7px 9px;line-height:1.25}
+  .mobile-plan-goal-remove{min-width:38px;min-height:38px;padding:0 8px;border:0;border-left:1px solid #92400e;background:#351607;color:#fecaca;font-size:18px;font-weight:900}
+  .mobile-plan-goal-remove:hover{background:#7f1d1d;color:#fff}
   .mobile-plan-progress{display:grid;gap:6px;padding:10px;border:1px solid #155e75;border-radius:11px;background:rgba(8,47,73,.5)}
   .mobile-plan-progress-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;color:#bae6fd;font-size:12px}
   .mobile-plan-progress-bar{height:9px;overflow:hidden;border:1px solid #164e63;border-radius:999px;background:#082f49}
@@ -663,6 +666,9 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .mobile-plan-source{padding:9px;border-left:3px solid #64748b;color:#94a3b8;font-size:11px;line-height:1.5}
   .mobile-plan-surface button:focus-visible,.mobile-plan-tier:focus-visible,.mobile-plan-watch-toggle:focus-within{outline:2px solid #93c5fd;outline-offset:2px}
   body.mobile-chart-host-only #left>.panel{display:none!important}
+  body.mobile-chart-host-only #mobileFocusShell,
+  body.mobile-chart-host-only #watchWorkspace,
+  body.mobile-chart-host-only .below-chart-info{display:none!important}
 }
 
 
@@ -778,6 +784,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .prep-inline-detail{padding:10px 11px}
   .prep-inline-detail-section p{font-size:12px;line-height:1.62}
 }
+.mobile-work-detail{display:grid;gap:10px}.mobile-work-detail-title{display:grid;gap:3px;padding-bottom:8px;border-bottom:1px solid #263550}.mobile-work-detail-title strong{font-size:18px;line-height:1.35;color:#f8fafc}.mobile-work-detail-title span{font-size:11px;color:#94a3b8}.mobile-work-detail-badges{display:flex;gap:5px;flex-wrap:wrap}.mobile-work-detail-badges span{padding:4px 7px;border:1px solid #334155;border-radius:999px;background:#172033;color:#cbd5e1;font-size:10px}.mobile-work-detail section{padding:10px;border:1px solid #263550;border-radius:9px;background:#0b1322}.mobile-work-detail section h3{margin:0 0 5px;font-size:12px;color:#93c5fd}.mobile-work-detail section p,.mobile-work-detail details p{margin:0;color:#e5e7eb;font-size:13px;line-height:1.6}.mobile-work-detail details{border-top:1px solid #263550;padding-top:8px}.mobile-work-detail summary{cursor:pointer;color:#94a3b8;font-size:12px;font-weight:800}.mobile-work-detail a{color:#60a5fa}.mobile-detail-empty{margin:0;color:#cbd5e1}
 </style>
 
 <style>
@@ -7543,7 +7550,10 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       if(e.target.closest?.('.mobile-goal-chip-remove')){e.stopPropagation();if(chip)removeGoal(chip.dataset.id);return;}
       if(e.target.closest?.('.mobile-goal-chip-main')){if(chip)focusGoal(chip.dataset.id);return;}
       if(e.target.closest?.('#mobileClearGoals')){clearAllGoalsWithUndo();return;}
-      if(e.target.closest?.('#mobilePrepJump')){window.showWatchWorkspace?.();}
+      if(e.target.closest?.('#mobilePrepJump')){
+        if(mobileWidth()&&typeof window.setMobileView==='function'){window.setMobileView('plan');return;}
+        window.showWatchWorkspace?.();
+      }
     });
   }
   function mobileGoalDisplayIds(){ return orderedGoalIds().slice().reverse(); }
@@ -8318,10 +8328,31 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   window.mountMobileSearchView=mountMobileSearchView;
   window.renderMobileSearchResults=renderMobileSearchResults;
 
-  let mobilePlanStoreUnsubscribe=null,mobilePlanWatchUnsubscribe=null;
+  let mobilePlanStoreUnsubscribe=null,mobilePlanWatchUnsubscribe=null,mobilePlanRenderRaf=0;
+  function scheduleMobilePlanRender(){
+    if(mobilePlanRenderRaf)return;
+    const flush=()=>{
+      mobilePlanRenderRaf=0;
+      if(mobileUiStore()?.getState?.().view==='plan')renderMobilePlanScreen();
+    };
+    mobilePlanRenderRaf=typeof requestAnimationFrame==='function'?requestAnimationFrame(flush):setTimeout(flush,0);
+  }
   function clearMobilePlanSubscriptions(){
     mobilePlanStoreUnsubscribe?.();mobilePlanStoreUnsubscribe=null;
     mobilePlanWatchUnsubscribe?.();mobilePlanWatchUnsubscribe=null;
+    if(mobilePlanRenderRaf){
+      if(typeof cancelAnimationFrame==='function')cancelAnimationFrame(mobilePlanRenderRaf);else clearTimeout(mobilePlanRenderRaf);
+      mobilePlanRenderRaf=0;
+    }
+  }
+  function removeMobilePlanGoal(id){
+    if(!selectedIds.has(id))return false;
+    selectedIds.delete(id);
+    if(selected===id)normalizeSelection();
+    selectionStateCache=null;
+    syncMobileUiGoals();
+    writeMobileUrlState?.({replace:true});
+    return true;
   }
   function renderPrepPlan(plan,goals,tier){
     const watch=window.marvelWatchProgress;
@@ -8339,7 +8370,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const tierLabel=safeTier==='complete'?'完全版':'サイト提案ルート';
     const title=goalIds.length===1?`${esc(nm[goalIds[0]]?.title||goalIds[0])} の予習プラン`:'複数ゴールの統合予習プラン';
     const summary=goalIds.length
-      ? `<div class="mobile-plan-summary" data-mobile-plan-summary><strong>🎯 ${goalIds.length}作品をゴール中</strong><div class="mobile-plan-summary-goals">${goalIds.map((id,index)=>`<span class="mobile-plan-goal">ゴール ${index+1}：${esc(nm[id]?.title||id)}</span>`).join('')}</div></div>`
+      ? `<div class="mobile-plan-summary" data-mobile-plan-summary><strong>🎯 ${goalIds.length}作品をゴール中</strong><div class="mobile-plan-summary-goals">${goalIds.map((id,index)=>`<span class="mobile-plan-goal"><span class="mobile-plan-goal-label">ゴール ${index+1}：${esc(nm[id]?.title||id)}</span><button type="button" class="mobile-plan-goal-remove" data-mobile-plan-remove-goal="${esc(id)}" aria-label="${esc(nm[id]?.title||id)}をゴールから解除">×</button></span>`).join('')}</div></div>`
       : '<div class="mobile-plan-summary" data-mobile-plan-summary><strong>🎯 ゴール未選択</strong><div class="muted">チャートまたは探す面で作品を選ぶと、ここに予習順を表示します。</div></div>';
     const percent=Math.round((Number(stats.percent)||0)*10)/10;
     const progress=`<div class="mobile-plan-progress" data-mobile-plan-progress><div class="mobile-plan-progress-head"><strong>視聴済み ${stats.watched||0}/${stats.total||0}</strong><span>${percent}%</span></div><div class="mobile-plan-progress-bar" role="progressbar" aria-label="予習プランの視聴進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><div class="mobile-plan-progress-fill" style="width:${Math.max(0,Math.min(100,percent))}%"></div></div><div class="mobile-plan-progress-note">${stats.remainingKnownMinutes?`残り時間：約 ${formatMinutes(stats.remainingKnownMinutes)}`:'残り時間：時間登録済みの未視聴作品はありません'}${stats.unknown?`（時間未登録 ${stats.unknown}件）`:''}</div></div>`;
@@ -8373,9 +8404,13 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     tier?.addEventListener('change',()=>{
       const next=tier.value==='complete'?'complete':'site-proposal';
       window.marvelSetConnectionTier?.(next);
-      renderMobilePlanScreen();
+      scheduleMobilePlanRender();
     });
     surface.querySelector('#mobilePlanChartReturn')?.addEventListener('click',()=>setMobileView('chart'));
+    surface.querySelectorAll('[data-mobile-plan-remove-goal]').forEach(button=>button.addEventListener('click',event=>{
+      event.preventDefault();event.stopPropagation();
+      removeMobilePlanGoal(button.dataset.mobilePlanRemoveGoal||'');
+    }));
     surface.querySelectorAll('[data-mobile-plan-detail]').forEach(button=>button.addEventListener('click',event=>{
       event.preventDefault();event.stopPropagation();openMobileSheet('detail',button.dataset.workId||null);
     }));
@@ -8398,8 +8433,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     mobileHost.replaceChildren(surface);
     renderMobilePlanScreen();
     const store=mobileUiStore();
-    mobilePlanStoreUnsubscribe=store?.subscribe?.(next=>{if(next.view==='plan')renderMobilePlanScreen();})||null;
-    mobilePlanWatchUnsubscribe=window.marvelWatchProgress?.subscribe?.(()=>{if(mobileUiStore()?.getState?.().view==='plan')renderMobilePlanScreen();})||null;
+    mobilePlanStoreUnsubscribe=store?.subscribe?.(next=>{if(next.view==='plan')scheduleMobilePlanRender();})||null;
+    mobilePlanWatchUnsubscribe=window.marvelWatchProgress?.subscribe?.(()=>{if(mobileUiStore()?.getState?.().view==='plan')scheduleMobilePlanRender();})||null;
     syncMobileBottomNav('plan');
     return surface;
   }
@@ -8548,6 +8583,14 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return true;
   }
 
+  function mobileWorkDetailHtml(workId){
+    const work=nm?.[workId],info=window.WORK_DETAILS?.[workId]||{};
+    if(!work)return '<p class="mobile-detail-empty">作品情報を読み込めませんでした。</p>';
+    const japan=work.japan_date?`${work.japan_date}${work.japan_type?`（${work.japan_type}）`:''}`:'未確認';
+    const source=work.source_url?`<a href="${esc(work.source_url)}" target="_blank" rel="noopener noreferrer">公式ソースを開く</a>`:'公式ソース未登録';
+    return `<article class="mobile-work-detail"><header class="mobile-work-detail-title"><strong>${esc(work.title||workId)}</strong><span>${esc(work.title_en||'')} · ${esc(work.release||'未定')}</span></header><div class="mobile-work-detail-badges"><span>${esc(work.branch||'系統未登録')}</span><span>日本公開・配信：${esc(japan)}</span></div><section><h3>あらすじ</h3><p>${esc(info.synopsis_ja||'詳細未登録')}</p></section><section><h3>相関図では</h3><p>${esc(info.map_role_ja||'接続上の説明は未登録です。')}</p></section><details><summary>公開情報・接続</summary><p>公開状況：${esc(work.status||'未確認')}<br>入力接続：${(inc[workId]||[]).length} / 出力接続：${(out[workId]||[]).length}<br>${source}</p></details></article>`;
+  }
+
   function setMobileView(view,{pushHistory=true}={}){
     const normalized=normalizeMobileView(view);
     const store=window.marvelMobileUiStore;
@@ -8570,7 +8613,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const [title,subtitle]=MOBILE_SHEET_LABELS[normalized];
     document.getElementById('mobileSheetTitle').textContent=title;
     document.getElementById('mobileSheetSubtitle').textContent=subtitle;
-    document.getElementById('mobileSheetBody').textContent=sheetWork?`${sheetWork} の情報を表示します。`:'選択した作品の情報を表示します。';
+    const sheetBody=document.getElementById('mobileSheetBody');
+    if(normalized==='detail')sheetBody.innerHTML=mobileWorkDetailHtml(sheetWork);
+    else sheetBody.textContent=sheetWork?`${sheetWork} の情報を表示します。`:'選択した作品の情報を表示します。';
     sheet.hidden=false;sheet.setAttribute('aria-hidden','false');sheet.setAttribute('aria-modal','true');
     if(!suppressMobileSheetHistory)writeMobileUrlState({replace:false});
     requestAnimationFrame(()=>document.getElementById('mobileSheetTitle')?.focus({preventScroll:true}));

@@ -374,6 +374,43 @@ class MobileShellContractTests(unittest.TestCase):
         ):
             self.assertIn(token, plan_source)
 
+    def test_mobile_plan_can_remove_each_goal_without_rebuilding_the_chart(self) -> None:
+        render_body = function_body(self.source, "renderMobilePlanScreen")
+        plan_source = render_body + function_body(self.source, "renderPrepPlan") + function_body(self.source, "removeMobilePlanGoal")
+        for token in (
+            "data-mobile-plan-remove-goal",
+            "removeMobilePlanGoal",
+            "syncMobileUiGoals",
+            "writeMobileUrlState",
+        ):
+            self.assertIn(token, plan_source)
+        self.assertNotIn("removeGoal(button.dataset.mobilePlanRemoveGoal)", render_body)
+
+    def test_mobile_plan_switch_hides_legacy_surfaces_and_coalesces_renders(self) -> None:
+        mount_body = function_body(self.source, "mountMobilePlanView")
+        self.assertIn("scheduleMobilePlanRender", mount_body)
+        self.assertIn("mobilePlanRenderRaf", self.source)
+        self.assertRegex(
+            self.source,
+            r"body\.mobile-chart-host-only\s+#mobileFocusShell[^}]*display:none!important",
+        )
+        self.assertRegex(
+            self.source,
+            r"body\.mobile-chart-host-only\s+#watchWorkspace[^}]*display:none!important",
+        )
+
+    def test_mobile_plan_jump_uses_the_new_mobile_view(self) -> None:
+        goal_bar_body = function_body(self.source, "wireStableMobileGoalBar")
+        self.assertIn("setMobileView", goal_bar_body)
+        self.assertIn("mobileWidth()", goal_bar_body)
+        self.assertIn("showWatchWorkspace?.()", goal_bar_body)
+
+    def test_mobile_detail_sheet_renders_work_metadata(self) -> None:
+        body = function_body(self.source, "openMobileSheet")
+        body += function_body(self.source, "mobileWorkDetailHtml")
+        for token in ("WORK_DETAILS", "nm?.[", "synopsis_ja", "map_role_ja", "innerHTML"):
+            self.assertIn(token, body)
+
     def test_mobile_plan_watch_toggle_updates_plan_only_without_chart_rebuild(self) -> None:
         render_body = function_body(self.source, "renderMobilePlanScreen")
         mount_body = function_body(self.source, "mountMobilePlanView")
@@ -414,7 +451,7 @@ class MobileShellContractTests(unittest.TestCase):
         runner = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
         self.assertTrue(runner.is_file(), "M3 browser runner must exist")
         source = runner.read_text(encoding="utf-8")
-        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "plan", "mobilePlanSnapshot", "data-mobile-plan-summary", "data-mobile-plan-watched", "data-mobile-plan-detail", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select", "firstCardInViewport", "legacyQuerySync"):
+        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "plan", "mobilePlanSnapshot", "data-mobile-plan-summary", "data-mobile-plan-watched", "data-mobile-plan-detail", "data-mobile-plan-remove-goal", "sheetBodyText", "layout", "mobilePrepJump", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select", "firstCardInViewport", "legacyQuerySync"):
             self.assertIn(token, source)
         self.assertIn("mobileAreaSheet", source)
         self.assertIn('data-mobile-target="release"', source)
