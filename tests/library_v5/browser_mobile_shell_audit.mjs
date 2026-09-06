@@ -264,6 +264,8 @@ async function mobilePlanSnapshot(cdp) {
       watchedIds:items.filter(item=>item.querySelector('[data-mobile-plan-watched]')?.checked).map(item=>item.dataset.mobilePlanWork||null),
       resultCount:items.length,progressText:progress?.textContent||'',progressValue:progress?.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')||null,
       remainingVisible:/残り時間/.test(progress?.textContent||''),detailReachable:items.length>0&&items.every(item=>{const button=item.querySelector('[data-mobile-plan-detail]');const r=button?.getBoundingClientRect();return !!r&&r.width>=44&&r.height>=44;}),
+      goalRemoveCount:surface?.querySelectorAll('[data-mobile-plan-remove-goal]').length||0,
+      layout:surface?(()=>{const r=surface.getBoundingClientRect();const focus=document.getElementById('mobileFocusShell'),watch=document.getElementById('watchWorkspace');return {left:r.left,right:r.right,width:r.width,viewportWidth:innerWidth,focusVisible:!!focus&&getComputedStyle(focus).display!=='none',watchVisible:!!watch&&getComputedStyle(watch).display!=='none',scrollY:scrollY};})():null,
       chartAction:!!surface?.querySelector('[data-mobile-plan-chart]'),selected:[...(selection.selected||[])],
       rerenders:window.__mobileShellAuditCounters||{render:0,fit:0,rebuild:0},
     };
@@ -345,6 +347,7 @@ async function snapshot(cdp) {
       camera:surface?.dataset.mobileCamera||null,
       sheetHidden:document.getElementById('mobileSheet')?.hidden!==false,
       sheetWork:store.sheetWork||null,
+      sheetBodyText:document.getElementById('mobileSheetBody')?.textContent?.trim()||'',
       planVisible:!!document.querySelector('#mobileViewHost [data-mobile-surface="plan"]'),
       bottomReachable:nav.length===3&&nav.every(button=>{const r=button.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.bottom<=innerHeight+1;}),
       controlsReachable:surface?[...surface.querySelectorAll('.mobile-chart-controls button')].every(button=>{const r=button.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.bottom<=innerHeight+1;}):false,
@@ -391,13 +394,13 @@ async function runAudit(args) {
   const failures = [];
   const result = {
     viewport: { width: 390, height: 844 },
-    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false },
+    views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false, legacyPrepJump: false },
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
     history: { queryOnViewSwitch: false, queryOnPopstate: false, planClick: null, urlAfterBack: null },
     sheet: { opened: false, closed: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
     search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false, firstCardInViewport: false, legacyQuerySync: false },
-    plan: { surface: false, tiers: false, noOfficialControl: false, summary: false, ordered: false, remaining: false, detailOpened: false, detailClosed: false, watchedToggle: false, multiGoalSummary: false, chartNavigation: false, chartPlanDomAbsent: false, cameraPreserved: false },
+    plan: { surface: false, tiers: false, noOfficialControl: false, summary: false, ordered: false, remaining: false, detailOpened: false, detailContent: false, detailClosed: false, goalRemoval: false, layout: false, switchMs: null, watchedToggle: false, multiGoalSummary: false, chartNavigation: false, chartPlanDomAbsent: false, cameraPreserved: false },
     failures,
   };
   try {
@@ -440,6 +443,26 @@ async function runAudit(args) {
       throw new Error(`drag camera and selection failed: before=${beforeDrag} after=${JSON.stringify(dragged)}`);
     }
     result.selection.dragPreserves = true;
+
+    const legacyPrepJump=await pointForSelector(cdp, '#mobilePrepJump');
+    if(legacyPrepJump){
+      await pageEvaluate(cdp, "document.querySelector('#mobilePrepJump')?.scrollIntoView({block:'center'}); return true;");
+      const visibleLegacyPrepJump=await pointForSelector(cdp, '#mobilePrepJump');
+      const visiblePoint=visibleLegacyPrepJump||legacyPrepJump;
+      const visiblePointJson=JSON.stringify(visiblePoint||null);
+      const legacyPrepBefore=await pageEvaluate(cdp, `const b=document.querySelector('#mobilePrepJump'); const r=b?.getBoundingClientRect(); return {point:${visiblePointJson},rect:r?{left:r.left,top:r.top,width:r.width,height:r.height}:null,display:b?getComputedStyle(b).display:null,hit:(${visiblePointJson}?document.elementFromPoint(${visiblePointJson}.x,${visiblePointJson}.y)?.outerHTML?.slice(0,180)||null:null),setMobileView:typeof window.setMobileView};`);
+      await clickPoint(cdp, visiblePoint);
+      let jumpedPlan;
+      try { jumpedPlan=await waitForPlan(cdp, (state) => state.view === "plan" && state.planSurface, timeoutMs, "legacy mobile prep jump"); }
+      catch(error){ failures.push(`legacy prep jump diagnostics: ${JSON.stringify(legacyPrepBefore)} after=${JSON.stringify(await snapshot(cdp))}`); throw error; }
+      result.views.legacyPrepJump=jumpedPlan.planSurface&&!jumpedPlan.layout?.focusVisible&&!jumpedPlan.layout?.watchVisible;
+      if(!result.views.legacyPrepJump)failures.push(`legacy prep jump did not use the mobile plan surface: ${JSON.stringify(jumpedPlan)}`);
+      await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
+      await waitFor(cdp, (state) => state.view === "chart" && state.selected.includes(node.workId), timeoutMs, "chart restore after legacy prep jump");
+      await pageEvaluate(cdp, "window.scrollTo(0,0); return true;");
+    } else {
+      failures.push("legacy mobile prep jump control was not reachable");
+    }
 
     const beforeSheet = await snapshot(cdp);
     result.rerenders.before = { ...beforeSheet.rerenders };
@@ -612,17 +635,53 @@ async function runAudit(args) {
     result.plan.summary=initialPlan.summaryText.includes(`${initialPlan.goalIds.length}作品をゴール中`);
     result.plan.ordered=initialPlan.ordered.length===initialPlan.resultCount && initialPlan.ordered.every(Boolean);
     result.plan.remaining=initialPlan.remainingVisible && initialPlan.progressValue!==null;
+    result.plan.layout=!!initialPlan.layout && !initialPlan.layout.focusVisible && !initialPlan.layout.watchVisible && initialPlan.layout.left>=0 && initialPlan.layout.width>=initialPlan.layout.viewportWidth-24;
     if(!result.plan.tiers)failures.push(`mobile plan exposed unexpected tiers: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.noOfficialControl)failures.push(`mobile plan exposed an official route control: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.summary)failures.push(`mobile plan goal summary is missing: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.ordered)failures.push(`mobile plan checklist order is missing: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.remaining)failures.push(`mobile plan remaining time/progress is missing: ${JSON.stringify(initialPlan)}`);
+    if(!result.plan.layout)failures.push(`mobile plan exposed a narrow or legacy surface: ${JSON.stringify(initialPlan.layout)}`);
 
     const firstPlanId=initialPlan.ordered[0];
+    const removalBefore=initialPlan.rerenders;
+    if(initialPlan.goalRemoveCount<1)failures.push(`mobile plan did not expose per-goal removal: ${JSON.stringify(initialPlan)}`);
+    const removalSelector=initialPlan.goalIds.length>1?`#mobileViewHost [data-mobile-plan-remove-goal]:not([data-mobile-plan-remove-goal="${firstPlanId}"])`:'#mobileViewHost [data-mobile-plan-remove-goal]';
+    const expectedGoalCount=Math.max(0,initialPlan.goalIds.length-1);
+    const removalPoint=await pointForSelector(cdp, removalSelector);
+    const removalBeforeClick=await pageEvaluate(cdp, `const b=document.querySelector(${JSON.stringify(removalSelector)}); const r=b?.getBoundingClientRect(); return {point:${JSON.stringify(removalPoint)},tag:b?.tagName||null,rect:r?{left:r.left,top:r.top,width:r.width,height:r.height}:null,hit:(${JSON.stringify(removalPoint)}?document.elementFromPoint(${JSON.stringify(removalPoint)}.x,${JSON.stringify(removalPoint)}.y)?.outerHTML?.slice(0,180):null)};`);
+    await clickPoint(cdp, removalPoint);
+    const removalImmediate=await mobilePlanSnapshot(cdp);
+    let removedPlan;
+    try {
+      removedPlan=await waitForPlan(cdp, (state) => state.view === "plan" && state.goalIds.length === expectedGoalCount, timeoutMs, "mobile plan goal removal");
+    } catch(error) {
+      const removalAfterTimeout=await mobilePlanSnapshot(cdp);
+      failures.push(`mobile plan goal removal diagnostics: before=${JSON.stringify(removalBeforeClick)} immediate=${JSON.stringify(removalImmediate)} after=${JSON.stringify(removalAfterTimeout)}`);
+      throw error;
+    }
+    result.plan.goalRemoval=removedPlan.goalIds.length===expectedGoalCount && (expectedGoalCount===0?removedPlan.resultCount===0:removedPlan.resultCount>0) && JSON.stringify(removedPlan.rerenders)===JSON.stringify(removalBefore);
+    if(!result.plan.goalRemoval)failures.push(`mobile plan goal removal did not update only plan state: before=${JSON.stringify(removalBeforeClick)} immediate=${JSON.stringify(removalImmediate)} current=${JSON.stringify(removedPlan)}`);
+    if(expectedGoalCount===0){
+      await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+      await waitForSearch(cdp, (state) => state.searchSurface, timeoutMs, "search after mobile plan goal removal");
+      await pageEvaluate(cdp, "document.querySelector('#mobileViewHost [data-mobile-search-query]')?.scrollIntoView({block:'center'}); return true;");
+      await clickPoint(cdp, await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-query]'));
+      await selectAllAndBackspace(cdp);
+      await cdp.send("Input.insertText", { text: "Spider-Man 3" });
+      await waitForSearch(cdp, (state) => state.resultCount>0 && state.firstId === "spider-man-3-2007", timeoutMs, "restore goal after mobile plan removal");
+      await clickPoint(cdp, await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-work="spider-man-3-2007"] [data-mobile-search-select]'));
+      await waitForSearch(cdp, (state) => state.selected.includes("spider-man-3-2007"), timeoutMs, "restored mobile plan goal");
+      await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="plan"]'));
+      await waitForPlan(cdp, (state) => state.view === "plan" && state.resultCount > 0, timeoutMs, "mobile plan after goal removal restore");
+    }
+
     await clickPoint(cdp, await pointForSelector(cdp, `#mobileViewHost [data-mobile-plan-work="${firstPlanId}"] [data-mobile-plan-detail]`));
     const planDetail=await waitFor(cdp, (state) => !state.sheetHidden, timeoutMs, "plan detail sheet");
     result.plan.detailOpened=planDetail.sheetWork===firstPlanId;
+    result.plan.detailContent=/あらすじ/.test(planDetail.sheetBodyText)&&/相関図では/.test(planDetail.sheetBodyText);
     if(!result.plan.detailOpened)failures.push(`plan detail sheet target mismatch: ${JSON.stringify(planDetail)}`);
+    if(!result.plan.detailContent)failures.push(`plan detail sheet did not render work metadata: ${JSON.stringify(planDetail)}`);
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
     await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "plan detail sheet close");
     result.plan.detailClosed=true;
@@ -630,8 +689,11 @@ async function runAudit(args) {
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
     const chartBeforePlan=await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible, timeoutMs, "chart before plan watch toggle");
     const cameraBeforePlan=chartBeforePlan.camera;
+    const planSwitchStart=Date.now();
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="plan"]'));
     const planForWatch=await waitForPlan(cdp, (state) => state.planSurface && state.ordered.includes(firstPlanId), timeoutMs, "plan watch toggle surface");
+    result.plan.switchMs=Date.now()-planSwitchStart;
+    if(result.plan.switchMs>1500)failures.push(`mobile plan switch was too slow: ${result.plan.switchMs}ms`);
     const watchedBefore=planForWatch.watchedIds.includes(firstPlanId);
     const planRerendersBefore=planForWatch.rerenders;
     await clickPoint(cdp, await pointForSelector(cdp, `#mobileViewHost [data-mobile-plan-work="${firstPlanId}"] [data-mobile-plan-watched]`));
