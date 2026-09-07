@@ -713,3 +713,17 @@ Verification at this boundary:
 - Pages deployment run `33830961858` succeeded; GitHub Pages reports `status=built` for `https://kamochama.github.io/marvel-flowchart-jp/`.
 
 This milestone changes presentation only. Future worldline/relation additions remain evidence-gated semantic work and are not implied by the layout adjustment.
+
+## 30. Mobile shell and preparation-plan stabilization — production baseline (2026-09-06)
+
+PR #75 (`https://github.com/kamochama/marvel-flowchart-jp/pull/75`) integrated the mobile-first shell, shared mobile state/history, search surface, and preparation-plan surface into `main` at merge commit `4917d8c1ff6443d0dd2e666411848e8e32f20eeb`. PR #76 (`https://github.com/kamochama/marvel-flowchart-jp/pull/76`) then stabilized the preparation-plan flow at merge commit `635d5060d9ae735e1835df820c5e9870ae445c3a`: legacy chart surfaces are hidden while the plan is active, goals can be removed independently, rendering is coalesced, work details are shown in the detail sheet, and chart-return navigation remains available. Public mobile tiers remain `site-proposal` and `complete` only.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `517` pass, `5` environment-gated skips;
+- build/audit/content-audit: `0` issues, story paths `83/83`, SQLite integrity `ok`;
+- local real Chrome/CDP mobile-shell audit: `failures=[]`;
+- hosted GitHub Actions run `34029236857`: all six required jobs pass after transient Chrome timeout reruns;
+- Pages deployment run `34030185938` succeeded.
+
+The two PRs are viewer-only changes. Canonical CSVs, graph edges, worldline/chronology semantics, and normalized fact meaning are unchanged. Any further mobile redesign or semantic data work requires its own bounded plan and regression contract.

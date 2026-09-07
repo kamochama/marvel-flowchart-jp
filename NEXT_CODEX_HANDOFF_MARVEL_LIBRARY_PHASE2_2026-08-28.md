@@ -314,6 +314,22 @@ Fresh verification for the merged PR #71 baseline:
 
 This milestone changes chronology presentation only. It does not add or infer any work relation, worldline crossing, or canonical fact.
 
+## 0.1.16 Production baseline after the 2026-09-06 mobile shell and preparation-plan work
+
+PR #75 (`https://github.com/kamochama/marvel-flowchart-jp/pull/75`) is integrated into `main` at merge commit `4917d8c1ff6443d0dd2e666411848e8e32f20eeb`. It introduces the mobile-first shell, shared mobile state/history, search surface, and preparation-plan surface while preserving the existing graph, worldline, chronology, and canonical data semantics. Public mobile preparation controls remain limited to `site-proposal` and `complete`; official-route data remains internal.
+
+PR #76 (`https://github.com/kamochama/marvel-flowchart-jp/pull/76`) is integrated into `main` at merge commit `635d5060d9ae735e1835df820c5e9870ae445c3a`. It stabilizes the preparation-plan flow: the legacy chart surfaces stay hidden while the plan is active, each goal can be removed without rebuilding the chart, plan rendering is coalesced, the detail sheet displays work metadata, and the plan-to-chart navigation remains available. The CI workflow also removes a redundant chronology-browser invocation that could hang after the required audit had already passed.
+
+Fresh verification for the merged mobile baseline:
+
+- bundled-Python full suite: `517` tests pass (`5` environment-gated skips);
+- bundled-Python build: `audit_issue_count=0`, content-audit issue count `0`, story paths `83/83`, SQLite integrity `ok`;
+- real Chrome/CDP mobile-shell audit: `failures=[]`, including plan goal removal, detail content, chart return, responsive visibility, selection clearing, and camera preservation;
+- GitHub Actions run `34029236857`: `test`, selection, interaction, chronology, publication-order, and mobile-shell jobs all pass after rerunning transient Chrome timeouts;
+- Pages deployment run `34030185938` succeeded for `https://kamochama.github.io/marvel-flowchart-jp/`.
+
+This milestone changes viewer presentation and interaction only. It does not modify canonical CSVs, relation/chronology/worldline semantics, or public plan-tier meaning.
+
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
 The static viewer now consumes the committed DB-derived artifact `data/derived/flowchart.json`; the browser does not open SQLite. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups, with all eligible edges visible by default and selection limited to presentation styling.
