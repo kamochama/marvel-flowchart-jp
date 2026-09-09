@@ -132,6 +132,25 @@ class MobileUxContractTests(unittest.TestCase):
         return_body = function_body(self.source, "marvelReturnToGoalView")
         self.assertIn("closeInspection", return_body)
 
+    def test_sheet_modal_lifecycle_owns_inert_scroll_and_pointer_state(self) -> None:
+        enter_body = function_body(self.source, "enterSheetModal")
+        leave_body = function_body(self.source, "leaveSheetModal")
+        self.assertIn("inert", enter_body)
+        self.assertIn("scrollY", enter_body)
+        self.assertIn("mobileSheetModalGeneration", enter_body)
+        self.assertIn("restore", leave_body)
+        self.assertIn("scrollTo", leave_body)
+        self.assertIn("mobileSheetModalGeneration", leave_body)
+        self.assertIn("sheetHostBackdrop", self.source)
+        self.assertIn("pointerId", self.source)
+
+    def test_docked_presentation_does_not_use_modal_aria_or_backdrop(self) -> None:
+        body = function_body(self.source, "syncSheetPresentation")
+        self.assertIn("setAttribute('role','region')", body)
+        self.assertIn("removeAttribute('aria-modal')", body)
+        self.assertIn("sheetHostBackdrop", self.source)
+        self.assertIn("data-presentation=\"docked\"", self.source)
+
     def test_side_tabs_expose_active_panel_state(self) -> None:
         body = function_body(self.source, "showSideTab")
         self.assertIn("aria-selected", body)
