@@ -5548,35 +5548,66 @@ render();
 <script>
 // v5.5 patch: deselect on second click + multi-select with Ctrl/Cmd/Shift
 var selectedIds = new Set();
+function normalizeMobileOverlay(value={}){
+  const kind=value?.kind;
+  if(kind==='detail'&&typeof value.workId==='string'&&value.workId.trim())return {kind:'detail',workId:value.workId.trim()};
+  if(kind==='reason'&&typeof value.relationId==='string'&&value.relationId.trim()){
+    const next={kind:'reason',relationId:value.relationId.trim()};
+    if(typeof value.sourceId==='string'&&value.sourceId.trim())next.sourceId=value.sourceId.trim();
+    if(typeof value.targetId==='string'&&value.targetId.trim())next.targetId=value.targetId.trim();
+    return next;
+  }
+  if(kind==='settings')return {kind:'settings',section:['display','plan','legend'].includes(value.section)?value.section:'display'};
+  return {kind:'closed'};
+}
+function sheetCompatibility(overlay){
+  const next=normalizeMobileOverlay(overlay);
+  return {
+    sheet:next.kind,
+    sheetWork:next.kind==='detail'?next.workId:next.kind==='reason'?next.relationId:null,
+  };
+}
 function createMobileUiStore(initialState={}){
   const initial=initialState&&typeof initialState==='object'?initialState:{};
   const normalizeView=view=>view==='chart'||view==='search'||view==='plan'?view:'chart';
-  const normalizeSheet=sheet=>sheet==='closed'||sheet==='detail'||sheet==='reason'||sheet==='settings'?sheet:'closed';
   const knownWork=id=>typeof id==='string'&&(typeof nm==='undefined'||!nm||!!nm[id]);
   const normalizeGoals=goalIds=>[...new Set((Array.isArray(goalIds)?goalIds:[]).filter(knownWork))];
   const normalizeState=next=>{
     const goalIds=normalizeGoals(next.goalIds);
+    const legacyOverlay=next.overlay||{
+      kind:next.sheet,
+      workId:next.sheetWork,
+      relationId:next.sheetWork,
+      section:next.sheetSection,
+    };
+    const overlay=normalizeMobileOverlay(legacyOverlay);
+    const compatibility=sheetCompatibility(overlay);
     return {
       view:normalizeView(next.view),goalIds,
       selectedId:typeof next.selectedId==='string'&&goalIds.includes(next.selectedId)?next.selectedId:null,
-      sheet:normalizeSheet(next.sheet),sheetWork:typeof next.sheetWork==='string'&&next.sheetWork?next.sheetWork:null,
+      overlay, ...compatibility,
       query:String(next.query||''),filter:String(next.filter||'')
     };
   };
-  let state=normalizeState({view:'chart',goalIds:[],selectedId:null,sheet:'closed',sheetWork:null,query:'',filter:'',...initial});
+  const initialOverlay=initial.overlay||{kind:initial.sheet||'closed',workId:initial.sheetWork,relationId:initial.sheetWork,section:initial.sheetSection};
+  let state=normalizeState({view:'chart',goalIds:[],selectedId:null,query:'',filter:'',...initial,overlay:initialOverlay});
   const listeners=new Set();
   const publish=next=>{
     const previous=state,nextState=normalizeState(next);
-    const changed=previous.view!==nextState.view||previous.selectedId!==nextState.selectedId||previous.sheet!==nextState.sheet||previous.sheetWork!==nextState.sheetWork||previous.query!==nextState.query||previous.filter!==nextState.filter||previous.goalIds.length!==nextState.goalIds.length||previous.goalIds.some((id,index)=>id!==nextState.goalIds[index]);
+    const changed=previous.view!==nextState.view||previous.selectedId!==nextState.selectedId||JSON.stringify(previous.overlay)!==JSON.stringify(nextState.overlay)||previous.query!==nextState.query||previous.filter!==nextState.filter||previous.goalIds.length!==nextState.goalIds.length||previous.goalIds.some((id,index)=>id!==nextState.goalIds[index]);
     if(!changed)return false;
     state=nextState;listeners.forEach(fn=>fn(state,previous));return true;
   };
   return {
-    getState:()=>({...state,goalIds:[...state.goalIds]}),
+    getState:()=>({...state,goalIds:[...state.goalIds],overlay:{...state.overlay}}),
     subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
     setView(view){return publish({...state,view:view==='search'||view==='plan'?view:'chart'});},
     setGoals(goalIds,selectedId=null){return publish({...state,goalIds,selectedId});},
-    setSheet(sheet,sheetWork=null){return publish({...state,sheet:['detail','reason','settings'].includes(sheet)?sheet:'closed',sheetWork});},
+    setOverlay(overlay){return publish({...state,overlay});},
+    setSheet(sheet,sheetWork=null){
+      const overlay=sheet==='detail'?{kind:'detail',workId:sheetWork}:sheet==='reason'?{kind:'reason',relationId:sheetWork}:sheet==='settings'?{kind:'settings',section:sheetWork||'display'}:{kind:'closed'};
+      return publish({...state,overlay});
+    },
     setSearch(query){return publish({...state,query:String(query||'')});},
     setFilter(filter){return publish({...state,filter:String(filter||'')});}
   };
@@ -8544,14 +8575,39 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return null;
   }
 
+  function mobileSheetRelationRepository(){
+    const relations=new Map();
+    for(const row of Object.values(reasonsById||{})){
+      if(row?.reason_kind!=='explicit_relation'||!row.relation_id)continue;
+      const existing=relations.get(row.relation_id);
+      if(existing&&!existing.valid)continue;
+      if(existing&&(existing.sourceId!==row.source_work_id||existing.targetId!==row.target_work_id)){
+        relations.set(row.relation_id,{valid:false});
+        continue;
+      }
+      relations.set(row.relation_id,{
+        valid:true,relationId:row.relation_id,sourceId:row.source_work_id,targetId:row.target_work_id,
+        reasons:[...(existing?.reasons||[]),row],
+      });
+    }
+    return {
+      hasWork:id=>typeof nm==='undefined'||!nm||!!nm[id],
+      getRelation:id=>{
+        const relation=relations.get(id);
+        return relation?.valid?relation:null;
+      },
+    };
+  }
+
   function readMobileUrlState(){
     const params=new URLSearchParams(location.search);
     const view=normalizeMobileView(params.get('mview'));
     const goalIds=(params.get('goals')||'').split(',').map(id=>id.trim()).filter(Boolean);
-    const sheet=normalizeMobileSheet(params.get('sheet'));
+    const overlay=window.marvelReadSheetParams?.(params,mobileSheetRelationRepository())||{kind:'closed'};
+    const compatibility=sheetCompatibility(overlay);
     return {
       view,goalIds,selectedId:goalIds[goalIds.length-1]||null,
-      sheet,sheetWork:sheet==='closed'?null:(params.get('sheetWork')||null),
+      overlay,sheet:compatibility.sheet,sheetWork:compatibility.sheetWork,
       query:params.get('q')||'',filter:params.get('mfilter')||''
     };
   }
@@ -8669,8 +8725,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const setOrDelete=(key,value)=>{if(value)params.set(key,value);else params.delete(key)};
     setOrDelete('mview',state.view==='chart'?'':normalizeMobileView(state.view));
     setOrDelete('goals',state.goalIds.join(','));
-    setOrDelete('sheet',state.sheet==='closed'?'':normalizeMobileSheet(state.sheet));
-    setOrDelete('sheetWork',state.sheet==='closed'?'':(state.sheetWork||''));
+    const overlay=state.overlay||{kind:state.sheet,workId:state.sheetWork,relationId:state.sheetWork};
+    window.marvelWriteSheetParams?.(params,overlay);
     setOrDelete('q',state.query);
     setOrDelete('mfilter',state.filter);
     url.search=params.toString();
@@ -8707,6 +8763,36 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return `<article class="mobile-work-detail"><header class="mobile-work-detail-title"><strong>${esc(work.title||workId)}</strong><span>${esc(work.title_en||'')} · ${esc(work.release||'未定')}</span></header><div class="mobile-work-detail-badges"><span>${esc(work.branch||'系統未登録')}</span><span>日本公開・配信：${esc(japan)}</span></div><section><h3>あらすじ</h3><p>${esc(info.synopsis_ja||'詳細未登録')}</p></section><section><h3>相関図では</h3><p>${esc(info.map_role_ja||'接続上の説明は未登録です。')}</p></section><details><summary>公開情報・接続</summary><p>公開状況：${esc(work.status||'未確認')}<br>入力接続：${(inc[workId]||[]).length} / 出力接続：${(out[workId]||[]).length}<br>${source}</p></details></article>`;
   }
 
+  function sheetReasonHtml(relation){
+    if(!relation||!relation.relationId||!nm?.[relation.sourceId]||!nm?.[relation.targetId]){
+      return '<p class="sheet-empty">この接続の根拠を確認できません。</p>';
+    }
+    const rows=(Array.isArray(relation.reasons)?relation.reasons:[]).map(row=>`<li data-sheet-reason-id="${esc(row.reason_id||'')}"><span>${esc(row.notes||row.reason_kind||'接続根拠')}</span><small>${esc(row.verification_status||'未確認')}</small></li>`).join('');
+    return `<article class="sheet-reason" data-sheet-relation="${esc(relation.relationId)}"><h3>${esc(nm[relation.sourceId].title)} → ${esc(nm[relation.targetId].title)}</h3><p>登録済みの接続根拠</p><ul>${rows||'<li>根拠の詳細は未登録です。</li>'}</ul></article>`;
+  }
+
+  function sheetSettingsHtml(section='display'){
+    const normalized=['display','plan','legend'].includes(section)?section:'display';
+    const targets=[['overview','関係地図'],['release','公開順'],['chronology','世界線・時系列'],['watch','この作品を見るなら'],['characters','人物・組織']];
+    const views=targets.map(([id,label])=>`<button type="button" data-mobile-target="${id}" data-sheet-display-target="${id}">${label}</button>`).join('');
+    const tier=window.marvelGetConnectionTier?.()||'site-proposal';
+    if(normalized==='display')return `<section class="sheet-settings" data-sheet-section="display"><h3>表示設定</h3><div class="sheet-display-targets" role="group" aria-label="表示ビュー">${views}</div><label class="sheet-tier-label" for="sheetTierSelect">つながりの詳しさ</label><select id="sheetTierSelect" data-sheet-tier><option value="site-proposal"${tier==='site-proposal'?' selected':''}>サイト提案ルート</option><option value="complete"${tier==='complete'?' selected':''}>完全版</option></select></section>`;
+    if(normalized==='plan')return `<section class="sheet-settings" data-sheet-section="plan"><h3>予習プラン設定</h3><p>ゴールの予習順と視聴済み状態は予習画面で管理します。</p></section>`;
+    return `<section class="sheet-settings" data-sheet-section="legend"><h3>凡例</h3><p>前史・後続・選択中の表示ルールを確認できます。</p></section>`;
+  }
+
+  function renderSheetContent(overlay){
+    const body=document.getElementById('mobileSheetBody');
+    if(!body)return false;
+    const next=normalizeMobileOverlay(overlay||mobileUiStore()?.getState()?.overlay);
+    let html='<p class="sheet-empty">作品を選ぶと、ここに情報を表示します。</p>';
+    if(next.kind==='detail')html=mobileWorkDetailHtml(next.workId);
+    else if(next.kind==='reason')html=sheetReasonHtml(mobileSheetRelationRepository().getRelation(next.relationId));
+    else if(next.kind==='settings')html=sheetSettingsHtml(next.section);
+    body.innerHTML=html;
+    return true;
+  }
+
   function setMobileView(view,{pushHistory=true}={}){
     const normalized=normalizeMobileView(view);
     const store=window.marvelMobileUiStore;
@@ -8738,9 +8824,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const [title,subtitle]=MOBILE_SHEET_LABELS[normalized];
     document.getElementById('mobileSheetTitle').textContent=title;
     document.getElementById('mobileSheetSubtitle').textContent=subtitle;
-    const sheetBody=document.getElementById('mobileSheetBody');
-    if(normalized==='detail')sheetBody.innerHTML=mobileWorkDetailHtml(sheetWork);
-    else sheetBody.textContent=sheetWork?`${sheetWork} の情報を表示します。`:'選択した作品の情報を表示します。';
+    renderSheetContent(store.getState().overlay);
     sheet.hidden=false;sheet.setAttribute('aria-hidden','false');sheet.setAttribute('aria-modal','true');
     if(!suppressMobileSheetHistory&&!sameContent){
       const action=wasClosed||previous.sheet!==normalized?'overlay-open':'overlay-target-change';
@@ -9848,6 +9932,43 @@ window.FEATURED_ROUTE=Object.freeze({
     }
     if(value.kind==='settings')return text(value.section)?{kind:'settings',section:text(value.section)}:{kind:'settings'};
     return {kind:'closed'};
+  };
+  window.marvelResolveSheetOverlay=function(value,repository={}){
+    const overlay=normalizeOverlay(value);
+    if(overlay.kind==='closed')return overlay;
+    if(overlay.kind==='detail'){
+      return typeof repository.hasWork==='function'&&repository.hasWork(overlay.workId)
+        ? overlay : {kind:'closed'};
+    }
+    if(overlay.kind==='reason'){
+      const relation=typeof repository.getRelation==='function'
+        ? repository.getRelation(overlay.relationId) : null;
+      if(!relation||relation.relationId!==overlay.relationId||!text(relation.sourceId)||!text(relation.targetId))return {kind:'closed'};
+      if((overlay.sourceId&&overlay.sourceId!==relation.sourceId)||(overlay.targetId&&overlay.targetId!==relation.targetId))return {kind:'closed'};
+      return {kind:'reason',relationId:relation.relationId,sourceId:relation.sourceId,targetId:relation.targetId};
+    }
+    const section=['display','plan','legend'].includes(overlay.section)?overlay.section:'display';
+    return {kind:'settings',section};
+  };
+  window.marvelReadSheetParams=function(params,repository={}){
+    const get=key=>typeof params?.get==='function'?params.get(key):null;
+    const kind=get('sheet');
+    if(kind==='detail')return window.marvelResolveSheetOverlay({kind,workId:get('sheetWork')},repository);
+    if(kind==='reason'){
+      const relationId=get('sheetRelation')||get('sheetWork');
+      return window.marvelResolveSheetOverlay({kind,relationId},repository);
+    }
+    if(kind==='settings')return window.marvelResolveSheetOverlay({kind,section:get('sheetSection')||'display'},repository);
+    return {kind:'closed'};
+  };
+  window.marvelWriteSheetParams=function(params,overlay){
+    if(!params||typeof params.delete!=='function'||typeof params.set!=='function')return params;
+    for(const key of ['sheet','sheetWork','sheetRelation','sheetSection'])params.delete(key);
+    const next=normalizeOverlay(overlay);
+    if(next.kind==='detail'){params.set('sheet','detail');params.set('sheetWork',next.workId);}
+    else if(next.kind==='reason'){params.set('sheet','reason');params.set('sheetRelation',next.relationId);}
+    else if(next.kind==='settings'){params.set('sheet','settings');params.set('sheetSection',['display','plan','legend'].includes(next.section)?next.section:'display');}
+    return params;
   };
   window.marvelCreateUiState=function(seed={}){
     const orderedIds=uniqueIds(seed.goals?.orderedIds);

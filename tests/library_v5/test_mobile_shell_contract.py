@@ -67,6 +67,12 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("setGoals", body)
         self.assertIn("setSheet", body)
 
+    def test_mobile_store_exposes_overlay_as_canonical_sheet_state(self) -> None:
+        body = function_body(self.source, "createMobileUiStore")
+        self.assertIn("overlay", body)
+        self.assertIn("setOverlay", body)
+        self.assertIn("sheetCompatibility", self.source)
+
     def test_mobile_store_normalizes_invalid_view_and_sheet(self) -> None:
         self.assertIn("view==='chart'", self.source)
         self.assertIn("sheet==='closed'", self.source)
@@ -497,8 +503,25 @@ class MobileShellContractTests(unittest.TestCase):
     def test_mobile_detail_sheet_renders_work_metadata(self) -> None:
         body = function_body(self.source, "openMobileSheet")
         body += function_body(self.source, "mobileWorkDetailHtml")
-        for token in ("WORK_DETAILS", "nm?.[", "synopsis_ja", "map_role_ja", "innerHTML"):
+        for token in ("WORK_DETAILS", "nm?.[", "synopsis_ja", "map_role_ja", "renderSheetContent"):
             self.assertIn(token, body)
+
+    def test_shared_sheet_renderers_use_canonical_detail_reason_and_settings_data(self) -> None:
+        reason_body = function_body(self.source, "sheetReasonHtml")
+        settings_body = function_body(self.source, "sheetSettingsHtml")
+        for token in ("relationId", "sourceId", "targetId", "reasons", "notes"):
+            self.assertIn(token, reason_body)
+        self.assertNotIn("ancestors(", reason_body)
+        self.assertNotIn("chronology", reason_body)
+        self.assertIn("site-proposal", settings_body)
+        self.assertIn("complete", settings_body)
+
+    def test_sheet_content_router_uses_one_renderer_for_detail_reason_and_settings(self) -> None:
+        body = function_body(self.source, "renderSheetContent")
+        self.assertIn("sheetReasonHtml", body)
+        self.assertIn("sheetSettingsHtml", body)
+        self.assertIn("mobileWorkDetailHtml", body)
+        self.assertIn("mobileSheetBody", body)
 
     def test_mobile_plan_watch_toggle_updates_plan_only_without_chart_rebuild(self) -> None:
         render_body = function_body(self.source, "renderMobilePlanScreen")
