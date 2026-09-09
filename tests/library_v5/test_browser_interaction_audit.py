@@ -58,6 +58,15 @@ class BrowserInteractionAuditTests(unittest.TestCase):
         self.assertIn('await poll(', source)
         self.assertNotIn('window.marvelReturnToGoalView', source)
 
+    def test_runner_bounds_and_retries_chrome_cdp_startup(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("launchChromeWithRetries", source)
+        self.assertIn("attempts = 3", source)
+        self.assertIn("AbortController", source)
+        self.assertIn("signal: controller.signal", source)
+        self.assertIn("commandTimeoutMs", source)
+        self.assertIn("runAuditWithRetries", source)
+
     def test_runner_proves_drag_and_chronology_repaint(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         self.assertIn("drag did not change SVG transform", source)
