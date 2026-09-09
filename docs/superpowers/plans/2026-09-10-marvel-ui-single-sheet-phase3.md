@@ -225,7 +225,7 @@ dockedでは`role=region`、aria-modalなし、backdrop hidden、inertなし、b
 
 **Interfaces:** `commitSheetDisplay(target)`は設定内の明示選択確定。`close`（dismiss）とは別操作とする。`openMobileAreaMenu()`は`open({kind:'settings',section:'display'})`へ委譲。
 
-- [ ] **Step 1: RED。** `closed→detail A→detail B`はpush 1回＋replace、Bからcloseは親entryへBack。直接detailリンクcloseはreplace。detail→reason→closeは親detailを復元。display選択確定後に選んだpanelが残ること、hash/未知query/背景goalsが変わらないことをbrowser assertionsへ追加する。
+- [ ] **Step 1: RED。** `closed→detail A→detail B`はpush 1回＋replace、Bからcloseは親entryへBack。直接detailリンクcloseはreplace。detail→reason→closeは親detailを復元。display選択確定後に選んだpanelが残ること、hash/未知query/背景goalsが変わらないことをbrowser assertionsへ追加する。さらに`site-proposal→settings→completeへ変更→dismiss`後も`complete`を保持すること、設定を閉じただけで`prepTier`を親snapshotへ巻き戻さないことをassertする。
 - [ ] **Step 2: RED確認。** focused testsとmobile browser auditを実行し、履歴追加数・対象復元・実測解除buttonの不足を記録する。
 - [ ] **Step 3: 最小実装。** open時に`entryId`/`parentEntryId`/`sheetOwner`と起点を記録。dismissで`history.back()`するのは現在entryが自分のapp overlay entryで、記録済みparentEntryIdも一致する場合だけ。直接リンク・不明な親はclosedへreplace。連打のBackはpending guardで1回にする。popstateは対象entry全体をguard内hydrateし、URLを書き直さない。
 
@@ -236,11 +236,11 @@ const canGoBack = owner==='app' && navigation.entryId===openedEntryId &&
 // detail A→Bはoverlayだけ変更。surface/goals/inspection/current goalは保存。
 ```
 
-表示選択確定は「設定を閉じて選んだ表示へ移る」一つのcommandとして処理する。通常dismissの`history.back()`を使うと親panelが復元されるため、同一surfaceのpanel選択はcurrent entryをclosed＋選択panelへreplaceし、surfaceを変える`watch`選択は既存surface-transitionとしてpushする。`activatePanel`の副次writerをtransactionで抑止し、command完了後に1回だけ書く。単なる設定open/closeではsurfaceを変えない。tier/combine変更は設定を開いたまま既存APIで適用し、dismissで戻ると親snapshotへ戻る挙動を監査に明示する。
+表示選択確定は「設定を閉じて選んだ表示へ移る」一つのcommandとして処理する。通常dismissの`history.back()`を使うと親panelが復元されるため、同一surfaceのpanel選択はcurrent entryをclosed＋選択panelへreplaceし、surfaceを変える`watch`選択は既存surface-transitionとしてpushする。`activatePanel`の副次writerをtransactionで抑止し、command完了後に1回だけ書く。単なる設定open/closeではsurfaceを変えない。tier/combine変更は設定を開いたまま既存APIで適用し、意図的な設定確定として扱う。設定をdismissで閉じても変更後のtier/combineを保持し、Back/Forwardによる設定履歴の復元は別契約として監査する。
 
 `.mobile-plan-goal-remove`の38pxを`min-width:44px;min-height:44px`へ変更。Sheetのbutton/select/summary/リンク操作も可視hit areaが44×44以上になるCSSにし、detail/plan双方の解除操作を測る。長い作品名で横overflowを作らない。
 
-- [ ] **Step 4: GREENと監査。** 390×844で実測hit area、表示選択後のpanel、Back/Forward、直接URL、親detail復帰、未知query/hash保存を確認。全閉じ方でgoals/inspection/current goalを予期せず変更していないことを比較する。
+- [ ] **Step 4: GREENと監査。** 390×844で実測hit area、表示選択後のpanel、`site-proposal→complete→dismiss`後のtier保持、Back/Forward、直接URL、親detail復帰、未知query/hash保存を確認。全閉じ方でgoals/inspection/current goalを予期せず変更していないことを比較する。
 - [ ] **Step 5: コミット。** `git commit -m "feat: unify display settings navigation and sheet history"`。
 
 ### Task 6: Chrome/CDP監査を単一Sheetへ更新する
