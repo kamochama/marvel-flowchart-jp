@@ -260,6 +260,10 @@ async function clickPoint(cdp, point) {
   await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", x: point.x, y: point.y, button: "left", clickCount: 1 });
   await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: point.x, y: point.y, button: "left", clickCount: 1 });
 }
+async function clickVisibleSelector(cdp, selector) {
+  await pageEvaluate(cdp, `document.querySelector(${JSON.stringify(selector)})?.scrollIntoView({block:'center',inline:'nearest'}); return true;`);
+  await clickPoint(cdp, await pointForSelector(cdp, selector));
+}
 async function pressTab(cdp) {
   const params = { key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, nativeVirtualKeyCode: 9 };
   await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", ...params });
@@ -280,7 +284,9 @@ async function mobileSearchSnapshot(cdp) {
     return {
       view:store.view||null,query:store.query||input?.value||'',filter:store.filter||'',
       url:location.href,historyLength:history.length,
+      scrollY:Math.round(window.scrollY||0),scrollHeight:Math.round((document.scrollingElement||document.documentElement)?.scrollHeight||0),viewportHeight:innerHeight,
       historyLog:window.__mobileHistoryLog||[],
+      historySnapshot:window.history.state?.viewerNavigation?.snapshot?.mobile||null,
       storeViewLog:window.__mobileStoreViewLog||[],
       searchSurface:!!surface,inputValue:input?.value||'',resultCount:cards.length,
       firstId:cards[0]?.dataset.mobileSearchWork||null,selected:[...(audit.selected||[])],back:[...(audit.back||[])],
@@ -433,7 +439,7 @@ async function instrumentRerenders(cdp) {
       const log=[];
       for(const name of ["pushState","replaceState"]){
         const original=history[name];
-        history[name]=function(...args){log.push({name,url:String(args[2]||location.href),view:window.marvelMobileUiStore?.getState?.().view||null});return original.apply(this,args);};
+        history[name]=function(...args){const result=original.apply(this,args);log.push({name,url:String(args[2]||location.href),view:window.marvelMobileUiStore?.getState?.().view||null,transitionKind:window.history.state?.viewerNavigation?.transitionKind||null,scroll:window.history.state?.viewerNavigation?.snapshot?.mobile?.scrollY||0});return result;};
       }
       window.__mobileHistoryLog=log;window.__mobileHistoryInstalled=true;
     }
@@ -465,7 +471,7 @@ async function runAudit(args) {
     viewport: { width: 390, height: 844 },
     views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false, legacyPrepJump: false },
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
-    history: { queryOnViewSwitch: false, queryOnPopstate: false, popstateNoWrites: false, forwardNoWrites: false, panelSnapshot: false, tierSnapshot: false, snapshotPopstateNoWrites: false, planClick: null, urlAfterBack: null },
+    history: { queryOnViewSwitch: false, queryOnPopstate: false, popstateNoWrites: false, forwardNoWrites: false, panelSnapshot: false, tierSnapshot: false, scrollSnapshot: false, snapshotPopstateNoWrites: false, planClick: null, urlAfterBack: null },
     sheet: { opened: false, closed: false, backNoWrite: false, forwardRestores: false, urlParentChild: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
     search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false, firstCardInViewport: false, legacyQuerySync: false },
@@ -538,6 +544,7 @@ async function runAudit(args) {
     const beforeSheet = await snapshot(cdp);
     result.rerenders.before = { ...beforeSheet.rerenders };
     const sheetOpenWritesBefore=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    const sheetOpenPushesBefore=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).filter(entry=>entry.name==='pushState').length;");
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartDetails"));
     await waitFor(cdp, (state) => !state.sheetHidden, timeoutMs, "sheet open");
     const opened = await snapshot(cdp);
@@ -546,7 +553,8 @@ async function runAudit(args) {
     if (opened.camera !== beforeSheet.camera) failures.push("sheet open changed data-mobile-camera");
     if (opened.rerenders.render !== beforeSheet.rerenders.render || opened.rerenders.fit !== beforeSheet.rerenders.fit || opened.rerenders.rebuild !== beforeSheet.rerenders.rebuild) failures.push("sheet open rebuilt chart");
     const sheetOpenWritesAfter=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
-    if(sheetOpenWritesAfter!==sheetOpenWritesBefore+1)failures.push(`sheet open did not create exactly one history entry: before=${sheetOpenWritesBefore} after=${sheetOpenWritesAfter}`);
+    const sheetOpenPushesAfter=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).filter(entry=>entry.name==='pushState').length;");
+    if(sheetOpenPushesAfter!==sheetOpenPushesBefore+1)failures.push(`sheet open did not create exactly one history entry: before=${sheetOpenWritesBefore} after=${sheetOpenWritesAfter} pushes=${sheetOpenPushesBefore}->${sheetOpenPushesAfter}`);
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
     await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "sheet close");
     const closed = await snapshot(cdp);
@@ -610,7 +618,7 @@ async function runAudit(args) {
     result.views.chartRestoresCamera = restored.camera === beforeSheet.camera;
     if (!result.views.chartRestoresCamera) failures.push(`chart remount lost camera: before=${beforeSheet.camera} after=${restored.camera}`);
 
-    await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartViewButton"));
+    await clickVisibleSelector(cdp, "#mobileChartViewButton");
     await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "display view chooser");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="release"]'));
     const releaseView = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release display view mount");
@@ -627,7 +635,7 @@ async function runAudit(args) {
     `);
     result.views.nonChartDocumentPanel = retainedDocumentApis.overviewHasIronMan && ["overview", "release", "chronology"].includes(retainedDocumentApis.preferred) && retainedDocumentApis.chooser;
     if (!result.views.nonChartDocumentPanel) failures.push(`non-chart document panel APIs failed: ${JSON.stringify(retainedDocumentApis)}`);
-    await clickPoint(cdp, await pointForSelector(cdp, "#mobileAreaButton"));
+    await clickVisibleSelector(cdp, "#mobileAreaButton");
     await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "non-chart display view chooser");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="overview"]'));
     const chooserOverview = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible && state.activePanelId === "overview", timeoutMs, "non-chart display chooser overview");
@@ -635,7 +643,7 @@ async function runAudit(args) {
     if (!result.views.displayChooser.selected) failures.push(`non-chart display chooser did not select overview: ${JSON.stringify(chooserOverview)}`);
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
     await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "overview" && state.activePanelId === "overview", timeoutMs, "overview chart return after chooser");
-    await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartViewButton"));
+    await clickVisibleSelector(cdp, "#mobileChartViewButton");
     await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "release chooser after overview return");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="release"]'));
     await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release chooser reselect");
@@ -647,7 +655,7 @@ async function runAudit(args) {
     const restoredRelease = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release chart return");
     if (restoredRelease.panelId !== "release" || restoredRelease.activePanelId !== "release") failures.push(`release display view was not restored: ${JSON.stringify(restoredRelease)}`);
 
-    await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartViewButton"));
+    await clickVisibleSelector(cdp, "#mobileChartViewButton");
     await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "characters chooser");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="characters"]'));
     const charactersView = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "characters" && state.activePanelId === "characters", timeoutMs, "characters display view mount");
@@ -678,6 +686,26 @@ async function runAudit(args) {
     const restoredReleaseSnapshot=await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.activePanelId === "release" && state.panelId === "release", timeoutMs, "release snapshot popstate");
     result.history.snapshotPopstateNoWrites=(await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;"))===0;
     if(!result.history.snapshotPopstateNoWrites)failures.push(`panel snapshot popstate wrote history: ${JSON.stringify(restoredReleaseSnapshot)}`);
+
+    // Scroll snapshots use replaceState on the current entry and restore on
+    // browser traversal without adding a history write.
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+    await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "scroll snapshot search setup");
+    const scrollTarget=await pageEvaluate(cdp, "const scrolling=document.scrollingElement||document.documentElement; return Math.max(0,Math.round(scrolling.scrollHeight-innerHeight-24));");
+    await pageEvaluate(cdp, `window.scrollTo({left:0,top:${scrollTarget},behavior:'auto'}); return true;`);
+    const scrolledSearch=await waitForSearch(cdp, (state) => state.view === "search" && state.historySnapshot?.scrollY > 0 && state.scrollY > 0, timeoutMs, "scroll history snapshot");
+    const scrollBefore=await pageEvaluate(cdp, "return {y:Math.round(window.scrollY),writes:(window.__mobileHistoryLog||[]).length};");
+    if(!scrolledSearch.historySnapshot?.scrollY || scrollBefore.y <= 0) failures.push(`scroll snapshot was not captured: ${JSON.stringify(scrolledSearch)} current=${JSON.stringify(scrollBefore)}`);
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
+    await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible, timeoutMs, "chart after scroll snapshot");
+    await pageEvaluate(cdp, "window.__mobileHistoryLog.length=0; history.back(); return true;");
+    const restoredScroll=await waitForSearch(cdp, (state) => state.view === "search" && state.historySnapshot?.scrollY > 0 && Math.abs(state.scrollY-state.historySnapshot.scrollY)<=2, timeoutMs, "scroll snapshot popstate");
+    const scrollAfter=await pageEvaluate(cdp, "return {y:Math.round(window.scrollY),writes:(window.__mobileHistoryLog||[]).length};");
+    result.history.scrollSnapshot=scrollAfter.writes===0 && Math.abs(scrollAfter.y-(restoredScroll.historySnapshot?.scrollY||0))<=2;
+    if(!result.history.scrollSnapshot) failures.push(`scroll popstate did not restore without writes: before=${JSON.stringify(scrollBefore)} restored=${JSON.stringify(restoredScroll)} after=${JSON.stringify(scrollAfter)}`);
+    await pageEvaluate(cdp, "window.scrollTo(0,0); return true;");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
+    await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible, timeoutMs, "chart after scroll snapshot reset");
     await pageEvaluate(cdp, "window.activatePanel('characters'); return true;");
     await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.activePanelId === "characters" && state.panelId === "characters", timeoutMs, "restore characters after snapshot audit");
 
@@ -695,6 +723,7 @@ async function runAudit(args) {
 
     // M4: search -> select -> chart must preserve the shared goal and its
     // predecessor highlight.  Query/filter updates are DOM-only while typing.
+    await pageEvaluate(cdp, "window.scrollTo(0,0); return true;");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
     await waitForSearch(cdp, (state) => state.view === "search" && state.searchSurface, timeoutMs, "mobile search surface");
     const searchInput=await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-query]');
