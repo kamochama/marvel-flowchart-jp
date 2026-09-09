@@ -215,6 +215,16 @@ async function stopChrome(processInfo) {
   });
 }
 
+async function closeStaticServer(server) {
+  if (!server?.listening) return;
+  server.closeAllConnections?.();
+  await Promise.race([
+    new Promise((resolve) => server.close(() => resolve())),
+    new Promise((resolve) => setTimeout(resolve, 5_000)),
+  ]);
+  server.closeAllConnections?.();
+}
+
 class CdpClient {
   constructor(url) {
     this.url = url;
@@ -546,7 +556,7 @@ async function runAudit(args) {
     }));
   } finally {
     cdp?.close();
-    await new Promise((resolve) => staticServer.server.close(() => resolve()));
+    await closeStaticServer(staticServer.server);
     if (chromeProcess) await stopChrome(chromeProcess);
   }
   const failures = cases.filter((item) => !item.ok);
