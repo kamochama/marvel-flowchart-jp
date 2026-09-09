@@ -7446,6 +7446,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     updateModeButtons();
     updatePreparationPlan();
     if(selectedIds.size) refreshSelection(false); else {render();updatePathExplanation();}
+    if(window.marvelMobileUiStore&&window.matchMedia?.('(max-width:760px)').matches&&Number(window.marvelMobileHistoryApplyDepth||0)===0){
+      window.writeMobileUrlState?.({action:'tier-change'});
+    }
     return prepTier;
   };
   window.marvelGetConnectionTier=()=>prepTier;
@@ -8560,6 +8563,31 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(mobileStatus)mobileStatus.value=filter.status;
   }
 
+  function readMobileHistorySnapshot(){
+    const allowedPanels=new Set(['overview','release','chronology','characters']);
+    const rawPanel=window.currentPanelId?.()||document.querySelector('.panel.active')?.id||'overview';
+    const panelId=allowedPanels.has(rawPanel)?rawPanel:'overview';
+    const rawTier=window.marvelGetConnectionTier?.()||'site-proposal';
+    const allowedTiers=new Set(['site-proposal','complete','official','minimum','recommended']);
+    const prepTier=allowedTiers.has(rawTier)?rawTier:'site-proposal';
+    return {panelId,prepTier};
+  }
+
+  function applyMobileHistorySnapshot(snapshot){
+    const next=snapshot&&typeof snapshot==='object'?snapshot:{};
+    const allowedPanels=new Set(['overview','release','chronology','characters']);
+    const panelId=allowedPanels.has(next.panelId)?next.panelId:'overview';
+    const allowedTiers=new Set(['site-proposal','complete','official','minimum','recommended']);
+    const prepTier=allowedTiers.has(next.prepTier)?next.prepTier:'site-proposal';
+    if(typeof window.marvelSetConnectionTier==='function'&&window.marvelGetConnectionTier?.()!==prepTier){
+      window.marvelSetConnectionTier(prepTier);
+    }
+    if(typeof window.activatePanel==='function'&&window.currentPanelId?.()!==panelId){
+      window.activatePanel(panelId,{fit:false,restoreSelection:true});
+    }
+    return {panelId,prepTier};
+  }
+
   function syncMobileSearchStateFromControls(){
     const store=window.marvelMobileUiStore;
     if(!store)return;
@@ -8620,6 +8648,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
         :(previousNavigation.sheetOwner||mobileSheetHistoryOwner||'none'));
     const historyState={...(window.history.state||{}),mobileUi:state,viewerNavigation:{
       version:1,entryId,parentEntryId,transitionKind:historyAction,sheetOwner,
+      snapshot:{...(previousNavigation.snapshot||{}),mobile:readMobileHistorySnapshot()},
     }};
     const writer=window.marvelCreateUiHistoryWriter?.(window.history);
     if(writer)return writer({state:historyState,url:nextUrl,action:{type:historyAction}});
@@ -8718,6 +8747,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       store.setSearch(parsed.query);store.setFilter(parsed.filter);
       syncMobileSearchControls(parsed);
       setMobileView(parsed.view,{pushHistory:false});
+      if(fromPopstate)applyMobileHistorySnapshot(window.history.state?.viewerNavigation?.snapshot?.mobile);
       if(parsed.sheet!=='closed'&&(current.sheet!==parsed.sheet||current.sheetWork!==parsed.sheetWork)){
         const previousSuppression=suppressMobileSheetHistory;suppressMobileSheetHistory=true;
         openMobileSheet(parsed.sheet,parsed.sheetWork);
@@ -9568,6 +9598,9 @@ window.ensureStageAViewInitialized=function(target){
       else if(wrap&&restoreSelection&&window.marvelDetailFocusId&&typeof window.marvelRenderDetailFocus==='function')window.marvelRenderDetailFocus(window.marvelDetailFocusId);
       else if(wrap){clearSvg();applyCharacterHighlight();if(typeof window.applyFamilyFocus==='function')window.applyFamilyFocus();}
     });
+    if(window.marvelMobileUiStore&&window.matchMedia?.('(max-width:760px)').matches&&Number(window.marvelMobileHistoryApplyDepth||0)===0){
+      window.writeMobileUrlState?.({action:'panel-change'});
+    }
     return true;
   };
 
