@@ -9724,6 +9724,21 @@ window.FEATURED_ROUTE=Object.freeze({
 (()=>{
   const text=value=>typeof value==='string'&&value.trim()?value.trim():null;
   const uniqueIds=ids=>[...new Set((Array.isArray(ids)?ids:[]).map(text).filter(Boolean))];
+  const finiteMetric=(value,fallback)=>{
+    const number=Number(value);
+    return Number.isFinite(number)?number:fallback;
+  };
+  window.marvelClassifyShell=function(metrics={}){
+    const layoutWidth=finiteMetric(metrics.layoutWidth,Infinity);
+    const screenWidth=finiteMetric(metrics.screenWidth,layoutWidth);
+    const screenHeight=finiteMetric(metrics.screenHeight,layoutWidth);
+    const screenShortSide=Math.min(screenWidth,screenHeight);
+    const screenLongSide=Math.max(screenWidth,screenHeight);
+    const coarse=metrics.coarse===true;
+    if(layoutWidth<=760 || (screenShortSide<=760 && coarse && screenLongSide<=1280))return 'mobile';
+    if(layoutWidth<=980)return 'compact';
+    return 'desktop';
+  };
   const normalizeOverlay=value=>{
     if(!value||value.kind==='closed')return {kind:'closed'};
     if(value.kind==='detail'&&text(value.workId))return {kind:'detail',workId:text(value.workId)};

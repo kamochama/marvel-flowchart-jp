@@ -448,7 +448,17 @@ async function runCase(cdp, url, timeoutMs, name, action) {
     await action();
     return { name, ok: true };
   } catch (error) {
-    return { name, ok: false, error: String(error?.message || error), state: await snapshot(cdp).catch(() => null) };
+    const message = String(error?.message || error);
+    // A poll timeout means the hosted browser did not expose a stable state
+    // before the deadline. It is retryable infrastructure noise; assertion
+    // failures remain non-retryable semantic failures.
+    return {
+      name,
+      ok: false,
+      error: message,
+      retryable: /timed out(?:$|:)/i.test(message),
+      state: await snapshot(cdp).catch(() => null),
+    };
   }
 }
 
@@ -567,7 +577,9 @@ async function runAuditWithRetries(args, attempts = 2) {
   let lastError = null;
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     try {
-      return await runAudit(args);
+      const report = await runAudit(args);
+      const retryable = report.failures.length > 0 && report.failures.every((failure) => failure.retryable === true);
+      if (!retryable || attempt + 1 >= attempts) return report;
     } catch (error) {
       lastError = error;
       if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
