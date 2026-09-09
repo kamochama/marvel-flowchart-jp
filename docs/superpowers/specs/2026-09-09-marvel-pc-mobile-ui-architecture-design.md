@@ -1,7 +1,7 @@
 # Marvel Flowchart JP — PC／モバイルUI統合設計
 
 作成日: 2026-09-09  
-状態: レビュー待ち  
+状態: ChatGPTレビュー反映・再レビュー待ち
 対象: PC版とモバイル版の表示層・操作状態・ナビゲーション設計  
 関連仕様: `docs/superpowers/specs/2026-09-04-marvel-mobile-ui-redesign-design.md`
 
@@ -12,6 +12,16 @@
 最初は公開HTMLの単一ファイル構成を維持し、`index.html`内に論理的な責務境界を設ける。状態更新、ナビゲーション、派生計算、描画スケジューリングの入口を固定し、既存監査が安定した後にだけ編集用ソース分割を検討する。状態管理の置換、DOMの大規模再配置、SVG／Canvas方式の変更を同じ段階で行わない。
 
 この設計は表示・操作層を対象とし、canonical dataと既存の意味論を変更しない。
+
+### 1.1 レビュー反映後の設計決定
+
+実装前に、次の意味論を固定する。
+
+- チャートの作品クリック／タップは「閲覧対象」の変更であり、ゴール追加ではない。再操作で`inspection.workId`を`null`へ戻す。
+- ゴールの追加・解除は、チャート・検索・予習の各面に明示する「ゴールに追加／解除」操作だけが行う。旧`selectedIds`直接操作は互換層に閉じ込める。
+- `reason`は作品ID一つから再推論せず、canonical relation IDを正本として履歴・URLから復元する。
+- PCの右ペインはSheetHostのdocked表示、モバイルの詳細は同じSheetHostのmodal表示とする。詳細のDOM／状態所有者を二重化しない。
+- Shell判定、5表示モードと共通`surface`の対応、履歴操作（push／replace／close）を仕様上の契約として扱う。
 
 ## 2. 現状と問題境界
 
@@ -62,15 +72,16 @@ ViewerApp
 │  └─ PlanAdapter          既存の予習順・進捗
 ├─ RenderScheduler         更新集約・revision検証・無効化
 ├─ ChartHost               SVG／Canvas・パネル・カメラの所有
-├─ DesktopShell            Header / ViewTabs / Inspector / WatchWorkspace
+├─ DesktopShell            Header / ViewTabs / Chart / WatchWorkspace
 ├─ MobileShell             TopBar / BottomNav / Chart / Search / Plan
-└─ SheetHost               detail / reason / settings の唯一の表示先
+└─ SheetHost               detail / reason / settings の唯一の表示先（docked／modal）
 ```
 
 ### 5.1 再利用する既存要素
 
 - `NODES`、`nm`、`inc/out`、理由・人物データはRepositoryAdapterから読み取る。別の作品辞書を作らない。
-- `selectedIds`、`selected`、既存の選択APIはDomainAdapterだけが更新する。新UIから直接変更しない。
+- `selectedIds`、`selected`、既存の選択APIはDomainAdapterだけが更新する。新UIから直接変更しない。新UIは`inspectWork`、`clearInspection`、`addGoal`、`removeGoal`、`clearGoals`のコマンドを使い、互換層が必要な期間だけ旧`selectedIds`へ投影する。
+- 閲覧対象の点灯は`inspection.workId`をHighlightAdapterへ渡す単一作品フォーカスとして扱い、`goals.orderedIds`の変更を伴わない。ゴール点灯は従来どおりPlan／Highlightのゴール派生結果で扱う。
 - 既存の点灯・tier・予習計算はHighlightAdapter／PlanAdapterから呼び、意味論を再実装しない。
 - `.panel`、`.svg-wrap`、既存SVG、CanvasキャッシュはChartHostが所有し、PC／モバイルで複製しない。
 - `marvelWatchProgress`は視聴済み状態の既存所有者として再利用する。
@@ -83,13 +94,13 @@ ViewerApp
 
 | 状態 | 不変条件 | 保存先 |
 | --- | --- | --- |
-| `inspection.workId` | 閲覧中の作品。ゴールでなくてもよい | 必要時にURL／履歴 |
+| `inspection.workId` | 閲覧中／チャートでフォーカス中の作品。ゴールでなくてもよい | 必要時にURL／履歴 |
 | `goals.orderedIds` | 重複なし、順序あり | URL |
 | `goals.currentId` | `orderedIds`の要素またはnull | URL |
 | `navigation.surface` | `chart`／`search`／`plan` | URL |
 | `navigation.chartPanel` | `overview`／`release`／`chronology`／`characters` | URLまたは表示設定 |
-| `overlay.kind/workId` | `closed`／`detail`／`reason`／`settings` | URL＋履歴 |
-| `search.query/filter` | 正規化された検索条件 | URL |
+| `overlay` | 下記の判別共用体。`closed`／`detail`／`reason`／`settings` | URL＋履歴 |
+| `search.rawQuery/filter` | ユーザー入力をそのまま保持する検索条件。正規化値は派生状態 | URL |
 | `plan.tier` | `site-proposal`／`complete` | URL |
 | `watched.ids` | 既存形式を維持 | localStorage／共有機能 |
 | `cameraByPanel` | パネル・レイアウト版ごとの位置・倍率 | メモリ＋履歴 |
@@ -97,13 +108,37 @@ ViewerApp
 
 `inspection.workId`、`goals.currentId`、シート対象、検索結果からの移動先を`selectedId`一つにまとめない。予習リストから作品詳細を開いても、ゴール集合・現在ゴール・リスト位置は変えない。
 
+`overlay`は次の判別共用体とし、`reason`を作品ID一つから復元しない。
+
+```text
+overlay =
+  { kind: "closed" }
+  | { kind: "detail", workId }
+  | { kind: "reason", relationId, sourceId, targetId }
+  | { kind: "settings", section? }
+```
+
+`relationId`がcanonical relationの正本であり、`sourceId`／`targetId`は表示・整合性検証用の派生値として保持する。存在しないrelationや不正な端点は開かず、`closed`へフォールバックする。
+
 ### 6.1 永続化の責務
 
 - URLは再読み込み・共有で再現すべき画面、作品、ゴール、tier、検索条件を持つ。
-- history stateはURLに加え、カメラ、スクロール、シート起点を持つ。`popstate`適用中は`pushState`／`replaceState`を発生させない。
+- history stateはURLに加え、カメラ、スクロール、シート起点、`entryId`、`parentEntryId`、`transitionKind`を持つ。`popstate`適用中は`pushState`／`replaceState`を発生させない。
 - localStorageは既存の視聴済みと表示設定に限定する。ゴールや開いているシートを暗黙に復活させない。
 - カメラ座標とピクセル単位のリスト位置はURLへ入れない。
-- 起動時は有効なURLを優先し、未知のクエリと既存の`#room=...`を保持する。
+- 起動時・通常遷移の優先順位は、`popstate`スナップショット → 明示URL → localStorageの表示設定 → 組み込み既定値とする。未知のクエリと既存の`#room=...`は保持する。
+
+履歴操作は次の規則に固定する。
+
+| 操作 | 履歴 | 備考 |
+| --- | --- | --- |
+| surface変更、ゴール追加／解除、overlay新規open | `pushState` | Backで直前の意味状態へ戻れる単位 |
+| 検索入力、filter変更、同一detail内のA→B、URL正規化、カメラ／スクロールsnapshot | `replaceState` | 入力1文字・1px移動で履歴を増やさない |
+| `popstate`適用中 | 書き込みなし | 到着したsnapshotをそのままhydrateする |
+| in-appで作ったoverlayのclose | `history.back()` | 親entryが明確な場合のみ |
+| 直接リンク初期entryのoverlay close | `replaceState`でclosed | 外部ページへ意図せず戻らない |
+
+同一detail内のA→Bは`overlay.detail.workId`だけを`replaceState`で更新する。検索・カメラ・スクロールは操作中にpushせず、surface遷移前または離脱時に現在entryへsnapshotする。
 
 ## 7. PC表示設計
 
@@ -118,7 +153,19 @@ ViewerApp
 - ズーム・全体表示・選択へ戻るはチャート内の固定位置に置き、詳細開閉では自動fitしない。
 - 予習ワークスペースはページフローに残し、チャートからスクロールで到達できる。戻る操作は直前のパネル、カメラ、選択を復元する。
 
-PCの左クリックによる詳細閲覧、ゴール追加操作、右クリックの補助操作は区別する。同じ作品の再操作で閲覧解除になる既存契約や背景クリック解除を変更しない。
+PCの5表示モードと共通状態の対応は次のとおりとする。
+
+| PC表示 | 共通状態 |
+| --- | --- |
+| 関係地図 | `surface=chart, chartPanel=overview` |
+| 公開順 | `surface=chart, chartPanel=release` |
+| 世界線・時系列 | `surface=chart, chartPanel=chronology` |
+| この作品を見るなら | `surface=plan`（`watchWorkspace`） |
+| 人物・組織 | `surface=chart, chartPanel=characters` |
+
+`surface=search`はPCでは検索結果を主領域またはSheetHostのdocked右ペインに表示し、チャートパネルを変更しない。幅をまたいでもsemantic stateは保持し、`surface=plan`はPC④、モバイル「予習」へ、`surface=chart`は`chartPanel`に対応する表示へ写像する。
+
+PCの作品クリックは`inspection.workId`だけを変更する。ゴール追加／解除は明示ボタンから行い、右クリックは補助操作に限定する。同じ作品の再クリックは閲覧フォーカスだけを解除し、ゴールを解除しない。背景クリックも`inspection.workId=null`だけを行い、全ゴール解除は独立ボタンからのみ実行する。これは既存の「再クリックでゴール解除」契約を意図的に置き換えるため、旧契約テストは削除せず、移行を示す新RED／GREENへ置き換える。
 
 ## 8. モバイル表示設計
 
@@ -128,7 +175,7 @@ PCの左クリックによる詳細閲覧、ゴール追加操作、右クリッ
 
 - 上部は現在の表示名、検索入口、短いゴール要約に限定する。
 - 全作品を探索可能にし、作品タップでは点灯結果を先に見せる。詳細を自動で全画面表示しない。
-- 1本指パン、2本指ズーム、再タップ解除、背景クリック解除、ドラッグ後の選択維持を維持する。
+- 1本指パン、2本指ズーム、再タップで`inspection`解除、背景クリックで`inspection`解除、ドラッグ後のフォーカス維持を契約にする。ゴールの追加／解除はノード上または詳細・要約上の明示操作で行う。
 - 「全体」「選択へ」は常設し、表示パネル切替・凡例・設定はSheetHostへ集約する。
 - 複数ゴールは要約から一覧を開き、長いチップを常設しない。
 
@@ -149,15 +196,17 @@ PCの左クリックによる詳細閲覧、ゴール追加操作、右クリッ
 
 ## 9. SheetHost設計
 
-PC／モバイルの切替でも破棄されない唯一のSheetHostを設け、`mobileAreaSheet`を含む表示切替、詳細、理由、設定を同じ制御下へ移す。
+PC／モバイルの切替でも破棄されない唯一のSheetHostを設け、`mobileAreaSheet`を含む表示切替、詳細、理由、設定を同じ制御下へ移す。PC右ペインは別のdetail所有者ではなく、SheetHostの`docked` presentationである。モバイルでは同じ内容を`modal` bottom sheetとして描画する。
 
 - `detail`: 作品ID、邦題・英題、公開情報、登録済み詳細、ゴール操作、公式ソース、チャート移動。
 - `reason`: source／target／reason ID、既存の関係種別と根拠。時系列隣接から理由を生成しない。
 - `settings`: 表示パネル、公開2プラン、既存の複数ゴール設定、凡例。内部専用の公式ルート選択は公開しない。
 
-シートは`closed | detail | reason | settings`のいずれか一つで、`aria-modal`、フォーカストラップ、Escape、背景、明示閉じる、起点復帰を実装する。シート内で対象作品をAからBへ変える操作は、同一シートの内容更新として扱い、不要な履歴を増やさない。ブラウザ戻る／進むでは到着した履歴をそのまま適用し、履歴を書き換えない。
+シートは`closed | detail | reason | settings`のいずれか一つで、`docked`と`modal`の表示モードを持つ。`modal`時だけ`aria-modal`、フォーカストラップ、backdrop、背景`inert`、背景スクロール固定を有効にする。`docked`時は常設Inspectorとして扱い、`aria-modal`、backdrop、focus trapを付けない。両方ともEscape、明示閉じる、起点復帰を実装する。シート内で対象作品をAからBへ変える操作は、同一detailの内容更新として扱い、`replaceState`で不要な履歴を増やさない。ブラウザ戻る／進むでは到着した履歴をそのまま適用し、履歴を書き換えない。
 
 背景クリックはシートを閉じるだけで、背後チャートの選択解除へ伝播させない。閉じた後は元のボタン、作品カード、画面見出しの順でフォーカス復帰先を探す。
+
+backdrop closeは、`pointerdown`と`pointerup`の両方がbackdrop自身だった場合だけ成立させる。シートから始まったdragやpointer sequenceを背景クリックと誤認しない。直接リンクの初期entryを閉じる場合は`replaceState`、アプリ内openのentryを閉じる場合は親entryが一致するときだけ`history.back()`を使う。
 
 ## 10. 描画パイプラインと性能
 
@@ -178,11 +227,23 @@ PC／モバイルの切替でも破棄されない唯一のSheetHostを設け、
 - SVG／Canvasは各パネル1実体とし、PC・モバイルで同じ図を複製しない。
 - 既存のCanvas画素予算を不用意に増やさない。性能値は同条件で測定してから予算化する。
 
+変更項目ごとの無効化範囲を固定し、不要な`render()`／`fitView()`を呼ばない。
+
+| 変更 | 更新対象 | 更新しないもの |
+| --- | --- | --- |
+| `search.rawQuery`／filter | Search DOM、件数 | ChartHost、camera、Canvas cache |
+| `overlay` | SheetHost | ChartHost、camera、goals |
+| `watched.ids` | Plan DOM、進捗表示 | ChartHost、camera、goal集合 |
+| `inspection.workId` | 点灯フォーカス、Inspector／detail要約 | Plan順、goal集合 |
+| `goals.*` | ゴール点灯、Plan、要約 | 検索条件、既存camera（明示「選択へ」以外） |
+| `navigation.chartPanel` | パネル表示（初回のみlazy build可） | 他パネルのSVG／Canvas、goal集合 |
+
 ## 11. レスポンシブとアクセシビリティ
 
 - 第1段階は既存の`760px`境界を維持する。
 - `761–980px`はコンパクトPCとして右ペインを必要時に開き、`981px`以上はチャート＋右ペインを基本とする。
-- 横向きの短辺がモバイル相当ならモバイルシェルを維持する条件を別監査する。UA文字列へ依存しない。
+- Shell判定はCSS、JavaScript、ブラウザ監査で同じcanonical predicateを使う。`shortSide=min(innerWidth,innerHeight)`、`longSide=max(...)`、`coarse=matchMedia('(pointer: coarse)').matches`として、`mobileShell = innerWidth <= 760 || (shortSide <= 760 && coarse && longSide <= 1280)`、それ以外では`761–980`をcompact PC、`981`以上をPCとする。UA文字列へ依存しない。
+- 期待値は`390×844=mobile`、`844×390=mobile`、`760×844=mobile`、`761×844=compact PC`、`980×844=compact PC`、`981×844=PC`と固定する。タッチ主体の横向き端末でもPCとモバイルのshellを同時表示しない。
 - 390×844では上部バー、主領域、下部ナビをsafe-area込みで配置する。多重な固定`dvh`計算を増やさない。
 - すべてのボタン、ゴール解除、閉じる、チェックラベルを実測44px以上にする。
 - Canvasだけに情報を閉じず、検索・作品一覧・関連一覧からキーボード操作でも同じ作品へ到達可能にする。
@@ -195,22 +256,24 @@ PC／モバイルの切替でも破棄されない唯一のSheetHostを設け、
 | 操作 | 変わる状態 | 保持する状態 |
 | --- | --- | --- |
 | PC作品クリック | `inspection.workId` | ゴール、tier、カメラ |
-| モバイル作品タップ | 既存選択トグル | ゴール、tier、カメラ |
-| ゴール追加／解除 | `goals.orderedIds/currentId` | 閲覧対象、検索条件 |
+| モバイル作品タップ | `inspection.workId`（同一作品なら`null`） | ゴール、tier、カメラ |
+| ゴールに追加／解除 | `goals.orderedIds/currentId` | 閲覧対象、検索条件 |
 | チャート→探す／予習 | `navigation.surface` | 選択、ゴール、tier、カメラ |
 | 予習→チャート | `navigation.surface` | 予習位置、ゴール、直前カメラ |
 | 詳細／理由／設定 | `overlay` | 背後の画面・選択・ゴール |
 | 戻る／進む | 履歴スナップショット全体 | 新しい履歴を作らない |
 
+ゴール削除時に`goals.currentId`を削除した場合は、同じ`orderedIds`の直前要素、なければ次要素、どちらもなければ`null`の順で決定する。この規則はPC・モバイル・履歴復元で共通とする。
+
 完了条件は次のとおり。
 
 1. チャート・探す・予習の3面を切り替えられる。
 2. どの面からも共通のゴール・点灯状態になる。
-3. 選択、再タップ解除、背景解除、ドラッグ後の保持が既存契約どおり動く。
+3. 閲覧フォーカス、再タップ解除、背景解除、ドラッグ後の保持が新しい契約どおり動き、ゴール追加／解除は明示操作だけで行われる。
 4. detail／reason／settingsを単一シートで扱い、戻る操作が予測可能である。
 5. URL／履歴から画面、作品、ゴール、検索条件を復元できる。
 6. 検索・予習・シート操作で不要なチャート再構築が発生しない。
-7. 760／761px、980／981px、390×844、844×390で重複UI、文字被り、タッチ領域不足、スクロール不能がない。
+7. 760／761px、980／981px、390×844、844×390でcanonical predicateどおりのshellになり、重複UI、文字被り、タッチ領域不足、スクロール不能がない。
 8. 全131作品×公開2プランの点灯集合、公開順の合成線ゼロ、既存時系列表示契約が維持される。
 9. PC、canonical data、関係・世界線・時系列の意味論に回帰がない。
 
@@ -218,7 +281,7 @@ PC／モバイルの切替でも破棄されない唯一のSheetHostを設け、
 
 ### Phase 0 — 現状固定
 
-PC閲覧・ゴール、検索→チャート、履歴、境界幅の観測契約を追加する。テスト追加のみで、失敗時のロールバック境界はテストコミットとする。
+PC閲覧・ゴール、検索→チャート、履歴、境界幅の観測契約を追加する。特に、(a)ゴール`[A,B]`を保持したまま作品Cの詳細を開いて`inspection`だけが変わる、(b)「チャートで見る」は`inspection`だけ、「ゴールに追加」は`goals`だけを変える、(c)旧再クリック＝ゴール解除契約を意図的に置き換える、のRED／GREENを先に固定する。テスト追加のみで、失敗時のロールバック境界はテストコミットとする。
 
 ### Phase 1 — 共通API境界
 
@@ -226,11 +289,11 @@ UIが状態を二重更新しないこと、閲覧対象・ゴール順序・現
 
 ### Phase 2 — ナビゲーション・履歴
 
-tier／panel、直接リンク、戻る／進む、シート対象、カメラ復帰を追加する。`popstate`で履歴が増殖しないことを実ブラウザで確認する。
+tier／panel、直接リンク、戻る／進む、シート対象、カメラ復帰を追加する。reasonのrelation round-trip、`closed → detail A → close → Back/Forward`、直接detailリンクのclose、detail A→Bのreplace、検索20文字入力・連続pan・長いscrollで履歴が増殖しないことを実ブラウザで確認する。`popstate`適用中のhistory書き込み回数は0とする。
 
 ### Phase 3 — 単一シート
 
-二重モーダル禁止、detail／reason／settingsの実内容、38px解除修正、対象変更、フォーカス復帰、背景伝播防止を実装する。
+二重モーダル禁止、detail／reason／settingsの実内容、38px解除修正、対象変更、フォーカス復帰、背景伝播防止を実装する。docked PCでは`aria-modal`／focus trap／backdropなし、modal mobileでは`inert`／scroll lock／focus trapありを監査する。backdropはpointerdown／pointerupの両方がbackdrop自身の場合だけ閉じる。
 
 ### Phase 4 — 検索・予習更新
 
@@ -238,7 +301,7 @@ tier／panel、直接リンク、戻る／進む、シート対象、カメラ�
 
 ### Phase 5 — PC・境界・横向き
 
-5表示、右ペイン、中間幅、横向き、タッチ主体PCを監査し、シェル二重表示とカメラ・ゴールの消失を防ぐ。
+5表示と`surface/chartPanel`対応、右ペイン、中間幅、横向き、タッチ主体PCを監査し、canonical predicate、シェル二重表示、カメラ・ゴール・active panelの消失を防ぐ。390×844、844×390、760、761、980、981の全ケースを対象にする。
 
 ### Phase 6 — 旧層撤去と統合
 
@@ -257,4 +320,4 @@ tier／panel、直接リンク、戻る／進む、シート対象、カメラ�
 
 ## 15. 未解決事項
 
-実装開始を止める未解決事項はない。Phase 0で、検索からの単一選択と複数ゴール追加の実挙動を実ブラウザで固定し、タッチ主体の横向き判定を境界テストで決める。ユーザー向けの追加確認は、代表フローとして「チャートから探索」と「検索から予習」のどちらを先に手触り確認するかだけとする。
+実装開始を止める設計上の未解決事項は、レビュー反映により解消した。作品クリックは閲覧フォーカス、ゴール操作は明示操作、reasonはrelation ID、PC右ペインはSheetHostのdocked表示、横向き判定はcanonical predicateとして固定する。実装前にPhase 0のRED／ブラウザ監査を追加し、旧契約との差分を意図的変更として記録する。ユーザー向けの追加確認は、代表フローとして「チャートから探索」と「検索から予習」のどちらを先に手触り確認するかだけとする。
