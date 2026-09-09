@@ -5582,7 +5582,7 @@ function createMobileUiStore(initialState={}){
   };
 }
 window.marvelMobileUiStore=createMobileUiStore();
-function syncMobileUiGoals(){window.marvelMobileUiStore?.setGoals(orderedGoalIds(),selected);}
+function syncMobileUiGoals(){window.marvelMobileUiStore?.setGoals(orderedGoalIds(),selected);window.marvelLegacyUiBridge?.requestPublish?.();}
 const _origCenterNodeInView = centerNodeInView;
 centerNodeInView = function(id){
   if(!selectedIds.size) return false;
@@ -8071,6 +8071,10 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   const MOBILE_SHEET_LABELS={detail:['作品情報','選択した作品の情報'],reason:['接続理由','この接続の根拠'],settings:['表示設定','モバイル表示の設定']};
   let mobileSheetReturnFocus=null;
   let suppressMobileSheetHistory=false;
+  let mobileSheetHistoryOwner='none';
+  let mobileSheetHistoryEntryId=null;
+  let mobileSheetBackPending=false;
+  let mobileNavigationEntryCounter=0;
   const mobileChartPanelOrigins=new Map();
   let mobileChartMountedPanel=null;
   let mobileChartLastPanel=null;
@@ -8079,6 +8083,10 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   function mobileUiStore(){return window.marvelMobileUiStore||null}
   function normalizeMobileView(view){return MOBILE_VIEWS.has(view)?view:'chart'}
   function normalizeMobileSheet(sheet){return MOBILE_SHEETS.has(sheet)?sheet:'closed'}
+  function createMobileNavigationEntryId(){
+    mobileNavigationEntryCounter+=1;
+    return `mobile-${Date.now().toString(36)}-${mobileNavigationEntryCounter}`;
+  }
 
   function ensureMobileShell(){
     const shell=document.getElementById('mobileAppShell');
@@ -8316,7 +8324,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       const store=window.marvelMobileUiStore;const filter=filterForSurface();
       store?.setSearch(queryInput.value||'');store?.setFilter(filter);
       syncMobileSearchControls({query:queryInput.value||'',filter});
-      scheduleMobileSearchRender(queryInput.value,filter);writeMobileUrlState({replace:true});
+      scheduleMobileSearchRender(queryInput.value,filter);writeMobileUrlState({action:'search-input'});
     };
     queryInput.addEventListener('input',sync);
     [branchInput,characterInput,statusInput].forEach(input=>input?.addEventListener('change',sync));
@@ -8351,7 +8359,12 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(selected===id)normalizeSelection();
     selectionStateCache=null;
     syncMobileUiGoals();
-    writeMobileUrlState?.({replace:true});
+    writeMobileUrlState?.({action:'goal-remove'});
+    // The plan surface is a projection of the shared selection store.  Paint
+    // the direct mutation synchronously so the clicked goal disappears even
+    // while a view/history transition is replacing its subscription.
+    renderMobilePlanScreen();
+    scheduleMobilePlanRender();
     return true;
   }
   function renderPrepPlan(plan,goals,tier){
@@ -8546,7 +8559,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(state.view==='search'&&mobileSurface?.querySelector('[data-mobile-search-query]')){
       syncMobileSearchControls(state);
       scheduleMobileSearchRender(state.query,state.filter);
-      writeMobileUrlState({replace:true});
+      writeMobileUrlState({action:'search-input'});
     }
   }
 
@@ -8560,11 +8573,12 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     // Keep the existing selection semantics in refreshSelection. This adapter
     // only restores the shared store snapshot into the semantic variables.
     selectedIds=nextIds;selected=nextSelected;
+    window.marvelLegacyUiBridge?.requestPublish?.();
     if(typeof flowchartReady!=='undefined'&&flowchartReady&&typeof refreshSelection==='function')refreshSelection(false);
     return true;
   }
 
-  function writeMobileUrlState({replace=false}={}){
+  function writeMobileUrlState({replace=false,action=null}={}){
     const state=mobileUiStore()?.getState();
     if(!state)return false;
     const url=new URL(window.location.href);
@@ -8578,8 +8592,26 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     setOrDelete('mfilter',state.filter);
     url.search=params.toString();
     const nextUrl=`${url.pathname}${url.search}${location.hash}`;
-    const historyState={...(window.history.state||{}),mobileUi:state};
-    if(replace)window.history.replaceState(historyState,'',nextUrl);else window.history.pushState(historyState,'',nextUrl);
+    const historyAction=action|| (replace?'replace':'surface-transition');
+    const historyMode=window.marvelUiHistoryPolicy?.({type:historyAction})|| (replace?'replace':'push');
+    if(historyMode==='none')return false;
+    const previousNavigation=window.history.state?.viewerNavigation||{};
+    const entryId=historyMode==='push'?
+      createMobileNavigationEntryId():(previousNavigation.entryId||createMobileNavigationEntryId());
+    const parentEntryId=historyMode==='push'?(previousNavigation.entryId||null):(previousNavigation.parentEntryId||null);
+    const sheetOwner=state.sheet==='closed'
+      ?'none'
+      :(historyAction==='overlay-open'&&mobileSheetHistoryOwner==='app'
+        ?'app'
+        :(previousNavigation.sheetOwner||mobileSheetHistoryOwner||'none'));
+    const historyState={...(window.history.state||{}),mobileUi:state,viewerNavigation:{
+      version:1,entryId,parentEntryId,transitionKind:historyAction,sheetOwner,
+    }};
+    const writer=window.marvelCreateUiHistoryWriter?.(window.history);
+    if(writer)return writer({state:historyState,url:nextUrl,action:{type:historyAction}});
+    const method=historyMode==='push'?'pushState':'replaceState';
+    if(typeof window.history?.[method]!=='function')return false;
+    window.history[method](historyState,'',nextUrl);
     return true;
   }
 
@@ -8595,10 +8627,11 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const normalized=normalizeMobileView(view);
     const store=window.marvelMobileUiStore;
     if(!store)return normalized;
+    const previous=store.getState().view;
     store.setView(normalized);
     mountMobileView(normalized);
     syncMobileBottomNav(normalized);
-    if(pushHistory)writeMobileUrlState({replace:false});
+    if(pushHistory&&previous!==normalized)writeMobileUrlState({action:'surface-transition'});
     return normalized;
   }
 
@@ -8607,8 +8640,16 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const store=mobileUiStore();
     const normalized=normalizeMobileSheet(kind);
     if(!sheet||!store||normalized==='closed'){closeMobileSheet();return false;}
-    if(store.getState().sheet==='closed')mobileSheetReturnFocus=document.activeElement;
+    const previous=store.getState();
+    const wasClosed=previous.sheet==='closed';
     const sheetWork=typeof workId==='string'&&workId.trim()?workId.trim():null;
+    const sameContent=previous.sheet===normalized&&previous.sheetWork===sheetWork;
+    if(wasClosed)mobileSheetReturnFocus=document.activeElement;
+    if(suppressMobileSheetHistory){
+      const navigation=window.history.state?.viewerNavigation||{};
+      mobileSheetHistoryOwner=navigation.sheetOwner==='app'?'app':'url';
+      mobileSheetHistoryEntryId=navigation.entryId||null;
+    }else if(wasClosed)mobileSheetHistoryOwner='app';
     store.setSheet(normalized,sheetWork);
     const [title,subtitle]=MOBILE_SHEET_LABELS[normalized];
     document.getElementById('mobileSheetTitle').textContent=title;
@@ -8617,7 +8658,11 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(normalized==='detail')sheetBody.innerHTML=mobileWorkDetailHtml(sheetWork);
     else sheetBody.textContent=sheetWork?`${sheetWork} の情報を表示します。`:'選択した作品の情報を表示します。';
     sheet.hidden=false;sheet.setAttribute('aria-hidden','false');sheet.setAttribute('aria-modal','true');
-    if(!suppressMobileSheetHistory)writeMobileUrlState({replace:false});
+    if(!suppressMobileSheetHistory&&!sameContent){
+      const action=wasClosed||previous.sheet!==normalized?'overlay-open':'overlay-target-change';
+      if(action==='overlay-open')mobileSheetHistoryOwner='app';
+      if(writeMobileUrlState({action}))mobileSheetHistoryEntryId=window.history.state?.viewerNavigation?.entryId||null;
+    }
     requestAnimationFrame(()=>document.getElementById('mobileSheetTitle')?.focus({preventScroll:true}));
     return true;
   }
@@ -8626,20 +8671,31 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const sheet=document.getElementById('mobileSheet');
     const store=mobileUiStore();
     const wasOpen=store?.getState().sheet!=='closed';
+    const navigation=window.history.state?.viewerNavigation||{};
+    const traverse=wasOpen&&syncHistory&&mobileSheetHistoryOwner==='app'&&
+      mobileSheetHistoryEntryId&&navigation.entryId===mobileSheetHistoryEntryId&&
+      navigation.sheetOwner==='app'&&navigation.parentEntryId&&!mobileSheetBackPending;
     store?.setSheet('closed',null);
     if(sheet){sheet.hidden=true;sheet.setAttribute('aria-hidden','true');}
-    if(wasOpen&&syncHistory)writeMobileUrlState({replace:true});
+    if(traverse){
+      mobileSheetBackPending=true;
+      window.history.back();
+    }else if(wasOpen&&syncHistory){
+      writeMobileUrlState({action:'overlay-close'});
+      mobileSheetHistoryOwner='none';mobileSheetHistoryEntryId=null;
+    }
+    if(!wasOpen||!syncHistory){mobileSheetHistoryOwner='none';mobileSheetHistoryEntryId=null;}
     const target=mobileSheetReturnFocus;mobileSheetReturnFocus=null;
     if(restoreFocus&&target?.isConnected)requestAnimationFrame(()=>target.focus());
     return wasOpen;
   }
 
-  function applyMobileUrlState(){
+  function applyMobileUrlState({fromPopstate=false}={}){
     const parsed=readMobileUrlState();
     const store=mobileUiStore();
     if(!store)return;
     const current=store.getState();
-    if(parsed.sheet==='closed'&&current.sheet!=='closed')closeMobileSheet();
+    if(parsed.sheet==='closed'&&current.sheet!=='closed')closeMobileSheet({syncHistory:!fromPopstate});
     store.setGoals(parsed.goalIds,parsed.selectedId);
     const selectionHydrated=hydrateMobileSelectionFromStore(store.getState());
     store.setSearch(parsed.query);store.setFilter(parsed.filter);
@@ -8650,14 +8706,15 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       openMobileSheet(parsed.sheet,parsed.sheetWork);
       suppressMobileSheetHistory=previousSuppression;
     }
-    if(typeof flowchartReady!=='undefined'&&flowchartReady&&!selectionHydrated&&typeof render==='function')render();
-    if(typeof flowchartReady!=='undefined'&&flowchartReady)writeMobileUrlState({replace:true});
+    if(typeof flowchartReady!=='undefined'&&flowchartReady&&!fromPopstate&&!selectionHydrated&&typeof render==='function')render();
+    if(typeof flowchartReady!=='undefined'&&flowchartReady&&!fromPopstate)writeMobileUrlState({action:'url-hydrate'});
   }
 
   function handleMobilePopState(){
     const parsed=readMobileUrlState();
+    mobileSheetBackPending=false;
     if(mobileUiStore()?.getState().sheet!=='closed'&&parsed.sheet==='closed')closeMobileSheet({syncHistory:false});
-    applyMobileUrlState();
+    applyMobileUrlState({fromPopstate:true});
   }
 
   window.ensureMobileShell=ensureMobileShell;
@@ -9661,6 +9718,121 @@ window.FEATURED_ROUTE=Object.freeze({
 })();
 </script>
 
+<script id="viewer-ui-state-facade">
+// Shared UI state contract. Presentation layers will adopt this facade during
+// the staged PC/mobile migration; legacy variables remain adapters until then.
+(()=>{
+  const text=value=>typeof value==='string'&&value.trim()?value.trim():null;
+  const uniqueIds=ids=>[...new Set((Array.isArray(ids)?ids:[]).map(text).filter(Boolean))];
+  const normalizeOverlay=value=>{
+    if(!value||value.kind==='closed')return {kind:'closed'};
+    if(value.kind==='detail'&&text(value.workId))return {kind:'detail',workId:text(value.workId)};
+    if(value.kind==='reason'&&text(value.relationId)){
+      const next={kind:'reason',relationId:text(value.relationId)};
+      for(const key of ['sourceId','targetId'])if(text(value[key]))next[key]=text(value[key]);
+      return next;
+    }
+    if(value.kind==='settings')return text(value.section)?{kind:'settings',section:text(value.section)}:{kind:'settings'};
+    return {kind:'closed'};
+  };
+  window.marvelCreateUiState=function(seed={}){
+    const orderedIds=uniqueIds(seed.goals?.orderedIds);
+    const hasCurrentId=!!seed.goals&&Object.prototype.hasOwnProperty.call(seed.goals,'currentId');
+    const requestedCurrentId=text(seed.goals?.currentId);
+    const currentId=hasCurrentId?(requestedCurrentId&&orderedIds.includes(requestedCurrentId)?requestedCurrentId:null):(orderedIds.at(-1)||null);
+    return {
+      inspection:{workId:text(seed.inspection?.workId)},
+      goals:{orderedIds,currentId},
+      overlay:normalizeOverlay(seed.overlay),
+      navigation:{surface:seed.navigation?.surface||'chart',chartPanel:seed.navigation?.chartPanel||'overview'},
+    };
+  };
+  window.marvelCreateLegacySelectionBridge=function(readLegacySnapshot){
+    const read=()=>{
+      const source=typeof readLegacySnapshot==='function'&&readLegacySnapshot()||{};
+      const goalIds=uniqueIds(source.goalIds);
+      const hasCurrentId=Object.prototype.hasOwnProperty.call(source,'currentId');
+      const requestedCurrentId=text(source.currentId);
+      const currentId=hasCurrentId?(requestedCurrentId&&goalIds.includes(requestedCurrentId)?requestedCurrentId:null):(goalIds.at(-1)||null);
+      return {inspection:{workId:text(source.inspectionId)},goals:{orderedIds:goalIds,currentId}};
+    };
+    const copy=state=>({inspection:{workId:state.inspection.workId},goals:{orderedIds:[...state.goals.orderedIds],currentId:state.goals.currentId}});
+    const equal=(a,b)=>!!a&&a.inspection.workId===b.inspection.workId&&a.goals.currentId===b.goals.currentId&&a.goals.orderedIds.length===b.goals.orderedIds.length&&a.goals.orderedIds.every((id,index)=>id===b.goals.orderedIds[index]);
+    const listeners=new Set();
+    let previous=null,scheduled=false;
+    const getSnapshot=()=>{const next=read();if(!previous)previous=copy(next);return next;};
+    const publish=()=>{
+      const next=read();
+      if(equal(previous,next))return copy(next);
+      previous=copy(next);
+      listeners.forEach(listener=>{try{listener(copy(next))}catch(_) {}});
+      return copy(next);
+    };
+    const requestPublish=()=>{
+      if(scheduled)return false;
+      scheduled=true;
+      Promise.resolve().then(()=>{scheduled=false;publish();});
+      return true;
+    };
+    const subscribe=listener=>{
+      if(typeof listener!=='function')return ()=>{};
+      listeners.add(listener);return ()=>listeners.delete(listener);
+    };
+    return Object.freeze({getSnapshot,subscribe,publish,requestPublish});
+  };
+  window.marvelApplyUiCommand=function(state,command={}){
+    const next=window.marvelCreateUiState(state);
+    const id=text(command.workId);
+    switch(command.type){
+      case 'inspect': next.inspection.workId=next.inspection.workId===id?null:id; break;
+      case 'clearInspection': next.inspection.workId=null; break;
+      case 'addGoal':
+        if(id&&!next.goals.orderedIds.includes(id))next.goals.orderedIds.push(id);
+        if(id)next.goals.currentId=id;
+        break;
+      case 'removeGoal':{
+        const index=next.goals.orderedIds.indexOf(id);
+        if(index<0)break;
+        next.goals.orderedIds.splice(index,1);
+        if(next.goals.currentId===id)next.goals.currentId=next.goals.orderedIds[index-1]||next.goals.orderedIds[index]||null;
+        break;
+      }
+      case 'clearGoals': next.goals={orderedIds:[],currentId:null}; break;
+      case 'openOverlay': next.overlay=normalizeOverlay(command.overlay); break;
+      default: break;
+    }
+    return next;
+  };
+  window.marvelUiHistoryPolicy=function(action={}){
+    if(action.type==='popstate-apply')return 'none';
+    if(['surface-transition','goal-add','goal-remove','goal-clear','overlay-open'].includes(action.type))return 'push';
+    return 'replace';
+  };
+  window.marvelCreateUiHistoryWriter=function(historyTarget=window.history){
+    return ({state={},url='',action={}}={})=>{
+      const mode=window.marvelUiHistoryPolicy(action);
+      if(mode==='none')return false;
+      const method=mode==='push'?'pushState':'replaceState';
+      if(typeof historyTarget?.[method]!=='function')return false;
+      historyTarget[method](state,'',url);
+      return true;
+    };
+  };
+  window.marvelEffectiveSheetContent=function(state,presentation){
+    const next=window.marvelCreateUiState(state);
+    if(next.overlay.kind!=='closed')return next.overlay;
+    if(presentation==='docked'&&next.inspection.workId)return {kind:'detail',workId:next.inspection.workId};
+    return {kind:'closed'};
+  };
+  window.marvelCloseUiOverlay=function(state,presentation){
+    const next=window.marvelCreateUiState(state);
+    if(next.overlay.kind==='closed'&&presentation==='docked'&&next.inspection.workId){next.inspection.workId=null;return next;}
+    next.overlay={kind:'closed'};
+    return next;
+  };
+})();
+</script>
+
 <script id="v515-runtime">
 // PUBLIC v5.18.0: desktop inspection is independent; mobile chart taps restore goal selection.
 (()=>{
@@ -9806,6 +9978,7 @@ window.FEATURED_ROUTE=Object.freeze({
       return false;
     }
     detailFocusId=id; window.marvelDetailFocusId=id;
+    window.marvelLegacyUiBridge?.requestPublish?.();
     renderFocusHighlight(id);
     if(center&&activeSvgHasNode(id))requestAnimationFrame(()=>_origCenterNodeInView(id));
     return true;
@@ -9815,12 +9988,14 @@ window.FEATURED_ROUTE=Object.freeze({
     if(!nm[id])return false;
     if(window.marvelFeaturedRouteAudit?.().active)window.exitFeaturedRoutePreview?.({restore:false});
     legacyGoalSelect(id,true);
+    window.marvelLegacyUiBridge?.requestPublish?.();
     if(detailFocusId)queueFocusPaint();
     return selectedIds.has(id);
   };
 
   window.marvelReturnToGoalView=function(){
     detailFocusId=null; window.marvelDetailFocusId=null;
+    window.marvelLegacyUiBridge?.requestPublish?.();
     if(selectedIds.size)refreshSelection(false);
     else{clearSvg();render();resetPanels();}
     return true;
@@ -9904,6 +10079,27 @@ window.FEATURED_ROUTE=Object.freeze({
     const muted=emptyHint.querySelector('.muted');if(muted)muted.textContent='スマホは作品をタップすると、その作品までの前史・後続をゴール表示します。詳細は下の予習プランから確認できます。';
   }
   window.marvelDetailFocusId=null;
+  window.marvelLegacyUiBridge=window.marvelCreateLegacySelectionBridge(()=>({
+    goalIds:typeof orderedGoalIds==='function'?orderedGoalIds():[],
+    currentId:typeof selected==='string'?selected:null,
+    inspectionId:detailFocusId,
+  }));
+  window.marvelUiCommands=Object.freeze({
+    inspectWork(id,options={}){return window.marvelFocusWork?.(id,options)||false;},
+    clearInspection(){return window.marvelReturnToGoalView?.()||false;},
+    addGoal(id){
+      if(!nm[id])return false;
+      if(selectedIds.has(id)){focusGoal(id);window.marvelLegacyUiBridge?.requestPublish?.();return true;}
+      return !!window.marvelToggleGoal?.(id);
+    },
+    removeGoal(id){return selectedIds.has(id)?!!removeGoal(id):false;},
+    clearGoals(){
+      if(!selectedIds.size)return false;
+      if(typeof window.clearAllGoalsWithUndo==='function'){window.clearAllGoalsWithUndo();return true;}
+      selectedIds=new Set();selected=null;refreshSelection(false);window.marvelLegacyUiBridge?.requestPublish?.();return true;
+    },
+    readSelection(){return window.marvelLegacyUiBridge?.getSnapshot?.()||null;},
+  });
 })();
 
 </script>

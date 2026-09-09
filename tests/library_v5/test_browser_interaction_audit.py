@@ -58,6 +58,21 @@ class BrowserInteractionAuditTests(unittest.TestCase):
         self.assertIn('await poll(', source)
         self.assertNotIn('window.marvelReturnToGoalView', source)
 
+    def test_runner_bounds_and_retries_chrome_cdp_startup(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("launchChromeWithRetries", source)
+        self.assertIn("attempts = 3", source)
+        self.assertIn("AbortController", source)
+        self.assertIn("signal: controller.signal", source)
+        self.assertIn("commandTimeoutMs", source)
+        self.assertIn("runAuditWithRetries", source)
+
+    def test_runner_closes_static_server_with_keepalive_guard(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("async function closeStaticServer(server)", source)
+        self.assertIn("server.closeAllConnections?.()", source)
+        self.assertIn("await closeStaticServer(staticServer.server)", source)
+
     def test_runner_proves_drag_and_chronology_repaint(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         self.assertIn("drag did not change SVG transform", source)
@@ -100,7 +115,7 @@ class BrowserInteractionAuditTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = json.loads(result.stdout.strip().splitlines()[-1])
-        self.assertEqual(report["summary"], {"cases": 6, "failures": 0})
+        self.assertEqual(report["summary"], {"cases": 7, "failures": 0})
 
 
 if __name__ == "__main__":

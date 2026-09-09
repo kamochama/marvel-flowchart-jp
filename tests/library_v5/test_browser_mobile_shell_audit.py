@@ -121,6 +121,33 @@ class BrowserMobileShellAuditTests(unittest.TestCase):
             self.assertIn(field, source)
         self.assertIn("JSON.stringify(report)", source)
 
+    def test_runner_retries_transient_chrome_target_startup(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("launchChromeWithRetries", source)
+        self.assertIn("attempts = 3", source)
+
+    def test_runner_closes_static_server_with_keepalive_guard(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("async function closeStaticServer(server)", source)
+        self.assertIn("server.closeAllConnections?.()", source)
+        self.assertIn("await closeStaticServer(staticServer.server)", source)
+
+    def test_runner_bounds_cdp_connection_and_retries_audit(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("CDP_COMMAND_TIMEOUT_MS", source)
+        self.assertIn("CDP WebSocket connection timed out", source)
+        self.assertIn("runAuditWithRetries", source)
+
+    def test_runner_does_not_retry_semantic_failures(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("const report = await runAudit(args);\n      return report;", source)
+        self.assertNotIn("if (!report.failures.length) return report;", source)
+
+    def test_runner_bounds_devtools_target_fetch(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("AbortController", source)
+        self.assertIn("signal: controller.signal", source)
+
     def test_chrome_discovery_honors_existing_configured_path(self) -> None:
         with tempfile.NamedTemporaryFile() as chrome:
             with mock.patch.dict(os.environ, {"MARVEL_CHROME_BIN": chrome.name}):

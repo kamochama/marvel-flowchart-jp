@@ -8,6 +8,7 @@ import path from "node:path";
 import { execFileSync, spawn } from "node:child_process";
 
 const DEFAULT_TIMEOUT_MS = 20_000;
+const CDP_COMMAND_TIMEOUT_MS = 15_000;
 const PROFILE_CLEANUP_RETRIES = 100;
 
 function usage() {
@@ -123,6 +124,18 @@ async function poll(task, timeoutMs, label) {
   throw new Error(`${label} timed out${lastError ? `: ${lastError.message}` : ""}${state}`);
 }
 
+async function fetchJsonWithTimeout(url, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), Math.max(250, Math.min(timeoutMs, 1_000)));
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    const body = response.ok ? await response.json() : null;
+    return { response, body };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function launchChrome(chromePath, timeoutMs) {
   const port = await freePort();
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "marvel-mobile-shell-cdp-"));
@@ -136,15 +149,28 @@ async function launchChrome(chromePath, timeoutMs) {
   try {
     const target = await poll(async () => {
       if (launchError) throw launchError;
-      const response = await fetch(`http://127.0.0.1:${port}/json/list`);
+      const { response, body } = await fetchJsonWithTimeout(`http://127.0.0.1:${port}/json/list`, timeoutMs);
       if (!response.ok) return null;
-      return (await response.json()).find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
+      return body.find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
     }, timeoutMs, "Chrome DevTools page target");
     return { child, userDataDir, webSocketDebuggerUrl: target.webSocketDebuggerUrl };
   } catch (error) {
     await stopChrome({ child, userDataDir });
     throw error;
   }
+}
+
+async function launchChromeWithRetries(chromePath, timeoutMs, attempts = 3) {
+  let lastError = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await launchChrome(chromePath, timeoutMs);
+    } catch (error) {
+      lastError = error;
+      if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+  }
+  throw lastError || new Error("Chrome launch failed");
 }
 
 async function stopChrome(processInfo) {
@@ -157,18 +183,39 @@ async function stopChrome(processInfo) {
   fs.rmSync(processInfo.userDataDir, { recursive: true, force: true, maxRetries: PROFILE_CLEANUP_RETRIES, retryDelay: 100 });
 }
 
+async function closeStaticServer(server) {
+  if (!server?.listening) return;
+  server.closeAllConnections?.();
+  await Promise.race([
+    new Promise((resolve) => server.close(() => resolve())),
+    new Promise((resolve) => setTimeout(resolve, 5_000)),
+  ]);
+  server.closeAllConnections?.();
+}
+
 class CdpClient {
   constructor(url) {
     this.url = url;
     this.nextId = 1;
     this.pending = new Map();
-    this.commandTimeoutMs = Number(process.env.MARVEL_CDP_COMMAND_TIMEOUT_MS || 30_000);
+    this.commandTimeoutMs = Number(process.env.MARVEL_CDP_COMMAND_TIMEOUT_MS || CDP_COMMAND_TIMEOUT_MS);
   }
   async connect() {
     this.socket = new WebSocket(this.url);
     await new Promise((resolve, reject) => {
-      this.socket.addEventListener("open", resolve, { once: true });
-      this.socket.addEventListener("error", () => reject(new Error("CDP WebSocket error")), { once: true });
+      let settled = false;
+      const finish = (callback, value) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        callback(value);
+      };
+      const timer = setTimeout(() => {
+        try { this.socket.close(); } catch (_) { /* best effort */ }
+        finish(reject, new Error(`CDP WebSocket connection timed out after ${this.commandTimeoutMs}ms`));
+      }, this.commandTimeoutMs);
+      this.socket.addEventListener("open", () => finish(resolve), { once: true });
+      this.socket.addEventListener("error", () => finish(reject, new Error("CDP WebSocket error")), { once: true });
     });
     this.socket.addEventListener("message", (event) => {
       const message = JSON.parse(String(event.data));
@@ -382,6 +429,11 @@ async function instrumentRerenders(cdp) {
       }
       window.__mobileHistoryLog=log;window.__mobileHistoryInstalled=true;
     }
+    if(!window.__mobilePopstateInstalled){
+      window.__mobilePopstateCount=0;
+      window.addEventListener('popstate',()=>{window.__mobilePopstateCount+=1;});
+      window.__mobilePopstateInstalled=true;
+    }
     if(!window.__mobileStoreViewInstalled){
       const store=window.marvelMobileUiStore;
       const original=store?.setView;
@@ -399,24 +451,26 @@ async function runAudit(args) {
   const staticServer = await startStaticServer(path.resolve(args.root || "."));
   let chromeProcess = null;
   let cdp = null;
+  let infrastructureReady = false;
   const failures = [];
   const result = {
     viewport: { width: 390, height: 844 },
     views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false, legacyPrepJump: false },
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
-    history: { queryOnViewSwitch: false, queryOnPopstate: false, planClick: null, urlAfterBack: null },
-    sheet: { opened: false, closed: false, cameraPreserved: false },
+    history: { queryOnViewSwitch: false, queryOnPopstate: false, popstateNoWrites: false, forwardNoWrites: false, planClick: null, urlAfterBack: null },
+    sheet: { opened: false, closed: false, backNoWrite: false, forwardRestores: false, urlParentChild: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
     search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false, firstCardInViewport: false, legacyQuerySync: false },
     plan: { surface: false, tiers: false, noOfficialControl: false, summary: false, ordered: false, remaining: false, detailOpened: false, detailContent: false, detailClosed: false, goalRemoval: false, layout: false, switchMs: null, watchedToggle: false, multiGoalSummary: false, chartNavigation: false, chartPlanDomAbsent: false, cameraPreserved: false },
     failures,
   };
   try {
-    chromeProcess = await launchChrome(chrome, timeoutMs);
+    chromeProcess = await launchChromeWithRetries(chrome, timeoutMs);
     cdp = new CdpClient(chromeProcess.webSocketDebuggerUrl);
     await cdp.connect();
     await cdp.send("Page.enable");
     await cdp.send("Runtime.enable");
+    infrastructureReady = true;
     await cdp.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
     await cdp.send("Page.navigate", { url: staticServer.url });
     await poll(() => pageEvaluate(cdp, "return document.readyState === 'complete'"), timeoutMs, "page load");
@@ -475,6 +529,7 @@ async function runAudit(args) {
 
     const beforeSheet = await snapshot(cdp);
     result.rerenders.before = { ...beforeSheet.rerenders };
+    const sheetOpenWritesBefore=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartDetails"));
     await waitFor(cdp, (state) => !state.sheetHidden, timeoutMs, "sheet open");
     const opened = await snapshot(cdp);
@@ -482,14 +537,55 @@ async function runAudit(args) {
     result.rerenders.afterOpen = { ...opened.rerenders };
     if (opened.camera !== beforeSheet.camera) failures.push("sheet open changed data-mobile-camera");
     if (opened.rerenders.render !== beforeSheet.rerenders.render || opened.rerenders.fit !== beforeSheet.rerenders.fit || opened.rerenders.rebuild !== beforeSheet.rerenders.rebuild) failures.push("sheet open rebuilt chart");
+    const sheetOpenWritesAfter=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    if(sheetOpenWritesAfter!==sheetOpenWritesBefore+1)failures.push(`sheet open did not create exactly one history entry: before=${sheetOpenWritesBefore} after=${sheetOpenWritesAfter}`);
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
     await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "sheet close");
     const closed = await snapshot(cdp);
     result.sheet.closed = true;
     result.rerenders.afterClose = { ...closed.rerenders };
     result.sheet.cameraPreserved = closed.camera === beforeSheet.camera;
+    const sheetCloseWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    result.sheet.backNoWrite=sheetCloseWrites===sheetOpenWritesAfter;
+    if(!result.sheet.backNoWrite)failures.push(`sheet close wrote history during back traversal: before=${sheetOpenWritesAfter} after=${sheetCloseWrites}`);
     if (!result.sheet.cameraPreserved) failures.push("sheet close changed data-mobile-camera");
     if (closed.rerenders.render !== beforeSheet.rerenders.render || closed.rerenders.fit !== beforeSheet.rerenders.fit || closed.rerenders.rebuild !== beforeSheet.rerenders.rebuild) failures.push("sheet close rebuilt chart");
+    await pageEvaluate(cdp, "history.forward(); return true;");
+    const reopened=await waitFor(cdp, (state) => !state.sheetHidden, timeoutMs, "sheet forward restore");
+    const sheetForwardWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    result.sheet.forwardRestores=reopened.sheetWork===opened.sheetWork&&sheetForwardWrites===sheetCloseWrites;
+    if(!result.sheet.forwardRestores)failures.push(`sheet forward did not restore without a write: open=${JSON.stringify(opened)} reopened=${JSON.stringify(reopened)} writes=${sheetCloseWrites}->${sheetForwardWrites}`);
+    await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
+    await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "sheet second close");
+
+    // URL-origin parent -> app-owned child: a direct detail sheet must retain
+    // URL ownership through same-kind replacement, then allow a newly opened
+    // child sheet to traverse back to that detail entry exactly once.
+    const directWorkId=node.workId;
+    const replacementWorkId="spider-man-2-2004";
+    await pageEvaluate(cdp, `
+      const url=new URL(location.href),params=new URLSearchParams(url.search);
+      params.set('mview','chart');params.delete('goals');params.set('sheet','detail');params.set('sheetWork',${JSON.stringify(directWorkId)});
+      url.search=params.toString();
+      history.replaceState({...history.state,viewerNavigation:{version:1,entryId:'audit-url-parent',parentEntryId:null,transitionKind:'url-hydrate',sheetOwner:'url'}},'',url.pathname+url.search+location.hash);
+      window.marvelMobileHydrateUrlState?.();
+      return true;
+    `);
+    await waitFor(cdp, (state) => !state.sheetHidden && state.sheetWork === directWorkId, timeoutMs, "URL-origin detail sheet");
+    await pageEvaluate(cdp, "(window.__mobileHistoryLog||[]).length=0; return true;");
+    await pageEvaluate(cdp, `window.openMobileSheet('detail',${JSON.stringify(replacementWorkId)}); return true;`);
+    await waitFor(cdp, (state) => !state.sheetHidden && state.sheetWork === replacementWorkId, timeoutMs, "URL-origin detail replacement");
+    const replacementWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    await pageEvaluate(cdp, "window.openMobileSheet('reason','audit-relation'); return true;");
+    await waitFor(cdp, (state) => !state.sheetHidden && state.sheetWork === 'audit-relation', timeoutMs, "app-owned child sheet");
+    const childWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    await pageEvaluate(cdp, "window.closeMobileSheet(); return true;");
+    const parentAfterChild=await waitFor(cdp, (state) => !state.sheetHidden && state.sheetWork === replacementWorkId && state.view === 'chart', timeoutMs, "URL-origin parent after child close");
+    const childCloseWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    result.sheet.urlParentChild=replacementWrites===1&&childWrites===2&&childCloseWrites===childWrites&&parentAfterChild.sheetWork===replacementWorkId;
+    if(!result.sheet.urlParentChild)failures.push(`URL-origin parent/child sheet ownership failed: replacement=${replacementWrites} child=${childWrites} close=${childCloseWrites} state=${JSON.stringify(parentAfterChild)}`);
+    await pageEvaluate(cdp, "window.closeMobileSheet(); return true;");
+    await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "URL-origin detail cleanup");
 
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
     const firstNonChart = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "non-chart surface removal");
@@ -620,11 +716,22 @@ async function runAudit(args) {
     result.history.planClick=planClickState;
     if(planClickState.view!=="plan")failures.push(`plan navigation did not settle on plan: ${JSON.stringify(planClickState)}`);
     await waitFor(cdp, (state) => state.view === "plan" && !state.chartVisible, timeoutMs, "plan view after search");
+    const beforePopstateWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
     await pageEvaluate(cdp, "history.back(); return true;");
     result.history.urlAfterBack=await pageEvaluate(cdp, "return {href:location.href,view:window.marvelMobileUiStore?.getState?.().view||null};");
     const searchPop=await waitForSearch(cdp, (state) => state.view === "search" && state.inputValue === "Spider-Man 3", timeoutMs, "search query after popstate");
     result.history.queryOnPopstate=searchPop.inputValue === "Spider-Man 3";
     if(!result.history.queryOnPopstate)failures.push(`query was not restored after popstate: ${JSON.stringify(searchPop)}`);
+    const popstateWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    result.history.popstateNoWrites=popstateWrites===beforePopstateWrites;
+    if(!result.history.popstateNoWrites)failures.push(`popstate hydration wrote history: before=${beforePopstateWrites} after=${popstateWrites}`);
+    await pageEvaluate(cdp, "history.forward(); return true;");
+    const planForward=await waitFor(cdp, (state) => state.view === "plan", timeoutMs, "plan query after forward");
+    const forwardWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    result.history.forwardNoWrites=planForward.view==="plan"&&forwardWrites===popstateWrites;
+    if(!result.history.forwardNoWrites)failures.push(`forward hydration wrote history: state=${JSON.stringify(planForward)} before=${popstateWrites} after=${forwardWrites}`);
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+    await waitForSearch(cdp, (state) => state.view === "search" && state.inputValue === "Spider-Man 3", timeoutMs, "search restored after forward");
     await pageEvaluate(cdp, "document.querySelector('#mobileViewHost [data-mobile-search-query]')?.scrollIntoView({block:'center'}); return true;");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-query]'));
     await selectAllAndBackspace(cdp);
@@ -759,10 +866,11 @@ async function runAudit(args) {
     result.plan.chartPlanDomAbsent=!chartFinal.planVisible;
     if(!result.plan.chartPlanDomAbsent)failures.push(`plan DOM remained mounted on chart: ${JSON.stringify(chartFinal)}`);
   } catch (error) {
+    if (!infrastructureReady) throw error;
     failures.push(String(error?.message || error));
   } finally {
     cdp?.close();
-    await new Promise((resolve) => staticServer.server.close(() => resolve()));
+    await closeStaticServer(staticServer.server);
     if (chromeProcess) await stopChrome(chromeProcess);
   }
   return result;
@@ -771,9 +879,23 @@ async function runAudit(args) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) { process.stdout.write(`${usage()}\n`); return; }
-  const report = await runAudit(args);
+  const report = await runAuditWithRetries(args);
   process.stdout.write(`${JSON.stringify(report)}\n`);
   if (report.failures.length) process.exitCode = 1;
+}
+
+async function runAuditWithRetries(args, attempts = 2) {
+  let lastError = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      const report = await runAudit(args);
+      return report;
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  throw lastError || new Error("mobile shell audit failed");
 }
 
 main().catch((error) => { process.stderr.write(`${error.stack || error}\n`); process.exitCode = 1; });

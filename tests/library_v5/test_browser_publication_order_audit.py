@@ -130,6 +130,16 @@ class BrowserPublicationOrderAuditTests(unittest.TestCase):
         for term in ("--root", "--chrome", "geometry", "synthetic"):
             self.assertIn(term, result.stdout)
 
+    def test_runner_retries_and_bounds_devtools_target_startup(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("launchChromeWithRetries", source)
+        self.assertIn("attempts = 3", source)
+        self.assertIn("AbortController", source)
+        self.assertIn("signal: controller.signal", source)
+        self.assertIn("commandTimeoutMs", source)
+        self.assertIn("runAuditWithRetries", source)
+        self.assertIn("closeAllConnections", source)
+
     def test_runner_report_contract_checks_json_and_synthetic_edges(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         self.assertIn("JSON.parse", source)
