@@ -9,6 +9,7 @@ import { spawn } from "node:child_process";
 
 const WORK_COUNT = 131;
 const WAIT_TIMEOUT_MS = 20_000;
+const CDP_COMMAND_TIMEOUT_MS = 15_000;
 const CHROME_PROFILE_CLEANUP_RETRIES = 100;
 const PC_CASES = [
   { name: "exact-day", precision: "day", id: "iron-man-2008" },
@@ -223,13 +224,25 @@ class CdpClient {
     this.url = url;
     this.nextId = 1;
     this.pending = new Map();
+    this.commandTimeoutMs = CDP_COMMAND_TIMEOUT_MS;
   }
 
   async connect() {
     this.socket = new WebSocket(this.url);
     await new Promise((resolve, reject) => {
-      this.socket.addEventListener("open", resolve, { once: true });
-      this.socket.addEventListener("error", () => reject(new Error("CDP WebSocket error")), { once: true });
+      let settled = false;
+      const finish = (callback, value) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        callback(value);
+      };
+      const timer = setTimeout(() => {
+        try { this.socket.close(); } catch (_) { /* best effort */ }
+        finish(reject, new Error(`CDP WebSocket connection timed out after ${this.commandTimeoutMs}ms`));
+      }, this.commandTimeoutMs);
+      this.socket.addEventListener("open", () => finish(resolve), { once: true });
+      this.socket.addEventListener("error", () => finish(reject, new Error("CDP WebSocket error")), { once: true });
     });
     this.socket.addEventListener("message", (event) => {
       const message = JSON.parse(String(event.data));
@@ -249,8 +262,21 @@ class CdpClient {
   send(method, params = {}) {
     const id = this.nextId++;
     return new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject });
-      this.socket.send(JSON.stringify({ id, method, params }));
+      const timer = setTimeout(() => {
+        this.pending.delete(id);
+        reject(new Error(`CDP command timed out: ${method}`));
+      }, this.commandTimeoutMs);
+      this.pending.set(id, {
+        resolve: (value) => { clearTimeout(timer); resolve(value); },
+        reject: (error) => { clearTimeout(timer); reject(error); },
+      });
+      try {
+        this.socket.send(JSON.stringify({ id, method, params }));
+      } catch (error) {
+        clearTimeout(timer);
+        this.pending.delete(id);
+        reject(error);
+      }
     });
   }
 
@@ -822,6 +848,19 @@ async function runAudit(args) {
   return report;
 }
 
+async function runAuditWithRetries(args, attempts = 2) {
+  let lastError = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await runAudit(args);
+    } catch (error) {
+      lastError = error;
+      if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+  }
+  throw lastError || new Error("publication-order audit failed");
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
@@ -829,7 +868,7 @@ async function main() {
     return;
   }
   try {
-    const report = await runAudit(args);
+    const report = await runAuditWithRetries(args);
     process.stdout.write(`${JSON.stringify(report)}\n`);
     if (report.summary.failures || report.summary.syntheticEdges) process.exitCode = 1;
   } catch (error) {
