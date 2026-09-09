@@ -451,6 +451,7 @@ async function runAudit(args) {
   const staticServer = await startStaticServer(path.resolve(args.root || "."));
   let chromeProcess = null;
   let cdp = null;
+  let infrastructureReady = false;
   const failures = [];
   const result = {
     viewport: { width: 390, height: 844 },
@@ -469,6 +470,7 @@ async function runAudit(args) {
     await cdp.connect();
     await cdp.send("Page.enable");
     await cdp.send("Runtime.enable");
+    infrastructureReady = true;
     await cdp.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
     await cdp.send("Page.navigate", { url: staticServer.url });
     await poll(() => pageEvaluate(cdp, "return document.readyState === 'complete'"), timeoutMs, "page load");
@@ -864,6 +866,7 @@ async function runAudit(args) {
     result.plan.chartPlanDomAbsent=!chartFinal.planVisible;
     if(!result.plan.chartPlanDomAbsent)failures.push(`plan DOM remained mounted on chart: ${JSON.stringify(chartFinal)}`);
   } catch (error) {
+    if (!infrastructureReady) throw error;
     failures.push(String(error?.message || error));
   } finally {
     cdp?.close();
@@ -882,19 +885,16 @@ async function main() {
 }
 
 async function runAuditWithRetries(args, attempts = 2) {
-  let lastReport = null;
   let lastError = null;
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     try {
       const report = await runAudit(args);
-      if (!report.failures.length) return report;
-      lastReport = report;
+      return report;
     } catch (error) {
       lastError = error;
     }
     if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
   }
-  if (lastReport) return lastReport;
   throw lastError || new Error("mobile shell audit failed");
 }
 

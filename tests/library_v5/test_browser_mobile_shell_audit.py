@@ -138,6 +138,11 @@ class BrowserMobileShellAuditTests(unittest.TestCase):
         self.assertIn("CDP WebSocket connection timed out", source)
         self.assertIn("runAuditWithRetries", source)
 
+    def test_runner_does_not_retry_semantic_failures(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("const report = await runAudit(args);\n      return report;", source)
+        self.assertNotIn("if (!report.failures.length) return report;", source)
+
     def test_runner_bounds_devtools_target_fetch(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         self.assertIn("AbortController", source)
