@@ -410,7 +410,7 @@ async function runAudit(args) {
     views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false, legacyPrepJump: false },
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
     history: { queryOnViewSwitch: false, queryOnPopstate: false, popstateNoWrites: false, forwardNoWrites: false, planClick: null, urlAfterBack: null },
-    sheet: { opened: false, closed: false, backNoWrite: false, forwardRestores: false, cameraPreserved: false },
+    sheet: { opened: false, closed: false, backNoWrite: false, forwardRestores: false, urlParentChild: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
     search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false, firstCardInViewport: false, legacyQuerySync: false },
     plan: { surface: false, tiers: false, noOfficialControl: false, summary: false, ordered: false, remaining: false, detailOpened: false, detailContent: false, detailClosed: false, goalRemoval: false, layout: false, switchMs: null, watchedToggle: false, multiGoalSummary: false, chartNavigation: false, chartPlanDomAbsent: false, cameraPreserved: false },
@@ -508,6 +508,35 @@ async function runAudit(args) {
     if(!result.sheet.forwardRestores)failures.push(`sheet forward did not restore without a write: open=${JSON.stringify(opened)} reopened=${JSON.stringify(reopened)} writes=${sheetCloseWrites}->${sheetForwardWrites}`);
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
     await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "sheet second close");
+
+    // URL-origin parent -> app-owned child: a direct detail sheet must retain
+    // URL ownership through same-kind replacement, then allow a newly opened
+    // child sheet to traverse back to that detail entry exactly once.
+    const directWorkId=node.workId;
+    const replacementWorkId="spider-man-2-2004";
+    await pageEvaluate(cdp, `
+      const url=new URL(location.href),params=new URLSearchParams(url.search);
+      params.set('mview','chart');params.delete('goals');params.set('sheet','detail');params.set('sheetWork',${JSON.stringify(directWorkId)});
+      url.search=params.toString();
+      history.replaceState({...history.state,viewerNavigation:{version:1,entryId:'audit-url-parent',parentEntryId:null,transitionKind:'url-hydrate',sheetOwner:'url'}},'',url.pathname+url.search+location.hash);
+      window.marvelMobileHydrateUrlState?.();
+      return true;
+    `);
+    await waitFor(cdp, (state) => !state.sheetHidden && state.sheetWork === directWorkId, timeoutMs, "URL-origin detail sheet");
+    await pageEvaluate(cdp, "(window.__mobileHistoryLog||[]).length=0; return true;");
+    await pageEvaluate(cdp, `window.openMobileSheet('detail',${JSON.stringify(replacementWorkId)}); return true;`);
+    await waitFor(cdp, (state) => !state.sheetHidden && state.sheetWork === replacementWorkId, timeoutMs, "URL-origin detail replacement");
+    const replacementWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    await pageEvaluate(cdp, "window.openMobileSheet('reason','audit-relation'); return true;");
+    await waitFor(cdp, (state) => !state.sheetHidden && state.sheetWork === 'audit-relation', timeoutMs, "app-owned child sheet");
+    const childWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    await pageEvaluate(cdp, "window.closeMobileSheet(); return true;");
+    const parentAfterChild=await waitFor(cdp, (state) => !state.sheetHidden && state.sheetWork === replacementWorkId && state.view === 'chart', timeoutMs, "URL-origin parent after child close");
+    const childCloseWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    result.sheet.urlParentChild=replacementWrites===1&&childWrites===2&&childCloseWrites===childWrites&&parentAfterChild.sheetWork===replacementWorkId;
+    if(!result.sheet.urlParentChild)failures.push(`URL-origin parent/child sheet ownership failed: replacement=${replacementWrites} child=${childWrites} close=${childCloseWrites} state=${JSON.stringify(parentAfterChild)}`);
+    await pageEvaluate(cdp, "window.closeMobileSheet(); return true;");
+    await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "URL-origin detail cleanup");
 
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
     const firstNonChart = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "non-chart surface removal");

@@ -136,6 +136,19 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("parentEntryId", close_body)
         self.assertIn("history.back()", close_body)
 
+    def test_mobile_sheet_owner_transitions_preserve_url_parent_and_mark_app_child(self) -> None:
+        open_body = function_body(self.source, "openMobileSheet")
+        write_body = function_body(self.source, "writeMobileUrlState")
+        self.assertRegex(
+            open_body,
+            r"if\(action==='overlay-open'\)mobileSheetHistoryOwner='app'",
+        )
+        self.assertRegex(
+            write_body,
+            r"historyAction==='overlay-open'&&mobileSheetHistoryOwner==='app'",
+        )
+        self.assertIn("previousNavigation.sheetOwner", write_body)
+
     def test_mobile_url_state_uses_documented_keys_and_preserves_hash(self) -> None:
         read_body = function_body(self.source, "readMobileUrlState")
         write_body = function_body(self.source, "writeMobileUrlState")
@@ -411,6 +424,8 @@ class MobileShellContractTests(unittest.TestCase):
             "removeMobilePlanGoal",
             "syncMobileUiGoals",
             "writeMobileUrlState",
+            "renderMobilePlanScreen",
+            "scheduleMobilePlanRender",
         ):
             self.assertIn(token, plan_source)
         self.assertNotIn("removeGoal(button.dataset.mobilePlanRemoveGoal)", render_body)

@@ -8360,6 +8360,11 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     selectionStateCache=null;
     syncMobileUiGoals();
     writeMobileUrlState?.({action:'goal-remove'});
+    // The plan surface is a projection of the shared selection store.  Paint
+    // the direct mutation synchronously so the clicked goal disappears even
+    // while a view/history transition is replacing its subscription.
+    renderMobilePlanScreen();
+    scheduleMobilePlanRender();
     return true;
   }
   function renderPrepPlan(plan,goals,tier){
@@ -8596,9 +8601,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const parentEntryId=historyMode==='push'?(previousNavigation.entryId||null):(previousNavigation.parentEntryId||null);
     const sheetOwner=state.sheet==='closed'
       ?'none'
-      :(['overlay-open','overlay-target-change'].includes(historyAction)
+      :(historyAction==='overlay-open'&&mobileSheetHistoryOwner==='app'
         ?'app'
-        :(previousNavigation.sheetOwner||'none'));
+        :(previousNavigation.sheetOwner||mobileSheetHistoryOwner||'none'));
     const historyState={...(window.history.state||{}),mobileUi:state,viewerNavigation:{
       version:1,entryId,parentEntryId,transitionKind:historyAction,sheetOwner,
     }};
@@ -8655,6 +8660,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     sheet.hidden=false;sheet.setAttribute('aria-hidden','false');sheet.setAttribute('aria-modal','true');
     if(!suppressMobileSheetHistory&&!sameContent){
       const action=wasClosed||previous.sheet!==normalized?'overlay-open':'overlay-target-change';
+      if(action==='overlay-open')mobileSheetHistoryOwner='app';
       if(writeMobileUrlState({action}))mobileSheetHistoryEntryId=window.history.state?.viewerNavigation?.entryId||null;
     }
     requestAnimationFrame(()=>document.getElementById('mobileSheetTitle')?.focus({preventScroll:true}));
