@@ -126,6 +126,12 @@ class BrowserMobileShellAuditTests(unittest.TestCase):
         self.assertIn("launchChromeWithRetries", source)
         self.assertIn("attempts = 3", source)
 
+    def test_runner_closes_static_server_with_keepalive_guard(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("async function closeStaticServer(server)", source)
+        self.assertIn("server.closeAllConnections?.()", source)
+        self.assertIn("await closeStaticServer(staticServer.server)", source)
+
     def test_runner_bounds_devtools_target_fetch(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         self.assertIn("AbortController", source)

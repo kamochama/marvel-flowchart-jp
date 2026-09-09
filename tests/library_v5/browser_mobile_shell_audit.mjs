@@ -182,6 +182,16 @@ async function stopChrome(processInfo) {
   fs.rmSync(processInfo.userDataDir, { recursive: true, force: true, maxRetries: PROFILE_CLEANUP_RETRIES, retryDelay: 100 });
 }
 
+async function closeStaticServer(server) {
+  if (!server?.listening) return;
+  server.closeAllConnections?.();
+  await Promise.race([
+    new Promise((resolve) => server.close(() => resolve())),
+    new Promise((resolve) => setTimeout(resolve, 5_000)),
+  ]);
+  server.closeAllConnections?.();
+}
+
 class CdpClient {
   constructor(url) {
     this.url = url;
@@ -845,7 +855,7 @@ async function runAudit(args) {
     failures.push(String(error?.message || error));
   } finally {
     cdp?.close();
-    await new Promise((resolve) => staticServer.server.close(() => resolve()));
+    await closeStaticServer(staticServer.server);
     if (chromeProcess) await stopChrome(chromeProcess);
   }
   return result;
