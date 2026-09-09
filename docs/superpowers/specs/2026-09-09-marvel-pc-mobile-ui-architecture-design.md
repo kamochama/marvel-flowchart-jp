@@ -213,7 +213,7 @@ effectiveSheetContent =
 
 したがって、PCで`overlay=closed`かつ`inspection.workId=C`なら、docked SheetHostにはCのdetail要約を表示する。明示的なdetail／reason／settings overlayはinspectionより優先し、close後はinspection由来のdocked detailへ戻る。モバイルではinspectionの変更だけでmodalを自動openせず、detail表示は明示操作から行う。検索結果は`surface=search`の主領域に固定し、SheetHostの`search`表示は設けない。
 
-dockedの閉じる操作は`clearInspection`として扱い、modalの閉じる操作は`overlay={ kind: "closed" }`として扱う。明示overlayを閉じた後にinspectionが残っていれば、PCではその作品のdocked detailへ戻る。
+dockedの閉じる操作は、`overlay={ kind: "closed" }`でinspection由来detailを表示している場合だけ`clearInspection`として扱う。detail／reason／settingsの明示overlayを表示中なら、presentationがdockedかmodalかに関係なくoverlayだけを`{ kind: "closed" }`へ戻し、inspectionは保持する（履歴は既定のoverlay close規則に従う）。明示overlayを閉じた後にinspectionが残っていれば、PCではその作品のdocked detailへ戻る。
 
 - `detail`: 作品ID、邦題・英題、公開情報、登録済み詳細、ゴール操作、公式ソース、チャート移動。
 - `reason`: canonical relationId、source／target、既存の関係種別と根拠。時系列隣接から理由を生成しない。
