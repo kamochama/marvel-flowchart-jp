@@ -49,6 +49,32 @@ return {inspected,cleared};
         self.assertIsNone(result["cleared"]["inspection"]["workId"])
         self.assertEqual(result["cleared"]["goals"], result["inspected"]["goals"])
 
+    def test_shell_classifier_uses_stable_layout_and_input_metrics(self) -> None:
+        result = self._run_node(
+            """
+const samples = {
+  portraitPhone: window.marvelClassifyShell({layoutWidth:390,screenWidth:390,screenHeight:844,coarse:true}),
+  landscapeTouchPhone: window.marvelClassifyShell({layoutWidth:844,screenWidth:844,screenHeight:390,coarse:true}),
+  exactMobileBoundary: window.marvelClassifyShell({layoutWidth:760,screenWidth:760,screenHeight:844,coarse:false}),
+  compactLowerBoundary: window.marvelClassifyShell({layoutWidth:761,screenWidth:761,screenHeight:844,coarse:false}),
+  compactUpperBoundary: window.marvelClassifyShell({layoutWidth:980,screenWidth:980,screenHeight:844,coarse:false}),
+  desktopLowerBoundary: window.marvelClassifyShell({layoutWidth:981,screenWidth:981,screenHeight:844,coarse:false}),
+};
+return samples;
+"""
+        )
+        self.assertEqual(
+            result,
+            {
+                "portraitPhone": "mobile",
+                "landscapeTouchPhone": "mobile",
+                "exactMobileBoundary": "mobile",
+                "compactLowerBoundary": "compact",
+                "compactUpperBoundary": "compact",
+                "desktopLowerBoundary": "desktop",
+            },
+        )
+
     def test_non_goal_commands_preserve_an_explicit_null_current_goal(self) -> None:
         result = self._run_node(
             """
