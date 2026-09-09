@@ -219,6 +219,16 @@ async function stopChrome(processInfo) {
   }
 }
 
+async function closeStaticServer(server) {
+  if (!server?.listening) return;
+  server.closeAllConnections?.();
+  await Promise.race([
+    new Promise((resolve) => server.close(() => resolve())),
+    new Promise((resolve) => setTimeout(resolve, 5_000)),
+  ]);
+  server.closeAllConnections?.();
+}
+
 class CdpClient {
   constructor(url) {
     this.url = url;
@@ -812,7 +822,7 @@ async function runAudit(args) {
     // Close the browser before the fixture server. Chrome may retain an idle
     // keep-alive request, which otherwise prevents server.close's callback
     // from firing and leaves the wrapper waiting after a successful audit.
-    await new Promise((resolve) => staticServer.server.close(() => resolve()));
+    await closeStaticServer(staticServer.server);
   }
   const cases = [...(desktop?.cases || []), ...(mobile?.cases || [])];
   const failures = [...(desktop?.failures || []), ...(mobile?.failures || [])];

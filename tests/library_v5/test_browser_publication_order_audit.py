@@ -138,6 +138,7 @@ class BrowserPublicationOrderAuditTests(unittest.TestCase):
         self.assertIn("signal: controller.signal", source)
         self.assertIn("commandTimeoutMs", source)
         self.assertIn("runAuditWithRetries", source)
+        self.assertIn("closeAllConnections", source)
 
     def test_runner_report_contract_checks_json_and_synthetic_edges(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
