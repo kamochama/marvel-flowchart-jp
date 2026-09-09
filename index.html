@@ -8071,6 +8071,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   const MOBILE_SHEET_LABELS={detail:['作品情報','選択した作品の情報'],reason:['接続理由','この接続の根拠'],settings:['表示設定','モバイル表示の設定']};
   let mobileSheetReturnFocus=null;
   let suppressMobileSheetHistory=false;
+  let mobileSheetHistoryOwner='none';
+  let mobileSheetBackPending=false;
   const mobileChartPanelOrigins=new Map();
   let mobileChartMountedPanel=null;
   let mobileChartLastPanel=null;
@@ -8316,7 +8318,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       const store=window.marvelMobileUiStore;const filter=filterForSurface();
       store?.setSearch(queryInput.value||'');store?.setFilter(filter);
       syncMobileSearchControls({query:queryInput.value||'',filter});
-      scheduleMobileSearchRender(queryInput.value,filter);writeMobileUrlState({replace:true});
+      scheduleMobileSearchRender(queryInput.value,filter);writeMobileUrlState({action:'search-input'});
     };
     queryInput.addEventListener('input',sync);
     [branchInput,characterInput,statusInput].forEach(input=>input?.addEventListener('change',sync));
@@ -8351,7 +8353,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(selected===id)normalizeSelection();
     selectionStateCache=null;
     syncMobileUiGoals();
-    writeMobileUrlState?.({replace:true});
+    writeMobileUrlState?.({action:'goal-remove'});
     return true;
   }
   function renderPrepPlan(plan,goals,tier){
@@ -8546,7 +8548,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(state.view==='search'&&mobileSurface?.querySelector('[data-mobile-search-query]')){
       syncMobileSearchControls(state);
       scheduleMobileSearchRender(state.query,state.filter);
-      writeMobileUrlState({replace:true});
+      writeMobileUrlState({action:'search-input'});
     }
   }
 
@@ -8565,7 +8567,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return true;
   }
 
-  function writeMobileUrlState({replace=false}={}){
+  function writeMobileUrlState({replace=false,action=null}={}){
     const state=mobileUiStore()?.getState();
     if(!state)return false;
     const url=new URL(window.location.href);
@@ -8579,8 +8581,23 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     setOrDelete('mfilter',state.filter);
     url.search=params.toString();
     const nextUrl=`${url.pathname}${url.search}${location.hash}`;
-    const historyState={...(window.history.state||{}),mobileUi:state};
-    if(replace)window.history.replaceState(historyState,'',nextUrl);else window.history.pushState(historyState,'',nextUrl);
+    const historyAction=action|| (replace?'replace':'surface-transition');
+    const previousNavigation=window.history.state?.viewerNavigation||{};
+    const sheetOwner=state.sheet==='closed'
+      ?'none'
+      :(['overlay-open','overlay-target-change'].includes(historyAction)
+        ?'app'
+        :(previousNavigation.sheetOwner||'none'));
+    const historyState={...(window.history.state||{}),mobileUi:state,viewerNavigation:{
+      version:1,transitionKind:historyAction,sheetOwner,
+    }};
+    const writer=window.marvelCreateUiHistoryWriter?.(window.history);
+    if(writer)return writer({state:historyState,url:nextUrl,action:{type:historyAction}});
+    const mode=window.marvelUiHistoryPolicy?.({type:historyAction})|| (replace?'replace':'push');
+    if(mode==='none')return false;
+    const method=mode==='push'?'pushState':'replaceState';
+    if(typeof window.history?.[method]!=='function')return false;
+    window.history[method](historyState,'',nextUrl);
     return true;
   }
 
@@ -8596,10 +8613,11 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const normalized=normalizeMobileView(view);
     const store=window.marvelMobileUiStore;
     if(!store)return normalized;
+    const previous=store.getState().view;
     store.setView(normalized);
     mountMobileView(normalized);
     syncMobileBottomNav(normalized);
-    if(pushHistory)writeMobileUrlState({replace:false});
+    if(pushHistory&&previous!==normalized)writeMobileUrlState({action:'surface-transition'});
     return normalized;
   }
 
@@ -8608,8 +8626,13 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const store=mobileUiStore();
     const normalized=normalizeMobileSheet(kind);
     if(!sheet||!store||normalized==='closed'){closeMobileSheet();return false;}
-    if(store.getState().sheet==='closed')mobileSheetReturnFocus=document.activeElement;
+    const previous=store.getState();
+    const wasClosed=previous.sheet==='closed';
     const sheetWork=typeof workId==='string'&&workId.trim()?workId.trim():null;
+    const sameContent=previous.sheet===normalized&&previous.sheetWork===sheetWork;
+    if(wasClosed)mobileSheetReturnFocus=document.activeElement;
+    if(suppressMobileSheetHistory)mobileSheetHistoryOwner=window.history.state?.viewerNavigation?.sheetOwner==='app'?'app':'url';
+    else if(wasClosed)mobileSheetHistoryOwner='app';
     store.setSheet(normalized,sheetWork);
     const [title,subtitle]=MOBILE_SHEET_LABELS[normalized];
     document.getElementById('mobileSheetTitle').textContent=title;
@@ -8618,7 +8641,10 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(normalized==='detail')sheetBody.innerHTML=mobileWorkDetailHtml(sheetWork);
     else sheetBody.textContent=sheetWork?`${sheetWork} の情報を表示します。`:'選択した作品の情報を表示します。';
     sheet.hidden=false;sheet.setAttribute('aria-hidden','false');sheet.setAttribute('aria-modal','true');
-    if(!suppressMobileSheetHistory)writeMobileUrlState({replace:false});
+    if(!suppressMobileSheetHistory&&!sameContent){
+      const action=wasClosed||previous.sheet!==normalized?'overlay-open':'overlay-target-change';
+      writeMobileUrlState({action});
+    }
     requestAnimationFrame(()=>document.getElementById('mobileSheetTitle')?.focus({preventScroll:true}));
     return true;
   }
@@ -8627,20 +8653,25 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const sheet=document.getElementById('mobileSheet');
     const store=mobileUiStore();
     const wasOpen=store?.getState().sheet!=='closed';
+    const traverse=wasOpen&&syncHistory&&mobileSheetHistoryOwner==='app'&&!mobileSheetBackPending;
     store?.setSheet('closed',null);
     if(sheet){sheet.hidden=true;sheet.setAttribute('aria-hidden','true');}
-    if(wasOpen&&syncHistory)writeMobileUrlState({replace:true});
+    if(traverse){
+      mobileSheetBackPending=true;
+      window.history.back();
+    }else if(wasOpen&&syncHistory)writeMobileUrlState({action:'overlay-close'});
+    if(!wasOpen||!syncHistory)mobileSheetHistoryOwner='none';
     const target=mobileSheetReturnFocus;mobileSheetReturnFocus=null;
     if(restoreFocus&&target?.isConnected)requestAnimationFrame(()=>target.focus());
     return wasOpen;
   }
 
-  function applyMobileUrlState(){
+  function applyMobileUrlState({fromPopstate=false}={}){
     const parsed=readMobileUrlState();
     const store=mobileUiStore();
     if(!store)return;
     const current=store.getState();
-    if(parsed.sheet==='closed'&&current.sheet!=='closed')closeMobileSheet();
+    if(parsed.sheet==='closed'&&current.sheet!=='closed')closeMobileSheet({syncHistory:!fromPopstate});
     store.setGoals(parsed.goalIds,parsed.selectedId);
     const selectionHydrated=hydrateMobileSelectionFromStore(store.getState());
     store.setSearch(parsed.query);store.setFilter(parsed.filter);
@@ -8651,14 +8682,15 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       openMobileSheet(parsed.sheet,parsed.sheetWork);
       suppressMobileSheetHistory=previousSuppression;
     }
-    if(typeof flowchartReady!=='undefined'&&flowchartReady&&!selectionHydrated&&typeof render==='function')render();
-    if(typeof flowchartReady!=='undefined'&&flowchartReady)writeMobileUrlState({replace:true});
+    if(typeof flowchartReady!=='undefined'&&flowchartReady&&!fromPopstate&&!selectionHydrated&&typeof render==='function')render();
+    if(typeof flowchartReady!=='undefined'&&flowchartReady&&!fromPopstate)writeMobileUrlState({action:'url-hydrate'});
   }
 
   function handleMobilePopState(){
     const parsed=readMobileUrlState();
+    mobileSheetBackPending=false;
     if(mobileUiStore()?.getState().sheet!=='closed'&&parsed.sheet==='closed')closeMobileSheet({syncHistory:false});
-    applyMobileUrlState();
+    applyMobileUrlState({fromPopstate:true});
   }
 
   window.ensureMobileShell=ensureMobileShell;
@@ -9751,6 +9783,16 @@ window.FEATURED_ROUTE=Object.freeze({
     if(action.type==='popstate-apply')return 'none';
     if(['surface-transition','goal-add','goal-remove','goal-clear','overlay-open'].includes(action.type))return 'push';
     return 'replace';
+  };
+  window.marvelCreateUiHistoryWriter=function(historyTarget=window.history){
+    return ({state={},url='',action={}}={})=>{
+      const mode=window.marvelUiHistoryPolicy(action);
+      if(mode==='none')return false;
+      const method=mode==='push'?'pushState':'replaceState';
+      if(typeof historyTarget?.[method]!=='function')return false;
+      historyTarget[method](state,'',url);
+      return true;
+    };
   };
   window.marvelEffectiveSheetContent=function(state,presentation){
     const next=window.marvelCreateUiState(state);

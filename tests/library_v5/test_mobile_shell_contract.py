@@ -106,8 +106,30 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("mobileSheet", close_body)
 
         self.assertIn('addEventListener(\'popstate\'', self.source)
-        self.assertIn("history.pushState", self.source)
+        self.assertIn("marvelCreateUiHistoryWriter", self.source)
         self.assertIn('aria-modal="true"', self.source)
+
+    def test_mobile_history_writer_is_policy_driven(self) -> None:
+        write_body = function_body(self.source, "writeMobileUrlState")
+        self.assertIn("action", write_body)
+        self.assertIn("marvelCreateUiHistoryWriter", write_body)
+        self.assertNotRegex(write_body, r"if\(replace\)window\.history\.replaceState")
+
+    def test_mobile_popstate_applies_without_any_history_write(self) -> None:
+        apply_body = function_body(self.source, "applyMobileUrlState")
+        popstate_body = function_body(self.source, "handleMobilePopState")
+        self.assertRegex(self.source, r"function applyMobileUrlState\(\{fromPopstate=false\}=\{\}\)")
+        self.assertRegex(apply_body, r"syncHistory:!fromPopstate")
+        self.assertRegex(apply_body, r"!fromPopstate[\s\S]{0,80}writeMobileUrlState")
+        self.assertIn("applyMobileUrlState({fromPopstate:true})", popstate_body)
+
+    def test_mobile_sheet_history_distinguishes_app_open_from_direct_url_hydration(self) -> None:
+        self.assertIn("mobileSheetHistoryOwner", self.source)
+        open_body = function_body(self.source, "openMobileSheet")
+        close_body = function_body(self.source, "closeMobileSheet")
+        self.assertIn("suppressMobileSheetHistory", open_body)
+        self.assertIn("viewerNavigation", open_body)
+        self.assertIn("history.back()", close_body)
 
     def test_mobile_url_state_uses_documented_keys_and_preserves_hash(self) -> None:
         read_body = function_body(self.source, "readMobileUrlState")
@@ -175,7 +197,7 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("closeMobileSheet({syncHistory:false})", popstate_body)
         self.assertRegex(
             popstate_body,
-            r"closeMobileSheet\(\{syncHistory:false\}\)[\s\S]*applyMobileUrlState\(\)",
+            r"closeMobileSheet\(\{syncHistory:false\}\)[\s\S]*applyMobileUrlState\(\{fromPopstate:true\}\)",
         )
 
     def test_focus_goal_syncs_store_after_desktop_semantic_update(self) -> None:

@@ -102,6 +102,44 @@ return {
         )
         self.assertEqual(result, {"addGoal": "push", "removeGoal": "push", "clearGoals": "push", "overlay": "push"})
 
+    def test_history_writer_uses_policy_and_skips_popstate_writes(self) -> None:
+        result = self._run_node(
+            """
+const calls=[];
+const history={
+  pushState:(state,title,url)=>calls.push({method:'pushState',state,title,url}),
+  replaceState:(state,title,url)=>calls.push({method:'replaceState',state,title,url}),
+};
+const write=window.marvelCreateUiHistoryWriter(history);
+const pop=write({state:{entry:'pop'},url:'?mview=chart',action:{type:'popstate-apply'}});
+const surface=write({state:{entry:'surface'},url:'?mview=search',action:{type:'surface-transition'}});
+const inspection=write({state:{entry:'inspection'},url:'?mview=search&q=x',action:{type:'inspection-focus'}});
+return {pop,surface,inspection,calls};
+"""
+        )
+        self.assertFalse(result["pop"])
+        self.assertTrue(result["surface"])
+        self.assertTrue(result["inspection"])
+        self.assertEqual(
+            result["calls"],
+            [
+                {"method": "pushState", "state": {"entry": "surface"}, "title": "", "url": "?mview=search"},
+                {"method": "replaceState", "state": {"entry": "inspection"}, "title": "", "url": "?mview=search&q=x"},
+            ],
+        )
+
+    def test_history_policy_marks_navigation_write_boundaries(self) -> None:
+        result = self._run_node(
+            """
+return {
+  overlayClose: window.marvelUiHistoryPolicy({type:'overlay-close'}),
+  searchInput: window.marvelUiHistoryPolicy({type:'search-input'}),
+  urlHydrate: window.marvelUiHistoryPolicy({type:'url-hydrate'}),
+};
+"""
+        )
+        self.assertEqual(result, {"overlayClose": "replace", "searchInput": "replace", "urlHydrate": "replace"})
+
     def test_sheet_close_uses_content_provenance(self) -> None:
         result = self._run_node(
             """
