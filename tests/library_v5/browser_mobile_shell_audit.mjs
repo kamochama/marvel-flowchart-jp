@@ -123,6 +123,16 @@ async function poll(task, timeoutMs, label) {
   throw new Error(`${label} timed out${lastError ? `: ${lastError.message}` : ""}${state}`);
 }
 
+async function fetchWithTimeout(url, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), Math.max(250, Math.min(timeoutMs, 1_000)));
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function launchChrome(chromePath, timeoutMs) {
   const port = await freePort();
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "marvel-mobile-shell-cdp-"));
@@ -136,7 +146,7 @@ async function launchChrome(chromePath, timeoutMs) {
   try {
     const target = await poll(async () => {
       if (launchError) throw launchError;
-      const response = await fetch(`http://127.0.0.1:${port}/json/list`);
+      const response = await fetchWithTimeout(`http://127.0.0.1:${port}/json/list`, timeoutMs);
       if (!response.ok) return null;
       return (await response.json()).find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
     }, timeoutMs, "Chrome DevTools page target");
