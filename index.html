@@ -8072,7 +8072,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   let mobileSheetReturnFocus=null;
   let suppressMobileSheetHistory=false;
   let mobileSheetHistoryOwner='none';
+  let mobileSheetHistoryEntryId=null;
   let mobileSheetBackPending=false;
+  let mobileNavigationEntryCounter=0;
   const mobileChartPanelOrigins=new Map();
   let mobileChartMountedPanel=null;
   let mobileChartLastPanel=null;
@@ -8081,6 +8083,10 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   function mobileUiStore(){return window.marvelMobileUiStore||null}
   function normalizeMobileView(view){return MOBILE_VIEWS.has(view)?view:'chart'}
   function normalizeMobileSheet(sheet){return MOBILE_SHEETS.has(sheet)?sheet:'closed'}
+  function createMobileNavigationEntryId(){
+    mobileNavigationEntryCounter+=1;
+    return `mobile-${Date.now().toString(36)}-${mobileNavigationEntryCounter}`;
+  }
 
   function ensureMobileShell(){
     const shell=document.getElementById('mobileAppShell');
@@ -8582,20 +8588,23 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     url.search=params.toString();
     const nextUrl=`${url.pathname}${url.search}${location.hash}`;
     const historyAction=action|| (replace?'replace':'surface-transition');
+    const historyMode=window.marvelUiHistoryPolicy?.({type:historyAction})|| (replace?'replace':'push');
+    if(historyMode==='none')return false;
     const previousNavigation=window.history.state?.viewerNavigation||{};
+    const entryId=historyMode==='push'?
+      createMobileNavigationEntryId():(previousNavigation.entryId||createMobileNavigationEntryId());
+    const parentEntryId=historyMode==='push'?(previousNavigation.entryId||null):(previousNavigation.parentEntryId||null);
     const sheetOwner=state.sheet==='closed'
       ?'none'
       :(['overlay-open','overlay-target-change'].includes(historyAction)
         ?'app'
         :(previousNavigation.sheetOwner||'none'));
     const historyState={...(window.history.state||{}),mobileUi:state,viewerNavigation:{
-      version:1,transitionKind:historyAction,sheetOwner,
+      version:1,entryId,parentEntryId,transitionKind:historyAction,sheetOwner,
     }};
     const writer=window.marvelCreateUiHistoryWriter?.(window.history);
     if(writer)return writer({state:historyState,url:nextUrl,action:{type:historyAction}});
-    const mode=window.marvelUiHistoryPolicy?.({type:historyAction})|| (replace?'replace':'push');
-    if(mode==='none')return false;
-    const method=mode==='push'?'pushState':'replaceState';
+    const method=historyMode==='push'?'pushState':'replaceState';
     if(typeof window.history?.[method]!=='function')return false;
     window.history[method](historyState,'',nextUrl);
     return true;
@@ -8631,8 +8640,11 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const sheetWork=typeof workId==='string'&&workId.trim()?workId.trim():null;
     const sameContent=previous.sheet===normalized&&previous.sheetWork===sheetWork;
     if(wasClosed)mobileSheetReturnFocus=document.activeElement;
-    if(suppressMobileSheetHistory)mobileSheetHistoryOwner=window.history.state?.viewerNavigation?.sheetOwner==='app'?'app':'url';
-    else if(wasClosed)mobileSheetHistoryOwner='app';
+    if(suppressMobileSheetHistory){
+      const navigation=window.history.state?.viewerNavigation||{};
+      mobileSheetHistoryOwner=navigation.sheetOwner==='app'?'app':'url';
+      mobileSheetHistoryEntryId=navigation.entryId||null;
+    }else if(wasClosed)mobileSheetHistoryOwner='app';
     store.setSheet(normalized,sheetWork);
     const [title,subtitle]=MOBILE_SHEET_LABELS[normalized];
     document.getElementById('mobileSheetTitle').textContent=title;
@@ -8643,7 +8655,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     sheet.hidden=false;sheet.setAttribute('aria-hidden','false');sheet.setAttribute('aria-modal','true');
     if(!suppressMobileSheetHistory&&!sameContent){
       const action=wasClosed||previous.sheet!==normalized?'overlay-open':'overlay-target-change';
-      writeMobileUrlState({action});
+      if(writeMobileUrlState({action}))mobileSheetHistoryEntryId=window.history.state?.viewerNavigation?.entryId||null;
     }
     requestAnimationFrame(()=>document.getElementById('mobileSheetTitle')?.focus({preventScroll:true}));
     return true;
@@ -8653,14 +8665,20 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const sheet=document.getElementById('mobileSheet');
     const store=mobileUiStore();
     const wasOpen=store?.getState().sheet!=='closed';
-    const traverse=wasOpen&&syncHistory&&mobileSheetHistoryOwner==='app'&&!mobileSheetBackPending;
+    const navigation=window.history.state?.viewerNavigation||{};
+    const traverse=wasOpen&&syncHistory&&mobileSheetHistoryOwner==='app'&&
+      mobileSheetHistoryEntryId&&navigation.entryId===mobileSheetHistoryEntryId&&
+      navigation.sheetOwner==='app'&&navigation.parentEntryId&&!mobileSheetBackPending;
     store?.setSheet('closed',null);
     if(sheet){sheet.hidden=true;sheet.setAttribute('aria-hidden','true');}
     if(traverse){
       mobileSheetBackPending=true;
       window.history.back();
-    }else if(wasOpen&&syncHistory)writeMobileUrlState({action:'overlay-close'});
-    if(!wasOpen||!syncHistory)mobileSheetHistoryOwner='none';
+    }else if(wasOpen&&syncHistory){
+      writeMobileUrlState({action:'overlay-close'});
+      mobileSheetHistoryOwner='none';mobileSheetHistoryEntryId=null;
+    }
+    if(!wasOpen||!syncHistory){mobileSheetHistoryOwner='none';mobileSheetHistoryEntryId=null;}
     const target=mobileSheetReturnFocus;mobileSheetReturnFocus=null;
     if(restoreFocus&&target?.isConnected)requestAnimationFrame(()=>target.focus());
     return wasOpen;

@@ -125,10 +125,15 @@ class MobileShellContractTests(unittest.TestCase):
 
     def test_mobile_sheet_history_distinguishes_app_open_from_direct_url_hydration(self) -> None:
         self.assertIn("mobileSheetHistoryOwner", self.source)
+        self.assertIn("mobileSheetHistoryEntryId", self.source)
         open_body = function_body(self.source, "openMobileSheet")
         close_body = function_body(self.source, "closeMobileSheet")
         self.assertIn("suppressMobileSheetHistory", open_body)
         self.assertIn("viewerNavigation", open_body)
+        write_body = function_body(self.source, "writeMobileUrlState")
+        self.assertIn("entryId", write_body)
+        self.assertIn("parentEntryId", write_body)
+        self.assertIn("parentEntryId", close_body)
         self.assertIn("history.back()", close_body)
 
     def test_mobile_url_state_uses_documented_keys_and_preserves_hash(self) -> None:
@@ -191,7 +196,9 @@ class MobileShellContractTests(unittest.TestCase):
             self.source,
             r"function closeMobileSheet\(\{restoreFocus=true,syncHistory=true\}=\{\}\)",
         )
-        self.assertRegex(close_body, r"if\(wasOpen&&syncHistory\)writeMobileUrlState")
+        self.assertRegex(close_body, r"else if\(wasOpen&&syncHistory\)\{[\s\S]*writeMobileUrlState")
+        self.assertRegex(close_body, r"mobileSheetHistoryEntryId&&navigation\.entryId===mobileSheetHistoryEntryId")
+        self.assertIn("navigation.parentEntryId", close_body)
 
         popstate_body = function_body(self.source, "handleMobilePopState")
         self.assertIn("closeMobileSheet({syncHistory:false})", popstate_body)

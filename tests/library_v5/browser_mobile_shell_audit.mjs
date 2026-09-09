@@ -382,6 +382,11 @@ async function instrumentRerenders(cdp) {
       }
       window.__mobileHistoryLog=log;window.__mobileHistoryInstalled=true;
     }
+    if(!window.__mobilePopstateInstalled){
+      window.__mobilePopstateCount=0;
+      window.addEventListener('popstate',()=>{window.__mobilePopstateCount+=1;});
+      window.__mobilePopstateInstalled=true;
+    }
     if(!window.__mobileStoreViewInstalled){
       const store=window.marvelMobileUiStore;
       const original=store?.setView;
@@ -404,8 +409,8 @@ async function runAudit(args) {
     viewport: { width: 390, height: 844 },
     views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false, legacyPrepJump: false },
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
-    history: { queryOnViewSwitch: false, queryOnPopstate: false, planClick: null, urlAfterBack: null },
-    sheet: { opened: false, closed: false, cameraPreserved: false },
+    history: { queryOnViewSwitch: false, queryOnPopstate: false, popstateNoWrites: false, forwardNoWrites: false, planClick: null, urlAfterBack: null },
+    sheet: { opened: false, closed: false, backNoWrite: false, forwardRestores: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
     search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false, firstCardInViewport: false, legacyQuerySync: false },
     plan: { surface: false, tiers: false, noOfficialControl: false, summary: false, ordered: false, remaining: false, detailOpened: false, detailContent: false, detailClosed: false, goalRemoval: false, layout: false, switchMs: null, watchedToggle: false, multiGoalSummary: false, chartNavigation: false, chartPlanDomAbsent: false, cameraPreserved: false },
@@ -475,6 +480,7 @@ async function runAudit(args) {
 
     const beforeSheet = await snapshot(cdp);
     result.rerenders.before = { ...beforeSheet.rerenders };
+    const sheetOpenWritesBefore=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartDetails"));
     await waitFor(cdp, (state) => !state.sheetHidden, timeoutMs, "sheet open");
     const opened = await snapshot(cdp);
@@ -482,14 +488,26 @@ async function runAudit(args) {
     result.rerenders.afterOpen = { ...opened.rerenders };
     if (opened.camera !== beforeSheet.camera) failures.push("sheet open changed data-mobile-camera");
     if (opened.rerenders.render !== beforeSheet.rerenders.render || opened.rerenders.fit !== beforeSheet.rerenders.fit || opened.rerenders.rebuild !== beforeSheet.rerenders.rebuild) failures.push("sheet open rebuilt chart");
+    const sheetOpenWritesAfter=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    if(sheetOpenWritesAfter!==sheetOpenWritesBefore+1)failures.push(`sheet open did not create exactly one history entry: before=${sheetOpenWritesBefore} after=${sheetOpenWritesAfter}`);
     await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
     await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "sheet close");
     const closed = await snapshot(cdp);
     result.sheet.closed = true;
     result.rerenders.afterClose = { ...closed.rerenders };
     result.sheet.cameraPreserved = closed.camera === beforeSheet.camera;
+    const sheetCloseWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    result.sheet.backNoWrite=sheetCloseWrites===sheetOpenWritesAfter;
+    if(!result.sheet.backNoWrite)failures.push(`sheet close wrote history during back traversal: before=${sheetOpenWritesAfter} after=${sheetCloseWrites}`);
     if (!result.sheet.cameraPreserved) failures.push("sheet close changed data-mobile-camera");
     if (closed.rerenders.render !== beforeSheet.rerenders.render || closed.rerenders.fit !== beforeSheet.rerenders.fit || closed.rerenders.rebuild !== beforeSheet.rerenders.rebuild) failures.push("sheet close rebuilt chart");
+    await pageEvaluate(cdp, "history.forward(); return true;");
+    const reopened=await waitFor(cdp, (state) => !state.sheetHidden, timeoutMs, "sheet forward restore");
+    const sheetForwardWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    result.sheet.forwardRestores=reopened.sheetWork===opened.sheetWork&&sheetForwardWrites===sheetCloseWrites;
+    if(!result.sheet.forwardRestores)failures.push(`sheet forward did not restore without a write: open=${JSON.stringify(opened)} reopened=${JSON.stringify(reopened)} writes=${sheetCloseWrites}->${sheetForwardWrites}`);
+    await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
+    await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "sheet second close");
 
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
     const firstNonChart = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "non-chart surface removal");
@@ -620,11 +638,22 @@ async function runAudit(args) {
     result.history.planClick=planClickState;
     if(planClickState.view!=="plan")failures.push(`plan navigation did not settle on plan: ${JSON.stringify(planClickState)}`);
     await waitFor(cdp, (state) => state.view === "plan" && !state.chartVisible, timeoutMs, "plan view after search");
+    const beforePopstateWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
     await pageEvaluate(cdp, "history.back(); return true;");
     result.history.urlAfterBack=await pageEvaluate(cdp, "return {href:location.href,view:window.marvelMobileUiStore?.getState?.().view||null};");
     const searchPop=await waitForSearch(cdp, (state) => state.view === "search" && state.inputValue === "Spider-Man 3", timeoutMs, "search query after popstate");
     result.history.queryOnPopstate=searchPop.inputValue === "Spider-Man 3";
     if(!result.history.queryOnPopstate)failures.push(`query was not restored after popstate: ${JSON.stringify(searchPop)}`);
+    const popstateWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    result.history.popstateNoWrites=popstateWrites===beforePopstateWrites;
+    if(!result.history.popstateNoWrites)failures.push(`popstate hydration wrote history: before=${beforePopstateWrites} after=${popstateWrites}`);
+    await pageEvaluate(cdp, "history.forward(); return true;");
+    const planForward=await waitFor(cdp, (state) => state.view === "plan", timeoutMs, "plan query after forward");
+    const forwardWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
+    result.history.forwardNoWrites=planForward.view==="plan"&&forwardWrites===popstateWrites;
+    if(!result.history.forwardNoWrites)failures.push(`forward hydration wrote history: state=${JSON.stringify(planForward)} before=${popstateWrites} after=${forwardWrites}`);
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+    await waitForSearch(cdp, (state) => state.view === "search" && state.inputValue === "Spider-Man 3", timeoutMs, "search restored after forward");
     await pageEvaluate(cdp, "document.querySelector('#mobileViewHost [data-mobile-search-query]')?.scrollIntoView({block:'center'}); return true;");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-query]'));
     await selectAllAndBackspace(cdp);
