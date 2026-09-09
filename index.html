@@ -5582,7 +5582,7 @@ function createMobileUiStore(initialState={}){
   };
 }
 window.marvelMobileUiStore=createMobileUiStore();
-function syncMobileUiGoals(){window.marvelMobileUiStore?.setGoals(orderedGoalIds(),selected);}
+function syncMobileUiGoals(){window.marvelMobileUiStore?.setGoals(orderedGoalIds(),selected);window.marvelLegacyUiBridge?.requestPublish?.();}
 const _origCenterNodeInView = centerNodeInView;
 centerNodeInView = function(id){
   if(!selectedIds.size) return false;
@@ -8560,6 +8560,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     // Keep the existing selection semantics in refreshSelection. This adapter
     // only restores the shared store snapshot into the semantic variables.
     selectedIds=nextIds;selected=nextSelected;
+    window.marvelLegacyUiBridge?.requestPublish?.();
     if(typeof flowchartReady!=='undefined'&&flowchartReady&&typeof refreshSelection==='function')refreshSelection(false);
     return true;
   }
@@ -9690,6 +9691,40 @@ window.FEATURED_ROUTE=Object.freeze({
       navigation:{surface:seed.navigation?.surface||'chart',chartPanel:seed.navigation?.chartPanel||'overview'},
     };
   };
+  window.marvelCreateLegacySelectionBridge=function(readLegacySnapshot){
+    const read=()=>{
+      const source=typeof readLegacySnapshot==='function'&&readLegacySnapshot()||{};
+      const goalIds=uniqueIds(source.goalIds);
+      const hasCurrentId=Object.prototype.hasOwnProperty.call(source,'currentId');
+      const requestedCurrentId=text(source.currentId);
+      const currentId=hasCurrentId?(requestedCurrentId&&goalIds.includes(requestedCurrentId)?requestedCurrentId:null):(goalIds.at(-1)||null);
+      return {inspection:{workId:text(source.inspectionId)},goals:{orderedIds:goalIds,currentId}};
+    };
+    const copy=state=>({inspection:{workId:state.inspection.workId},goals:{orderedIds:[...state.goals.orderedIds],currentId:state.goals.currentId}});
+    const equal=(a,b)=>!!a&&a.inspection.workId===b.inspection.workId&&a.goals.currentId===b.goals.currentId&&a.goals.orderedIds.length===b.goals.orderedIds.length&&a.goals.orderedIds.every((id,index)=>id===b.goals.orderedIds[index]);
+    const listeners=new Set();
+    let previous=null,scheduled=false;
+    const getSnapshot=()=>{const next=read();if(!previous)previous=copy(next);return next;};
+    const publish=()=>{
+      const next=read();
+      if(equal(previous,next))return copy(next);
+      previous=copy(next);
+      const notification=copy(next);
+      listeners.forEach(listener=>{try{listener(notification)}catch(_){}});
+      return copy(next);
+    };
+    const requestPublish=()=>{
+      if(scheduled)return false;
+      scheduled=true;
+      Promise.resolve().then(()=>{scheduled=false;publish();});
+      return true;
+    };
+    const subscribe=listener=>{
+      if(typeof listener!=='function')return ()=>{};
+      listeners.add(listener);return ()=>listeners.delete(listener);
+    };
+    return Object.freeze({getSnapshot,subscribe,publish,requestPublish});
+  };
   window.marvelApplyUiCommand=function(state,command={}){
     const next=window.marvelCreateUiState(state);
     const id=text(command.workId);
@@ -9878,6 +9913,7 @@ window.FEATURED_ROUTE=Object.freeze({
       return false;
     }
     detailFocusId=id; window.marvelDetailFocusId=id;
+    window.marvelLegacyUiBridge?.requestPublish?.();
     renderFocusHighlight(id);
     if(center&&activeSvgHasNode(id))requestAnimationFrame(()=>_origCenterNodeInView(id));
     return true;
@@ -9887,12 +9923,14 @@ window.FEATURED_ROUTE=Object.freeze({
     if(!nm[id])return false;
     if(window.marvelFeaturedRouteAudit?.().active)window.exitFeaturedRoutePreview?.({restore:false});
     legacyGoalSelect(id,true);
+    window.marvelLegacyUiBridge?.requestPublish?.();
     if(detailFocusId)queueFocusPaint();
     return selectedIds.has(id);
   };
 
   window.marvelReturnToGoalView=function(){
     detailFocusId=null; window.marvelDetailFocusId=null;
+    window.marvelLegacyUiBridge?.requestPublish?.();
     if(selectedIds.size)refreshSelection(false);
     else{clearSvg();render();resetPanels();}
     return true;
@@ -9976,6 +10014,27 @@ window.FEATURED_ROUTE=Object.freeze({
     const muted=emptyHint.querySelector('.muted');if(muted)muted.textContent='スマホは作品をタップすると、その作品までの前史・後続をゴール表示します。詳細は下の予習プランから確認できます。';
   }
   window.marvelDetailFocusId=null;
+  window.marvelLegacyUiBridge=window.marvelCreateLegacySelectionBridge(()=>({
+    goalIds:typeof orderedGoalIds==='function'?orderedGoalIds():[],
+    currentId:typeof selected==='string'?selected:null,
+    inspectionId:detailFocusId,
+  }));
+  window.marvelUiCommands=Object.freeze({
+    inspectWork(id,options={}){return window.marvelFocusWork?.(id,options)||false;},
+    clearInspection(){return window.marvelReturnToGoalView?.()||false;},
+    addGoal(id){
+      if(!nm[id])return false;
+      if(selectedIds.has(id)){focusGoal(id);window.marvelLegacyUiBridge?.requestPublish?.();return true;}
+      return !!window.marvelToggleGoal?.(id);
+    },
+    removeGoal(id){return selectedIds.has(id)?!!removeGoal(id):false;},
+    clearGoals(){
+      if(!selectedIds.size)return false;
+      if(typeof window.clearAllGoalsWithUndo==='function'){window.clearAllGoalsWithUndo();return true;}
+      selectedIds=new Set();selected=null;refreshSelection(false);window.marvelLegacyUiBridge?.requestPublish?.();return true;
+    },
+    readSelection(){return window.marvelLegacyUiBridge?.getSnapshot?.()||null;},
+  });
 })();
 
 </script>

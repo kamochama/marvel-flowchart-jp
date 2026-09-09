@@ -95,11 +95,12 @@ return {
 return {
   addGoal: window.marvelUiHistoryPolicy({type:'goal-add'}),
   removeGoal: window.marvelUiHistoryPolicy({type:'goal-remove'}),
+  clearGoals: window.marvelUiHistoryPolicy({type:'goal-clear'}),
   overlay: window.marvelUiHistoryPolicy({type:'overlay-open'}),
 };
 """
         )
-        self.assertEqual(result, {"addGoal": "push", "removeGoal": "push", "overlay": "push"})
+        self.assertEqual(result, {"addGoal": "push", "removeGoal": "push", "clearGoals": "push", "overlay": "push"})
 
     def test_sheet_close_uses_content_provenance(self) -> None:
         result = self._run_node(
@@ -120,6 +121,69 @@ return {derived,explicit,explicitClosed,derivedClosed,mobileExplicitClosed};
         self.assertEqual(result["derivedClosed"]["inspection"], {"workId": None})
         self.assertEqual(result["mobileExplicitClosed"]["overlay"], {"kind": "closed"})
         self.assertEqual(result["mobileExplicitClosed"]["inspection"], {"workId": "A"})
+
+    def test_legacy_selection_bridge_keeps_inspection_and_goal_focus_independent(self) -> None:
+        result = self._run_node(
+            """
+const legacy = {goalIds:['A','B','A'],currentId:'B',inspectionId:'C',surface:'chart',chartPanel:'overview'};
+const bridge = window.marvelCreateLegacySelectionBridge(() => legacy);
+const snapshot = bridge.getSnapshot();
+const before = JSON.parse(JSON.stringify(snapshot));
+snapshot.goals.orderedIds.push('D');
+legacy.goalIds=['A','C']; legacy.currentId='C'; legacy.inspectionId='D';
+return {legacy,before,mutated:snapshot,after:bridge.getSnapshot()};
+"""
+        )
+        self.assertEqual(result["legacy"]["goalIds"], ["A", "C"])
+        self.assertEqual(result["before"]["goals"], {"orderedIds": ["A", "B"], "currentId": "B"})
+        self.assertEqual(result["before"]["inspection"], {"workId": "C"})
+        self.assertEqual(result["mutated"]["goals"]["orderedIds"], ["A", "B", "D"])
+        self.assertEqual(result["after"], {"inspection": {"workId": "D"}, "goals": {"orderedIds": ["A", "C"], "currentId": "C"}})
+
+    def test_legacy_selection_bridge_does_not_apply_facade_goal_reducer(self) -> None:
+        result = self._run_node(
+            """
+const legacy = {goalIds:['A','C'],currentId:'C',inspectionId:null};
+const bridge = window.marvelCreateLegacySelectionBridge(() => legacy);
+const snapshot = bridge.getSnapshot();
+return {snapshot,reduced:window.marvelApplyUiCommand(snapshot,{type:'removeGoal',workId:'C'})};
+"""
+        )
+        self.assertEqual(result["snapshot"]["goals"], {"orderedIds": ["A", "C"], "currentId": "C"})
+        self.assertEqual(result["reduced"]["goals"], {"orderedIds": ["A"], "currentId": "A"})
+
+    def test_legacy_selection_bridge_coalesces_publish_notifications(self) -> None:
+        result = self._run_node(
+            """
+const legacy = {goalIds:['A'],currentId:'A',inspectionId:null};
+const bridge = window.marvelCreateLegacySelectionBridge(() => legacy);
+const seen=[]; const unsubscribe=bridge.subscribe(state=>seen.push(state));
+bridge.requestPublish();
+legacy.goalIds=['A','B']; legacy.currentId='B'; legacy.inspectionId='C';
+bridge.requestPublish();
+await Promise.resolve();
+const after=bridge.getSnapshot();
+unsubscribe(); legacy.goalIds=['A']; legacy.currentId='A'; bridge.requestPublish(); await Promise.resolve();
+return {seen,after};
+"""
+        )
+        self.assertEqual(len(result["seen"]), 1)
+        self.assertEqual(result["seen"][0], {"inspection": {"workId": "C"}, "goals": {"orderedIds": ["A", "B"], "currentId": "B"}})
+        self.assertEqual(result["after"], result["seen"][0])
+
+    def test_legacy_selection_bridge_skips_noop_publish_after_initial_read(self) -> None:
+        result = self._run_node(
+            """
+const legacy = {goalIds:['A'],currentId:'A',inspectionId:null};
+const bridge = window.marvelCreateLegacySelectionBridge(() => legacy);
+bridge.getSnapshot();
+const seen=[]; bridge.subscribe(state=>seen.push(state));
+bridge.requestPublish(); await Promise.resolve();
+legacy.inspectionId='C'; bridge.requestPublish(); await Promise.resolve();
+return {seen};
+"""
+        )
+        self.assertEqual(result["seen"], [{"inspection": {"workId": "C"}, "goals": {"orderedIds": ["A"], "currentId": "A"}}])
 
 
 if __name__ == "__main__":

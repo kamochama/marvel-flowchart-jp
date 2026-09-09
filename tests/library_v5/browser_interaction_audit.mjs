@@ -16,7 +16,7 @@ function usage() {
   return [
     "Usage: node browser_interaction_audit.mjs --root <repo> [--chrome <path>]",
     "",
-    "Runs six real desktop interaction cases against the exported SVG chart:",
+    "Runs seven real desktop interaction cases against the exported SVG chart:",
     "re-click deselection, background clear, drag preservation, two panel round-trips, and side-tab preservation.",
     "",
     "Options:",
@@ -472,6 +472,27 @@ async function runAudit(args) {
       await waitFor(cdp, (state) => state.sideTab === "links" && state.focus.includes(REPRESENTATIVE_WORK), timeoutMs, "links tab focus preservation");
       await clickSelector(cdp, '.side-tab-btn[data-side-tab="works"]', timeoutMs);
       await waitFor(cdp, (state) => state.sideTab === "works" && state.focus.includes(REPRESENTATIVE_WORK), timeoutMs, "works tab focus restoration");
+    }));
+    cases.push(await runCase(cdp, staticServer.url, timeoutMs, "shared-ui-selection-bridge", async () => {
+      const result = await pageEvaluate(cdp, `
+        const api=window.marvelUiCommands;
+        if(!api||typeof api.readSelection!=='function')throw new Error("shared UI command gateway is missing");
+        const before=api.readSelection();
+        if(!api.addGoal(${JSON.stringify(REPRESENTATIVE_WORK)}))throw new Error("goal command was rejected");
+        const goal=api.readSelection();
+        if(!api.inspectWork(${JSON.stringify(CHRONOLOGY_WORK)},{center:false}))throw new Error("inspection command was rejected");
+        const inspected=api.readSelection();
+        if(!api.clearInspection())throw new Error("inspection clear command was rejected");
+        const cleared=api.readSelection();
+        if(!api.removeGoal(${JSON.stringify(REPRESENTATIVE_WORK)}))throw new Error("goal removal command was rejected");
+        const removed=api.readSelection();
+        return {before,goal,inspected,cleared,removed};
+      `);
+      if(JSON.stringify(result.before.goals.orderedIds)!==JSON.stringify([]))throw new Error(`unexpected initial goals: ${JSON.stringify(result.before)}`);
+      if(JSON.stringify(result.goal.goals.orderedIds)!==JSON.stringify([REPRESENTATIVE_WORK])||result.goal.goals.currentId!==REPRESENTATIVE_WORK)throw new Error(`goal state was not projected: ${JSON.stringify(result.goal)}`);
+      if(JSON.stringify(result.inspected.goals)!==JSON.stringify(result.goal.goals)||result.inspected.inspection.workId!==CHRONOLOGY_WORK)throw new Error(`inspection mutated goals: ${JSON.stringify(result.inspected)}`);
+      if(JSON.stringify(result.cleared.goals)!==JSON.stringify(result.goal.goals)||result.cleared.inspection.workId!==null)throw new Error(`inspection clear changed goals: ${JSON.stringify(result.cleared)}`);
+      if(JSON.stringify(result.removed.goals)!==JSON.stringify({orderedIds:[],currentId:null})||result.removed.inspection.workId!==null)throw new Error(`goal removal did not settle: ${JSON.stringify(result.removed)}`);
     }));
   } finally {
     cdp?.close();

@@ -100,7 +100,7 @@ class BrowserInteractionAuditTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = json.loads(result.stdout.strip().splitlines()[-1])
-        self.assertEqual(report["summary"], {"cases": 6, "failures": 0})
+        self.assertEqual(report["summary"], {"cases": 7, "failures": 0})
 
 
 if __name__ == "__main__":
