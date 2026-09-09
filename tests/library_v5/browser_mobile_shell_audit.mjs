@@ -147,6 +147,19 @@ async function launchChrome(chromePath, timeoutMs) {
   }
 }
 
+async function launchChromeWithRetries(chromePath, timeoutMs, attempts = 3) {
+  let lastError = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await launchChrome(chromePath, timeoutMs);
+    } catch (error) {
+      lastError = error;
+      if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+  }
+  throw lastError || new Error("Chrome launch failed");
+}
+
 async function stopChrome(processInfo) {
   const child = processInfo?.child;
   if (child && child.exitCode === null && !child.killed) {
@@ -417,7 +430,7 @@ async function runAudit(args) {
     failures,
   };
   try {
-    chromeProcess = await launchChrome(chrome, timeoutMs);
+    chromeProcess = await launchChromeWithRetries(chrome, timeoutMs);
     cdp = new CdpClient(chromeProcess.webSocketDebuggerUrl);
     await cdp.connect();
     await cdp.send("Page.enable");

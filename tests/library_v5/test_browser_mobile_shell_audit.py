@@ -121,6 +121,11 @@ class BrowserMobileShellAuditTests(unittest.TestCase):
             self.assertIn(field, source)
         self.assertIn("JSON.stringify(report)", source)
 
+    def test_runner_retries_transient_chrome_target_startup(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("launchChromeWithRetries", source)
+        self.assertIn("attempts = 3", source)
+
     def test_chrome_discovery_honors_existing_configured_path(self) -> None:
         with tempfile.NamedTemporaryFile() as chrome:
             with mock.patch.dict(os.environ, {"MARVEL_CHROME_BIN": chrome.name}):
