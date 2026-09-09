@@ -1,7 +1,7 @@
 # Marvel Flowchart JP — PC／モバイルUI統合設計
 
 作成日: 2026-09-09  
-状態: ChatGPTレビュー反映・再レビュー待ち
+状態: ChatGPT再レビュー反映・最終レビュー待ち
 対象: PC版とモバイル版の表示層・操作状態・ナビゲーション設計  
 関連仕様: `docs/superpowers/specs/2026-09-04-marvel-mobile-ui-redesign-design.md`
 
@@ -29,7 +29,7 @@ PR #75／#76で、モバイルには「チャート・探す・予習」の専�
 
 次の設計上の残差を解消する。
 
-- PCの閲覧対象とモバイルのゴール選択は異なる操作であり、`selectedId`一つへ統合してはならない。
+- PC・モバイルとも閲覧対象とゴール選択は異なる操作であり、`selectedId`一つへ統合してはならない。
 - 詳細シートは実データを表示するが、理由・設定の内容と制御は一つのシートへ統合されていない。
 - `mobileAreaSheet`と詳細シートが別系統で、表示切替と詳細表示のライフサイクルが二重になっている。
 - ゴール解除ボタンのCSS指定が38pxであり、可視操作全数の44px監査が必要である。
@@ -80,7 +80,7 @@ ViewerApp
 ### 5.1 再利用する既存要素
 
 - `NODES`、`nm`、`inc/out`、理由・人物データはRepositoryAdapterから読み取る。別の作品辞書を作らない。
-- `selectedIds`、`selected`、既存の選択APIはDomainAdapterだけが更新する。新UIから直接変更しない。新UIは`inspectWork`、`clearInspection`、`addGoal`、`removeGoal`、`clearGoals`のコマンドを使い、互換層が必要な期間だけ旧`selectedIds`へ投影する。
+- `selectedIds`、`selected`、既存の選択APIはDomainAdapterだけが更新する。新UIから直接変更しない。新UIは`inspectWork`、`clearInspection`、`addGoal`、`removeGoal`、`clearGoals`のコマンドを使い、互換層が必要な期間も旧`selectedIds`へ投影するのはgoal系コマンドだけとする。
 - 閲覧対象の点灯は`inspection.workId`をHighlightAdapterへ渡す単一作品フォーカスとして扱い、`goals.orderedIds`の変更を伴わない。ゴール点灯は従来どおりPlan／Highlightのゴール派生結果で扱う。
 - 既存の点灯・tier・予習計算はHighlightAdapter／PlanAdapterから呼び、意味論を再実装しない。
 - `.panel`、`.svg-wrap`、既存SVG、CanvasキャッシュはChartHostが所有し、PC／モバイルで複製しない。
@@ -94,7 +94,7 @@ ViewerApp
 
 | 状態 | 不変条件 | 保存先 |
 | --- | --- | --- |
-| `inspection.workId` | 閲覧中／チャートでフォーカス中の作品。ゴールでなくてもよい | 必要時にURL／履歴 |
+| `inspection.workId` | 閲覧中／チャートでフォーカス中の作品。ゴールでなくてもよい | URL＋履歴（null時はURLから除去） |
 | `goals.orderedIds` | 重複なし、順序あり | URL |
 | `goals.currentId` | `orderedIds`の要素またはnull | URL |
 | `navigation.surface` | `chart`／`search`／`plan` | URL |
@@ -135,6 +135,9 @@ overlay =
 | surface変更、ゴール追加／解除、overlay新規open | `pushState` | Backで直前の意味状態へ戻れる単位 |
 | 検索入力、filter変更、同一detail内のA→B、URL正規化、カメラ／スクロールsnapshot | `replaceState` | 入力1文字・1px移動で履歴を増やさない |
 | `popstate`適用中 | 書き込みなし | 到着したsnapshotをそのままhydrateする |
+| チャート内の閲覧フォーカス変更／再クリック解除 | `replaceState` | A→B→Cの閲覧だけで履歴を増やさない。`inspection.workId`をURLへ反映する |
+| surface遷移を伴う「チャートで見る」 | `pushState` | 新entryに遷移先surfaceと`inspection.workId`を含める |
+| `goals.currentId`だけの切替 | `replaceState` | ゴール集合を変えず、現在位置だけ更新する |
 | in-appで作ったoverlayのclose | `history.back()` | 親entryが明確な場合のみ |
 | 直接リンク初期entryのoverlay close | `replaceState`でclosed | 外部ページへ意図せず戻らない |
 
@@ -151,7 +154,7 @@ overlay =
 - 複数ゴールはチャート上部の要約帯に表示し、個別解除と全解除を区別する。
 - OR／AND／PATHは複数ゴール時の追加設定としてまとめる。
 - ズーム・全体表示・選択へ戻るはチャート内の固定位置に置き、詳細開閉では自動fitしない。
-- 予習ワークスペースはページフローに残し、チャートからスクロールで到達できる。戻る操作は直前のパネル、カメラ、選択を復元する。
+- 予習ワークスペースはページフローに残し、チャートからスクロールで到達できる。戻る操作は直前のパネル、カメラ、inspectionを復元する。
 
 PCの5表示モードと共通状態の対応は次のとおりとする。
 
@@ -163,7 +166,7 @@ PCの5表示モードと共通状態の対応は次のとおりとする。
 | この作品を見るなら | `surface=plan`（`watchWorkspace`） |
 | 人物・組織 | `surface=chart, chartPanel=characters` |
 
-`surface=search`はPCでは検索結果を主領域またはSheetHostのdocked右ペインに表示し、チャートパネルを変更しない。幅をまたいでもsemantic stateは保持し、`surface=plan`はPC④、モバイル「予習」へ、`surface=chart`は`chartPanel`に対応する表示へ写像する。
+`surface=search`はPCでも検索結果を主領域に固定し、チャートパネルやSheetHostのcontentを変更しない。幅をまたいでもsemantic stateは保持し、`surface=plan`はPC④、モバイル「予習」へ、`surface=chart`は`chartPanel`に対応する表示へ写像する。
 
 PCの作品クリックは`inspection.workId`だけを変更する。ゴール追加／解除は明示ボタンから行い、右クリックは補助操作に限定する。同じ作品の再クリックは閲覧フォーカスだけを解除し、ゴールを解除しない。背景クリックも`inspection.workId=null`だけを行い、全ゴール解除は独立ボタンからのみ実行する。これは既存の「再クリックでゴール解除」契約を意図的に置き換えるため、旧契約テストは削除せず、移行を示す新RED／GREENへ置き換える。
 
@@ -198,8 +201,22 @@ PCの作品クリックは`inspection.workId`だけを変更する。ゴール�
 
 PC／モバイルの切替でも破棄されない唯一のSheetHostを設け、`mobileAreaSheet`を含む表示切替、詳細、理由、設定を同じ制御下へ移す。PC右ペインは別のdetail所有者ではなく、SheetHostの`docked` presentationである。モバイルでは同じ内容を`modal` bottom sheetとして描画する。
 
+履歴上の`overlay`と、表示層が実際に描画する内容は次で一意に決める。
+
+```text
+effectiveSheetContent =
+  overlay.kind !== "closed" ? overlay
+  : (presentation === "docked" && inspection.workId !== null
+      ? { kind: "detail", workId: inspection.workId }
+      : { kind: "closed" })
+```
+
+したがって、PCで`overlay=closed`かつ`inspection.workId=C`なら、docked SheetHostにはCのdetail要約を表示する。明示的なdetail／reason／settings overlayはinspectionより優先し、close後はinspection由来のdocked detailへ戻る。モバイルではinspectionの変更だけでmodalを自動openせず、detail表示は明示操作から行う。検索結果は`surface=search`の主領域に固定し、SheetHostの`search`表示は設けない。
+
+dockedの閉じる操作は`clearInspection`として扱い、modalの閉じる操作は`overlay={ kind: "closed" }`として扱う。明示overlayを閉じた後にinspectionが残っていれば、PCではその作品のdocked detailへ戻る。
+
 - `detail`: 作品ID、邦題・英題、公開情報、登録済み詳細、ゴール操作、公式ソース、チャート移動。
-- `reason`: source／target／reason ID、既存の関係種別と根拠。時系列隣接から理由を生成しない。
+- `reason`: canonical relationId、source／target、既存の関係種別と根拠。時系列隣接から理由を生成しない。
 - `settings`: 表示パネル、公開2プラン、既存の複数ゴール設定、凡例。内部専用の公式ルート選択は公開しない。
 
 シートは`closed | detail | reason | settings`のいずれか一つで、`docked`と`modal`の表示モードを持つ。`modal`時だけ`aria-modal`、フォーカストラップ、backdrop、背景`inert`、背景スクロール固定を有効にする。`docked`時は常設Inspectorとして扱い、`aria-modal`、backdrop、focus trapを付けない。両方ともEscape、明示閉じる、起点復帰を実装する。シート内で対象作品をAからBへ変える操作は、同一detailの内容更新として扱い、`replaceState`で不要な履歴を増やさない。ブラウザ戻る／進むでは到着した履歴をそのまま適用し、履歴を書き換えない。
@@ -242,7 +259,8 @@ backdrop closeは、`pointerdown`と`pointerup`の両方がbackdrop自身だっ�
 
 - 第1段階は既存の`760px`境界を維持する。
 - `761–980px`はコンパクトPCとして右ペインを必要時に開き、`981px`以上はチャート＋右ペインを基本とする。
-- Shell判定はCSS、JavaScript、ブラウザ監査で同じcanonical predicateを使う。`shortSide=min(innerWidth,innerHeight)`、`longSide=max(...)`、`coarse=matchMedia('(pointer: coarse)').matches`として、`mobileShell = innerWidth <= 760 || (shortSide <= 760 && coarse && longSide <= 1280)`、それ以外では`761–980`をcompact PC、`981`以上をPCとする。UA文字列へ依存しない。
+- Shell判定はCSS、JavaScript、ブラウザ監査で同じcanonical predicateを使う。キーボードで変動する`innerHeight`／`visualViewport.height`は判定に使わず、安定した`layoutWidth=document.documentElement.clientWidth`、`screenShortSide=min(screen.width,screen.height)`、`screenLongSide=max(screen.width,screen.height)`、`coarse=matchMedia('(pointer: coarse)').matches`、`orientation=screen.orientation.type`を使う。`mobileShell = layoutWidth <= 760 || (screenShortSide <= 760 && coarse && screenLongSide <= 1280)`、それ以外では`761–980`をcompact PC、`981`以上をPCとする。UA文字列へ依存しない。
+- 初期化時と本当のorientation／layout width変更時だけShellを再評価し、ソフトウェアキーボードによるvisual viewport高さ変更では`<html data-shell="mobile|compact|desktop">`を変更しない。CSSはこの`data-shell`だけを表示切替の正本とする。
 - 期待値は`390×844=mobile`、`844×390=mobile`、`760×844=mobile`、`761×844=compact PC`、`980×844=compact PC`、`981×844=PC`と固定する。タッチ主体の横向き端末でもPCとモバイルのshellを同時表示しない。
 - 390×844では上部バー、主領域、下部ナビをsafe-area込みで配置する。多重な固定`dvh`計算を増やさない。
 - すべてのボタン、ゴール解除、閉じる、チェックラベルを実測44px以上にする。
@@ -258,9 +276,9 @@ backdrop closeは、`pointerdown`と`pointerup`の両方がbackdrop自身だっ�
 | PC作品クリック | `inspection.workId` | ゴール、tier、カメラ |
 | モバイル作品タップ | `inspection.workId`（同一作品なら`null`） | ゴール、tier、カメラ |
 | ゴールに追加／解除 | `goals.orderedIds/currentId` | 閲覧対象、検索条件 |
-| チャート→探す／予習 | `navigation.surface` | 選択、ゴール、tier、カメラ |
+| チャート→探す／予習 | `navigation.surface` | inspection、ゴール、tier、カメラ |
 | 予習→チャート | `navigation.surface` | 予習位置、ゴール、直前カメラ |
-| 詳細／理由／設定 | `overlay` | 背後の画面・選択・ゴール |
+| 詳細／理由／設定 | `overlay` | 背後の画面・inspection・ゴール |
 | 戻る／進む | 履歴スナップショット全体 | 新しい履歴を作らない |
 
 ゴール削除時に`goals.currentId`を削除した場合は、同じ`orderedIds`の直前要素、なければ次要素、どちらもなければ`null`の順で決定する。この規則はPC・モバイル・履歴復元で共通とする。
@@ -281,7 +299,7 @@ backdrop closeは、`pointerdown`と`pointerup`の両方がbackdrop自身だっ�
 
 ### Phase 0 — 現状固定
 
-PC閲覧・ゴール、検索→チャート、履歴、境界幅の観測契約を追加する。特に、(a)ゴール`[A,B]`を保持したまま作品Cの詳細を開いて`inspection`だけが変わる、(b)「チャートで見る」は`inspection`だけ、「ゴールに追加」は`goals`だけを変える、(c)旧再クリック＝ゴール解除契約を意図的に置き換える、のRED／GREENを先に固定する。テスト追加のみで、失敗時のロールバック境界はテストコミットとする。
+PC閲覧・ゴール、検索→チャート、履歴、境界幅の観測契約を追加する。特に、(a)ゴール`[A,B]`を保持したまま作品Cの詳細を開いて`inspection`だけが変わる、(b)「チャートで見る」は`inspection`だけ、「ゴールに追加」は`goals`だけを変える、(c)旧再クリック＝ゴール解除契約を意図的に置き換える、(d)同一surface内のA→B→B再クリックは`replaceState`で履歴長を増やさず、検索C→「チャートで見る」は`pushState`でsurfaceとinspectionを保存する、のRED／GREENを先に固定する。テスト追加のみで、失敗時のロールバック境界はテストコミットとする。
 
 ### Phase 1 — 共通API境界
 
@@ -293,7 +311,7 @@ tier／panel、直接リンク、戻る／進む、シート対象、カメラ�
 
 ### Phase 3 — 単一シート
 
-二重モーダル禁止、detail／reason／settingsの実内容、38px解除修正、対象変更、フォーカス復帰、背景伝播防止を実装する。docked PCでは`aria-modal`／focus trap／backdropなし、modal mobileでは`inert`／scroll lock／focus trapありを監査する。backdropはpointerdown／pointerupの両方がbackdrop自身の場合だけ閉じる。
+二重モーダル禁止、detail／reason／settingsの実内容、38px解除修正、対象変更、フォーカス復帰、背景伝播防止を実装する。`overlay=closed, inspection=A`のPCではdocked detail A、reason/settings open時はoverlay内容、close後はdetail Aへ戻ることをRED化する。モバイルではinspectionだけでmodalを自動openしない。docked PCでは`aria-modal`／focus trap／backdropなし、modal mobileでは`inert`／scroll lock／focus trapありを監査する。backdropはpointerdown／pointerupの両方がbackdrop自身の場合だけ閉じる。
 
 ### Phase 4 — 検索・予習更新
 
@@ -301,7 +319,7 @@ tier／panel、直接リンク、戻る／進む、シート対象、カメラ�
 
 ### Phase 5 — PC・境界・横向き
 
-5表示と`surface/chartPanel`対応、右ペイン、中間幅、横向き、タッチ主体PCを監査し、canonical predicate、シェル二重表示、カメラ・ゴール・active panelの消失を防ぐ。390×844、844×390、760、761、980、981の全ケースを対象にする。
+5表示と`surface/chartPanel`対応、右ペイン、中間幅、横向き、タッチ主体PCを監査し、canonical predicate、シェル二重表示、カメラ・ゴール・active panelの消失を防ぐ。390×844、844×390、760、761、980、981の全ケースに加え、761–1280pxのcoarse端末で入力フォーカス後にvisual viewport高さだけを縮めても`data-shell`、focus、surface、camera、goalsが不変であることを確認する。
 
 ### Phase 6 — 旧層撤去と統合
 
