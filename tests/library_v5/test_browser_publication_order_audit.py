@@ -7,6 +7,8 @@ import subprocess
 import unittest
 from pathlib import Path
 
+from tests.library_v5.browser_audit_process import run_audit_process
+
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNNER = ROOT / "tests" / "library_v5" / "browser_publication_order_audit.mjs"
@@ -87,6 +89,13 @@ def _chrome_path() -> str | None:
 
 
 class BrowserPublicationOrderAuditTests(unittest.TestCase):
+    def test_python_wrapper_uses_bounded_process_tree_cleanup(self) -> None:
+        source = (ROOT / "tests" / "library_v5" / "test_browser_publication_order_audit.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("run_audit_process", source)
+        self.assertIn("TimeoutExpired", source)
+
     def test_ci_declares_publication_order_audit_after_chronology(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
         chronology = workflow.index("  browser-chronology-audit:")
@@ -308,24 +317,26 @@ class BrowserPublicationOrderAuditTests(unittest.TestCase):
             chrome,
             "Chrome/Chromium is required when MARVEL_BROWSER_PUBLICATION_ORDER_AUDIT=1",
         )
-        result = subprocess.run(
-            [
-                "node",
-                str(RUNNER),
-                "--root",
-                str(ROOT),
-                "--chrome",
-                str(chrome),
-                "--timeout-ms",
-                "8000",
-            ],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            timeout=240,
-            check=False,
-        )
+        try:
+            result = run_audit_process(
+                [
+                    "node",
+                    str(RUNNER),
+                    "--root",
+                    str(ROOT),
+                    "--chrome",
+                    str(chrome),
+                    "--timeout-ms",
+                    "8000",
+                ],
+                cwd=ROOT,
+                timeout=240,
+            )
+        except subprocess.TimeoutExpired as error:
+            self.fail(
+                f"publication-order harness timed out after {error.timeout}s; "
+                f"partial stdout={error.output!r}; partial stderr={error.stderr!r}"
+            )
         report = _parse_report(result.stdout)
         print(_summary_line(report), flush=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

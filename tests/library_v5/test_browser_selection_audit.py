@@ -16,6 +16,7 @@ RUNNER = ROOT / "tests" / "library_v5" / "browser_selection_audit.mjs"
 WORKFLOW = ROOT / ".github" / "workflows" / "library-v5-ci.yml"
 
 from tests.library_v5.selection_audit_oracle import SelectionAuditOracle
+from tests.library_v5.browser_audit_process import run_audit_process
 
 
 def _chrome_path() -> str | None:
@@ -100,6 +101,13 @@ class BrowserSelectionAuditTests(unittest.TestCase):
         self.assertIn("maxRetries: CHROME_PROFILE_CLEANUP_RETRIES", source)
         self.assertIn("retryDelay:", source)
 
+    def test_python_wrapper_uses_bounded_process_tree_cleanup(self) -> None:
+        source = (ROOT / "tests" / "library_v5" / "test_browser_selection_audit.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("run_audit_process", source)
+        self.assertIn("TimeoutExpired", source)
+
     @unittest.skipUnless(
         os.environ.get("MARVEL_BROWSER_AUDIT") == "1",
         "set MARVEL_BROWSER_AUDIT=1 to run the real headless DOM audit",
@@ -113,23 +121,26 @@ class BrowserSelectionAuditTests(unittest.TestCase):
                 json.dumps(_expected_payload(), ensure_ascii=False, sort_keys=True),
                 encoding="utf-8",
             )
-            result = subprocess.run(
-                [
-                    "node",
-                    str(RUNNER),
-                    "--root",
-                    str(ROOT),
-                    "--expected",
-                    str(expected_path),
-                    "--chrome",
-                    str(chrome),
-                ],
-                cwd=ROOT,
-                capture_output=True,
-                text=True,
-                timeout=180,
-                check=False,
-            )
+            try:
+                result = run_audit_process(
+                    [
+                        "node",
+                        str(RUNNER),
+                        "--root",
+                        str(ROOT),
+                        "--expected",
+                        str(expected_path),
+                        "--chrome",
+                        str(chrome),
+                    ],
+                    cwd=ROOT,
+                    timeout=180,
+                )
+            except subprocess.TimeoutExpired as error:
+                self.fail(
+                    f"browser selection harness timed out after {error.timeout}s; "
+                    f"partial stdout={error.output!r}; partial stderr={error.stderr!r}"
+                )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = json.loads(result.stdout.strip().splitlines()[-1])
         self.assertEqual(report["summary"], {

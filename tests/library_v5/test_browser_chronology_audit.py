@@ -4,9 +4,10 @@ import json
 import os
 import shutil
 import subprocess
-import tempfile
 import unittest
 from pathlib import Path
+
+from tests.library_v5.browser_audit_process import run_audit_process
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -34,6 +35,13 @@ def _chrome_path() -> str | None:
 
 
 class BrowserChronologyAuditTests(unittest.TestCase):
+    def test_python_wrapper_uses_bounded_process_tree_cleanup(self) -> None:
+        source = (ROOT / "tests" / "library_v5" / "test_browser_chronology_audit.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("run_audit_process", source)
+        self.assertIn("TimeoutExpired", source)
+
     def test_ci_declares_dedicated_chronology_audit_after_interaction(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
         interaction = workflow.index("  browser-interaction-audit:")
@@ -180,14 +188,16 @@ class BrowserChronologyAuditTests(unittest.TestCase):
     def test_headless_chronology_contract(self) -> None:
         chrome = _chrome_path()
         self.assertIsNotNone(chrome, "Chrome/Chromium is required when MARVEL_BROWSER_CHRONOLOGY_AUDIT=1")
-        with tempfile.TemporaryDirectory(prefix="marvel-browser-chronology-") as temp_dir:
-            result = subprocess.run(
+        try:
+            result = run_audit_process(
                 ["node", str(RUNNER), "--root", str(ROOT), "--chrome", str(chrome)],
                 cwd=ROOT,
-                capture_output=True,
-                text=True,
                 timeout=180,
-                check=False,
+            )
+        except subprocess.TimeoutExpired as error:
+            self.fail(
+                f"chronology harness timed out after {error.timeout}s; "
+                f"partial stdout={error.output!r}; partial stderr={error.stderr!r}"
             )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         try:
