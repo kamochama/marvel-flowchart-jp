@@ -8747,7 +8747,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       store.setSearch(parsed.query);store.setFilter(parsed.filter);
       syncMobileSearchControls(parsed);
       setMobileView(parsed.view,{pushHistory:false});
-      applyMobileHistorySnapshot(window.history.state?.viewerNavigation?.snapshot?.mobile);
+      if(fromPopstate)applyMobileHistorySnapshot(window.history.state?.viewerNavigation?.snapshot?.mobile);
       if(parsed.sheet!=='closed'&&(current.sheet!==parsed.sheet||current.sheetWork!==parsed.sheetWork)){
         const previousSuppression=suppressMobileSheetHistory;suppressMobileSheetHistory=true;
         openMobileSheet(parsed.sheet,parsed.sheetWork);
