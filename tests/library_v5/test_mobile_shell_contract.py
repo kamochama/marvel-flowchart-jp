@@ -193,6 +193,17 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("tier-change", tier_body)
         self.assertIn("writeMobileUrlState", tier_body)
 
+    def test_mobile_history_snapshot_tracks_scroll_without_new_entries(self) -> None:
+        snapshot_body = function_body(self.source, "readMobileHistorySnapshot")
+        scroll_body = function_body(self.source, "mobileHistoryScrollPosition")
+        apply_body = function_body(self.source, "applyMobileHistorySnapshot")
+        self.assertIn("mobileHistoryScrollPosition", snapshot_body)
+        self.assertIn("scrollX", scroll_body)
+        self.assertIn("scrollY", scroll_body)
+        self.assertIn("restoreMobileHistoryScroll", apply_body)
+        self.assertIn("scheduleMobileHistoryScrollSnapshot", self.source)
+        self.assertIn("scroll-snapshot", self.source)
+
     def test_mobile_url_reapplies_sheet_work_when_kind_is_unchanged(self) -> None:
         body = function_body(self.source, "applyMobileUrlState")
         self.assertRegex(body, r"const current=store\.getState\(\)")
@@ -529,7 +540,7 @@ class MobileShellContractTests(unittest.TestCase):
         runner = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
         self.assertTrue(runner.is_file(), "M3 browser runner must exist")
         source = runner.read_text(encoding="utf-8")
-        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "plan", "mobilePlanSnapshot", "data-mobile-plan-summary", "data-mobile-plan-watched", "data-mobile-plan-detail", "data-mobile-plan-remove-goal", "sheetBodyText", "layout", "mobilePrepJump", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select", "firstCardInViewport", "legacyQuerySync"):
+        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "plan", "mobilePlanSnapshot", "data-mobile-plan-summary", "data-mobile-plan-watched", "data-mobile-plan-detail", "data-mobile-plan-remove-goal", "sheetBodyText", "layout", "mobilePrepJump", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select", "firstCardInViewport", "legacyQuerySync", "scrollY", "historySnapshot"):
             self.assertIn(token, source)
         self.assertIn("mobileAreaSheet", source)
         self.assertIn('data-mobile-target="release"', source)

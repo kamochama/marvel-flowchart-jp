@@ -177,10 +177,15 @@ return {
   overlayClose: window.marvelUiHistoryPolicy({type:'overlay-close'}),
   searchInput: window.marvelUiHistoryPolicy({type:'search-input'}),
   urlHydrate: window.marvelUiHistoryPolicy({type:'url-hydrate'}),
+  scrollSnapshot: window.marvelUiHistoryPolicy({type:'scroll-snapshot'}),
 };
 """
         )
-        self.assertEqual(result, {"overlayClose": "replace", "searchInput": "replace", "urlHydrate": "replace"})
+        self.assertEqual(result, {"overlayClose": "replace", "searchInput": "replace", "urlHydrate": "replace", "scrollSnapshot": "replace"})
+        facade = INDEX.read_text(encoding="utf-8")
+        policy_start = facade.index("window.marvelUiHistoryPolicy=function")
+        policy_end = facade.index("window.marvelCreateUiHistoryWriter=function", policy_start)
+        self.assertIn("scroll-snapshot", facade[policy_start:policy_end])
 
     def test_sheet_close_uses_content_provenance(self) -> None:
         result = self._run_node(

@@ -8078,6 +8078,8 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   let mobileSheetHistoryEntryId=null;
   let mobileSheetBackPending=false;
   let mobileHistoryApplyDepth=0;
+  let mobileHistoryScrollSnapshotTimer=0;
+  let mobileHistoryScrollRestoreDepth=0;
   let mobileNavigationEntryCounter=0;
   const mobileChartPanelOrigins=new Map();
   let mobileChartMountedPanel=null;
@@ -8102,6 +8104,44 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   function createMobileNavigationEntryId(){
     mobileNavigationEntryCounter+=1;
     return `mobile-${Date.now().toString(36)}-${mobileNavigationEntryCounter}`;
+  }
+  function mobileHistoryScrollValue(value){
+    const number=Number(value);
+    return Number.isFinite(number)&&number>0?Math.round(number):0;
+  }
+  function mobileHistoryScrollPosition(){
+    const scrolling=document.scrollingElement||document.documentElement;
+    return {
+      scrollX:mobileHistoryScrollValue(window.scrollX??scrolling?.scrollLeft),
+      scrollY:mobileHistoryScrollValue(window.scrollY??scrolling?.scrollTop),
+    };
+  }
+  function restoreMobileHistoryScroll(snapshot){
+    const next=snapshot&&typeof snapshot==='object'?snapshot:{};
+    const scrollX=mobileHistoryScrollValue(next.scrollX);
+    const scrollY=mobileHistoryScrollValue(next.scrollY);
+    mobileHistoryScrollRestoreDepth+=1;
+    const frame=callback=>typeof requestAnimationFrame==='function'?requestAnimationFrame(callback):setTimeout(callback,0);
+    frame(()=>frame(()=>{
+      try{window.scrollTo({left:scrollX,top:scrollY,behavior:'auto'});}catch(_){window.scrollTo(scrollX,scrollY);}
+      frame(()=>{mobileHistoryScrollRestoreDepth=Math.max(0,mobileHistoryScrollRestoreDepth-1);});
+    }));
+    return {scrollX,scrollY};
+  }
+  function scheduleMobileHistoryScrollSnapshot(){
+    if(!mobileChartMotion.matches||mobileHistoryApplying()||mobileHistoryScrollRestoreDepth>0||mobileHistoryScrollSnapshotTimer)return false;
+    const flush=()=>{
+      mobileHistoryScrollSnapshotTimer=0;
+      if(!mobileChartMotion.matches||mobileHistoryApplying()||mobileHistoryScrollRestoreDepth>0)return;
+      writeMobileUrlState({replace:true,action:'scroll-snapshot'});
+    };
+    mobileHistoryScrollSnapshotTimer=setTimeout(flush,0);
+    return true;
+  }
+  function cancelMobileHistoryScrollSnapshot(){
+    if(!mobileHistoryScrollSnapshotTimer)return;
+    clearTimeout(mobileHistoryScrollSnapshotTimer);
+    mobileHistoryScrollSnapshotTimer=0;
   }
 
   function ensureMobileShell(){
@@ -8570,7 +8610,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const rawTier=window.marvelGetConnectionTier?.()||'site-proposal';
     const allowedTiers=new Set(['site-proposal','complete','official','minimum','recommended']);
     const prepTier=allowedTiers.has(rawTier)?rawTier:'site-proposal';
-    return {panelId,prepTier};
+    return {panelId,prepTier,...mobileHistoryScrollPosition()};
   }
 
   function applyMobileHistorySnapshot(snapshot){
@@ -8585,7 +8625,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(typeof window.activatePanel==='function'&&window.currentPanelId?.()!==panelId){
       window.activatePanel(panelId,{fit:false,restoreSelection:true});
     }
-    return {panelId,prepTier};
+    return {panelId,prepTier,...restoreMobileHistoryScroll(next)};
   }
 
   function syncMobileSearchStateFromControls(){
@@ -8620,6 +8660,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   }
 
   function writeMobileUrlState({replace=false,action=null}={}){
+    cancelMobileHistoryScrollSnapshot();
     if(mobileHistoryApplying())return false;
     const state=mobileUiStore()?.getState();
     if(!state)return false;
@@ -8789,6 +8830,11 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   mobileChartMotion.addEventListener?.('change',()=>requestAnimationFrame(syncMobileChartForViewport));
   const initializeMobileShell=()=>{
     ensureMobileShell();
+    if(!window.__mobileHistoryScrollWired){
+      window.addEventListener('scroll',scheduleMobileHistoryScrollSnapshot,{passive:true});
+      document.addEventListener('scroll',scheduleMobileHistoryScrollSnapshot,{passive:true,capture:true});
+      window.__mobileHistoryScrollWired=true;
+    }
     document.getElementById('q')?.addEventListener('input',syncMobileSearchStateFromControls);
     document.getElementById('branch')?.addEventListener('change',syncMobileSearchStateFromControls);
     document.getElementById('character')?.addEventListener('change',syncMobileSearchStateFromControls);
@@ -9874,6 +9920,7 @@ window.FEATURED_ROUTE=Object.freeze({
   window.marvelUiHistoryPolicy=function(action={}){
     if(action.type==='popstate-apply')return 'none';
     if(['surface-transition','goal-add','goal-remove','goal-clear','overlay-open'].includes(action.type))return 'push';
+    if(['inspection-focus','goal-focus','overlay-close','search-input','url-hydrate','scroll-snapshot'].includes(action.type))return 'replace';
     return 'replace';
   };
   window.marvelCreateUiHistoryWriter=function(historyTarget=window.history){
