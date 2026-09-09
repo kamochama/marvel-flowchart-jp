@@ -9,6 +9,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
+from tests.library_v5.browser_audit_process import run_audit_process
+
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNNER = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
@@ -136,6 +138,13 @@ class BrowserMobileShellAuditTests(unittest.TestCase):
         self.assertIn("launchChromeWithRetries", source)
         self.assertIn("attempts = 3", source)
 
+    def test_python_wrapper_retries_only_outer_process_timeouts(self) -> None:
+        source = (ROOT / "tests" / "library_v5" / "test_browser_mobile_shell_audit.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("run_audit_process", source)
+        self.assertIn("TimeoutExpired", source)
+
     def test_runner_closes_static_server_with_keepalive_guard(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         self.assertIn("async function closeStaticServer(server)", source)
@@ -214,7 +223,7 @@ class BrowserMobileShellAuditTests(unittest.TestCase):
             "Chrome/Chromium is required when MARVEL_BROWSER_MOBILE_SHELL_AUDIT=1",
         )
         try:
-            result = subprocess.run(
+            result = run_audit_process(
                 [
                     "node",
                     str(RUNNER),
@@ -226,11 +235,7 @@ class BrowserMobileShellAuditTests(unittest.TestCase):
                     "8000",
                 ],
                 cwd=ROOT,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
                 timeout=240,
-                check=False,
             )
         except subprocess.TimeoutExpired as error:
             self.fail(_format_timeout_diagnostic(error))

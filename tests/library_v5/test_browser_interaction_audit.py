@@ -4,9 +4,10 @@ import json
 import os
 import shutil
 import subprocess
-import tempfile
 import unittest
 from pathlib import Path
+
+from tests.library_v5.browser_audit_process import run_audit_process
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -67,6 +68,13 @@ class BrowserInteractionAuditTests(unittest.TestCase):
         self.assertIn("commandTimeoutMs", source)
         self.assertIn("runAuditWithRetries", source)
 
+    def test_python_wrapper_retries_only_outer_process_timeouts(self) -> None:
+        source = (ROOT / "tests" / "library_v5" / "test_browser_interaction_audit.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("run_audit_process", source)
+        self.assertIn("TimeoutExpired", source)
+
     def test_runner_retries_only_explicit_harness_timeout_reports(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         self.assertIn("retryable", source)
@@ -104,8 +112,8 @@ class BrowserInteractionAuditTests(unittest.TestCase):
     def test_headless_interactions_preserve_selection_contract(self) -> None:
         chrome = _chrome_path()
         self.assertIsNotNone(chrome, "Chrome/Chromium is required when MARVEL_BROWSER_INTERACTION_AUDIT=1")
-        with tempfile.TemporaryDirectory(prefix="marvel-browser-interaction-") as temp_dir:
-            result = subprocess.run(
+        try:
+            result = run_audit_process(
                 [
                     "node",
                     str(RUNNER),
@@ -115,10 +123,12 @@ class BrowserInteractionAuditTests(unittest.TestCase):
                     str(chrome),
                 ],
                 cwd=ROOT,
-                capture_output=True,
-                text=True,
                 timeout=180,
-                check=False,
+            )
+        except subprocess.TimeoutExpired as error:
+            self.fail(
+                f"browser interaction harness timed out after {error.timeout}s; "
+                f"partial stdout={error.output!r}; partial stderr={error.stderr!r}"
             )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = json.loads(result.stdout.strip().splitlines()[-1])
