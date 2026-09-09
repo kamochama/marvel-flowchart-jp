@@ -314,6 +314,7 @@ async function mobilePlanSnapshot(cdp) {
       goalRemoveCount:surface?.querySelectorAll('[data-mobile-plan-remove-goal]').length||0,
       layout:surface?(()=>{const r=surface.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,viewportWidth:innerWidth,scrollY:scrollY};})():null,
       chartAction:!!surface?.querySelector('[data-mobile-plan-chart]'),selected:[...(selection.selected||[])],
+      historySnapshot:window.history.state?.viewerNavigation?.snapshot?.mobile||null,
       rerenders:window.__mobileShellAuditCounters||{render:0,fit:0,rebuild:0},
     };
   `);
@@ -402,6 +403,7 @@ async function snapshot(cdp) {
       camera:surface?.dataset.mobileCamera||null,
       sheetHidden:document.getElementById('mobileSheet')?.hidden!==false,
       sheetWork:store.sheetWork||null,
+      historySnapshot:window.history.state?.viewerNavigation?.snapshot?.mobile||null,
       sheetBodyText:document.getElementById('mobileSheetBody')?.textContent?.trim()||'',
       planVisible:!!document.querySelector('#mobileViewHost [data-mobile-surface="plan"]'),
       bottomReachable:nav.length===3&&nav.every(button=>{const r=button.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.bottom<=innerHeight+1;}),
@@ -410,7 +412,13 @@ async function snapshot(cdp) {
     };
   `);
 }
-async function waitFor(cdp, predicate, timeoutMs, label) { return poll(async () => { const state = await snapshot(cdp); return predicate(state) ? state : null; }, timeoutMs, label); }
+async function waitFor(cdp, predicate, timeoutMs, label) {
+  return poll(async () => {
+    const state = await snapshot(cdp);
+    if(predicate(state))return state;
+    const error=new Error(label);error.state=state;throw error;
+  }, timeoutMs, label);
+}
 async function instrumentRerenders(cdp) {
   await pageEvaluate(cdp, `
     if(!window.__mobileShellAuditInstalled){
@@ -457,7 +465,7 @@ async function runAudit(args) {
     viewport: { width: 390, height: 844 },
     views: { chartVisible: false, keyboardFocus: false, displayPanel: { selected: false, panelId: null }, nonChartRemovesChart: false, nonChartHidesLegacyPanel: false, nonChartDocumentPanel: false, displayChooser: { selected: false, panelId: null }, charactersPanel: { selected: false, panelId: null }, responsiveSearchSync: false, chartRestoresCamera: false, legacyPrepJump: false },
     selection: { selected: false, reclickClears: false, blankClears: false, dragPreserves: false },
-    history: { queryOnViewSwitch: false, queryOnPopstate: false, popstateNoWrites: false, forwardNoWrites: false, planClick: null, urlAfterBack: null },
+    history: { queryOnViewSwitch: false, queryOnPopstate: false, popstateNoWrites: false, forwardNoWrites: false, panelSnapshot: false, tierSnapshot: false, snapshotPopstateNoWrites: false, planClick: null, urlAfterBack: null },
     sheet: { opened: false, closed: false, backNoWrite: false, forwardRestores: false, urlParentChild: false, cameraPreserved: false },
     rerenders: { before: null, afterOpen: null, afterClose: null },
     search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false, firstCardInViewport: false, legacyQuerySync: false },
@@ -651,6 +659,28 @@ async function runAudit(args) {
     const restoredCharacters = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "characters" && state.activePanelId === "characters", timeoutMs, "characters chart return");
     if (restoredCharacters.panelId !== "characters" || restoredCharacters.activePanelId !== "characters") failures.push(`characters display view was not restored: ${JSON.stringify(restoredCharacters)}`);
 
+    // Phase 2B: panel snapshots belong to the current history entry.  A
+    // chart -> search -> chart traversal must restore the panel that was
+    // recorded on the destination entry without writing during popstate.
+    await pageEvaluate(cdp, "window.activatePanel('release'); return true;");
+    const releaseSnapshot=await waitFor(cdp, (state) => state.view === "chart" && state.activePanelId === "release" && state.historySnapshot?.panelId === "release", timeoutMs, "release history snapshot");
+    result.history.panelSnapshot=releaseSnapshot.historySnapshot?.panelId === "release";
+    if(!result.history.panelSnapshot)failures.push(`release panel snapshot was not recorded: ${JSON.stringify(releaseSnapshot)}`);
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
+    await waitFor(cdp, (state) => state.view === "search" && state.activePanelId === "release", timeoutMs, "search after release snapshot");
+    await pageEvaluate(cdp, "window.activatePanel('overview'); return true;");
+    await waitFor(cdp, (state) => state.view === "search" && state.activePanelId === "overview" && state.historySnapshot?.panelId === "overview", timeoutMs, "overview search snapshot");
+    await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
+    await waitFor(cdp, (state) => state.view === "chart" && state.activePanelId === "overview", timeoutMs, "overview chart snapshot");
+    await pageEvaluate(cdp, "window.__mobileHistoryLog.length=0; history.back(); return true;");
+    await waitFor(cdp, (state) => state.view === "search" && state.activePanelId === "overview", timeoutMs, "snapshot search popstate");
+    await pageEvaluate(cdp, "history.back(); return true;");
+    const restoredReleaseSnapshot=await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.activePanelId === "release" && state.panelId === "release", timeoutMs, "release snapshot popstate");
+    result.history.snapshotPopstateNoWrites=(await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;"))===0;
+    if(!result.history.snapshotPopstateNoWrites)failures.push(`panel snapshot popstate wrote history: ${JSON.stringify(restoredReleaseSnapshot)}`);
+    await pageEvaluate(cdp, "window.activatePanel('characters'); return true;");
+    await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.activePanelId === "characters" && state.panelId === "characters", timeoutMs, "restore characters after snapshot audit");
+
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
     await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "responsive search setup");
     await cdp.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
@@ -761,8 +791,15 @@ async function runAudit(args) {
     if(!result.plan.remaining)failures.push(`mobile plan remaining time/progress is missing: ${JSON.stringify(initialPlan)}`);
     if(!result.plan.layout)failures.push(`mobile plan exposed a narrow or legacy surface: ${JSON.stringify(initialLayout)}`);
 
+    const planTier=await pointForSelector(cdp, '#mobileViewHost [data-mobile-plan-tier]');
+    await clickPoint(cdp, planTier);
+    await pageEvaluate(cdp, `const tier=document.querySelector('#mobileViewHost [data-mobile-plan-tier]'); tier.value='complete'; tier.dispatchEvent(new Event('change',{bubbles:true})); return true;`);
+    const completePlan=await waitForPlan(cdp, (state) => state.view === "plan" && state.tierValue === "complete" && state.historySnapshot?.prepTier === "complete", timeoutMs, "complete tier history snapshot");
+    result.history.tierSnapshot=completePlan.historySnapshot?.prepTier === "complete";
+    if(!result.history.tierSnapshot)failures.push(`complete tier snapshot was not recorded: ${JSON.stringify(completePlan)}`);
+
     const firstPlanId=initialPlan.ordered[0];
-    const removalBefore=initialPlan.rerenders;
+    const removalBefore=(await mobilePlanSnapshot(cdp)).rerenders;
     if(initialPlan.goalRemoveCount<1)failures.push(`mobile plan did not expose per-goal removal: ${JSON.stringify(initialPlan)}`);
     const removalSelector=initialPlan.goalIds.length>1?`#mobileViewHost [data-mobile-plan-remove-goal]:not([data-mobile-plan-remove-goal="${firstPlanId}"])`:'#mobileViewHost [data-mobile-plan-remove-goal]';
     const expectedGoalCount=Math.max(0,initialPlan.goalIds.length-1);
@@ -794,7 +831,11 @@ async function runAudit(args) {
       await waitForPlan(cdp, (state) => state.view === "plan" && state.resultCount > 0, timeoutMs, "mobile plan after goal removal restore");
     }
 
-    await clickPoint(cdp, await pointForSelector(cdp, `#mobileViewHost [data-mobile-plan-work="${firstPlanId}"] [data-mobile-plan-detail]`));
+    const planDetailSelector=`#mobileViewHost [data-mobile-plan-work="${firstPlanId}"] [data-mobile-plan-detail]`;
+    await pageEvaluate(cdp, `document.querySelector(${JSON.stringify(planDetailSelector)})?.scrollIntoView({block:'center'}); return true;`);
+    const planDetailPoint=await pointForSelector(cdp, planDetailSelector);
+    if(!planDetailPoint)throw new Error(`mobile plan detail control is not reachable: ${planDetailSelector}`);
+    await clickPoint(cdp, planDetailPoint);
     const planDetail=await waitFor(cdp, (state) => !state.sheetHidden, timeoutMs, "plan detail sheet");
     result.plan.detailOpened=planDetail.sheetWork===firstPlanId;
     result.plan.detailContent=/あらすじ/.test(planDetail.sheetBodyText)&&/相関図では/.test(planDetail.sheetBodyText);

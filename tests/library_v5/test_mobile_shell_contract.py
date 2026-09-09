@@ -169,6 +169,30 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("URLSearchParams", write_body)
         self.assertIn("location.hash", write_body)
 
+    def test_mobile_history_snapshot_captures_panel_and_preparation_tier(self) -> None:
+        snapshot_body = function_body(self.source, "readMobileHistorySnapshot")
+        write_body = function_body(self.source, "writeMobileUrlState")
+        self.assertIn("panelId", snapshot_body)
+        self.assertIn("prepTier", snapshot_body)
+        self.assertIn("viewerNavigation", write_body)
+        self.assertIn("snapshot", write_body)
+
+    def test_mobile_history_snapshot_restores_without_writing_during_popstate(self) -> None:
+        apply_body = function_body(self.source, "applyMobileHistorySnapshot")
+        hydrate_body = function_body(self.source, "applyMobileUrlState")
+        self.assertIn("activatePanel", apply_body)
+        self.assertIn("marvelSetConnectionTier", apply_body)
+        self.assertRegex(hydrate_body, r"applyMobileHistorySnapshot\([\s\S]{0,180}viewerNavigation")
+        self.assertIn("mobileHistoryApplying", self.source)
+
+    def test_panel_and_tier_changes_replace_the_current_mobile_snapshot(self) -> None:
+        panel_body = function_body(self.source, "activatePanel")
+        tier_body = function_body(self.source, "marvelSetConnectionTier")
+        self.assertIn("panel-change", panel_body)
+        self.assertIn("writeMobileUrlState", panel_body)
+        self.assertIn("tier-change", tier_body)
+        self.assertIn("writeMobileUrlState", tier_body)
+
     def test_mobile_url_reapplies_sheet_work_when_kind_is_unchanged(self) -> None:
         body = function_body(self.source, "applyMobileUrlState")
         self.assertRegex(body, r"const current=store\.getState\(\)")
@@ -511,7 +535,8 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn('data-mobile-target="release"', source)
         self.assertIn("panelId", source)
         self.assertIn("const state = await snapshot(cdp)", source)
-        self.assertIn("return predicate(state) ? state : null", source)
+        self.assertIn("if(predicate(state))return state", source)
+        self.assertIn("error.state=state", source)
 
 
 if __name__ == "__main__":
