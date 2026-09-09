@@ -185,6 +185,21 @@ return {seen};
         )
         self.assertEqual(result["seen"], [{"inspection": {"workId": "C"}, "goals": {"orderedIds": ["A"], "currentId": "A"}}])
 
+    def test_legacy_selection_bridge_isolates_subscriber_payloads(self) -> None:
+        result = self._run_node(
+            """
+const legacy = {goalIds:['A'],currentId:'A',inspectionId:null};
+const bridge = window.marvelCreateLegacySelectionBridge(() => legacy);
+const seen=[];
+bridge.subscribe(state=>{state.goals.orderedIds.push('MUTATED');seen.push(state);});
+bridge.subscribe(state=>seen.push(state));
+legacy.goalIds=['A','B']; legacy.currentId='B'; bridge.requestPublish(); await Promise.resolve();
+return {seen};
+"""
+        )
+        self.assertEqual(result["seen"][0]["goals"]["orderedIds"], ["A", "B", "MUTATED"])
+        self.assertEqual(result["seen"][1]["goals"]["orderedIds"], ["A", "B"])
+
 
 if __name__ == "__main__":
     unittest.main()

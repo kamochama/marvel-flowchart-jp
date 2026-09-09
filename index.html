@@ -9709,8 +9709,7 @@ window.FEATURED_ROUTE=Object.freeze({
       const next=read();
       if(equal(previous,next))return copy(next);
       previous=copy(next);
-      const notification=copy(next);
-      listeners.forEach(listener=>{try{listener(notification)}catch(_){}});
+      listeners.forEach(listener=>{try{listener(copy(next))}catch(_) {}});
       return copy(next);
     };
     const requestPublish=()=>{
