@@ -49,6 +49,19 @@ return {inspected,cleared};
         self.assertIsNone(result["cleared"]["inspection"]["workId"])
         self.assertEqual(result["cleared"]["goals"], result["inspected"]["goals"])
 
+    def test_non_goal_commands_preserve_an_explicit_null_current_goal(self) -> None:
+        result = self._run_node(
+            """
+const initial = window.marvelCreateUiState({goals:{orderedIds:['A','B'],currentId:null}});
+const inspected = window.marvelApplyUiCommand(initial, {type:'inspect',workId:'C'});
+const overlay = window.marvelApplyUiCommand(inspected, {type:'openOverlay',overlay:{kind:'settings'}});
+return {initial,inspected,overlay};
+"""
+        )
+        self.assertIsNone(result["initial"]["goals"]["currentId"])
+        self.assertIsNone(result["inspected"]["goals"]["currentId"])
+        self.assertIsNone(result["overlay"]["goals"]["currentId"])
+
     def test_goal_commands_are_the_only_commands_that_mutate_goals(self) -> None:
         result = self._run_node(
             """
@@ -75,6 +88,18 @@ return {
 """
         )
         self.assertEqual(result, {"inspection": "replace", "surface": "push", "goalFocus": "replace", "popstate": "none"})
+
+    def test_goal_mutations_and_overlay_open_push_history(self) -> None:
+        result = self._run_node(
+            """
+return {
+  addGoal: window.marvelUiHistoryPolicy({type:'goal-add'}),
+  removeGoal: window.marvelUiHistoryPolicy({type:'goal-remove'}),
+  overlay: window.marvelUiHistoryPolicy({type:'overlay-open'}),
+};
+"""
+        )
+        self.assertEqual(result, {"addGoal": "push", "removeGoal": "push", "overlay": "push"})
 
     def test_sheet_close_uses_content_provenance(self) -> None:
         result = self._run_node(

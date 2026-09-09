@@ -9680,7 +9680,9 @@ window.FEATURED_ROUTE=Object.freeze({
   };
   window.marvelCreateUiState=function(seed={}){
     const orderedIds=uniqueIds(seed.goals?.orderedIds);
-    const currentId=orderedIds.includes(text(seed.goals?.currentId))?text(seed.goals.currentId):(orderedIds.at(-1)||null);
+    const hasCurrentId=!!seed.goals&&Object.prototype.hasOwnProperty.call(seed.goals,'currentId');
+    const requestedCurrentId=text(seed.goals?.currentId);
+    const currentId=hasCurrentId?(requestedCurrentId&&orderedIds.includes(requestedCurrentId)?requestedCurrentId:null):(orderedIds.at(-1)||null);
     return {
       inspection:{workId:text(seed.inspection?.workId)},
       goals:{orderedIds,currentId},
@@ -9713,7 +9715,7 @@ window.FEATURED_ROUTE=Object.freeze({
   };
   window.marvelUiHistoryPolicy=function(action={}){
     if(action.type==='popstate-apply')return 'none';
-    if(action.type==='surface-transition')return 'push';
+    if(['surface-transition','goal-add','goal-remove','goal-clear','overlay-open'].includes(action.type))return 'push';
     return 'replace';
   };
   window.marvelEffectiveSheetContent=function(state,presentation){
