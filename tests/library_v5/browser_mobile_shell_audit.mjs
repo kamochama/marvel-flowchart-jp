@@ -8,6 +8,7 @@ import path from "node:path";
 import { execFileSync, spawn } from "node:child_process";
 
 const DEFAULT_TIMEOUT_MS = 20_000;
+const CDP_COMMAND_TIMEOUT_MS = 15_000;
 const PROFILE_CLEANUP_RETRIES = 100;
 
 function usage() {
@@ -197,13 +198,24 @@ class CdpClient {
     this.url = url;
     this.nextId = 1;
     this.pending = new Map();
-    this.commandTimeoutMs = Number(process.env.MARVEL_CDP_COMMAND_TIMEOUT_MS || 30_000);
+    this.commandTimeoutMs = Number(process.env.MARVEL_CDP_COMMAND_TIMEOUT_MS || CDP_COMMAND_TIMEOUT_MS);
   }
   async connect() {
     this.socket = new WebSocket(this.url);
     await new Promise((resolve, reject) => {
-      this.socket.addEventListener("open", resolve, { once: true });
-      this.socket.addEventListener("error", () => reject(new Error("CDP WebSocket error")), { once: true });
+      let settled = false;
+      const finish = (callback, value) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        callback(value);
+      };
+      const timer = setTimeout(() => {
+        try { this.socket.close(); } catch (_) { /* best effort */ }
+        finish(reject, new Error(`CDP WebSocket connection timed out after ${this.commandTimeoutMs}ms`));
+      }, this.commandTimeoutMs);
+      this.socket.addEventListener("open", () => finish(resolve), { once: true });
+      this.socket.addEventListener("error", () => finish(reject, new Error("CDP WebSocket error")), { once: true });
     });
     this.socket.addEventListener("message", (event) => {
       const message = JSON.parse(String(event.data));
@@ -864,9 +876,26 @@ async function runAudit(args) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) { process.stdout.write(`${usage()}\n`); return; }
-  const report = await runAudit(args);
+  const report = await runAuditWithRetries(args);
   process.stdout.write(`${JSON.stringify(report)}\n`);
   if (report.failures.length) process.exitCode = 1;
+}
+
+async function runAuditWithRetries(args, attempts = 2) {
+  let lastReport = null;
+  let lastError = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      const report = await runAudit(args);
+      if (!report.failures.length) return report;
+      lastReport = report;
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  if (lastReport) return lastReport;
+  throw lastError || new Error("mobile shell audit failed");
 }
 
 main().catch((error) => { process.stderr.write(`${error.stack || error}\n`); process.exitCode = 1; });

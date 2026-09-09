@@ -132,6 +132,12 @@ class BrowserMobileShellAuditTests(unittest.TestCase):
         self.assertIn("server.closeAllConnections?.()", source)
         self.assertIn("await closeStaticServer(staticServer.server)", source)
 
+    def test_runner_bounds_cdp_connection_and_retries_audit(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("CDP_COMMAND_TIMEOUT_MS", source)
+        self.assertIn("CDP WebSocket connection timed out", source)
+        self.assertIn("runAuditWithRetries", source)
+
     def test_runner_bounds_devtools_target_fetch(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         self.assertIn("AbortController", source)
