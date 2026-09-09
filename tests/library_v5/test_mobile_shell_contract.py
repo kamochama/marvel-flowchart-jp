@@ -115,6 +115,16 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("marvelCreateUiHistoryWriter", write_body)
         self.assertNotRegex(write_body, r"if\(replace\)window\.history\.replaceState")
 
+    def test_mobile_history_hydration_has_transaction_guard(self) -> None:
+        apply_body = function_body(self.source, "applyMobileUrlState")
+        self.assertIn("mobileHistoryApplyDepth", self.source)
+        self.assertIn("try", apply_body)
+        self.assertIn("finally", apply_body)
+
+    def test_mobile_writer_checks_history_hydration_guard(self) -> None:
+        write_body = function_body(self.source, "writeMobileUrlState")
+        self.assertIn("mobileHistoryApplying", write_body)
+
     def test_mobile_popstate_applies_without_any_history_write(self) -> None:
         apply_body = function_body(self.source, "applyMobileUrlState")
         popstate_body = function_body(self.source, "handleMobilePopState")

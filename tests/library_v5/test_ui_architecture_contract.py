@@ -154,6 +154,22 @@ return {pop,surface,inspection,calls};
             ],
         )
 
+    def test_history_writer_skips_when_hydration_transaction_is_active(self) -> None:
+        result = self._run_node(
+            """
+window.marvelMobileHistoryApplyDepth = 1;
+const calls=[];
+const history={
+  pushState:()=>calls.push('push'),
+  replaceState:()=>calls.push('replace'),
+};
+const write=window.marvelCreateUiHistoryWriter(history);
+const written=write({state:{},url:'?mview=search',action:{type:'surface-transition'}});
+return {written,calls};
+"""
+        )
+        self.assertEqual(result, {"written": False, "calls": []})
+
     def test_history_policy_marks_navigation_write_boundaries(self) -> None:
         result = self._run_node(
             """
