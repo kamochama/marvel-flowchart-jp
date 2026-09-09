@@ -78,6 +78,16 @@ def _validate_report(report: dict[str, object]) -> None:
         raise AssertionError(f"mobile shell report failures: {failures!r}")
 
 
+def _format_timeout_diagnostic(error: subprocess.TimeoutExpired) -> str:
+    """Keep partial Node output visible when the outer watchdog fires."""
+    stdout = error.stdout or ""
+    stderr = error.stderr or ""
+    return (
+        f"mobile shell harness timed out after {error.timeout}s; "
+        f"partial stdout={stdout!r}; partial stderr={stderr!r}"
+    )
+
+
 def _successful_report() -> dict[str, object]:
     return {
         "viewport": {"width": 390, "height": 844},
@@ -175,6 +185,17 @@ class BrowserMobileShellAuditTests(unittest.TestCase):
         report = _parse_report(json.dumps(_successful_report()))
         _validate_report(report)
 
+    def test_timeout_diagnostic_preserves_partial_node_output(self) -> None:
+        error = subprocess.TimeoutExpired(
+            ["node", str(RUNNER)],
+            timeout=240,
+            output="partial stdout",
+            stderr="partial stderr",
+        )
+        diagnostic = _format_timeout_diagnostic(error)
+        self.assertIn("partial stdout", diagnostic)
+        self.assertIn("partial stderr", diagnostic)
+
     def test_wrapper_is_environment_gated(self) -> None:
         source = (ROOT / "tests" / "library_v5" / "test_browser_mobile_shell_audit.py").read_text(
             encoding="utf-8"
@@ -192,24 +213,27 @@ class BrowserMobileShellAuditTests(unittest.TestCase):
             chrome,
             "Chrome/Chromium is required when MARVEL_BROWSER_MOBILE_SHELL_AUDIT=1",
         )
-        result = subprocess.run(
-            [
-                "node",
-                str(RUNNER),
-                "--root",
-                str(ROOT),
-                "--chrome",
-                str(chrome),
-                "--timeout-ms",
-                "8000",
-            ],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            timeout=240,
-            check=False,
-        )
+        try:
+            result = subprocess.run(
+                [
+                    "node",
+                    str(RUNNER),
+                    "--root",
+                    str(ROOT),
+                    "--chrome",
+                    str(chrome),
+                    "--timeout-ms",
+                    "8000",
+                ],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                timeout=240,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as error:
+            self.fail(_format_timeout_diagnostic(error))
         report = _parse_report(result.stdout)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         _validate_report(report)
