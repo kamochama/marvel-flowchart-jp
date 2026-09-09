@@ -67,6 +67,13 @@ class BrowserInteractionAuditTests(unittest.TestCase):
         self.assertIn("commandTimeoutMs", source)
         self.assertIn("runAuditWithRetries", source)
 
+    def test_runner_retries_only_explicit_harness_timeout_reports(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("retryable", source)
+        self.assertIn("timed out", source)
+        self.assertIn("failure.retryable", source)
+        self.assertRegex(source, r"report\.failures\.every\(\(failure\)\s*=>\s*failure\.retryable\s*===\s*true\)")
+
     def test_runner_closes_static_server_with_keepalive_guard(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
         self.assertIn("async function closeStaticServer(server)", source)
