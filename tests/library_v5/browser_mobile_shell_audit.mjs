@@ -123,11 +123,13 @@ async function poll(task, timeoutMs, label) {
   throw new Error(`${label} timed out${lastError ? `: ${lastError.message}` : ""}${state}`);
 }
 
-async function fetchWithTimeout(url, timeoutMs) {
+async function fetchJsonWithTimeout(url, timeoutMs) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), Math.max(250, Math.min(timeoutMs, 1_000)));
   try {
-    return await fetch(url, { signal: controller.signal });
+    const response = await fetch(url, { signal: controller.signal });
+    const body = response.ok ? await response.json() : null;
+    return { response, body };
   } finally {
     clearTimeout(timer);
   }
@@ -146,9 +148,9 @@ async function launchChrome(chromePath, timeoutMs) {
   try {
     const target = await poll(async () => {
       if (launchError) throw launchError;
-      const response = await fetchWithTimeout(`http://127.0.0.1:${port}/json/list`, timeoutMs);
+      const { response, body } = await fetchJsonWithTimeout(`http://127.0.0.1:${port}/json/list`, timeoutMs);
       if (!response.ok) return null;
-      return (await response.json()).find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
+      return body.find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
     }, timeoutMs, "Chrome DevTools page target");
     return { child, userDataDir, webSocketDebuggerUrl: target.webSocketDebuggerUrl };
   } catch (error) {

@@ -152,6 +152,18 @@ async function poll(task, timeoutMs, label) {
   throw new Error(`${label} timed out${lastError ? `: ${lastError.message}` : ""}`);
 }
 
+async function fetchJsonWithTimeout(url, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), Math.max(250, Math.min(timeoutMs, 1_000)));
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    const body = response.ok ? await response.json() : null;
+    return { response, body };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function launchChrome(chromePath, timeoutMs) {
   const port = await freePort();
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "marvel-flowchart-publication-cdp-"));
@@ -165,16 +177,28 @@ async function launchChrome(chromePath, timeoutMs) {
   try {
     const target = await poll(async () => {
       if (launchError) throw launchError;
-      const response = await fetch(`http://127.0.0.1:${port}/json/list`);
+      const { response, body } = await fetchJsonWithTimeout(`http://127.0.0.1:${port}/json/list`, timeoutMs);
       if (!response.ok) return null;
-      const targets = await response.json();
-      return targets.find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
+      return body.find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
     }, timeoutMs, "Chrome DevTools page target");
     return { child, userDataDir, webSocketDebuggerUrl: target.webSocketDebuggerUrl };
   } catch (error) {
     await stopChrome({ child, userDataDir });
     throw error;
   }
+}
+
+async function launchChromeWithRetries(chromePath, timeoutMs, attempts = 3) {
+  let lastError = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await launchChrome(chromePath, timeoutMs);
+    } catch (error) {
+      lastError = error;
+      if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+  }
+  throw lastError || new Error("Chrome launch failed");
 }
 
 async function stopChrome(processInfo) {
@@ -749,7 +773,7 @@ async function runAudit(args) {
   let desktop = null;
   let mobile = null;
   try {
-    chromeProcess = await launchChrome(chrome, timeoutMs);
+    chromeProcess = await launchChromeWithRetries(chrome, timeoutMs);
     cdp = new CdpClient(chromeProcess.webSocketDebuggerUrl);
     await cdp.connect();
     await cdp.send("Page.enable");
