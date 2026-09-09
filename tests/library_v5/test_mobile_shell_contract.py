@@ -84,11 +84,17 @@ class MobileShellContractTests(unittest.TestCase):
         shell_start = self.source.find('id="mobileAppShell"')
         self.assertGreaterEqual(shell_start, 0)
         self.assertLess(shell_start, main_start)
-        for element_id in ("mobileViewHost", "mobileBottomNav", "mobileSheet"):
+        for element_id in ("mobileViewHost", "mobileBottomNav", "sheetHost"):
             element_start = self.source.find(f'id="{element_id}"')
             self.assertGreaterEqual(element_start, shell_start)
             self.assertLess(element_start, main_start)
-        self.assertEqual(self.source.count('id="mobileSheet"'), 1)
+        self.assertEqual(self.source.count('id="sheetHost"'), 1)
+
+    def test_shared_sheet_host_replaces_the_two_legacy_mobile_sheet_owners(self) -> None:
+        self.assertEqual(self.source.count('id="sheetHost"'), 1)
+        self.assertEqual(self.source.count('id="sheetHostBody"'), 1)
+        self.assertNotIn('id="mobileAreaSheet"', self.source)
+        self.assertNotIn('id="mobileSheet"', self.source)
 
     def test_mobile_navigation_handlers_update_store_and_history(self) -> None:
         mount_body = function_body(self.source, "mountMobileView")
@@ -102,7 +108,7 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("aria-current", self.source)
 
         open_body = function_body(self.source, "openMobileSheet")
-        self.assertIn("setSheet", open_body)
+        self.assertIn("setOverlay", open_body)
         self.assertIn("sheetWork", open_body)
         self.assertIn("writeMobileUrlState", open_body)
 
@@ -113,7 +119,7 @@ class MobileShellContractTests(unittest.TestCase):
 
         self.assertIn('addEventListener(\'popstate\'', self.source)
         self.assertIn("marvelCreateUiHistoryWriter", self.source)
-        self.assertIn('aria-modal="true"', self.source)
+        self.assertIn("setAttribute('aria-modal','true')", self.source)
 
     def test_mobile_history_writer_is_policy_driven(self) -> None:
         write_body = function_body(self.source, "writeMobileUrlState")
@@ -134,10 +140,13 @@ class MobileShellContractTests(unittest.TestCase):
     def test_mobile_popstate_applies_without_any_history_write(self) -> None:
         apply_body = function_body(self.source, "applyMobileUrlState")
         popstate_body = function_body(self.source, "handleMobilePopState")
-        self.assertRegex(self.source, r"function applyMobileUrlState\(\{fromPopstate=false\}=\{\}\)")
+        self.assertRegex(
+            self.source,
+            r"function applyMobileUrlState\(\{fromPopstate=false,preserveTier=false\}=\{\}\)",
+        )
         self.assertRegex(apply_body, r"syncHistory:!fromPopstate")
         self.assertRegex(apply_body, r"!fromPopstate[\s\S]{0,80}writeMobileUrlState")
-        self.assertIn("applyMobileUrlState({fromPopstate:true})", popstate_body)
+        self.assertIn("applyMobileUrlState({fromPopstate:true,preserveTier})", popstate_body)
 
     def test_mobile_sheet_history_distinguishes_app_open_from_direct_url_hydration(self) -> None:
         self.assertIn("mobileSheetHistoryOwner", self.source)
@@ -188,8 +197,15 @@ class MobileShellContractTests(unittest.TestCase):
         hydrate_body = function_body(self.source, "applyMobileUrlState")
         self.assertIn("activatePanel", apply_body)
         self.assertIn("marvelSetConnectionTier", apply_body)
+        self.assertIn("preserveTier", apply_body)
         self.assertRegex(hydrate_body, r"applyMobileHistorySnapshot\([\s\S]{0,180}viewerNavigation")
         self.assertIn("mobileHistoryApplying", self.source)
+
+    def test_settings_dismiss_preserves_an_intentional_tier_change(self) -> None:
+        hydrate_body = function_body(self.source, "applyMobileUrlState")
+        popstate_body = function_body(self.source, "handleMobilePopState")
+        self.assertIn("preserveTier", hydrate_body)
+        self.assertIn("preserveTier", popstate_body)
 
     def test_panel_and_tier_changes_replace_the_current_mobile_snapshot(self) -> None:
         panel_body = function_body(self.source, "activatePanel")
@@ -215,8 +231,12 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertRegex(body, r"const current=store\.getState\(\)")
         self.assertRegex(
             body,
-            r"current\.sheet!==parsed\.sheet[\s\S]{0,120}current\.sheetWork!==parsed\.sheetWork",
+            r"const currentOverlay=normalizeMobileOverlay\(current\.overlay\)[\s\S]{0,120}const parsedOverlay=normalizeMobileOverlay\(parsed\.overlay\)[\s\S]{0,180}JSON\.stringify\(currentOverlay\)!==JSON\.stringify\(parsedOverlay\)",
         )
+
+    def test_mobile_url_reapplies_settings_section_without_collapsing_to_display(self) -> None:
+        body = function_body(self.source, "applyMobileUrlState")
+        self.assertIn("parsed.sheet==='settings'?parsed.overlay?.section:parsed.sheetWork", body)
 
     def test_mobile_search_url_and_controls_share_store_adapter(self) -> None:
         project_body = function_body(self.source, "syncMobileSearchControls")
@@ -268,7 +288,7 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("closeMobileSheet({syncHistory:false})", popstate_body)
         self.assertRegex(
             popstate_body,
-            r"closeMobileSheet\(\{syncHistory:false\}\)[\s\S]*applyMobileUrlState\(\{fromPopstate:true\}\)",
+            r"closeMobileSheet\(\{syncHistory:false\}\)[\s\S]*applyMobileUrlState\(\{fromPopstate:true,preserveTier\}\)",
         )
 
     def test_focus_goal_syncs_store_after_desktop_semantic_update(self) -> None:
@@ -521,7 +541,14 @@ class MobileShellContractTests(unittest.TestCase):
         self.assertIn("sheetReasonHtml", body)
         self.assertIn("sheetSettingsHtml", body)
         self.assertIn("mobileWorkDetailHtml", body)
-        self.assertIn("mobileSheetBody", body)
+        self.assertIn("sheetHostBody", body)
+
+    def test_sheet_display_choice_closes_without_backtracking_before_panel_change(self) -> None:
+        body = function_body(self.source, "renderSheetContent")
+        self.assertRegex(
+            body,
+            r"closeMobileSheet\(\{syncHistory:false\}\)[\s\S]{0,180}activatePanel",
+        )
 
     def test_mobile_plan_watch_toggle_updates_plan_only_without_chart_rebuild(self) -> None:
         render_body = function_body(self.source, "renderMobilePlanScreen")
@@ -565,7 +592,7 @@ class MobileShellContractTests(unittest.TestCase):
         source = runner.read_text(encoding="utf-8")
         for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "plan", "mobilePlanSnapshot", "data-mobile-plan-summary", "data-mobile-plan-watched", "data-mobile-plan-detail", "data-mobile-plan-remove-goal", "sheetBodyText", "layout", "mobilePrepJump", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select", "firstCardInViewport", "legacyQuerySync", "scrollY", "historySnapshot"):
             self.assertIn(token, source)
-        self.assertIn("mobileAreaSheet", source)
+        self.assertIn("sheetHost", source)
         self.assertIn('data-mobile-target="release"', source)
         self.assertIn("panelId", source)
         self.assertIn("const state = await snapshot(cdp)", source)

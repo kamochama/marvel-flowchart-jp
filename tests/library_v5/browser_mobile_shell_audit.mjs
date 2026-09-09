@@ -407,10 +407,10 @@ async function snapshot(cdp) {
       selected:[...(selection.selected||[])],
       back:[...(selection.back||[])],
       camera:surface?.dataset.mobileCamera||null,
-      sheetHidden:document.getElementById('mobileSheet')?.hidden!==false,
+      sheetHidden:document.getElementById('sheetHost')?.hidden!==false,
       sheetWork:store.sheetWork||null,
       historySnapshot:window.history.state?.viewerNavigation?.snapshot?.mobile||null,
-      sheetBodyText:document.getElementById('mobileSheetBody')?.textContent?.trim()||'',
+      sheetBodyText:document.getElementById('sheetHostBody')?.textContent?.trim()||'',
       planVisible:!!document.querySelector('#mobileViewHost [data-mobile-surface="plan"]'),
       bottomReachable:nav.length===3&&nav.every(button=>{const r=button.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.bottom<=innerHeight+1;}),
       controlsReachable:surface?[...surface.querySelectorAll('.mobile-chart-controls button')].every(button=>{const r=button.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.bottom<=innerHeight+1;}):false,
@@ -555,7 +555,7 @@ async function runAudit(args) {
     const sheetOpenWritesAfter=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
     const sheetOpenPushesAfter=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).filter(entry=>entry.name==='pushState').length;");
     if(sheetOpenPushesAfter!==sheetOpenPushesBefore+1)failures.push(`sheet open did not create exactly one history entry: before=${sheetOpenWritesBefore} after=${sheetOpenWritesAfter} pushes=${sheetOpenPushesBefore}->${sheetOpenPushesAfter}`);
-    await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
+    await clickPoint(cdp, await pointForSelector(cdp, "#sheetHostClose"));
     await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "sheet close");
     const closed = await snapshot(cdp);
     result.sheet.closed = true;
@@ -571,7 +571,7 @@ async function runAudit(args) {
     const sheetForwardWrites=await pageEvaluate(cdp, "return (window.__mobileHistoryLog||[]).length;");
     result.sheet.forwardRestores=reopened.sheetWork===opened.sheetWork&&sheetForwardWrites===sheetCloseWrites;
     if(!result.sheet.forwardRestores)failures.push(`sheet forward did not restore without a write: open=${JSON.stringify(opened)} reopened=${JSON.stringify(reopened)} writes=${sheetCloseWrites}->${sheetForwardWrites}`);
-    await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
+    await clickPoint(cdp, await pointForSelector(cdp, "#sheetHostClose"));
     await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "sheet second close");
 
     // URL-origin parent -> app-owned child: a direct detail sheet must retain
@@ -619,8 +619,8 @@ async function runAudit(args) {
     if (!result.views.chartRestoresCamera) failures.push(`chart remount lost camera: before=${beforeSheet.camera} after=${restored.camera}`);
 
     await clickVisibleSelector(cdp, "#mobileChartViewButton");
-    await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "display view chooser");
-    await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="release"]'));
+    await poll(() => pageEvaluate(cdp, "return !document.getElementById('sheetHost')?.hidden;"), timeoutMs, "display view chooser");
+    await clickPoint(cdp, await pointForSelector(cdp, '#sheetHost [data-mobile-target="release"]'));
     const releaseView = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release display view mount");
     result.views.displayPanel = { selected: releaseView.panelId === "release" && releaseView.activePanelId === "release", panelId: releaseView.panelId };
     if (!result.views.displayPanel.selected) failures.push(`display view did not mount release panel: ${JSON.stringify(releaseView)}`);
@@ -630,22 +630,22 @@ async function runAudit(args) {
     const retainedDocumentApis = await pageEvaluate(cdp, `
       const overviewHasIronMan=window.panelHasWork?.("overview","iron-man-2008")===true;
       const preferred=window.preferredPanelForWork?.("iron-man-2008")||null;
-      const chooser=!!document.querySelector('#mobileAreaSheet [data-mobile-target="overview"]');
+      const chooser=!!document.querySelector('#sheetHost [data-mobile-target="overview"]');
       return {overviewHasIronMan,preferred,chooser,documentPanels:[...document.querySelectorAll('.panel')].map(panel=>panel.id)};
     `);
     result.views.nonChartDocumentPanel = retainedDocumentApis.overviewHasIronMan && ["overview", "release", "chronology"].includes(retainedDocumentApis.preferred) && retainedDocumentApis.chooser;
     if (!result.views.nonChartDocumentPanel) failures.push(`non-chart document panel APIs failed: ${JSON.stringify(retainedDocumentApis)}`);
     await clickVisibleSelector(cdp, "#mobileAreaButton");
-    await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "non-chart display view chooser");
-    await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="overview"]'));
+    await poll(() => pageEvaluate(cdp, "return !document.getElementById('sheetHost')?.hidden;"), timeoutMs, "non-chart display view chooser");
+    await clickPoint(cdp, await pointForSelector(cdp, '#sheetHost [data-mobile-target="overview"]'));
     const chooserOverview = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible && state.activePanelId === "overview", timeoutMs, "non-chart display chooser overview");
     result.views.displayChooser = { selected: chooserOverview.activePanelId === "overview", panelId: chooserOverview.activePanelId };
     if (!result.views.displayChooser.selected) failures.push(`non-chart display chooser did not select overview: ${JSON.stringify(chooserOverview)}`);
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="chart"]'));
     await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "overview" && state.activePanelId === "overview", timeoutMs, "overview chart return after chooser");
     await clickVisibleSelector(cdp, "#mobileChartViewButton");
-    await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "release chooser after overview return");
-    await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="release"]'));
+    await poll(() => pageEvaluate(cdp, "return !document.getElementById('sheetHost')?.hidden;"), timeoutMs, "release chooser after overview return");
+    await clickPoint(cdp, await pointForSelector(cdp, '#sheetHost [data-mobile-target="release"]'));
     await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "release" && state.activePanelId === "release", timeoutMs, "release chooser reselect");
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
     const releaseNonChart = await waitFor(cdp, (state) => state.view === "search" && !state.chartVisible, timeoutMs, "release chooser non-chart removal");
@@ -656,8 +656,8 @@ async function runAudit(args) {
     if (restoredRelease.panelId !== "release" || restoredRelease.activePanelId !== "release") failures.push(`release display view was not restored: ${JSON.stringify(restoredRelease)}`);
 
     await clickVisibleSelector(cdp, "#mobileChartViewButton");
-    await poll(() => pageEvaluate(cdp, "return !document.getElementById('mobileAreaSheet')?.hidden;"), timeoutMs, "characters chooser");
-    await clickPoint(cdp, await pointForSelector(cdp, '#mobileAreaSheet [data-mobile-target="characters"]'));
+    await poll(() => pageEvaluate(cdp, "return !document.getElementById('sheetHost')?.hidden;"), timeoutMs, "characters chooser");
+    await clickPoint(cdp, await pointForSelector(cdp, '#sheetHost [data-mobile-target="characters"]'));
     const charactersView = await waitFor(cdp, (state) => state.view === "chart" && state.chartVisible && state.panelId === "characters" && state.activePanelId === "characters", timeoutMs, "characters display view mount");
     result.views.charactersPanel = { selected: charactersView.panelId === "characters" && charactersView.activePanelId === "characters", panelId: charactersView.panelId };
     if (!result.views.charactersPanel.selected) failures.push(`characters display view did not mount: ${JSON.stringify(charactersView)}`);
@@ -870,7 +870,7 @@ async function runAudit(args) {
     result.plan.detailContent=/あらすじ/.test(planDetail.sheetBodyText)&&/相関図では/.test(planDetail.sheetBodyText);
     if(!result.plan.detailOpened)failures.push(`plan detail sheet target mismatch: ${JSON.stringify(planDetail)}`);
     if(!result.plan.detailContent)failures.push(`plan detail sheet did not render work metadata: ${JSON.stringify(planDetail)}`);
-    await clickPoint(cdp, await pointForSelector(cdp, "#mobileSheetClose"));
+    await clickPoint(cdp, await pointForSelector(cdp, "#sheetHostClose"));
     await waitFor(cdp, (state) => state.sheetHidden, timeoutMs, "plan detail sheet close");
     result.plan.detailClosed=true;
 

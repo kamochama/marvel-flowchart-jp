@@ -590,6 +590,16 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 
 /* M2 mobile shell: one active view host, one bottom navigation, one sheet. */
 .mobile-app-shell{display:none}
+#sheetHost{position:fixed;top:95px;right:0;bottom:0;z-index:45;width:min(390px,32vw);display:flex;align-items:stretch;justify-content:flex-end;background:transparent;pointer-events:none}
+#sheetHost[hidden]{display:none!important}
+#sheetHost[data-presentation="docked"] .mobile-sheet-backdrop{display:none}
+#sheetHost[data-presentation="docked"] .mobile-sheet-card{width:100%;height:100%;overflow:auto;padding:12px 13px 22px;border:1px solid #334155;border-right:0;border-radius:14px 0 0 0;background:var(--panel);box-shadow:-12px 0 30px rgba(0,0,0,.24);pointer-events:auto}
+#sheetHost[data-presentation="docked"] .mobile-sheet-card:before{display:none}
+#sheetHost[data-presentation="docked"] .mobile-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+#sheetHost[data-presentation="docked"] .mobile-sheet-head h2{margin:0;font-size:16px;color:#f8fafc}
+#sheetHost[data-presentation="docked"] .mobile-sheet-head p{margin:3px 0 0;color:#94a3b8;font-size:11px}
+#sheetHost[data-presentation="docked"] .mobile-sheet-head button{min-width:68px;min-height:44px}
+#sheetHost[data-presentation="docked"] #sheetHostPanel{display:block}
 @media(max-width:760px){
   .mobile-app-shell{display:flex;position:relative;z-index:20;min-height:calc(100dvh - 56px);flex-direction:column;background:#070b16;color:#e5e7eb}
   .mobile-view-host{flex:1 1 auto;min-height:0;padding:10px 9px calc(72px + env(safe-area-inset-bottom));}
@@ -600,8 +610,8 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   #mobileBottomNav{position:fixed;right:0;bottom:0;left:0;z-index:70;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px 9px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #263550;background:rgba(7,11,22,.97);box-shadow:0 -10px 30px rgba(0,0,0,.28)}
   #mobileBottomNav button{min-height:44px;border:1px solid #334155;border-radius:10px;background:#101827;color:#cbd5e1;font-size:12px;font-weight:850}
   #mobileBottomNav button[aria-current="page"]{border-color:#60a5fa;background:#172554;color:#dbeafe;box-shadow:0 0 0 1px rgba(96,165,250,.18)}
-  #mobileSheet{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center;background:rgba(2,6,23,.72)}
-  #mobileSheet[hidden]{display:none!important}
+  #sheetHost{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center;background:rgba(2,6,23,.72);pointer-events:auto}
+  #sheetHost[hidden]{display:none!important}
   .mobile-sheet-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;cursor:default}
   .mobile-sheet-card{position:relative;z-index:1;width:100%;max-height:78dvh;overflow:auto;padding:12px 13px calc(16px + env(safe-area-inset-bottom));border:1px solid #475569;border-bottom:0;border-radius:18px 18px 0 0;background:#0b1322;box-shadow:0 -18px 50px rgba(0,0,0,.48)}
   .mobile-sheet-card:before{content:"";display:block;width:46px;height:4px;margin:0 auto 10px;border-radius:999px;background:#64748b}
@@ -609,7 +619,7 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .mobile-sheet-head h2{margin:0;font-size:16px;color:#f8fafc}
   .mobile-sheet-head p{margin:3px 0 0;color:#94a3b8;font-size:11px}
   .mobile-sheet-head button{min-width:68px;min-height:44px}
-  #mobileSheetBody{min-height:80px;padding:12px;border:1px solid #263550;border-radius:10px;background:#0f172a;color:#cbd5e1;line-height:1.55}
+  #sheetHostBody{min-height:80px;padding:12px;border:1px solid #263550;border-radius:10px;background:#0f172a;color:#cbd5e1;line-height:1.55}
   .mobile-chart-surface{display:block;min-height:0}
   .mobile-chart-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 8px}
   .mobile-chart-controls button{min-width:0;min-height:44px;padding:7px 4px;border:1px solid #334155;border-radius:10px;background:#101827;color:#dbeafe;font-size:11px;font-weight:850}
@@ -698,7 +708,6 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
   .mobile-area-group>b{grid-column:1/-1;color:#8fa2bd;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
   .mobile-area-group button{min-height:46px;text-align:left;font-size:13px;font-weight:750;background:#101a2d;border-color:#30415d}
   .mobile-area-group button.active{background:#1d4ed8;border-color:#60a5fa}
-  #mobileAreaClose{width:100%;min-height:44px;background:#172033}
 }
 
 
@@ -872,14 +881,8 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
   
   <div id="mobilePrimaryNav" class="mobile-primary-nav" aria-label="スマホナビ">
     <div id="mobileSearchHost" class="mobile-search-host"></div>
-    <button id="mobileAreaButton" class="mobile-area-button" type="button" aria-expanded="false" aria-controls="mobileAreaSheet">関係地図 <span aria-hidden="true">▼</span></button>
+    <button id="mobileAreaButton" class="mobile-area-button" type="button" aria-expanded="false" aria-controls="sheetHostPanel">関係地図 <span aria-hidden="true">▼</span></button>
     <button id="mobileControlsButton" class="mobile-controls-button" type="button" aria-expanded="false" aria-controls="flowchartControls">操作</button>
-    <div id="mobileAreaSheet" class="mobile-area-sheet" aria-hidden="true" hidden>
-      <div class="mobile-area-sheet-card" role="dialog" aria-modal="true" aria-label="表示ビューを選ぶ">
-        <div class="mobile-area-group"><b>ビュー</b><button type="button" data-mobile-target="overview">関係地図</button><button type="button" data-mobile-target="release">公開順</button><button type="button" data-mobile-target="chronology">世界線・時系列</button><button type="button" data-mobile-target="watch">この作品を見るなら</button><button type="button" data-mobile-target="characters">人物・組織</button></div>
-        <button id="mobileAreaClose" type="button">閉じる</button>
-      </div>
-    </div>
   </div>
   <div id="flowchartControls" class="controls" aria-label="作品相関図の操作">
   <div id="flowchartStatus" class="muted" role="status" aria-live="polite">データを読み込み中…</div>
@@ -906,16 +909,16 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
     <button type="button" data-mobile-view="search">探す</button>
     <button type="button" data-mobile-view="plan">予習</button>
   </nav>
-  <div id="mobileSheet" role="dialog" aria-modal="true" aria-labelledby="mobileSheetTitle" aria-hidden="true" hidden>
-    <button type="button" class="mobile-sheet-backdrop" data-mobile-sheet-dismiss aria-label="シートを閉じる"></button>
-    <section class="mobile-sheet-card" tabindex="-1">
-      <div class="mobile-sheet-head">
-        <div><h2 id="mobileSheetTitle" tabindex="-1">作品情報</h2><p id="mobileSheetSubtitle">選択した作品の情報</p></div>
-        <button id="mobileSheetClose" type="button">閉じる</button>
-      </div>
-      <div id="mobileSheetBody">作品を選ぶと、ここに詳細を表示します。</div>
-    </section>
-  </div>
+</div>
+<div id="sheetHost" data-presentation="docked" aria-labelledby="sheetHostTitle" aria-hidden="true" hidden>
+  <button id="sheetHostBackdrop" type="button" class="mobile-sheet-backdrop" data-mobile-sheet-dismiss aria-label="シートを閉じる"></button>
+  <section id="sheetHostPanel" class="mobile-sheet-card" tabindex="-1">
+    <div class="mobile-sheet-head">
+      <div><h2 id="sheetHostTitle" tabindex="-1">作品情報</h2><p id="sheetHostSubtitle">選択した作品の情報</p></div>
+      <button id="sheetHostClose" type="button">閉じる</button>
+    </div>
+    <div id="sheetHostBody">作品を選ぶと、ここに詳細を表示します。</div>
+  </section>
 </div>
 <div class="public-nav-sticky">
   <div class="public-guide" aria-label="基本操作">
@@ -8132,6 +8135,20 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   }
   function normalizeMobileView(view){return MOBILE_VIEWS.has(view)?view:'chart'}
   function normalizeMobileSheet(sheet){return MOBILE_SHEETS.has(sheet)?sheet:'closed'}
+  function syncSheetPresentation(){
+    const host=document.getElementById('sheetHost');
+    if(!host)return 'docked';
+    const presentation=mobileChartMotion.matches?'modal':'docked';
+    host.dataset.presentation=presentation;
+    if(presentation==='modal'){
+      host.setAttribute('role','dialog');
+      host.setAttribute('aria-modal','true');
+    }else{
+      host.setAttribute('role','region');
+      host.removeAttribute('aria-modal');
+    }
+    return presentation;
+  }
   function createMobileNavigationEntryId(){
     mobileNavigationEntryCounter+=1;
     return `mobile-${Date.now().toString(36)}-${mobileNavigationEntryCounter}`;
@@ -8180,12 +8197,16 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(!shell)return null;
     if(shell.dataset.mobileShellWired==='1')return shell;
     const nav=document.getElementById('mobileBottomNav');
-    const sheet=document.getElementById('mobileSheet');
+    const sheet=document.getElementById('sheetHost');
     nav?.addEventListener('click',event=>{
       const button=event.target.closest?.('[data-mobile-view]');
       if(button)setMobileView(button.dataset.mobileView);
     });
-    document.getElementById('mobileSheetClose')?.addEventListener('click',()=>closeMobileSheet());
+    document.getElementById('sheetHostClose')?.addEventListener('click',()=>{
+      const state=mobileUiStore()?.getState?.();
+      if(!mobileChartMotion.matches&&state?.sheet==='closed')window.marvelReturnToGoalView?.();
+      else closeMobileSheet();
+    });
     sheet?.addEventListener('click',event=>{
       if(event.target===sheet||event.target.closest?.('[data-mobile-sheet-dismiss]'))closeMobileSheet();
     });
@@ -8669,12 +8690,13 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return {panelId,prepTier,...mobileHistoryScrollPosition()};
   }
 
-  function applyMobileHistorySnapshot(snapshot){
+  function applyMobileHistorySnapshot(snapshot,{preserveTier=false}={}){
     const next=snapshot&&typeof snapshot==='object'?snapshot:{};
     const allowedPanels=new Set(['overview','release','chronology','characters']);
     const panelId=allowedPanels.has(next.panelId)?next.panelId:'overview';
     const allowedTiers=new Set(['site-proposal','complete','official','minimum','recommended']);
-    const prepTier=allowedTiers.has(next.prepTier)?next.prepTier:'site-proposal';
+    const currentTier=window.marvelGetConnectionTier?.()||'site-proposal';
+    const prepTier=preserveTier&&allowedTiers.has(currentTier)?currentTier:(allowedTiers.has(next.prepTier)?next.prepTier:'site-proposal');
     if(typeof window.marvelSetConnectionTier==='function'&&window.marvelGetConnectionTier?.()!==prepTier){
       window.marvelSetConnectionTier(prepTier);
     }
@@ -8782,7 +8804,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   }
 
   function renderSheetContent(overlay){
-    const body=document.getElementById('mobileSheetBody');
+    const body=document.getElementById('sheetHostBody');
     if(!body)return false;
     const next=normalizeMobileOverlay(overlay||mobileUiStore()?.getState()?.overlay);
     let html='<p class="sheet-empty">作品を選ぶと、ここに情報を表示します。</p>';
@@ -8790,6 +8812,35 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     else if(next.kind==='reason')html=sheetReasonHtml(mobileSheetRelationRepository().getRelation(next.relationId));
     else if(next.kind==='settings')html=sheetSettingsHtml(next.section);
     body.innerHTML=html;
+    body.querySelectorAll('[data-sheet-display-target]').forEach(button=>button.addEventListener('click',event=>{
+      event.preventDefault();event.stopPropagation();
+      // A display choice is a panel transition, not a detail-sheet child.
+      // Close without traversing back first so the selected panel can replace
+      // the current URL/history snapshot instead of being rolled back to the
+      // parent entry previous panel.
+      closeMobileSheet({syncHistory:false});
+      window.activatePanel?.(button.dataset.sheetDisplayTarget,{fit:false,restoreSelection:false});
+    }));
+    body.querySelector('[data-sheet-tier]')?.addEventListener('change',event=>window.marvelSetConnectionTier?.(event.target.value));
+    return true;
+  }
+
+  function openDockedInspection(workId){
+    if(mobileChartMotion.matches||!nm?.[workId])return false;
+    const host=document.getElementById('sheetHost');
+    if(!host)return false;
+    syncSheetPresentation();
+    host.dataset.owner='inspection';
+    renderSheetContent({kind:'detail',workId});
+    host.hidden=false;host.setAttribute('aria-hidden','false');
+    return true;
+  }
+
+  function closeDockedInspection(){
+    const host=document.getElementById('sheetHost');
+    if(!host||host.dataset.owner!=='inspection')return false;
+    if(mobileUiStore()?.getState?.().overlay?.kind!=='closed')return false;
+    host.hidden=true;host.setAttribute('aria-hidden','true');host.dataset.owner='none';
     return true;
   }
 
@@ -8806,37 +8857,43 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   }
 
   function openMobileSheet(kind,workId){
-    const sheet=document.getElementById('mobileSheet');
+    const sheet=document.getElementById('sheetHost');
     const store=mobileUiStore();
     const normalized=normalizeMobileSheet(kind);
     if(!sheet||!store||normalized==='closed'){closeMobileSheet();return false;}
+    syncSheetPresentation();
     const previous=store.getState();
     const wasClosed=previous.sheet==='closed';
     const sheetWork=typeof workId==='string'&&workId.trim()?workId.trim():null;
-    const sameContent=previous.sheet===normalized&&previous.sheetWork===sheetWork;
+    const nextOverlay=normalized==='settings'
+      ?{kind:'settings',section:['display','plan','legend'].includes(sheetWork)?sheetWork:'display'}
+      :normalized==='detail'?{kind:'detail',workId:sheetWork}
+      :{kind:'reason',relationId:sheetWork};
+    const sameContent=JSON.stringify(previous.overlay)===JSON.stringify(nextOverlay);
     if(wasClosed)mobileSheetReturnFocus=document.activeElement;
     if(suppressMobileSheetHistory){
       const navigation=window.history.state?.viewerNavigation||{};
       mobileSheetHistoryOwner=navigation.sheetOwner==='app'?'app':'url';
       mobileSheetHistoryEntryId=navigation.entryId||null;
     }else if(wasClosed)mobileSheetHistoryOwner='app';
-    store.setSheet(normalized,sheetWork);
+    store.setOverlay(nextOverlay);
     const [title,subtitle]=MOBILE_SHEET_LABELS[normalized];
-    document.getElementById('mobileSheetTitle').textContent=title;
-    document.getElementById('mobileSheetSubtitle').textContent=subtitle;
+    document.getElementById('sheetHostTitle').textContent=title;
+    document.getElementById('sheetHostSubtitle').textContent=subtitle;
     renderSheetContent(store.getState().overlay);
+    sheet.dataset.owner='explicit';
     sheet.hidden=false;sheet.setAttribute('aria-hidden','false');sheet.setAttribute('aria-modal','true');
     if(!suppressMobileSheetHistory&&!sameContent){
       const action=wasClosed||previous.sheet!==normalized?'overlay-open':'overlay-target-change';
       if(action==='overlay-open')mobileSheetHistoryOwner='app';
       if(writeMobileUrlState({action}))mobileSheetHistoryEntryId=window.history.state?.viewerNavigation?.entryId||null;
     }
-    requestAnimationFrame(()=>document.getElementById('mobileSheetTitle')?.focus({preventScroll:true}));
+    requestAnimationFrame(()=>document.getElementById('sheetHostTitle')?.focus({preventScroll:true}));
     return true;
   }
 
   function closeMobileSheet({restoreFocus=true,syncHistory=true}={}){
-    const sheet=document.getElementById('mobileSheet');
+    const sheet=document.getElementById('sheetHost');
     const store=mobileUiStore();
     const wasOpen=store?.getState().sheet!=='closed';
     const navigation=window.history.state?.viewerNavigation||{};
@@ -8845,6 +8902,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       navigation.sheetOwner==='app'&&navigation.parentEntryId&&!mobileSheetBackPending;
     store?.setSheet('closed',null);
     if(sheet){sheet.hidden=true;sheet.setAttribute('aria-hidden','true');}
+    if(sheet)sheet.dataset.owner='none';
     if(traverse){
       mobileSheetBackPending=true;
       window.history.back();
@@ -8853,12 +8911,13 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       mobileSheetHistoryOwner='none';mobileSheetHistoryEntryId=null;
     }
     if(!wasOpen||!syncHistory){mobileSheetHistoryOwner='none';mobileSheetHistoryEntryId=null;}
+    document.getElementById('mobileAreaButton')?.setAttribute('aria-expanded','false');
     const target=mobileSheetReturnFocus;mobileSheetReturnFocus=null;
     if(restoreFocus&&target?.isConnected)requestAnimationFrame(()=>target.focus());
     return wasOpen;
   }
 
-  function applyMobileUrlState({fromPopstate=false}={}){
+  function applyMobileUrlState({fromPopstate=false,preserveTier=false}={}){
     const guardHistory=!!fromPopstate;
     if(guardHistory)beginMobileHistoryApplication();
     try{
@@ -8872,10 +8931,12 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       store.setSearch(parsed.query);store.setFilter(parsed.filter);
       syncMobileSearchControls(parsed);
       setMobileView(parsed.view,{pushHistory:false});
-      if(fromPopstate)applyMobileHistorySnapshot(window.history.state?.viewerNavigation?.snapshot?.mobile);
-      if(parsed.sheet!=='closed'&&(current.sheet!==parsed.sheet||current.sheetWork!==parsed.sheetWork)){
+      if(fromPopstate)applyMobileHistorySnapshot(window.history.state?.viewerNavigation?.snapshot?.mobile,{preserveTier});
+      const currentOverlay=normalizeMobileOverlay(current.overlay);
+      const parsedOverlay=normalizeMobileOverlay(parsed.overlay);
+      if(parsed.sheet!=='closed'&&JSON.stringify(currentOverlay)!==JSON.stringify(parsedOverlay)){
         const previousSuppression=suppressMobileSheetHistory;suppressMobileSheetHistory=true;
-        openMobileSheet(parsed.sheet,parsed.sheetWork);
+        openMobileSheet(parsed.sheet,parsed.sheet==='settings'?parsed.overlay?.section:parsed.sheetWork);
         suppressMobileSheetHistory=previousSuppression;
       }
       if(typeof flowchartReady!=='undefined'&&flowchartReady&&!fromPopstate&&!selectionHydrated&&typeof render==='function')render();
@@ -8887,9 +8948,11 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
 
   function handleMobilePopState(){
     const parsed=readMobileUrlState();
+    const previous=mobileUiStore()?.getState();
+    const preserveTier=previous?.overlay?.kind==='settings'&&parsed.sheet==='closed';
     mobileSheetBackPending=false;
     if(mobileUiStore()?.getState().sheet!=='closed'&&parsed.sheet==='closed')closeMobileSheet({syncHistory:false});
-    applyMobileUrlState({fromPopstate:true});
+    applyMobileUrlState({fromPopstate:true,preserveTier});
   }
 
   window.ensureMobileShell=ensureMobileShell;
@@ -8897,6 +8960,26 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   window.setMobileView=setMobileView;
   window.openMobileSheet=openMobileSheet;
   window.closeMobileSheet=closeMobileSheet;
+  window.syncSheetPresentation=syncSheetPresentation;
+  window.marvelSheetHost={
+    open(overlay){
+      const next=normalizeMobileOverlay(overlay);
+      if(next.kind==='closed')return closeMobileSheet();
+      return openMobileSheet(next.kind,next.kind==='detail'?next.workId:next.kind==='reason'?next.relationId:next.section);
+    },
+    close(options){return closeMobileSheet(options||{});},
+    render(overlay){syncSheetPresentation();return renderSheetContent(overlay||mobileUiStore()?.getState?.().overlay);},
+    openInspection:openDockedInspection,
+    closeInspection:closeDockedInspection,
+    getSnapshot(){
+      const overlay=normalizeMobileOverlay(mobileUiStore()?.getState?.().overlay);
+      const selection=window.marvelUiCommands?.readSelection?.()||{};
+      const presentation=syncSheetPresentation();
+      const state={...selection,overlay};
+      const effective=window.marvelEffectiveSheetContent?.(state,presentation)||overlay;
+      return {overlay:{...overlay},effective:{...effective},presentation};
+    },
+  };
   window.readMobileUrlState=readMobileUrlState;
   window.writeMobileUrlState=writeMobileUrlState;
   window.marvelMobileHydrateUrlState=applyMobileUrlState;
@@ -8911,8 +8994,9 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     host?.replaceChildren();
     mountMobileView(view);
   };
-  mobileChartMotion.addEventListener?.('change',()=>requestAnimationFrame(syncMobileChartForViewport));
+  mobileChartMotion.addEventListener?.('change',()=>requestAnimationFrame(()=>{syncSheetPresentation();syncMobileChartForViewport();}));
   const initializeMobileShell=()=>{
+    syncSheetPresentation();
     ensureMobileShell();
     if(!window.__mobileHistoryScrollWired){
       window.addEventListener('scroll',scheduleMobileHistoryScrollSnapshot,{passive:true});
@@ -9002,11 +9086,6 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   const AREA_LABELS={overview:'関係地図',release:'公開順',chronology:'世界線・時系列',watch:'この作品を見るなら',characters:'人物・組織'};
   let currentPublicView='overview';
   const areaButton=document.getElementById('mobileAreaButton');
-  const areaSheet=document.getElementById('mobileAreaSheet');
-  if(areaSheet&&areaSheet.parentElement!==document.body)document.body.appendChild(areaSheet);
-  let mobileAreaReturnFocus=null,mobileAreaOpen=false;
-  const mobileAreaFocusable=()=>[...areaSheet?.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')||[]]
-    .filter(el=>!el.disabled&&el.offsetParent!==null);
   const desktopSearchHost=document.querySelector('.control-search');
   const mobileSearchHost=document.getElementById('mobileSearchHost');
   const searchInput=document.getElementById('q');
@@ -9020,15 +9099,17 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     document.querySelectorAll('[data-mobile-target]').forEach(b=>b.classList.toggle('active',b.dataset.mobileTarget===target));
   };
   window.openMobileAreaMenu=function(){
-    if(!areaSheet)return;
-    if(!mobileAreaOpen)mobileAreaReturnFocus=document.activeElement;
-    mobileAreaOpen=true;areaSheet.hidden=false;areaSheet.setAttribute('aria-hidden','false');areaButton?.setAttribute('aria-expanded','true');syncMobileAreaLabel();
-    requestAnimationFrame(()=>mobileAreaFocusable()[0]?.focus());
+    const state=window.marvelMobileUiStore?.getState?.();
+    if(state?.sheet==='settings'&&state.overlay?.section==='display'){window.closeMobileSheet?.();return false;}
+    window.openMobileSheet?.('settings','display');
+    areaButton?.setAttribute('aria-expanded','true');
+    syncMobileAreaLabel();
+    return true;
   };
   window.closeMobileAreaMenu=function(){
-    if(!areaSheet)return;
-    mobileAreaOpen=false;areaSheet.hidden=true;areaSheet.setAttribute('aria-hidden','true');areaButton?.setAttribute('aria-expanded','false');
-    if(mobileAreaReturnFocus?.isConnected){const target=mobileAreaReturnFocus;mobileAreaReturnFocus=null;requestAnimationFrame(()=>target.focus());}
+    const state=window.marvelMobileUiStore?.getState?.();
+    if(state?.sheet==='settings'&&state.overlay?.section==='display')window.closeMobileSheet?.();
+    areaButton?.setAttribute('aria-expanded','false');
   };
   let mobileSearchResults=document.getElementById('mobileSearchResults');
   if(!mobileSearchResults&&mobileSearchHost){
@@ -9739,19 +9820,7 @@ window.ensureStageAViewInitialized=function(target){
     const target=btn.dataset.mobileTarget;
     activatePanel(target);closeMobileAreaMenu();
   });
-  areaButton?.addEventListener('click',()=>areaSheet?.hidden?openMobileAreaMenu():closeMobileAreaMenu());
-  document.getElementById('mobileAreaClose')?.addEventListener('click',closeMobileAreaMenu);
-  areaSheet?.addEventListener('click',e=>{if(e.target===areaSheet)closeMobileAreaMenu();});
-  document.addEventListener('keydown',e=>{
-    if(!mobileAreaOpen)return;
-    if(e.key==='Escape'){e.preventDefault();closeMobileAreaMenu();closeMobileSearchResults();return;}
-    if(e.key!=='Tab')return;
-    const focusables=mobileAreaFocusable();if(!focusables.length)return;
-    const first=focusables[0],last=focusables[focusables.length-1];
-    if(!areaSheet.contains(document.activeElement)){e.preventDefault();(e.shiftKey?last:first).focus();}
-    else if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
-    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
-  });
+  areaButton?.addEventListener('click',openMobileAreaMenu);
   searchInput?.addEventListener('input',renderLegacyMobileSearchResults);
   searchInput?.addEventListener('focus',renderLegacyMobileSearchResults);
   document.addEventListener('pointerdown',e=>{if(mobileSearchHost&&!mobileSearchHost.contains(e.target))closeMobileSearchResults();});
@@ -10217,6 +10286,7 @@ window.FEATURED_ROUTE=Object.freeze({
     detailFocusId=id; window.marvelDetailFocusId=id;
     window.marvelLegacyUiBridge?.requestPublish?.();
     renderFocusHighlight(id);
+    window.marvelSheetHost?.openInspection?.(id);
     if(center&&activeSvgHasNode(id))requestAnimationFrame(()=>_origCenterNodeInView(id));
     return true;
   };
@@ -10232,6 +10302,7 @@ window.FEATURED_ROUTE=Object.freeze({
 
   window.marvelReturnToGoalView=function(){
     detailFocusId=null; window.marvelDetailFocusId=null;
+    window.marvelSheetHost?.closeInspection?.();
     window.marvelLegacyUiBridge?.requestPublish?.();
     if(selectedIds.size)refreshSelection(false);
     else{clearSvg();render();resetPanels();}
