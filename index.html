@@ -8074,6 +8074,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   let mobileSheetHistoryOwner='none';
   let mobileSheetHistoryEntryId=null;
   let mobileSheetBackPending=false;
+  let mobileHistoryApplyDepth=0;
   let mobileNavigationEntryCounter=0;
   const mobileChartPanelOrigins=new Map();
   let mobileChartMountedPanel=null;
@@ -8081,6 +8082,18 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   let mobileChartMountedHost=null;
 
   function mobileUiStore(){return window.marvelMobileUiStore||null}
+  window.marvelMobileHistoryApplyDepth=0;
+  function mobileHistoryApplying(){
+    return mobileHistoryApplyDepth>0||Number(window.marvelMobileHistoryApplyDepth||0)>0;
+  }
+  function beginMobileHistoryApplication(){
+    mobileHistoryApplyDepth+=1;
+    window.marvelMobileHistoryApplyDepth=mobileHistoryApplyDepth;
+  }
+  function endMobileHistoryApplication(){
+    mobileHistoryApplyDepth=Math.max(0,mobileHistoryApplyDepth-1);
+    window.marvelMobileHistoryApplyDepth=mobileHistoryApplyDepth;
+  }
   function normalizeMobileView(view){return MOBILE_VIEWS.has(view)?view:'chart'}
   function normalizeMobileSheet(sheet){return MOBILE_SHEETS.has(sheet)?sheet:'closed'}
   function createMobileNavigationEntryId(){
@@ -8579,6 +8592,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   }
 
   function writeMobileUrlState({replace=false,action=null}={}){
+    if(mobileHistoryApplying())return false;
     const state=mobileUiStore()?.getState();
     if(!state)return false;
     const url=new URL(window.location.href);
@@ -8691,23 +8705,29 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
   }
 
   function applyMobileUrlState({fromPopstate=false}={}){
-    const parsed=readMobileUrlState();
-    const store=mobileUiStore();
-    if(!store)return;
-    const current=store.getState();
-    if(parsed.sheet==='closed'&&current.sheet!=='closed')closeMobileSheet({syncHistory:!fromPopstate});
-    store.setGoals(parsed.goalIds,parsed.selectedId);
-    const selectionHydrated=hydrateMobileSelectionFromStore(store.getState());
-    store.setSearch(parsed.query);store.setFilter(parsed.filter);
-    syncMobileSearchControls(parsed);
-    setMobileView(parsed.view,{pushHistory:false});
-    if(parsed.sheet!=='closed'&&(current.sheet!==parsed.sheet||current.sheetWork!==parsed.sheetWork)){
-      const previousSuppression=suppressMobileSheetHistory;suppressMobileSheetHistory=true;
-      openMobileSheet(parsed.sheet,parsed.sheetWork);
-      suppressMobileSheetHistory=previousSuppression;
+    const guardHistory=!!fromPopstate;
+    if(guardHistory)beginMobileHistoryApplication();
+    try{
+      const parsed=readMobileUrlState();
+      const store=mobileUiStore();
+      if(!store)return;
+      const current=store.getState();
+      if(parsed.sheet==='closed'&&current.sheet!=='closed')closeMobileSheet({syncHistory:!fromPopstate});
+      store.setGoals(parsed.goalIds,parsed.selectedId);
+      const selectionHydrated=hydrateMobileSelectionFromStore(store.getState());
+      store.setSearch(parsed.query);store.setFilter(parsed.filter);
+      syncMobileSearchControls(parsed);
+      setMobileView(parsed.view,{pushHistory:false});
+      if(parsed.sheet!=='closed'&&(current.sheet!==parsed.sheet||current.sheetWork!==parsed.sheetWork)){
+        const previousSuppression=suppressMobileSheetHistory;suppressMobileSheetHistory=true;
+        openMobileSheet(parsed.sheet,parsed.sheetWork);
+        suppressMobileSheetHistory=previousSuppression;
+      }
+      if(typeof flowchartReady!=='undefined'&&flowchartReady&&!fromPopstate&&!selectionHydrated&&typeof render==='function')render();
+      if(typeof flowchartReady!=='undefined'&&flowchartReady&&!fromPopstate)writeMobileUrlState({action:'url-hydrate'});
+    }finally{
+      if(guardHistory)endMobileHistoryApplication();
     }
-    if(typeof flowchartReady!=='undefined'&&flowchartReady&&!fromPopstate&&!selectionHydrated&&typeof render==='function')render();
-    if(typeof flowchartReady!=='undefined'&&flowchartReady&&!fromPopstate)writeMobileUrlState({action:'url-hydrate'});
   }
 
   function handleMobilePopState(){
@@ -9825,6 +9845,7 @@ window.FEATURED_ROUTE=Object.freeze({
   };
   window.marvelCreateUiHistoryWriter=function(historyTarget=window.history){
     return ({state={},url='',action={}}={})=>{
+      if(Number(window.marvelMobileHistoryApplyDepth||0)>0)return false;
       const mode=window.marvelUiHistoryPolicy(action);
       if(mode==='none')return false;
       const method=mode==='push'?'pushState':'replaceState';
