@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `227d589917fdf05610bb22f072aaf076151262bb` (PR #64); latest integrated viewer baseline: `11846866b3f5772e27b504b09f45ae589e70a694` (PR #84)
+- latest semantic baseline commit: `227d589917fdf05610bb22f072aaf076151262bb` (PR #64); latest integrated viewer baseline: `642634d37d6cd91c972b776bb5f9965eeb35c88e` (PR #86)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -35,6 +35,7 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #69 chronology node-closure and mobile visual fix: merged as `18b226ead9cf23d1311136fd49442ba0bee1b0f5`
 - PR #71 chronology annotation overlap fix: merged as `431bab8ad25a53b7258e937da919dfd933c072a9`
 - PR #84 mobile single-SheetHost selection/plan stabilization: merged as `11846866b3f5772e27b504b09f45ae589e70a694`
+- PR #86 Phase 4 search/preparation state stabilization: merged as `642634d37d6cd91c972b776bb5f9965eeb35c88e`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -346,6 +347,22 @@ Fresh verification for the merged Phase 3 baseline:
 - Pages deployment run `34447987577` succeeded; GitHub Pages reports `status=built` for `https://kamochama.github.io/marvel-flowchart-jp/` and the public HTML smoke check returned HTTP `200`.
 
 This is still a viewer-only baseline. Canonical CSVs, persistent review ledgers, graph edges, worldline/chronology semantics, and public plan-tier meaning are unchanged. The next bounded boundary is Phase 4 (`docs/superpowers/specs/2026-09-09-marvel-pc-mobile-ui-architecture-design.md`): audit search, watch-check, and goal-removal updates for zero chart rebuilds plus scroll/focus preservation. Phase 4 has not started in this documentation update; Phase 5 shell-boundary work and Phase 6 old-layer removal remain later separately planned work.
+
+## 0.1.18 Production baseline after the 2026-09-10 Phase 4 search/preparation stabilization
+
+PR #86 (`https://github.com/kamochama/marvel-flowchart-jp/pull/86`) is integrated into `main` at merge commit `642634d37d6cd91c972b776bb5f9965eeb35c88e`. It completes the bounded Phase 4 viewer work: search updates are audited as DOM-only with replace-only history, and preparation watch/tier/goal updates preserve the plan viewport and focused item action while avoiding chart rebuilds. The plan is recorded in `docs/superpowers/plans/2026-09-10-marvel-ui-phase4-search-preparation.md`.
+
+Fresh verification for the merged Phase 4 baseline:
+
+- bundled-Python full suite: `577` tests pass (`5` environment-gated skips);
+- bundled-Python build: `audit_issue_count=0`, content-audit issue count `0`, story paths `83/83`, prewatch edges `199`, SQLite integrity `ok`, export `131` nodes / `355` edges / `562` reasons;
+- real Chrome/CDP selection audit: `131` works × `2` public tiers, exact-set mismatches `0`;
+- real Chrome/CDP interaction, chronology, publication-order, and mobile-shell audits: pass (`131` publication cards, `0` failures, `0` synthetic edges);
+- Phase 4 mobile report: search focus/scroll preserved, plan anchor preserved, chart rebuild delta `0`, push-history delta `0`;
+- GitHub Actions run `34457417548`: all six required jobs pass;
+- Pages deployment run `34458701604` succeeded; GitHub Pages reports `status=built` for `https://kamochama.github.io/marvel-flowchart-jp/` and the public HTML smoke check returned HTTP `200`.
+
+This remains viewer-only. Canonical CSVs, persistent review ledgers, relation/chronology/worldline semantics, and public plan-tier meaning are unchanged. The next bounded boundary is Phase 5 of the PC/mobile architecture spec: PC surface/breakpoint/orientation and shell-boundary audit. Phase 5 has not started in this record; Phase 6 old-layer removal remains later separately planned work.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
