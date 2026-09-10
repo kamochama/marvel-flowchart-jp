@@ -106,7 +106,7 @@ const restoreSearchViewport=(surface,snapshot)=>{if(!surface||!snapshot)return;s
 ```
 
 - [x] **Step 4: Run MobileShellContractTests and the mobile-shell browser audit GREEN.** Confirm chart rebuild delta 0 and history growth 0.
-- [ ] **Step 5: Commit:** git add index.html tests/library_v5/test_mobile_shell_contract.py tests/library_v5/browser_mobile_shell_audit.mjs; git diff --cached --check; git commit -m 'fix: preserve search viewport and focus during updates'.
+- [x] **Step 5: Commit:** included in combined implementation commit `5e92cd0` after the search audit and plan snapshot changes were reviewed together.
 
 ### Task 3: Preserve preparation-plan position and focus
 
@@ -143,7 +143,7 @@ function restoreMobilePlanViewport(surface,snapshot){
 ```
 
 - [x] **Step 4: Run focused unit and browser audits GREEN.** Verify rebuild delta 0, history growth 0, ordered goals correct, and watched progress changes only in the plan projection.
-- [ ] **Step 5: Commit:** git add index.html tests/library_v5/test_mobile_shell_contract.py tests/library_v5/browser_mobile_shell_audit.mjs; git diff --cached --check; git commit -m 'fix: preserve preparation plan position and focus'.
+- [x] **Step 5: Commit:** included in combined implementation commit `5e92cd0` after the search audit and plan snapshot changes were reviewed together.
 
 ### Task 4: Integrate and verify
 
@@ -152,8 +152,8 @@ function restoreMobilePlanViewport(surface,snapshot){
 - [x] **Step 1: Require phase4.search and phase4.plan in the Python harness; require every boolean true and every counter/history delta zero.**
 - [x] **Step 2: Run the exact bundled-Python full suite, build, selection audit, interaction audit, and mobile-shell audit from AGENTS.md.**
 - [x] **Step 3: Inspect the complete diff. Confirm only planned HTML/test/docs files changed; canonical CSVs and persistent review ledgers are byte-identical; git diff --check is clean.**
-- [ ] **Step 4: Record RED/GREEN counts, hosted CI, Pages, and unchanged semantic boundaries; state that Phase 5 PC/breakpoint/orientation work is next and not included.**
-- [ ] **Step 5: Push the feature branch, create a normal PR, wait for required checks, merge, verify main SHA and Pages/public HTML, then update this plan's execution record. Never commit directly to main or force-push.**
+- [x] **Step 4: Record RED/GREEN counts, hosted CI, Pages, and unchanged semantic boundaries; state that Phase 5 PC/breakpoint/orientation work is next and not included.** Recorded in the execution record and merged handoff/roadmap sections.
+- [x] **Step 5: Push the feature branch, create a normal PR, wait for required checks, merge, verify main SHA and Pages/public HTML, then update this plan's execution record. Never commit directly to main or force-push.** PR #86 merged as `642634d`; docs-only PR #87 merged as `a982201`; Pages run `34459017063` and public HTTP 200 were verified.
 
 ## Self-review checklist
 
@@ -168,4 +168,4 @@ function restoreMobilePlanViewport(surface,snapshot){
 - Task 2: the existing search renderer was confirmed by real Chrome to preserve input focus, keep scroll stable for the exercised update, avoid chart rebuilds (`0`), and add no `pushState` entries (`0`). No redundant search implementation rewrite was made; the browser regression fields were added instead.
 - Task 3 GREEN: `captureMobilePlanViewport`/`restoreMobilePlanViewport` now preserve plan surface/document scroll and focused plan actions with `preventScroll`, while initial surface mounts do not inherit stale chart focus/scroll. The real mobile-shell report recorded `anchorPreserved=true`, `chartRebuilds=0`, and `historyGrowth=0`.
 - Task 4 verification: bundled-Python suite `577` pass (`5` environment-gated skips); build `audit_issue_count=0`, content-audit issue count `0`, story paths `83/83`, prewatch edges `199`, export `131` nodes / `355` edges / `562` reasons; real Chrome selection, interaction, and mobile-shell audits pass. Generated build outputs were inspected and removed as transient; canonical CSVs and review ledgers remained unchanged.
-- Production handoff and roadmap update, PR creation, hosted CI, Pages verification, and merge remain the final integration steps after the implementation diff is reviewed.
+- Production integration is complete: PR #86 merged as `642634d`, the handoff/roadmap docs-only PR #87 merged as `a982201`, all six hosted CI jobs passed, and Pages run `34459017063` reports `built` with public HTTP 200. The next bounded boundary is Phase 5 PC/breakpoint/orientation shell auditing.
