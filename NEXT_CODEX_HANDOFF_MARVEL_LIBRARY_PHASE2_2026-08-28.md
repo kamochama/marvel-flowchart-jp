@@ -11,7 +11,7 @@ Repository:
 Current production branch:
 
 - `main`
-- latest semantic baseline commit: `227d589917fdf05610bb22f072aaf076151262bb` (PR #64); latest integrated audit baseline: `431bab8ad25a53b7258e937da919dfd933c072a9` (PR #71)
+- latest semantic baseline commit: `227d589917fdf05610bb22f072aaf076151262bb` (PR #64); latest integrated viewer baseline: `11846866b3f5772e27b504b09f45ae589e70a694` (PR #84)
 
 The previous forward line and its follow-up PRs are now integrated:
 
@@ -34,6 +34,7 @@ The previous forward line and its follow-up PRs are now integrated:
 - PR #66 relation evidence promotion wave010: merged as `696b21b485ee77ce647c5f9206b428afaf84905c`
 - PR #69 chronology node-closure and mobile visual fix: merged as `18b226ead9cf23d1311136fd49442ba0bee1b0f5`
 - PR #71 chronology annotation overlap fix: merged as `431bab8ad25a53b7258e937da919dfd933c072a9`
+- PR #84 mobile single-SheetHost selection/plan stabilization: merged as `11846866b3f5772e27b504b09f45ae589e70a694`
 
 There is no currently approved semantic implementation branch. Create a new `codex/` branch only after the next bounded execution plan is selected. Do not commit directly to production `main`.
 
@@ -329,6 +330,22 @@ Fresh verification for the merged mobile baseline:
 - Pages deployment run `34030185938` succeeded for `https://kamochama.github.io/marvel-flowchart-jp/`.
 
 This milestone changes viewer presentation and interaction only. It does not modify canonical CSVs, relation/chronology/worldline semantics, or public plan-tier meaning.
+
+## 0.1.17 Production baseline after the 2026-09-10 single-sheet mobile stabilization
+
+PR #84 (`https://github.com/kamochama/marvel-flowchart-jp/pull/84`) is integrated into `main` at merge commit `11846866b3f5772e27b504b09f45ae589e70a694`. It completes the Phase 3 single-SheetHost viewer boundary: mobile chart/detail/plan navigation now shares one sheet host, selection is restored after chart remount and async paint, stale detail focus is guarded, and desktop docked-inspection fallback is closed when crossing into mobile. The change also hardens the mobile-shell and publication audits without changing graph or canonical semantics.
+
+Fresh verification for the merged Phase 3 baseline:
+
+- bundled-Python full suite: `575` tests pass (`5` environment-gated skips);
+- bundled-Python build: `audit_issue_count=0`, content-audit issue count `0`, story paths `83/83`, SQLite integrity `ok`;
+- real Chrome/CDP selection audit: `131` works × `2` public tiers, exact-set mismatches `0`;
+- real Chrome/CDP interaction, chronology, and publication-order audits: pass (`cards=131`, `failures=0`, `syntheticEdges=0`);
+- real Chrome/CDP mobile-shell audit: pass;
+- GitHub Actions run `34447987577`: all six required jobs pass;
+- Pages deployment run `34447987577` succeeded; GitHub Pages reports `status=built` for `https://kamochama.github.io/marvel-flowchart-jp/` and the public HTML smoke check returned HTTP `200`.
+
+This is still a viewer-only baseline. Canonical CSVs, persistent review ledgers, graph edges, worldline/chronology semantics, and public plan-tier meaning are unchanged. The next bounded boundary is Phase 4 (`docs/superpowers/specs/2026-09-09-marvel-pc-mobile-ui-architecture-design.md`): audit search, watch-check, and goal-removal updates for zero chart rebuilds plus scroll/focus preservation. Phase 4 has not started in this documentation update; Phase 5 shell-boundary work and Phase 6 old-layer removal remain later separately planned work.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 

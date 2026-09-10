@@ -21,6 +21,8 @@ If this roadmap conflicts with a newer explicit user instruction, the newer user
 
 > **Current chronology annotation note (2026-09-04):** PR #71 is merged into `main` at `431bab8ad25a53b7258e937da919dfd933c072a9`. It is a viewer-only overlap fix for chronology lane headers and branch/pivot annotations; no canonical facts, chronology edge IDs, graph topology, or selection semantics changed. See §29 and the handoff's §0.1.15.
 
+> **Current Phase 3 viewer note (2026-09-10):** PR #84 is merged into `main` at `11846866b3f5772e27b504b09f45ae589e70a694`. It completes the single-SheetHost mobile navigation boundary and async selection repaint guards without changing canonical data or graph semantics. See §31 and the handoff's §0.1.17.
+
 ---
 
 ## 1. End goal
@@ -727,3 +729,18 @@ Verification at this boundary:
 - Pages deployment run `34030185938` succeeded.
 
 The two PRs are viewer-only changes. Canonical CSVs, graph edges, worldline/chronology semantics, and normalized fact meaning are unchanged. Any further mobile redesign or semantic data work requires its own bounded plan and regression contract.
+
+## 31. Single-SheetHost mobile stabilization — production baseline (2026-09-10)
+
+PR #84 (`https://github.com/kamochama/marvel-flowchart-jp/pull/84`) integrated the Phase 3 single-SheetHost viewer boundary into `main` at merge commit `11846866b3f5772e27b504b09f45ae589e70a694`. Mobile chart, detail, and preparation-plan navigation now share one sheet host; selection is restored after mobile chart remount and delayed paint; stale detail focus is guarded; and desktop docked-inspection fallback is closed when moving into mobile. The mobile-shell and publication harnesses were strengthened around these transitions.
+
+Verification at this boundary:
+
+- bundled-Python full suite: `575` pass, `5` environment-gated skips;
+- build/audit/content-audit: `0` issues, story paths `83/83`, SQLite integrity `ok`;
+- real Chrome/CDP selection audit: `131` works × `2` public tiers, `0` exact-set mismatches;
+- interaction, chronology, publication-order, and mobile-shell audits: pass (`131` publication cards, `0` failures, `0` synthetic edges);
+- hosted GitHub Actions run `34447987577`: all six required jobs pass;
+- Pages deployment run `34447987577` succeeded and GitHub Pages reports `status=built` for `https://kamochama.github.io/marvel-flowchart-jp/`.
+
+This remains viewer-only. Canonical CSVs, review ledgers, relation/chronology/worldline semantics, and public plan-tier meaning are unchanged. The next bounded work is Phase 4 of the PC/mobile architecture spec: audit search, watch-check, and goal-removal updates for zero chart rebuilds while preserving scroll position and focus. It is not started by this record. Phase 5 shell-boundary work and Phase 6 old-layer removal remain later boundaries requiring their own plan, RED/UI contract, and full verification.
