@@ -462,6 +462,8 @@ class MobileShellContractTests(unittest.TestCase):
 
     def test_phase4_plan_update_restores_viewport_and_focus_anchor(self) -> None:
         body = function_body(self.source, "renderMobilePlanScreen")
+        body += function_body(self.source, "captureMobilePlanViewport")
+        body += function_body(self.source, "restoreMobilePlanViewport")
         for token in ("activeElement", "scrollTop", "preventScroll", "data-mobile-plan-work"):
             self.assertIn(token, body)
         for forbidden in ("fitView(", "rebuildMobileCanvas(", "initMobileCanvas(", "mountMobileChartView("):
