@@ -344,6 +344,30 @@ async function selectAllAndBackspace(cdp) {
   await cdp.send("Input.dispatchKeyEvent", { type:"keyDown", ...backspace });
   await cdp.send("Input.dispatchKeyEvent", { type:"keyUp", ...backspace });
 }
+async function focusMobileSearchInput(cdp, timeoutMs, label="mobile search input focus") {
+  const selector='#mobileViewHost [data-mobile-search-query]';
+  await pageEvaluate(cdp, "return new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve(true))));");
+  const point=await pointForSelector(cdp, selector);
+  if(!point)throw new Error(`${label}: input is not mounted`);
+  // Mobile emulation can deliver a synthetic mouse click before the input's
+  // focus task is committed after a history restore. Wait for focus before
+  // sending keyboard input so this remains a DOM interaction audit rather
+  // than a timing race in the harness.
+  await cdp.send("Input.dispatchMouseEvent", { type:"mouseMoved", x:point.x, y:point.y });
+  await cdp.send("Input.dispatchMouseEvent", { type:"mousePressed", x:point.x, y:point.y, button:"left", clickCount:1 });
+  await new Promise((resolve) => setTimeout(resolve, 40));
+  await cdp.send("Input.dispatchMouseEvent", { type:"mouseReleased", x:point.x, y:point.y, button:"left", clickCount:1 });
+  await pageEvaluate(cdp, "return new Promise(resolve=>requestAnimationFrame(()=>resolve(true))); ");
+  return poll(
+    () => pageEvaluate(cdp, `return document.activeElement===document.querySelector(${JSON.stringify(selector)});`),
+    timeoutMs,
+    label,
+  );
+}
+async function stablePointForSelector(cdp, selector) {
+  await pageEvaluate(cdp, "return new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve(true))));");
+  return pointForSelector(cdp, selector);
+}
 async function controlFocusSequence(cdp) {
   const expected = ["mobileChartFit", "mobileChartSelected", "mobileChartDetails", "mobileChartViewButton"];
   await clickPoint(cdp, await pointForSelector(cdp, "#mobileChartFit"));
@@ -792,7 +816,7 @@ async function runAudit(args) {
     await clickPoint(cdp, await pointForSelector(cdp, '#mobileBottomNav [data-mobile-view="search"]'));
     await waitForSearch(cdp, (state) => state.view === "search" && state.inputValue === "Spider-Man 3", timeoutMs, "search restored after forward");
     await pageEvaluate(cdp, "document.querySelector('#mobileViewHost [data-mobile-search-query]')?.scrollIntoView({block:'center'}); return true;");
-    await clickPoint(cdp, await pointForSelector(cdp, '#mobileViewHost [data-mobile-search-query]'));
+    await focusMobileSearchInput(cdp, timeoutMs, "empty mobile search input focus");
     await selectAllAndBackspace(cdp);
     await cdp.send("Input.insertText", { text: "No Such Marvel Work" });
     const emptySearch=await waitForSearch(cdp, (state) => state.emptyVisible && state.emptyText === "該当なし", timeoutMs, "empty mobile search announcement");
@@ -884,7 +908,9 @@ async function runAudit(args) {
     if(result.plan.switchMs>1500)failures.push(`mobile plan switch was too slow: ${result.plan.switchMs}ms`);
     const watchedBefore=planForWatch.watchedIds.includes(firstPlanId);
     const planRerendersBefore=planForWatch.rerenders;
-    await clickPoint(cdp, await pointForSelector(cdp, `#mobileViewHost [data-mobile-plan-work="${firstPlanId}"] [data-mobile-plan-watched]`));
+    const watchedSelector=`#mobileViewHost [data-mobile-plan-work="${firstPlanId}"] [data-mobile-plan-watched]`;
+    await pageEvaluate(cdp, `document.querySelector(${JSON.stringify(watchedSelector)})?.scrollIntoView({block:'center'}); return true;`);
+    await clickPoint(cdp, await stablePointForSelector(cdp, watchedSelector));
     const toggled=await waitForPlan(cdp, (state) => state.watchedIds.includes(firstPlanId)===!watchedBefore, timeoutMs, "watched persistence toggle");
     const planRerendersUnchanged=JSON.stringify(toggled.rerenders)===JSON.stringify(planRerendersBefore);
     result.plan.watchedToggle=toggled.watchedIds.includes(firstPlanId)===!watchedBefore && planRerendersUnchanged;

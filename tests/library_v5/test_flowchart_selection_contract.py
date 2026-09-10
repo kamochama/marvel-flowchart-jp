@@ -474,7 +474,8 @@ process.stdout.write(JSON.stringify(ids));
         end = self.source.index("\n  };\n\n  document.querySelectorAll('.tab').forEach", start)
         activate = self.source[start:end]
         self.assertIn("refreshSelection(false)", activate)
-        self.assertIn("window.marvelRenderDetailFocus(window.marvelDetailFocusId)", activate)
+        self.assertIn("const detailAtActivation=window.marvelDetailFocusId||null", activate)
+        self.assertIn("window.marvelRenderDetailFocus(detailAtActivation)", activate)
 
     def test_release_disables_mobile_synthetic_edges_at_the_release_boundary(self) -> None:
         """A release SVG policy must block synthetic relation overlays on mobile."""
@@ -549,8 +550,9 @@ process.stdout.write(JSON.stringify(ids));
         start = self.source.index("window.activatePanel=function")
         end = self.source.index("\n  };\n\n  document.querySelectorAll('.tab').forEach", start)
         activate = self.source[start:end]
-        self.assertIn("window.marvelDetailFocusId", activate)
-        self.assertIn("window.marvelRenderDetailFocus(window.marvelDetailFocusId)", activate)
+        self.assertIn("const detailAtActivation=window.marvelDetailFocusId||null", activate)
+        self.assertIn("window.marvelDetailFocusId===detailAtActivation", activate)
+        self.assertIn("window.marvelRenderDetailFocus(detailAtActivation)", activate)
 
     def test_chronology_groups_carry_traversability_and_fox_branch_endpoints(self) -> None:
         """Structural branches are selectable; display-only sequences are not traversed."""

@@ -8144,6 +8144,15 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const presentation=mobileChartMotion.matches?'modal':'docked';
     const previous=host.dataset.presentation||'docked';
     if(previous==='modal'&&presentation==='docked'&&!host.hidden)leaveSheetModal({restoreFocus:false});
+    // A PC inspection is a docked fallback, not a mobile modal. When the
+    // viewport crosses into the mobile presentation, retire that fallback
+    // before the modal lifecycle can inert the mobile shell.
+    if(previous==='docked'&&presentation==='modal'&&!host.hidden&&host.dataset.owner==='inspection'&&mobileUiStore()?.getState?.().overlay?.kind==='closed'){
+      // Keep goals, SVG paint, and camera intact; only retire the PC fallback
+      // host so the mobile shell can receive input.
+      if(window.marvelDetailFocusId&&typeof window.marvelReturnToGoalView==='function')window.marvelReturnToGoalView();
+      else window.marvelSheetHost?.closeInspection?.();
+    }
     const right=document.getElementById('right');
     if(presentation==='docked'&&right&&host.parentElement!==right){
       const anchor=right.querySelector('#sidePanelWorks');
@@ -8892,7 +8901,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       // the current URL/history snapshot instead of being rolled back to the
       // parent entry previous panel.
       closeMobileSheet({syncHistory:false});
-      window.activatePanel?.(button.dataset.sheetDisplayTarget,{fit:false,restoreSelection:false});
+      window.activatePanel?.(button.dataset.sheetDisplayTarget,{fit:false,restoreSelection:true});
     }));
     body.querySelector('[data-sheet-tier]')?.addEventListener('change',event=>window.marvelSetConnectionTier?.(event.target.value));
     body.querySelector('[data-sheet-goal-toggle]')?.addEventListener('click',event=>{
@@ -9089,7 +9098,20 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const host=document.getElementById('mobileViewHost');
     const view=mobileUiStore()?.getState().view||'chart';
     if(!mobileChartMotion.matches){document.body.classList.remove('mobile-chart-host-only');restoreMobileChartPanels();host?.replaceChildren();return;}
-    if(view==='chart'){document.body.classList.remove('mobile-chart-host-only');mountMobileChartView(host);return;}
+    if(view==='chart'){
+      document.body.classList.remove('mobile-chart-host-only');
+      mountMobileChartView(host);
+      // A pending desktop panel paint can run in the same frame as the
+      // responsive move. Reapply the existing semantic selection after the
+      // mobile surface mounts so SVG and Canvas keep the same highlight set.
+      const repaintMobileChart=()=>{
+        if(selectedIds.size&&typeof refreshSelection==='function')refreshSelection(false);
+        else if(window.marvelDetailFocusId&&typeof window.marvelRenderDetailFocus==='function')window.marvelRenderDetailFocus(window.marvelDetailFocusId);
+      };
+      repaintMobileChart();
+      requestAnimationFrame(()=>requestAnimationFrame(repaintMobileChart));
+      return;
+    }
     document.body.classList.add('mobile-chart-host-only');
     restoreMobileChartPanels();
     host?.replaceChildren();
@@ -9885,6 +9907,8 @@ window.ensureStageAViewInitialized=function(target){
     }
     const panel=document.getElementById(target);
     if(!panel)return false;
+    const hadSelection=selectedIds.size>0;
+    const detailAtActivation=window.marvelDetailFocusId||null;
     const wasWatch=currentPublicView==='watch'||document.body.classList.contains('public-watch-view');
     if(exitFeatured&&typeof window.exitFeaturedRoutePreview==='function')window.exitFeaturedRoutePreview({restore:false});
     document.body.classList.remove('mobile-watch-in-view','public-watch-view');
@@ -9906,8 +9930,8 @@ window.ensureStageAViewInitialized=function(target){
           else applyView(wrap);
         }else fitView(wrap);
       }
-      if(wrap&&restoreSelection&&selectedIds.size)refreshSelection(false);
-      else if(wrap&&restoreSelection&&window.marvelDetailFocusId&&typeof window.marvelRenderDetailFocus==='function')window.marvelRenderDetailFocus(window.marvelDetailFocusId);
+      if(wrap&&restoreSelection&&hadSelection)refreshSelection(false);
+      else if(wrap&&restoreSelection&&detailAtActivation&&window.marvelDetailFocusId===detailAtActivation&&typeof window.marvelRenderDetailFocus==='function')window.marvelRenderDetailFocus(detailAtActivation);
       else if(wrap){clearSvg();applyCharacterHighlight();if(typeof window.applyFamilyFocus==='function')window.applyFamilyFocus();}
     });
     if(window.marvelMobileUiStore&&window.matchMedia?.('(max-width:760px)').matches&&Number(window.marvelMobileHistoryApplyDepth||0)===0){

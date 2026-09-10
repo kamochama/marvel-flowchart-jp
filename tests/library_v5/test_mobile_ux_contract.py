@@ -151,6 +151,22 @@ class MobileUxContractTests(unittest.TestCase):
         self.assertIn("sheetHostBackdrop", self.source)
         self.assertIn("data-presentation=\"docked\"", self.source)
 
+    def test_responsive_switch_closes_docked_inspection_before_mobile_modal(self) -> None:
+        body = function_body(self.source, "syncSheetPresentation")
+        self.assertIn("marvelSheetHost?.closeInspection", body)
+        self.assertIn("dataset.owner==='inspection'", body)
+
+    def test_mobile_sheet_chart_switch_preserves_selection_paint(self) -> None:
+        self.assertIn(
+            "window.activatePanel?.(button.dataset.sheetDisplayTarget,{fit:false,restoreSelection:true})",
+            self.source,
+        )
+
+    def test_panel_activation_captures_selection_before_async_paint(self) -> None:
+        body = function_body(self.source, "activatePanel")
+        self.assertIn("const hadSelection=selectedIds.size>0", body)
+        self.assertIn("restoreSelection&&hadSelection", body)
+
     def test_side_tabs_expose_active_panel_state(self) -> None:
         body = function_body(self.source, "showSideTab")
         self.assertIn("aria-selected", body)
