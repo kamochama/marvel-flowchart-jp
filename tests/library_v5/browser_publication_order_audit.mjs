@@ -695,7 +695,7 @@ async function waitMobile(cdp, predicate, timeoutMs, label) {
 
 async function activateMobileRelease(cdp, timeoutMs) {
   await clickSelector(cdp, "#mobileAreaButton", timeoutMs);
-  await clickSelector(cdp, '.mobile-area-sheet [data-mobile-target="release"]', timeoutMs);
+  await clickSelector(cdp, '#sheetHost [data-mobile-target="release"]', timeoutMs);
   await waitMobile(cdp, (s) => s.active === true && s.panel === "release" && s.nodeBoxes === WORK_COUNT, timeoutMs, "mobile release Canvas readiness");
 }
 

@@ -522,7 +522,7 @@ class MobileShellContractTests(unittest.TestCase):
 
     def test_mobile_detail_sheet_renders_work_metadata(self) -> None:
         body = function_body(self.source, "openMobileSheet")
-        body += function_body(self.source, "mobileWorkDetailHtml")
+        body += function_body(self.source, "sheetWorkDetailHtml")
         for token in ("WORK_DETAILS", "nm?.[", "synopsis_ja", "map_role_ja", "renderSheetContent"):
             self.assertIn(token, body)
 
@@ -540,7 +540,7 @@ class MobileShellContractTests(unittest.TestCase):
         body = function_body(self.source, "renderSheetContent")
         self.assertIn("sheetReasonHtml", body)
         self.assertIn("sheetSettingsHtml", body)
-        self.assertIn("mobileWorkDetailHtml", body)
+        self.assertIn("sheetWorkDetailHtml", body)
         self.assertIn("sheetHostBody", body)
 
     def test_sheet_display_choice_closes_without_backtracking_before_panel_change(self) -> None:
