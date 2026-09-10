@@ -270,6 +270,9 @@ class BrowserPublicationOrderAuditTests(unittest.TestCase):
         ):
             self.assertIn(term, source)
         self.assertRegex(source, r"overlaySyntheticDrawn\s*!==?\s*0|overlaySyntheticDrawn\s*[><]\s*0")
+        self.assertIn("if(mobileCanvasHitTest(wrap,x,y)!==null)continue;", source)
+        self.assertIn("if(!document.elementFromPoint(x,y)?.closest?.('canvas[data-marvel-mobile-canvas]'))continue;", source)
+        self.assertIn("tools=wrap.querySelector('.chart-watch-tools')?.getBoundingClientRect()", source)
 
     def test_wrapper_skips_live_chrome_without_opt_in(self) -> None:
         source = (ROOT / "tests" / "library_v5" / "test_browser_publication_order_audit.py").read_text(

@@ -415,7 +415,7 @@ async function clearMobileViewport(cdp, timeoutMs) {
 
 async function activateMobilePanel(cdp, target, timeoutMs) {
   await clickSelector(cdp, "#mobileAreaButton", timeoutMs);
-  await clickSelector(cdp, `.mobile-area-sheet [data-mobile-target="${target}"]`, timeoutMs);
+  await clickSelector(cdp, `#sheetHost [data-mobile-target="${target}"]`, timeoutMs);
   await poll(() => pageEvaluate(cdp, `return document.querySelector('.panel.active')?.id===${JSON.stringify(target)}`), timeoutMs, `${target} panel activation`);
 }
 

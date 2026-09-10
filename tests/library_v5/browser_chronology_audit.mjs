@@ -464,9 +464,9 @@ async function setCombine(cdp, mode, timeoutMs) {
 async function activateChronologyOnCurrentViewport(cdp, timeoutMs) {
   const mobile=await evaluate(cdp, "return matchMedia('(max-width:760px)').matches");
   if(mobile){
-    const open=await evaluate(cdp, "return !!document.querySelector('#mobileAreaSheet')&&!document.querySelector('#mobileAreaSheet').hidden");
+    const open=await evaluate(cdp, "return !!document.querySelector('#sheetHost')&&!document.querySelector('#sheetHost').hidden");
     if(!open)await clickSelector(cdp,"#mobileAreaButton",timeoutMs);
-    await clickSelector(cdp,'.mobile-area-sheet [data-mobile-target="chronology"]',timeoutMs);
+    await clickSelector(cdp,'#sheetHost [data-mobile-target="chronology"]',timeoutMs);
   }else await clickSelector(cdp,'.tab[data-target="chronology"]',timeoutMs);
   await poll(()=>evaluate(cdp,"return document.querySelector('.panel.active')?.id==='chronology'"),timeoutMs,"chronology panel activation");
 }

@@ -63,7 +63,7 @@ class MobileUxContractTests(unittest.TestCase):
     def test_mobile_navigation_exposes_controls_and_relationships(self) -> None:
         self.assertRegex(self.source, r'id="mobileControlsButton"[^>]*aria-controls="flowchartControls"')
         self.assertRegex(self.source, r'<div id="flowchartControls" class="controls"')
-        self.assertRegex(self.source, r'id="mobileAreaButton"[^>]*aria-controls="mobileAreaSheet"')
+        self.assertRegex(self.source, r'id="mobileAreaButton"[^>]*aria-controls="sheetHostPanel"')
 
     def test_mobile_primary_controls_have_44px_touch_targets(self) -> None:
         match = re.search(
@@ -99,12 +99,12 @@ class MobileUxContractTests(unittest.TestCase):
     def test_mobile_area_menu_traps_and_restores_focus(self) -> None:
         open_body = function_body(self.source, "openMobileAreaMenu")
         close_body = function_body(self.source, "closeMobileAreaMenu")
-        self.assertIn("mobileAreaReturnFocus", open_body)
-        self.assertRegex(open_body, r"focus\(\)")
-        self.assertIn("mobileAreaReturnFocus", close_body)
-        self.assertRegex(close_body, r"focus\(\)")
-        self.assertIn("mobileAreaOpen", self.source)
-        self.assertIn("e.key!=='Tab'", self.source)
+        self.assertIn("openMobileSheet", open_body)
+        self.assertIn("settings", open_body)
+        self.assertIn("display", open_body)
+        self.assertIn("closeMobileSheet", close_body)
+        self.assertIn("sheetHost", self.source)
+        self.assertIn("event.key!=='Tab'", function_body(self.source, "ensureMobileShell"))
 
     def test_mobile_sheet_manages_dialog_focus(self) -> None:
         body = function_body(self.source, "openMobileSheet")
@@ -115,8 +115,57 @@ class MobileUxContractTests(unittest.TestCase):
         self.assertIn("focus", body)
         self.assertIn("mobileSheetReturnFocus", close_body)
         self.assertIn("focus", close_body)
-        self.assertIn('aria-modal="true"', self.source)
+        self.assertIn("setAttribute('aria-modal','true')", self.source)
         self.assertIn("e.key==='Escape'", self.source)
+
+    def test_shared_sheet_host_has_modal_and_docked_presentation_contract(self) -> None:
+        self.assertIn("window.marvelSheetHost", self.source)
+        self.assertIn("data-presentation", self.source)
+        self.assertIn("syncSheetPresentation", self.source)
+        self.assertRegex(self.source, r"data-presentation=\"docked\"")
+        self.assertIn("setAttribute('role','region')", self.source)
+
+    def test_desktop_inspection_uses_shared_sheet_host_without_goal_mutation(self) -> None:
+        body = function_body(self.source, "marvelFocusWork")
+        self.assertIn("marvelSheetHost", body)
+        self.assertIn("openInspection", body)
+        return_body = function_body(self.source, "marvelReturnToGoalView")
+        self.assertIn("closeInspection", return_body)
+
+    def test_sheet_modal_lifecycle_owns_inert_scroll_and_pointer_state(self) -> None:
+        enter_body = function_body(self.source, "enterSheetModal")
+        leave_body = function_body(self.source, "leaveSheetModal")
+        self.assertIn("inert", enter_body)
+        self.assertIn("scrollY", enter_body)
+        self.assertIn("mobileSheetModalGeneration", enter_body)
+        self.assertIn("restore", leave_body)
+        self.assertIn("scrollTo", leave_body)
+        self.assertIn("mobileSheetModalGeneration", leave_body)
+        self.assertIn("sheetHostBackdrop", self.source)
+        self.assertIn("pointerId", self.source)
+
+    def test_docked_presentation_does_not_use_modal_aria_or_backdrop(self) -> None:
+        body = function_body(self.source, "syncSheetPresentation")
+        self.assertIn("setAttribute('role','region')", body)
+        self.assertIn("removeAttribute('aria-modal')", body)
+        self.assertIn("sheetHostBackdrop", self.source)
+        self.assertIn("data-presentation=\"docked\"", self.source)
+
+    def test_responsive_switch_closes_docked_inspection_before_mobile_modal(self) -> None:
+        body = function_body(self.source, "syncSheetPresentation")
+        self.assertIn("marvelSheetHost?.closeInspection", body)
+        self.assertIn("dataset.owner==='inspection'", body)
+
+    def test_mobile_sheet_chart_switch_preserves_selection_paint(self) -> None:
+        self.assertIn(
+            "window.activatePanel?.(button.dataset.sheetDisplayTarget,{fit:false,restoreSelection:true})",
+            self.source,
+        )
+
+    def test_panel_activation_captures_selection_before_async_paint(self) -> None:
+        body = function_body(self.source, "activatePanel")
+        self.assertIn("const hadSelection=selectedIds.size>0", body)
+        self.assertIn("restoreSelection&&hadSelection", body)
 
     def test_side_tabs_expose_active_panel_state(self) -> None:
         body = function_body(self.source, "showSideTab")

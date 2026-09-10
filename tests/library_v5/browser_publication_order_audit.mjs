@@ -680,9 +680,9 @@ async function mobilePointForWork(cdp, id, timeoutMs) {
 
 async function mobileBlankPoint(cdp, timeoutMs) {
   return poll(() => pageEvaluate(cdp, `
-    const wrap=document.querySelector('#release .release-view-wrap'),audit=window.marvelCanvasAudit?.(),r=wrap?.getBoundingClientRect(),state=wrap&&mobileCanvasStates.get(wrap),view=wrap&&ensureMobileViewBoxState(wrap);
+    const wrap=document.querySelector('#release .release-view-wrap'),audit=window.marvelCanvasAudit?.(),r=wrap?.getBoundingClientRect(),state=wrap&&mobileCanvasStates.get(wrap),view=wrap&&ensureMobileViewBoxState(wrap),tools=wrap.querySelector('.chart-watch-tools')?.getBoundingClientRect();
     if(!wrap||!r||!state||!view)return null;const m=mobileViewBoxMetrics(wrap,view),boxes=state.nodeBoxes||[],right=Math.min(r.right,innerWidth),bottom=Math.min(r.bottom,innerHeight);
-    for(let y=r.top+18;y<bottom-18;y+=16)for(let x=r.left+8;x<right-8;x+=16){const w=mobileClientToWorld(wrap,view,x,y,r);if(boxes.every(n=>w.x<n.box.x||w.x>n.box.x2||w.y<n.box.y||w.y>n.box.y2))return{x,y};}return{x:r.left+8,y:Math.min(bottom-8,r.top+8)};
+    for(let y=r.top+18;y<bottom-18;y+=16)for(let x=r.left+8;x<right-8;x+=16){if(tools&&x>=tools.left-14&&x<=tools.right+14&&y>=tools.top-14&&y<=tools.bottom+14)continue;if(!document.elementFromPoint(x,y)?.closest?.('canvas[data-marvel-mobile-canvas]'))continue;const w=mobileClientToWorld(wrap,view,x,y,r);if(mobileCanvasHitTest(wrap,x,y)!==null)continue;if(boxes.every(n=>w.x<n.box.x||w.x>n.box.x2||w.y<n.box.y||w.y>n.box.y2))return{x,y};}return{x:r.left+8,y:Math.min(bottom-8,r.top+8)};
   `), timeoutMs, "mobile release background point");
 }
 
@@ -695,7 +695,7 @@ async function waitMobile(cdp, predicate, timeoutMs, label) {
 
 async function activateMobileRelease(cdp, timeoutMs) {
   await clickSelector(cdp, "#mobileAreaButton", timeoutMs);
-  await clickSelector(cdp, '.mobile-area-sheet [data-mobile-target="release"]', timeoutMs);
+  await clickSelector(cdp, '#sheetHost [data-mobile-target="release"]', timeoutMs);
   await waitMobile(cdp, (s) => s.active === true && s.panel === "release" && s.nodeBoxes === WORK_COUNT, timeoutMs, "mobile release Canvas readiness");
 }
 

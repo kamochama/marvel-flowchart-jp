@@ -75,6 +75,57 @@ return samples;
             },
         )
 
+    def test_sheet_overlay_resolves_only_canonical_relation_endpoints(self) -> None:
+        result = self._run_node(
+            """
+const repository = {
+  hasWork: id => ['A','B'].includes(id),
+  getRelation: id => id === 'R'
+    ? {relationId:'R',sourceId:'A',targetId:'B',reasons:[]}
+    : null,
+};
+return {
+  valid: window.marvelResolveSheetOverlay({kind:'reason',relationId:'R'}, repository),
+  invalid: window.marvelResolveSheetOverlay({kind:'reason',relationId:'R',sourceId:'B'}, repository),
+  missing: window.marvelResolveSheetOverlay({kind:'detail',workId:'missing'}, repository),
+};
+"""
+        )
+        self.assertEqual(
+            result,
+            {
+                "valid": {"kind": "reason", "relationId": "R", "sourceId": "A", "targetId": "B"},
+                "invalid": {"kind": "closed"},
+                "missing": {"kind": "closed"},
+            },
+        )
+
+    def test_sheet_url_codec_removes_stale_kind_specific_keys(self) -> None:
+        result = self._run_node(
+            """
+const repository = {
+  hasWork: id => ['A','B'].includes(id),
+  getRelation: id => id === 'R'
+    ? {relationId:'R',sourceId:'A',targetId:'B',reasons:[]}
+    : null,
+};
+const parsed = window.marvelReadSheetParams(
+  new URLSearchParams('sheet=reason&sheetRelation=R&sheetWork=stale'),
+  repository,
+);
+const params = new URLSearchParams('sheet=detail&sheetWork=A&sheetRelation=R&sheetSection=display');
+window.marvelWriteSheetParams(params, {kind:'settings',section:'plan'});
+return {parsed, written:[...params.entries()]};
+"""
+        )
+        self.assertEqual(
+            result,
+            {
+                "parsed": {"kind": "reason", "relationId": "R", "sourceId": "A", "targetId": "B"},
+                "written": [["sheet", "settings"], ["sheetSection", "plan"]],
+            },
+        )
+
     def test_non_goal_commands_preserve_an_explicit_null_current_goal(self) -> None:
         result = self._run_node(
             """
