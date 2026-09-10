@@ -8576,14 +8576,32 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     }).join('');
     const empty=orderedIds.length?'':`<div class="mobile-plan-empty">${goalIds.length?'このゴールには表示対象の予習作品がありません。':'ゴールを選ぶと、サイト提案ルートまたは完全版の順序付きチェックリストを作成します。'}</div>`;
     const source=goalIds.length?`<div class="mobile-plan-source">${tierLabel}：選択したゴールの前提作品を重複除去し、接続順に並べています。</div>`:'';
-    const html=`<span class="mobile-view-kicker">PREPARATION</span><h2 id="mobilePlanTitle">${title}</h2><label class="mobile-plan-tier-row" for="mobilePlanTier">予習プラン<select id="mobilePlanTier" class="mobile-plan-tier" data-mobile-plan-tier aria-label="予習プランを選ぶ"><option value="site-proposal"${safeTier==='site-proposal'?' selected':''}>サイト提案ルート</option><option value="complete"${safeTier==='complete'?' selected':''}>完全版</option></select></label>${summary}${progress}<div class="mobile-plan-actions"><button type="button" class="mobile-plan-chart" id="mobilePlanChartReturn" data-mobile-plan-chart>チャートで見る</button></div><ol class="mobile-plan-list" data-mobile-plan-list aria-label="予習順チェックリスト">${rows}</ol>${empty}${source}`;
+    const html=`<span class="mobile-view-kicker">PREPARATION</span><h2 id="mobilePlanTitle" tabindex="-1">${title}</h2><label class="mobile-plan-tier-row" for="mobilePlanTier">予習プラン<select id="mobilePlanTier" class="mobile-plan-tier" data-mobile-plan-tier aria-label="予習プランを選ぶ"><option value="site-proposal"${safeTier==='site-proposal'?' selected':''}>サイト提案ルート</option><option value="complete"${safeTier==='complete'?' selected':''}>完全版</option></select></label>${summary}${progress}<div class="mobile-plan-actions"><button type="button" class="mobile-plan-chart" id="mobilePlanChartReturn" data-mobile-plan-chart>チャートで見る</button></div><ol class="mobile-plan-list" data-mobile-plan-list aria-label="予習順チェックリスト">${rows}</ol>${empty}${source}`;
     return {html,plan,goalIds,orderedIds,stats,watchedIds,setWatched};
   }
   window.renderPrepPlan=renderPrepPlan;
 
+  function captureMobilePlanViewport(surface){
+    const active=document.activeElement;
+    const item=active?.closest?.('[data-mobile-plan-work]');
+    const scrolling=document.scrollingElement||document.documentElement;
+    return {hasContent:!!surface?.querySelector?.('[data-mobile-plan-work]'),focusedPlan:!!active?.closest?.('[data-mobile-surface="plan"]'),surfaceScrollTop:surface?.scrollTop||0,documentScrollTop:scrolling?.scrollTop||window.scrollY||0,workId:item?.dataset.mobilePlanWork||'',action:active?.matches?.('[data-mobile-plan-watched]')?'watched':active?.matches?.('[data-mobile-plan-detail]')?'detail':''};
+  }
+  function restoreMobilePlanViewport(surface,snapshot){
+    if(!surface||!snapshot)return;
+    const scrolling=document.scrollingElement||document.documentElement;
+    surface.scrollTop=snapshot.surfaceScrollTop||0;
+    if(snapshot.hasContent&&scrolling)scrolling.scrollTop=snapshot.documentScrollTop||0;
+    if(!snapshot.focusedPlan)return;
+    const selector=snapshot.action==='watched'?'[data-mobile-plan-watched]':'[data-mobile-plan-detail]';
+    const item=snapshot.workId&&[...surface.querySelectorAll('[data-mobile-plan-item]')].find(node=>node.dataset.mobilePlanWork===snapshot.workId);
+    const target=item?.querySelector(selector)||surface.querySelector('#mobilePlanTitle');
+    if(target&&typeof target.focus==='function')target.focus({preventScroll:true});
+  }
   function renderMobilePlanScreen(){
     const surface=document.querySelector('#mobileViewHost [data-mobile-surface="plan"]');
     if(!surface)return null;
+    const viewportSnapshot=captureMobilePlanViewport(surface);
     const store=mobileUiStore(),state=store?.getState()||{goalIds:[],selectedId:null};
     const orderedFromStore=Array.isArray(state.goalIds)?state.goalIds.slice():[];
     // orderedGoalIds remains the semantic ordering adapter; goalIds from the
@@ -8614,6 +8632,7 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
       rendered.setWatched(box.dataset.id,box.checked);
       if(!window.marvelWatchProgress?.subscribe)renderMobilePlanScreen();
     }));
+    restoreMobilePlanViewport(surface,viewportSnapshot);
     return rendered;
   }
   window.renderMobilePlanScreen=renderMobilePlanScreen;

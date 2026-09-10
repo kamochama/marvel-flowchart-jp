@@ -500,6 +500,7 @@ async function runAudit(args) {
     rerenders: { before: null, afterOpen: null, afterClose: null },
     search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false, firstCardInViewport: false, legacyQuerySync: false },
     plan: { surface: false, tiers: false, noOfficialControl: false, summary: false, ordered: false, remaining: false, detailOpened: false, detailContent: false, detailClosed: false, goalRemoval: false, layout: false, switchMs: null, watchedToggle: false, multiGoalSummary: false, chartNavigation: false, chartPlanDomAbsent: false, cameraPreserved: false },
+    phase4: { search: { focusPreserved: false, scrollPreserved: false, chartRebuilds: 0, historyGrowth: 0 }, plan: { anchorPreserved: false, chartRebuilds: 0, historyGrowth: 0 } },
     failures,
   };
   try {
@@ -761,6 +762,18 @@ async function runAudit(args) {
     result.search.firstCardInViewport=spider.firstCardInViewport;
     if(!result.search.firstCardInViewport)failures.push(`mobile search first result is outside the viewport: ${JSON.stringify(spider)}`);
     if(!result.search.actionsReachable)failures.push(`mobile search actions are below the 44px contract: ${JSON.stringify(spider)}`);
+    const phase4SearchBefore=await pageEvaluate(cdp,"const log=window.__mobileHistoryLog||[]; return {rebuild:window.__mobileShellAuditCounters?.rebuild||0,pushes:log.filter(row=>row.name==='pushState').length,scroll:Math.round(window.scrollY),focus:document.activeElement?.id||''};");
+    await pageEvaluate(cdp,"const input=document.querySelector('#mobileViewHost [data-mobile-search-query]'); input.focus(); input.value='Spider'; input.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText',data:'Spider'})); return true;");
+    await waitForSearch(cdp,(state)=>state.view==='search'&&state.query==='Spider'&&state.resultCount>0,timeoutMs,'phase4 search update');
+    const phase4SearchAfter=await pageEvaluate(cdp,"const log=window.__mobileHistoryLog||[]; return {rebuild:window.__mobileShellAuditCounters?.rebuild||0,pushes:log.filter(row=>row.name==='pushState').length,scroll:Math.round(window.scrollY),focus:document.activeElement?.id||''};");
+    result.phase4.search.chartRebuilds=phase4SearchAfter.rebuild-phase4SearchBefore.rebuild;
+    result.phase4.search.historyGrowth=phase4SearchAfter.pushes-phase4SearchBefore.pushes;
+    result.phase4.search.focusPreserved=phase4SearchAfter.focus==='mobileSearchQuery';
+    result.phase4.search.scrollPreserved=Math.abs(phase4SearchAfter.scroll-phase4SearchBefore.scroll)<=2;
+    if(result.phase4.search.chartRebuilds!==0)failures.push(`phase4 search rebuilt chart: ${JSON.stringify({before:phase4SearchBefore,after:phase4SearchAfter})}`);
+    if(result.phase4.search.historyGrowth!==0)failures.push(`phase4 search grew push history: ${JSON.stringify({before:phase4SearchBefore,after:phase4SearchAfter})}`);
+    if(!result.phase4.search.focusPreserved)failures.push(`phase4 search lost input focus: ${JSON.stringify({before:phase4SearchBefore,after:phase4SearchAfter})}`);
+    if(!result.phase4.search.scrollPreserved)failures.push(`phase4 search moved scroll: ${JSON.stringify({before:phase4SearchBefore,after:phase4SearchAfter})}`);
     await pageEvaluate(cdp, "document.getElementById('q')?.scrollIntoView({block:'center'}); return true;");
     await clickPoint(cdp, await pointForSelector(cdp, '#q'));
     await selectAllAndBackspace(cdp);
@@ -910,8 +923,16 @@ async function runAudit(args) {
     const planRerendersBefore=planForWatch.rerenders;
     const watchedSelector=`#mobileViewHost [data-mobile-plan-work="${firstPlanId}"] [data-mobile-plan-watched]`;
     await pageEvaluate(cdp, `document.querySelector(${JSON.stringify(watchedSelector)})?.scrollIntoView({block:'center'}); return true;`);
+    const phase4PlanBefore=await pageEvaluate(cdp,"const item=document.querySelector('#mobileViewHost [data-mobile-plan-item]'); const box=item?.getBoundingClientRect(); const log=window.__mobileHistoryLog||[]; return {id:item?.dataset.mobilePlanWork||'',top:box?.top||0,rebuild:window.__mobileShellAuditCounters?.rebuild||0,pushes:log.filter(row=>row.name==='pushState').length,focus:document.activeElement?.dataset?.id||''};");
     await clickPoint(cdp, await stablePointForSelector(cdp, watchedSelector));
     const toggled=await waitForPlan(cdp, (state) => state.watchedIds.includes(firstPlanId)===!watchedBefore, timeoutMs, "watched persistence toggle");
+    const phase4PlanAfter=await pageEvaluate(cdp,"const item=document.querySelector('#mobileViewHost [data-mobile-plan-item]'); const box=item?.getBoundingClientRect(); const log=window.__mobileHistoryLog||[]; return {id:item?.dataset.mobilePlanWork||'',top:box?.top||0,rebuild:window.__mobileShellAuditCounters?.rebuild||0,pushes:log.filter(row=>row.name==='pushState').length,focus:document.activeElement?.dataset?.id||''};");
+    result.phase4.plan.chartRebuilds=phase4PlanAfter.rebuild-phase4PlanBefore.rebuild;
+    result.phase4.plan.historyGrowth=phase4PlanAfter.pushes-phase4PlanBefore.pushes;
+    result.phase4.plan.anchorPreserved=phase4PlanAfter.id===phase4PlanBefore.id&&Math.abs(phase4PlanAfter.top-phase4PlanBefore.top)<=4&&phase4PlanAfter.focus===firstPlanId;
+    if(result.phase4.plan.chartRebuilds!==0)failures.push(`phase4 plan rebuilt chart: ${JSON.stringify({before:phase4PlanBefore,after:phase4PlanAfter})}`);
+    if(result.phase4.plan.historyGrowth!==0)failures.push(`phase4 plan grew push history: ${JSON.stringify({before:phase4PlanBefore,after:phase4PlanAfter})}`);
+    if(!result.phase4.plan.anchorPreserved)failures.push(`phase4 plan lost item anchor or focus: ${JSON.stringify({before:phase4PlanBefore,after:phase4PlanAfter})}`);
     const planRerendersUnchanged=JSON.stringify(toggled.rerenders)===JSON.stringify(planRerendersBefore);
     result.plan.watchedToggle=toggled.watchedIds.includes(firstPlanId)===!watchedBefore && planRerendersUnchanged;
     if(!result.plan.watchedToggle)failures.push(`watched toggle did not persist: ${JSON.stringify(toggled)}`);

@@ -25,6 +25,7 @@ REQUIRED_REPORT_FIELDS = {
     "rerenders",
     "search",
     "plan",
+    "phase4",
     "failures",
 }
 
@@ -78,6 +79,22 @@ def _validate_report(report: dict[str, object]) -> None:
         raise AssertionError("mobile shell report failures must be an array")
     if failures:
         raise AssertionError(f"mobile shell report failures: {failures!r}")
+    phase4 = report["phase4"]
+    if not isinstance(phase4, dict) or not isinstance(phase4.get("search"), dict) or not isinstance(phase4.get("plan"), dict):
+        raise AssertionError("mobile shell report phase4 must contain search and plan objects")
+    search = phase4["search"]
+    plan = phase4["plan"]
+    for section, required in (
+        (search, ("focusPreserved", "scrollPreserved", "chartRebuilds", "historyGrowth")),
+        (plan, ("anchorPreserved", "chartRebuilds", "historyGrowth")),
+    ):
+        missing_section = [key for key in required if key not in section]
+        if missing_section:
+            raise AssertionError(f"mobile shell report phase4 field missing: {missing_section[0]}")
+    if not search["focusPreserved"] or not search["scrollPreserved"] or search["chartRebuilds"] != 0 or search["historyGrowth"] != 0:
+        raise AssertionError(f"mobile shell phase4 search contract failed: {search!r}")
+    if not plan["anchorPreserved"] or plan["chartRebuilds"] != 0 or plan["historyGrowth"] != 0:
+        raise AssertionError(f"mobile shell phase4 plan contract failed: {plan!r}")
 
 
 def _format_timeout_diagnostic(error: subprocess.TimeoutExpired) -> str:
@@ -100,6 +117,10 @@ def _successful_report() -> dict[str, object]:
         "rerenders": {},
         "search": {},
         "plan": {},
+        "phase4": {
+            "search": {"focusPreserved": True, "scrollPreserved": True, "chartRebuilds": 0, "historyGrowth": 0},
+            "plan": {"anchorPreserved": True, "chartRebuilds": 0, "historyGrowth": 0},
+        },
         "failures": [],
     }
 

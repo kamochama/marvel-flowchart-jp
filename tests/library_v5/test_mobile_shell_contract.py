@@ -450,6 +450,25 @@ class MobileShellContractTests(unittest.TestCase):
         for forbidden in ("fitView(", "initMobileCanvas(", "rebuildMobileCanvas(", "mountMobileChartView("):
             self.assertNotIn(forbidden, mount_body)
 
+    def test_phase4_search_update_keeps_chart_and_goal_owners_separate(self) -> None:
+        body = function_body(self.source, "mountMobileSearchView")
+        render_body = function_body(self.source, "renderMobileSearchResults")
+        self.assertIn("setSearch", body)
+        self.assertIn("setFilter", body)
+        for forbidden in ("render(", "fitView(", "rebuildMobileCanvas(", "initMobileCanvas(", "mountMobileChartView("):
+            self.assertNotIn(forbidden, body + render_body)
+        self.assertNotIn("selectedIds.clear", body + render_body)
+        self.assertNotIn("clearAllGoals", body + render_body)
+
+    def test_phase4_plan_update_restores_viewport_and_focus_anchor(self) -> None:
+        body = function_body(self.source, "renderMobilePlanScreen")
+        body += function_body(self.source, "captureMobilePlanViewport")
+        body += function_body(self.source, "restoreMobilePlanViewport")
+        for token in ("activeElement", "scrollTop", "preventScroll", "data-mobile-plan-work"):
+            self.assertIn(token, body)
+        for forbidden in ("fitView(", "rebuildMobileCanvas(", "initMobileCanvas(", "mountMobileChartView("):
+            self.assertNotIn(forbidden, body)
+
     def test_mobile_plan_renderer_reuses_shared_plan_and_watch_engines(self) -> None:
         mount_body = function_body(self.source, "mountMobilePlanView")
         render_body = function_body(self.source, "renderMobilePlanScreen")
