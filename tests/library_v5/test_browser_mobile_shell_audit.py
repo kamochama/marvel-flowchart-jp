@@ -27,6 +27,7 @@ REQUIRED_REPORT_FIELDS = {
     "plan",
     "phase4",
     "phase5",
+    "phase6",
     "failures",
 }
 
@@ -106,6 +107,18 @@ def _validate_report(report: dict[str, object]) -> None:
         raise AssertionError(f"mobile shell phase5 boundary contract failed: {phase5!r}")
     if phase5.get("coarseLandscape") is not True or phase5.get("visualViewportHeightInvariant") is not True:
         raise AssertionError(f"mobile shell phase5 coarse/height contract failed: {phase5!r}")
+    phase6 = report["phase6"]
+    if not isinstance(phase6, dict) or not isinstance(phase6.get("ownership"), dict):
+        raise AssertionError("mobile shell report phase6 must contain ownership")
+    expected_ownership = {"portrait390", "landscape844", "width760", "width761", "width980", "width981"}
+    if set(phase6["ownership"]) != expected_ownership:
+        raise AssertionError(f"mobile shell phase6 ownership boundaries mismatch: {phase6['ownership']!r}")
+    if any(not isinstance(row, dict) or row.get("ok") is not True for row in phase6["ownership"].values()):
+        raise AssertionError(f"mobile shell phase6 ownership contract failed: {phase6!r}")
+    if phase6.get("sheetHostCount") != 1 or phase6.get("duplicateOverlayCount") != 0 or phase6.get("duplicateBackdropCount") != 0:
+        raise AssertionError(f"mobile shell phase6 shared-host contract failed: {phase6!r}")
+    if phase6.get("retiredRightHeaderReachable") is not False:
+        raise AssertionError(f"mobile shell phase6 retired header became reachable: {phase6!r}")
 
 
 def _format_timeout_diagnostic(error: subprocess.TimeoutExpired) -> str:
@@ -139,6 +152,16 @@ def _successful_report() -> dict[str, object]:
             },
             "coarseLandscape": True,
             "visualViewportHeightInvariant": True,
+        },
+        "phase6": {
+            "ownership": {
+                key: {"ok": True}
+                for key in ("portrait390", "landscape844", "width760", "width761", "width980", "width981")
+            },
+            "sheetHostCount": 1,
+            "duplicateOverlayCount": 0,
+            "duplicateBackdropCount": 0,
+            "retiredRightHeaderReachable": False,
         },
         "failures": [],
     }
