@@ -52,8 +52,6 @@ class Phase6LegacyLayerContractTests(unittest.TestCase):
         self.assertGreaterEqual(focus_start, 0)
         self.assertNotIn("marvelRenderFocusedDetail", focus_body)
         self.assertNotRegex(focus_body, r"detail\\.(?:innerHTML|textContent)")
-        self.assertIn("window.marvelRenderFocusedDetail=function", self.source)
-        self.assertIn("window.marvelRenderFocusedDetail(id)", self.source)
 
         open_start = self.source.find("function openDockedInspection")
         open_end = self.source.find("function closeDockedInspection", open_start)
@@ -65,6 +63,29 @@ class Phase6LegacyLayerContractTests(unittest.TestCase):
         self.assertNotIn("data-sheet-host-mirror", close_body)
         self.assertIn("renderSheetContent({kind:'detail',workId})", open_body)
         self.assertIn("sheetHostBody", self.source)
+
+    def test_phase6_retired_inspection_markup_is_absent(self) -> None:
+        """Task 2's retired detail writer and its private markup are gone."""
+        for token in (
+            "marvelRenderFocusedDetail",
+            "sortedDirect",
+            "attrEsc",
+            "v515-detail-title",
+            "v515-detail-section",
+            "v515-detail-actions",
+            "v515-goal-cta",
+            "v515-return-goals",
+            "v515-prevnext",
+            "v515-work-links",
+            "v515-work-link",
+            "v515-meta",
+            "mobileWorkDetailHtml",
+        ):
+            self.assertNotIn(token, self.source)
+
+        # The chart's focus paint is a separate, still-active responsibility.
+        self.assertIn("g.node.detail-focus", self.source)
+        self.assertIn("function sheetWorkDetailHtml", self.source)
 
     def test_phase6_search_projection_remains_active_adapter(self) -> None:
         """Mobile search still delegates filtering to the shared DOM-backed predicate."""

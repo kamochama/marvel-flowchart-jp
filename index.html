@@ -742,38 +742,9 @@ main{grid-template-columns:minmax(0,1fr) clamp(310px,25vw,360px)}
 
 </style>
 
-<style id="v515-styles">
-/* PUBLIC v5.18.0 — desktop inspection stays side-by-side; mobile chart selection is goal/connection-first. */
-#detail.v515-detail{color:var(--text);font-size:13px;line-height:1.6}
-.v515-detail-title{padding-bottom:10px;border-bottom:1px solid #263246}
-.v515-detail-title>strong{display:block;font-size:18px;line-height:1.35;color:#fff}
-.v515-detail-badges{margin-top:6px}
-.v515-detail-section{margin:12px 0;padding:10px 11px;border-radius:9px;background:#0d1526;border:1px solid #253248}
-.v515-detail-section h4{margin:0 0 5px;font-size:12px;letter-spacing:.04em;color:#cbd5e1}
-.v515-detail-section p{margin:0;color:#e5e7eb}
-.v515-synopsis{border-left:3px solid #38bdf8}
-.v515-map-role{border-left:3px solid #a78bfa}
-.v515-detail-actions{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
-.v515-goal-cta{min-height:44px;padding:9px 13px;font-weight:800;background:#1d4ed8;border-color:#3b82f6;color:#fff}
-.v515-goal-cta.is-goal{background:#43151d;border-color:#ef4444;color:#fecaca}
-.v515-return-goals{min-height:44px;padding:9px 12px;background:#172033;border-color:#475569}
-.v515-prevnext{display:grid;gap:10px;margin:12px 0}
-.v515-prevnext>div{padding:9px 10px;border:1px solid #263246;border-radius:9px;background:#0e1728}
-.v515-work-links{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
-.v515-work-link{padding:4px 7px;border-radius:999px;font-size:11px;background:#1f2937;border:1px solid #374151;color:#dbeafe;text-align:left}
-.v515-meta{margin-top:11px;border-top:1px solid #263246;padding-top:9px;color:#cbd5e1}
-.v515-meta summary{cursor:pointer;font-weight:700;color:#94a3b8}
-.v515-meta-body{display:grid;gap:6px;padding-top:8px;font-size:12px}
-.v515-meta a{color:#60a5fa}
+<style id="detail-focus-style">
+/* Detail focus is chart paint, not the retired #detail inspection markup. */
 .svg-wrap svg g.node.detail-focus{filter:saturate(1.4) brightness(1.2) drop-shadow(0 0 22px #ef4444)}
-@media(max-width:760px){
-  #detail.v515-detail{font-size:14px}
-  .v515-detail-title>strong{font-size:19px}
-  .v515-detail-section{padding:11px 12px}
-  .v515-detail-actions{position:sticky;top:0;z-index:2;background:linear-gradient(180deg,#111827 82%,rgba(17,24,39,0));padding:7px 0 12px;margin:5px 0 8px}
-  .v515-goal-cta,.v515-return-goals{min-height:48px;flex:1 1 150px}
-}
-
 </style>
 
 
@@ -8927,8 +8898,6 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     return `<article class="mobile-work-detail" data-sheet-work="${esc(workId)}"><header class="mobile-work-detail-title"><strong>${esc(work.title||workId)}</strong><span>${esc(work.title_en||'')} · ${esc(work.release||'未定')}</span></header><div class="mobile-work-detail-badges"><span>${esc(work.branch||'系統未登録')}</span><span>日本公開・配信：${esc(japan)}</span></div><section><h3>あらすじ</h3><p>${esc(info.synopsis_ja||'詳細未登録')}</p></section><section><h3>相関図では</h3><p>${esc(info.map_role_ja||'接続上の説明は未登録です。')}</p></section><div class="sheet-work-actions"><button type="button" data-sheet-goal-toggle data-work-id="${esc(workId)}">${isGoal?'ゴールから外す':'ゴールに追加'}</button><button type="button" data-sheet-chart data-work-id="${esc(workId)}">チャートで見る</button></div><div class="sheet-work-prevnext"><div><b>← 前に見る候補</b><div class="sheet-work-links">${links(prev,'source')}</div></div><div><b>→ 次に見る候補</b><div class="sheet-work-links">${links(next,'target')}</div></div></div><details><summary>公開情報・接続</summary><p>公開状況：${esc(work.status||'未確認')}<br>入力接続：${(inc[workId]||[]).length} / 出力接続：${(out[workId]||[]).length}<br>${source}</p></details></article>`;
   }
 
-  function mobileWorkDetailHtml(workId){return sheetWorkDetailHtml(workId)}
-
   function sheetReasonHtml(relation){
     if(!relation||!relation.relationId||!nm?.[relation.sourceId]||!nm?.[relation.targetId]){
       return '<p class="sheet-empty">この接続の根拠を確認できません。</p>';
@@ -10410,34 +10379,6 @@ window.FEATURED_ROUTE=Object.freeze({
     const state=window.marvelBuildTierHighlightState?.([id],tier,base)||base;
     return {...state,selectedIds:[id],scopeMode:scope,combineMode:'or',pathMode:false,pathPreference:'main',tier:state.tier||tier,prepTier:state.prepTier||tier};
   }
-
-  const attrEsc=s=>esc(s).replaceAll('"','&quot;').replaceAll("'",'&#39;');
-
-  function sortedDirect(id,kind){
-    const arr=(kind==='in'?(inc[id]||[]):(out[id]||[])).slice();
-    return arr.sort((a,b)=>edgeRank(b)-edgeRank(a)).slice(0,8);
-  }
-
-  window.marvelRenderFocusedDetail=function(id){
-    const n=nm[id],info=window.WORK_DETAILS?.[id]; if(!n||!detail)return false;
-    const goals=activeGoalIds(),isGoal=selectedIds.has(id);
-    const prev=sortedDirect(id,'in'),next=sortedDirect(id,'out');
-    const link=(wid,label)=>`<button type="button" class="v515-work-link" data-v515-focus="${attrEsc(wid)}">${esc(label)}</button>`;
-    const jpinfo=n.japan_date?`${esc(n.japan_date)} ${esc(n.japan_type||'')}`:'公式確認データ未登録';
-    const source=n.source_url?`<a href="${attrEsc(n.source_url)}" target="_blank" rel="noopener">日本向け公式ソースを開く ↗</a>${n.source_note?`<div class="muted">${esc(n.source_note)}</div>`:''}`:'<span class="muted">公式ソース登録なし</span>';
-    detail.classList.add('v515-detail');
-    detail.innerHTML=`
-      <div class="v515-detail-title"><strong>${esc(n.title)}</strong><div class="muted">${esc(n.title_en)} / ${esc(n.release)}</div><div class="v515-detail-badges"><span class="badge">${esc(n.branch)}</span>${goals.length?`<span class="badge">ゴール ${goals.length}件保持中</span>`:''}</div></div>
-      <section class="v515-detail-section v515-synopsis"><h4>あらすじ</h4><p>${esc(info?.synopsis_ja||'詳細未登録')}</p></section>
-      <section class="v515-detail-section v515-map-role"><h4>相関図では</h4><p>${esc(info?.map_role_ja||'接続上の説明は未登録です。')}</p></section>
-      <div class="v515-detail-actions"><button type="button" data-v515-goal-toggle class="v515-goal-cta ${isGoal?'is-goal':''}">${isGoal?'ゴールから外す':'🎯 ゴールに追加'}</button>${goals.length?'<button type="button" data-v515-return-goals class="v515-return-goals">ゴール表示に戻る</button>':''}</div>
-      <div class="v515-prevnext"><div><b>← 前に見る候補</b><div class="v515-work-links">${prev.length?prev.map(e=>link(e.source,nm[e.source]?.title||e.source)).join(''):'<span class="muted">なし</span>'}</div></div><div><b>→ 次に見る候補</b><div class="v515-work-links">${next.length?next.map(e=>link(e.target,nm[e.target]?.title||e.target)).join(''):'<span class="muted">なし</span>'}</div></div></div>
-      <details class="v515-meta"><summary>公開情報・分類・接続数</summary><div class="v515-meta-body"><div><b>系統：</b>${esc(n.branch)}</div><div><b>日本公開・配信：</b>${jpinfo}</div><div><b>接続数：</b>入力 ${(inc[id]||[]).length} / 出力 ${(out[id]||[]).length}</div><div>${source}</div></div></details>`;
-    detail.querySelector('[data-v515-goal-toggle]')?.addEventListener('click',()=>{window.marvelToggleGoal(id);window.marvelRenderFocusedDetail(id);});
-    detail.querySelector('[data-v515-return-goals]')?.addEventListener('click',()=>window.marvelReturnToGoalView());
-    detail.querySelectorAll('[data-v515-focus]').forEach(btn=>btn.addEventListener('click',()=>window.marvelFocusWork(btn.dataset.v515Focus,{center:true})));
-    return true;
-  };
 
   function renderFocusHighlight(id){
     if(!id||!nm[id])return false;
