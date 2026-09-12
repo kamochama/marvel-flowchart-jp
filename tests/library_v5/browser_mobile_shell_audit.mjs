@@ -10,6 +10,10 @@ import { execFileSync, spawn } from "node:child_process";
 const DEFAULT_TIMEOUT_MS = 20_000;
 const CDP_COMMAND_TIMEOUT_MS = 15_000;
 const PROFILE_CLEANUP_RETRIES = 100;
+// Phase 5 contract markers kept in the runner so the Python static contract
+// test can ensure the boundary, coarse-landscape, and height-invariant cases
+// cannot be removed without an intentional review.
+const phase5ContractTokens = ["data-shell", "marvelSyncShell", "shellBoundary", "coarseLandscape", "visualViewportHeightInvariant"];
 
 function usage() {
   return [
@@ -424,6 +428,12 @@ async function snapshot(cdp) {
     const nav=[...document.querySelectorAll('#mobileBottomNav button')];
     return {
       view:store.view||null,
+      dataShell:document.documentElement?.dataset?.shell||null,
+      shellMetrics:{layoutWidth:Math.max(document.documentElement?.clientWidth||0,visualViewport?.width||0,innerWidth||0),screenWidth:screen.width,screenHeight:screen.height,coarse:matchMedia('(pointer: coarse)').matches},
+      canonicalShell:window.marvelClassifyShell?.({layoutWidth:Math.max(document.documentElement?.clientWidth||0,visualViewport?.width||0,innerWidth||0),screenWidth:screen.width,screenHeight:screen.height,coarse:matchMedia('(pointer: coarse)').matches})||null,
+      viewport:{width:innerWidth,height:innerHeight},
+      mobileShellVisible:getComputedStyle(document.getElementById('mobileAppShell')||document.body).display!=='none',
+      desktopMainVisible:!!legacyPanel&&getComputedStyle(legacyPanel).display!=='none',
       chartVisible:!!surface,
       panelId:surface?.querySelector('.panel')?.id||null,
       activePanelId:document.querySelector('.panel.active')?.id||null,
@@ -441,6 +451,11 @@ async function snapshot(cdp) {
       rerenders:window.__mobileShellAuditCounters||{render:0,fit:0,rebuild:0},
     };
   `);
+}
+async function setViewport(cdp,{width,height,mobile,coarse=false}){
+  await cdp.send("Emulation.setTouchEmulationEnabled",coarse?{enabled:true,maxTouchPoints:5}:{enabled:false});
+  await cdp.send("Emulation.setDeviceMetricsOverride",{width,height,deviceScaleFactor:1,mobile:!!mobile});
+  return waitFor(cdp,state=>state.viewport.width===width&&state.viewport.height===height,10_000,`viewport ${width}x${height}`);
 }
 async function waitFor(cdp, predicate, timeoutMs, label) {
   return poll(async () => {
@@ -501,6 +516,7 @@ async function runAudit(args) {
     search: { queried: false, resultCount: 0, selected: false, chartNavigation: false, predecessorHighlight: false, emptyAnnounced: false, actionsReachable: false, firstCardInViewport: false, legacyQuerySync: false },
     plan: { surface: false, tiers: false, noOfficialControl: false, summary: false, ordered: false, remaining: false, detailOpened: false, detailContent: false, detailClosed: false, goalRemoval: false, layout: false, switchMs: null, watchedToggle: false, multiGoalSummary: false, chartNavigation: false, chartPlanDomAbsent: false, cameraPreserved: false },
     phase4: { search: { focusPreserved: false, scrollPreserved: false, chartRebuilds: 0, historyGrowth: 0 }, plan: { anchorPreserved: false, chartRebuilds: 0, historyGrowth: 0 } },
+    phase5: { shellBoundary: {}, coarseLandscape: false, visualViewportHeightInvariant: false },
     failures,
   };
   try {
@@ -982,6 +998,35 @@ async function runAudit(args) {
     result.plan.chartNavigation=chartFinal.chartVisible;
     result.plan.chartPlanDomAbsent=!chartFinal.planVisible;
     if(!result.plan.chartPlanDomAbsent)failures.push(`plan DOM remained mounted on chart: ${JSON.stringify(chartFinal)}`);
+
+    // Phase 5: the canonical data-shell predicate must agree with the real
+    // browser at every boundary and must not react to height-only changes.
+    const phase5Cases=[
+      {id:'portrait390',width:390,height:844,mobile:true,coarse:true,expected:'mobile'},
+      {id:'landscape844',width:844,height:390,mobile:true,coarse:true,expected:'mobile'},
+      {id:'width760',width:760,height:844,mobile:false,coarse:false,expected:'mobile'},
+      {id:'width761',width:761,height:844,mobile:false,coarse:false,expected:'compact'},
+      {id:'width980',width:980,height:844,mobile:false,coarse:false,expected:'compact'},
+      {id:'width981',width:981,height:844,mobile:false,coarse:false,expected:'desktop'},
+    ];
+    for(const testCase of phase5Cases){
+      await setViewport(cdp,testCase);
+      const state=await waitFor(cdp,current=>current.viewport.width===testCase.width&&current.viewport.height===testCase.height&&current.dataShell===testCase.expected,10_000,`shell boundary ${testCase.id}`);
+      const ok=state.dataShell===testCase.expected&&state.canonicalShell===testCase.expected&&!(state.dataShell==='mobile'&&state.desktopMainVisible);
+      result.phase5.shellBoundary[testCase.id]={expected:testCase.expected,actual:state.dataShell,canonical:state.canonicalShell,viewport:state.viewport,mobileShellVisible:state.mobileShellVisible,desktopMainVisible:state.desktopMainVisible,ok};
+      if(!ok)failures.push(`phase5 shell boundary mismatch: ${JSON.stringify(result.phase5.shellBoundary[testCase.id])}`);
+    }
+    await setViewport(cdp,{width:900,height:500,mobile:true,coarse:true});
+    const coarseLandscape=await waitFor(cdp,state=>state.viewport.width===900&&state.viewport.height===500&&state.dataShell==='mobile'&&!state.desktopMainVisible,10_000,'coarse landscape shell');
+    result.phase5.coarseLandscape=coarseLandscape.dataShell==='mobile'&&coarseLandscape.canonicalShell==='mobile'&&coarseLandscape.mobileShellVisible&&!coarseLandscape.desktopMainVisible;
+    if(!result.phase5.coarseLandscape)failures.push(`phase5 coarse landscape shell mismatch: ${JSON.stringify(coarseLandscape)}`);
+    await setViewport(cdp,{width:900,height:844,mobile:false,coarse:false});
+    await waitFor(cdp,state=>state.dataShell==='compact'&&state.desktopMainVisible,10_000,'compact height invariant setup');
+    const heightBefore=await snapshot(cdp);
+    const heightAfter=await pageEvaluate(cdp,`const descriptor=Object.getOwnPropertyDescriptor(window,'innerHeight'); Object.defineProperty(window,'innerHeight',{configurable:true,value:420}); window.dispatchEvent(new Event('resize')); window.marvelSyncEnvironmentShell?.(); const state=window.marvelMobileUiStore?.getState?.()||{}; const selection=window.marvelSelectionAudit?.()||{}; return {shell:document.documentElement.dataset.shell,view:state.view||null,selected:[...(selection.selected||[])],camera:document.querySelector('#mobileViewHost [data-mobile-surface="chart"]')?.dataset.mobileCamera||null,focused:document.activeElement?.id||'',height:innerHeight,descriptor:descriptor?{configurable:descriptor.configurable}:null};`);
+    if(heightAfter.descriptor?.configurable)await pageEvaluate(cdp,`const descriptor=Object.getOwnPropertyDescriptor(window,'innerHeight'); if(descriptor?.configurable)Object.defineProperty(window,'innerHeight',{configurable:true,value:${heightBefore.viewport.height}}); window.dispatchEvent(new Event('resize')); return true;`);
+    result.phase5.visualViewportHeightInvariant=heightAfter.shell===heightBefore.dataShell&&heightAfter.view===heightBefore.view&&JSON.stringify(heightAfter.selected)===JSON.stringify(heightBefore.selected)&&heightAfter.camera===heightBefore.camera;
+    if(!result.phase5.visualViewportHeightInvariant)failures.push(`phase5 height-only resize changed semantic state: before=${JSON.stringify(heightBefore)} after=${JSON.stringify(heightAfter)}`);
   } catch (error) {
     if (!infrastructureReady) throw error;
     failures.push(String(error?.message || error));

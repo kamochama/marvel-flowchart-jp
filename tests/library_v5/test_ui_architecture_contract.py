@@ -75,6 +75,45 @@ return samples;
             },
         )
 
+    def test_shell_sync_writes_canonical_data_shell_at_all_boundaries(self) -> None:
+        result = self._run_node(
+            """
+const root = {dataset:{}};
+const samples = {
+  portraitPhone: {layoutWidth:390,screenWidth:390,screenHeight:844,coarse:true},
+  landscapeTouchPhone: {layoutWidth:844,screenWidth:844,screenHeight:390,coarse:true},
+  exactMobileBoundary: {layoutWidth:760,screenWidth:760,screenHeight:844,coarse:false},
+  compactLowerBoundary: {layoutWidth:761,screenWidth:761,screenHeight:844,coarse:false},
+  compactUpperBoundary: {layoutWidth:980,screenWidth:980,screenHeight:844,coarse:false},
+  desktopLowerBoundary: {layoutWidth:981,screenWidth:981,screenHeight:844,coarse:false},
+};
+const shells = Object.fromEntries(Object.entries(samples).map(([name,metrics]) => [name, window.marvelSyncShell({root,metrics})]));
+return {shells,dataShell:root.dataset.shell};
+"""
+        )
+        self.assertEqual(
+            result,
+            {
+                "shells": {
+                    "portraitPhone": "mobile",
+                    "landscapeTouchPhone": "mobile",
+                    "exactMobileBoundary": "mobile",
+                    "compactLowerBoundary": "compact",
+                    "compactUpperBoundary": "compact",
+                    "desktopLowerBoundary": "desktop",
+                },
+                "dataShell": "desktop",
+            },
+        )
+
+    def test_shell_sync_does_not_use_height_or_visual_viewport_for_classification(self) -> None:
+        source = INDEX.read_text(encoding="utf-8")
+        body = source[source.index("window.marvelClassifyShell=function") : source.index("window.marvelSyncShell=function") + 1600]
+        self.assertNotIn("innerHeight", body)
+        self.assertNotIn("visualViewport.height", body)
+        self.assertIn("screenShortSide", body)
+        self.assertIn("screenLongSide", body)
+
     def test_sheet_overlay_resolves_only_canonical_relation_endpoints(self) -> None:
         result = self._run_node(
             """
