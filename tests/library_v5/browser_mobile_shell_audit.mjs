@@ -14,13 +14,14 @@ const PROFILE_CLEANUP_RETRIES = 100;
 // test can ensure the boundary, coarse-landscape, and height-invariant cases
 // cannot be removed without an intentional review.
 const phase5ContractTokens = ["data-shell", "marvelSyncShell", "shellBoundary", "coarseLandscape", "visualViewportHeightInvariant"];
+const phase6ContractTokens = ["ownership", "sheetHostCount", "duplicateOverlayCount", "retiredRightHeaderReachable"];
 
 function usage() {
   return [
     "Usage: node browser_mobile_shell_audit.mjs --root <repo> [--chrome <path>]",
     "",
     "Runs real pointer/focus scenarios against the M3/M4/M5 mobile shell surfaces.",
-    "The final line is JSON: {viewport,views,selection,history,sheet,rerenders,search,plan,failures}.",
+    "The final line is JSON: {viewport,views,selection,history,sheet,rerenders,search,plan,phase4,phase5,phase6,failures}.",
     "",
     "Options:",
     "  --root <path>      Repository root to serve over HTTP",
@@ -445,6 +446,35 @@ async function snapshot(cdp) {
       sheetWork:store.sheetWork||null,
       historySnapshot:window.history.state?.viewerNavigation?.snapshot?.mobile||null,
       sheetBodyText:document.getElementById('sheetHostBody')?.textContent?.trim()||'',
+      rightOwnership:(()=>{
+        const right=document.getElementById('right'),style=right?getComputedStyle(right):null;
+        const host=document.getElementById('sheetHost');
+        const rightActive=!!right&&style?.display!=='none'&&style?.visibility!=='hidden'&&style?.pointerEvents!=='none';
+        return {
+          active:rightActive,
+          display:style?.display||null,
+          visibility:style?.visibility||null,
+          pointerEvents:style?.pointerEvents||null,
+          hasWorks:!!right?.querySelector('#sidePanelWorks'),
+          hasLinks:!!right?.querySelector('#sidePanelLinks'),
+          hasPath:!!right?.querySelector('#pathExplainCard'),
+          sheetParent:host?.parentElement?.id||host?.parentElement?.tagName?.toLowerCase()||null,
+          sheetPresentation:host?.dataset?.presentation||null,
+          sheetHostCount:document.querySelectorAll('#sheetHost').length,
+          overlayCount:[...document.querySelectorAll('#sheetHost, .mobile-sheet-backdrop, [data-mobile-overlay]')].filter(node=>{
+            const r=node.getBoundingClientRect(),s=getComputedStyle(node);
+            return !node.hidden&&s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0;
+          }).length,
+          backdropCount:[...document.querySelectorAll('#sheetHostBackdrop, .mobile-sheet-backdrop')].filter(node=>{
+            const r=node.getBoundingClientRect(),s=getComputedStyle(node);
+            return !node.hidden&&s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0;
+          }).length,
+          retiredRightHeaderReachable:[...document.querySelectorAll('#mobileDetailsTitle,#mobileDetailsClose')].some(node=>{
+            const r=node.getBoundingClientRect(),s=getComputedStyle(node);
+            return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0&&s.pointerEvents!=='none';
+          }),
+        };
+      })(),
       planVisible:!!document.querySelector('#mobileViewHost [data-mobile-surface="plan"]'),
       bottomReachable:nav.length===3&&nav.every(button=>{const r=button.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.bottom<=innerHeight+1;}),
       controlsReachable:surface?[...surface.querySelectorAll('.mobile-chart-controls button')].every(button=>{const r=button.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.bottom<=innerHeight+1;}):false,
@@ -517,6 +547,7 @@ async function runAudit(args) {
     plan: { surface: false, tiers: false, noOfficialControl: false, summary: false, ordered: false, remaining: false, detailOpened: false, detailContent: false, detailClosed: false, goalRemoval: false, layout: false, switchMs: null, watchedToggle: false, multiGoalSummary: false, chartNavigation: false, chartPlanDomAbsent: false, cameraPreserved: false },
     phase4: { search: { focusPreserved: false, scrollPreserved: false, chartRebuilds: 0, historyGrowth: 0 }, plan: { anchorPreserved: false, chartRebuilds: 0, historyGrowth: 0 } },
     phase5: { shellBoundary: {}, coarseLandscape: false, visualViewportHeightInvariant: false },
+    phase6: { ownership: {}, sheetHostCount: 0, duplicateOverlayCount: 0, duplicateBackdropCount: 0, retiredRightHeaderReachable: false },
     failures,
   };
   try {
@@ -1015,6 +1046,18 @@ async function runAudit(args) {
       const ok=state.dataShell===testCase.expected&&state.canonicalShell===testCase.expected&&!(state.dataShell==='mobile'&&state.desktopMainVisible);
       result.phase5.shellBoundary[testCase.id]={expected:testCase.expected,actual:state.dataShell,canonical:state.canonicalShell,viewport:state.viewport,mobileShellVisible:state.mobileShellVisible,desktopMainVisible:state.desktopMainVisible,ok};
       if(!ok)failures.push(`phase5 shell boundary mismatch: ${JSON.stringify(result.phase5.shellBoundary[testCase.id])}`);
+      const mobileOwner=testCase.expected==='mobile';
+      const ownership=state.rightOwnership||{};
+      const ownershipOk=mobileOwner
+        ? !ownership.active&&ownership.display==='none'&&ownership.pointerEvents==='none'&&ownership.sheetParent==='body'&&ownership.sheetPresentation==='modal'&&ownership.sheetHostCount===1
+        : ownership.active&&ownership.pointerEvents!=='none'&&ownership.hasWorks&&ownership.hasLinks&&ownership.hasPath&&ownership.sheetParent==='right'&&ownership.sheetPresentation==='docked'&&ownership.sheetHostCount===1;
+      result.phase6.ownership[testCase.id]={expectedShell:testCase.expected,actualShell:state.dataShell,right:ownership,ok:ownershipOk};
+      result.phase6.sheetHostCount=Math.max(result.phase6.sheetHostCount,Number(ownership.sheetHostCount||0));
+      result.phase6.duplicateOverlayCount=Math.max(result.phase6.duplicateOverlayCount,Math.max(0,Number(ownership.overlayCount||0)-1));
+      result.phase6.duplicateBackdropCount=Math.max(result.phase6.duplicateBackdropCount,Math.max(0,Number(ownership.backdropCount||0)-1));
+      result.phase6.retiredRightHeaderReachable=result.phase6.retiredRightHeaderReachable||!!ownership.retiredRightHeaderReachable;
+      if(!ownershipOk)failures.push(`phase6 presentation ownership mismatch: ${JSON.stringify(result.phase6.ownership[testCase.id])}`);
+      if(ownership.retiredRightHeaderReachable)failures.push(`phase6 retired #right mobile header is reachable: ${JSON.stringify({case:testCase.id,right:ownership})}`);
     }
     await setViewport(cdp,{width:900,height:500,mobile:true,coarse:true});
     const coarseLandscape=await waitFor(cdp,state=>state.viewport.width===900&&state.viewport.height===500&&state.dataShell==='mobile'&&!state.desktopMainVisible,10_000,'coarse landscape shell');
