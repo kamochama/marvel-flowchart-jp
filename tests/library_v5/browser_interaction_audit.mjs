@@ -564,6 +564,60 @@ async function runAudit(args) {
       if(JSON.stringify(result.cleared.goals)!==JSON.stringify(result.goal.goals)||result.cleared.inspection.workId!==null)throw new Error(`inspection clear changed goals: ${JSON.stringify(result.cleared)}`);
       if(JSON.stringify(result.removed.goals)!==JSON.stringify({orderedIds:[],currentId:null})||result.removed.inspection.workId!==null)throw new Error(`goal removal did not settle: ${JSON.stringify(result.removed)}`);
     }));
+    cases.push(await runCase(cdp, staticServer.url, timeoutMs, "phase6-detail-ownership", async () => {
+      const result = await pageEvaluate(cdp, `
+        const api=window.marvelUiCommands;
+        if(!api||typeof api.readSelection!=='function')throw new Error("shared UI command gateway is missing");
+        if(!api.addGoal(${JSON.stringify(REPRESENTATIVE_WORK)}))throw new Error("goal setup was rejected");
+        const beforeSelection=api.readSelection();
+        const detail=document.querySelector('#detail');
+        const detailCard=detail?.closest('.card');
+        const before={
+          goals:beforeSelection.goals,
+          detailHtml:detail?.innerHTML||'',
+          detailCardHidden:!!detailCard?.hidden,
+          historyLength:window.history.length,
+        };
+        if(!api.inspectWork(${JSON.stringify(CHRONOLOGY_WORK)},{center:false}))throw new Error("inspection command was rejected");
+        const inspectedSelection=api.readSelection();
+        const host=document.querySelector('#sheetHost');
+        const inspected={
+          goals:inspectedSelection.goals,
+          inspection:inspectedSelection.inspection,
+          detailHtml:detail?.innerHTML||'',
+          detailCardHidden:!!detailCard?.hidden,
+          detailMirror:detailCard?.dataset?.sheetHostMirror||null,
+          hostOwner:host?.dataset?.owner||null,
+          hostPresentation:host?.dataset?.presentation||null,
+          hostParent:host?.parentElement?.id||null,
+          hostHidden:!!host?.hidden,
+          sheetWorkId:document.querySelector('#sheetHostBody [data-sheet-work]')?.dataset?.sheetWork||null,
+          historyLength:window.history.length,
+        };
+        if(!api.clearInspection())throw new Error("inspection clear command was rejected");
+        const clearedSelection=api.readSelection();
+        const cleared={
+          goals:clearedSelection.goals,
+          inspection:clearedSelection.inspection,
+          detailHtml:detail?.innerHTML||'',
+          detailCardHidden:!!detailCard?.hidden,
+          detailMirror:detailCard?.dataset?.sheetHostMirror||null,
+          hostOwner:host?.dataset?.owner||null,
+          hostHidden:!!host?.hidden,
+          historyLength:window.history.length,
+        };
+        if(!api.removeGoal(${JSON.stringify(REPRESENTATIVE_WORK)}))throw new Error("goal teardown was rejected");
+        return {before,inspected,cleared};
+      `);
+      if(JSON.stringify(result.inspected.goals)!==JSON.stringify(result.before.goals))throw new Error(`inspection mutated goals: ${JSON.stringify(result)}`);
+      if(JSON.stringify(result.cleared.goals)!==JSON.stringify(result.before.goals))throw new Error(`inspection clear changed goals: ${JSON.stringify(result)}`);
+      if(result.inspected.inspection.workId!==CHRONOLOGY_WORK||result.cleared.inspection.workId!==null)throw new Error(`inspection lifecycle mismatch: ${JSON.stringify(result)}`);
+      if(result.inspected.detailHtml!==result.before.detailHtml||result.cleared.detailHtml!==result.before.detailHtml)throw new Error(`legacy goal summary changed: ${JSON.stringify(result)}`);
+      if(result.inspected.detailCardHidden||result.cleared.detailCardHidden||result.inspected.detailMirror!==null||result.cleared.detailMirror!==null)throw new Error(`legacy detail card ownership changed: ${JSON.stringify(result)}`);
+      if(result.inspected.hostOwner!=="inspection"||result.inspected.hostPresentation!=="docked"||result.inspected.hostParent!=="right"||result.inspected.hostHidden||result.inspected.sheetWorkId!==CHRONOLOGY_WORK)throw new Error(`SheetHost inspection ownership mismatch: ${JSON.stringify(result)}`);
+      if(result.cleared.hostOwner!=="none"||!result.cleared.hostHidden)throw new Error(`SheetHost did not close cleanly: ${JSON.stringify(result)}`);
+      if(result.inspected.historyLength!==result.before.historyLength||result.cleared.historyLength!==result.before.historyLength)throw new Error(`inspection changed history length: ${JSON.stringify(result)}`);
+    }));
   } finally {
     cdp?.close();
     await closeStaticServer(staticServer.server);

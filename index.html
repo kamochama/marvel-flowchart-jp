@@ -8989,8 +8989,6 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     const host=document.getElementById('sheetHost');
     if(!host)return false;
     syncSheetPresentation();
-    const legacyDetail=document.getElementById('detail')?.closest('.card');
-    if(legacyDetail){legacyDetail.dataset.sheetHostMirror='hidden';legacyDetail.hidden=true;}
     host.dataset.owner='inspection';
     renderSheetContent({kind:'detail',workId});
     host.hidden=false;host.setAttribute('aria-hidden','false');
@@ -9002,8 +9000,6 @@ window.marvelBuildTierHighlightState=buildTierHighlightState;
     if(!host||host.dataset.owner!=='inspection')return false;
     if(mobileUiStore()?.getState?.().overlay?.kind!=='closed')return false;
     host.hidden=true;host.setAttribute('aria-hidden','true');host.dataset.owner='none';
-    const legacyDetail=document.querySelector('[data-sheet-host-mirror="hidden"]');
-    if(legacyDetail){legacyDetail.hidden=false;delete legacyDetail.dataset.sheetHostMirror;}
     return true;
   }
 
@@ -10461,11 +10457,6 @@ window.FEATURED_ROUTE=Object.freeze({
         if(isGoal)g.classList.add(wid===selected?'current-goal':'goal-node');
         if(wid===id)g.classList.add('detail-focus');
       }
-      if(typeof window.marvelRenderFocusedDetail==='function')window.marvelRenderFocusedDetail(id);
-      else if(detail){
-        const goals=activeGoalIds().length?`<div class="muted">ゴール${activeGoalIds().length}件は保持中</div>`:'';
-        detail.innerHTML=`<strong>${esc(nm[id].title)}</strong><div class="muted">詳細表示中（ゴールには追加していません）</div>${goals}`;
-      }
       return true;
     }
     const part=focusPart(id),ctx=part.nodes||new Set([id]);
@@ -10499,11 +10490,6 @@ window.FEATURED_ROUTE=Object.freeze({
     window.renderChronologySelectionState?.(svg,part);
     window.marvelApplyOfficialRouteSvgOverlay?.(svg,part);
     if(typeof window.marvelRenderReasonExplanation==='function')window.marvelRenderReasonExplanation([...(inc[id]||[]),...(out[id]||[])]);
-    if(typeof window.marvelRenderFocusedDetail==='function')window.marvelRenderFocusedDetail(id);
-    else if(detail){
-      const goals=activeGoalIds().length?`<div class="muted">ゴール${activeGoalIds().length}件は保持中</div>`:'';
-      detail.innerHTML=`<strong>${esc(nm[id].title)}</strong><div class="muted">詳細表示中（ゴールには追加していません）</div>${goals}`;
-    }
     return true;
   }
 

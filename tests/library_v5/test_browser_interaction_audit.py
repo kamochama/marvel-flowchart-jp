@@ -105,6 +105,18 @@ class BrowserInteractionAuditTests(unittest.TestCase):
         self.assertIn("overlaySyntheticDrawn", source)
         self.assertIn("overlaySyntheticDrawn === 0", source)
 
+    def test_runner_proves_phase6_detail_ownership(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn('"phase6-detail-ownership"', source)
+        self.assertIn("detailHtml", source)
+        self.assertIn("detailCardHidden", source)
+        self.assertIn("detailMirror", source)
+        self.assertIn("hostOwner", source)
+        self.assertIn("hostPresentation", source)
+        self.assertIn("hostParent", source)
+        self.assertIn("historyLength", source)
+        self.assertIn('hostParent!=="right"', source)
+
     @unittest.skipUnless(
         os.environ.get("MARVEL_BROWSER_INTERACTION_AUDIT") == "1",
         "set MARVEL_BROWSER_INTERACTION_AUDIT=1 to run the real headless interaction audit",
@@ -132,7 +144,7 @@ class BrowserInteractionAuditTests(unittest.TestCase):
             )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = json.loads(result.stdout.strip().splitlines()[-1])
-        self.assertEqual(report["summary"], {"cases": 7, "failures": 0})
+        self.assertEqual(report["summary"], {"cases": 8, "failures": 0})
 
 
 if __name__ == "__main__":
