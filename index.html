@@ -864,6 +864,26 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
   .watch-workspace select{min-height:44px}
 }
 </style>
+<style id="phase5-shell-contract">
+/* Phase 5: data-shell is the canonical presentation switch.  These rules
+   mirror the mobile shell's essential visibility/ownership rules for
+   landscape touch phones whose layout width is greater than 760px. */
+html[data-shell="mobile"] .mobile-app-shell{display:flex;position:relative;z-index:20;min-height:calc(100dvh - 56px);flex-direction:column;background:#070b16;color:#e5e7eb}
+html[data-shell="mobile"] .mobile-view-host{flex:1 1 auto;min-height:0;padding:10px 9px calc(72px + env(safe-area-inset-bottom))}
+html[data-shell="mobile"] #mobilePrimaryNav{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px;padding:7px 9px 8px;border-top:1px solid #263550;background:rgba(7,11,22,.96)}
+html[data-shell="mobile"] header{position:sticky;top:0;z-index:30;padding:0}
+html[data-shell="mobile"] header .controls{display:none!important}
+html[data-shell="mobile"] .public-nav-sticky,html[data-shell="mobile"] .tabs,html[data-shell="mobile"] .public-guide{display:none!important}
+html[data-shell="mobile"] #mobileBottomNav{position:fixed;right:0;bottom:0;left:0;z-index:70;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px 9px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #263550;background:rgba(7,11,22,.97);box-shadow:0 -10px 30px rgba(0,0,0,.28)}
+html[data-shell="mobile"] #mobileBottomNav button{min-height:44px}
+html[data-shell="mobile"] #sheetHost{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center;background:rgba(2,6,23,.72);pointer-events:auto}
+html[data-shell="mobile"] #sheetHost[hidden]{display:none!important}
+html[data-shell="compact"] .mobile-app-shell{display:none!important}
+html[data-shell="compact"] #mobilePrimaryNav{display:none!important}
+html[data-shell="compact"] main{display:block}
+html[data-shell="desktop"] .mobile-app-shell{display:none!important}
+html[data-shell="desktop"] #mobilePrimaryNav{display:none!important}
+</style>
 </head><body>
 <header>
   <div class="public-brand">
@@ -4431,7 +4451,29 @@ applyCharacterHighlight()
 function neighborhood(id,d){let seen=new Set([id]),front=new Set([id]);for(let k=0;k<d;k++){let next=new Set();for(const x of front){for(const e of(inc[x]||[])){if(!seen.has(e.source)){seen.add(e.source);next.add(e.source)}}for(const e of(out[x]||[])){if(!seen.has(e.target)){seen.add(e.target);next.add(e.target)}}}front=next}return seen}
 
 const viewStates=new Map();
-const mobileChartMotion=window.matchMedia('(max-width:760px)');
+// Phase 5: all presentation code reads the canonical shell state.  The
+// media-query fallback keeps the early legacy adapters safe before the
+// viewer-ui-state-facade has initialized the data-shell attribute.
+const mobileChartMotion=(()=>{
+  const mq=window.matchMedia('(max-width:760px)');
+  return {
+    get matches(){
+      const shell=document.documentElement?.dataset?.shell;
+      const metricsReader=window.marvelReadShellMetrics;
+      const classifier=window.marvelClassifyShell;
+      if(typeof metricsReader==='function'&&typeof classifier==='function')return classifier(metricsReader())==='mobile';
+      return shell ? shell==='mobile' : mq.matches;
+    },
+    addEventListener(type,listener){
+      mq.addEventListener?.(type,listener);
+      if(type==='change')window.addEventListener('marvel-shell-change',listener);
+    },
+    removeEventListener(type,listener){
+      mq.removeEventListener?.(type,listener);
+      if(type==='change')window.removeEventListener('marvel-shell-change',listener);
+    }
+  };
+})();
 function ensureViewState(wrap){
   if(!wrap) return null;
   let st=viewStates.get(wrap);
@@ -10135,6 +10177,34 @@ window.FEATURED_ROUTE=Object.freeze({
     if(layoutWidth<=980)return 'compact';
     return 'desktop';
   };
+  window.marvelReadShellMetrics=function(source={}){
+    const root=source.root||(typeof document!=='undefined'?document.documentElement:null);
+    const metrics=source.metrics&&typeof source.metrics==='object'?source.metrics:source;
+    const matchMedia=source.matchMedia||(typeof window!=='undefined'?window.matchMedia:null);
+    const clientWidth=finiteMetric(root?.clientWidth,0);
+    const viewportWidth=finiteMetric(typeof window!=='undefined'?window.innerWidth:0,0);
+    const visualViewportWidth=finiteMetric(typeof visualViewport!=='undefined'?visualViewport.width:0,0);
+    // Overlay/classic scrollbar gutters can make clientWidth one pixel
+    // narrower than the actual layout viewport.  Keep the stable clientWidth
+    // signal, but do not misclassify an exact 761/981 boundary because of the
+    // browser's scrollbar gutter.
+    const layoutWidth=finiteMetric(metrics.layoutWidth,Math.max(clientWidth,viewportWidth,visualViewportWidth)||Infinity);
+    const screenWidth=finiteMetric(metrics.screenWidth,finiteMetric(typeof screen!=='undefined'?screen.width:layoutWidth,layoutWidth));
+    const screenHeight=finiteMetric(metrics.screenHeight,finiteMetric(typeof screen!=='undefined'?screen.height:layoutWidth,layoutWidth));
+    const coarse=metrics.coarse===true || (metrics.coarse!==false && typeof matchMedia==='function' && !!matchMedia('(pointer: coarse)')?.matches);
+    return {layoutWidth,screenWidth,screenHeight,coarse};
+  };
+  // Canonical CSS boundary: data-shell="mobile|compact|desktop".
+  window.marvelSyncShell=function(options={}){
+    const metrics=options.metrics||window.marvelReadShellMetrics(options);
+    const shell=window.marvelClassifyShell(metrics);
+    const root=options.root||(typeof document!=='undefined'?document.documentElement:null);
+    if(root?.dataset)root.dataset.shell=shell;
+    if(options.dispatch!==false&&typeof window.dispatchEvent==='function'){
+      try{window.dispatchEvent(new Event('marvel-shell-change'));}catch(_){ }
+    }
+    return shell;
+  };
   const normalizeOverlay=value=>{
     if(!value||value.kind==='closed')return {kind:'closed'};
     if(value.kind==='detail'&&text(value.workId))return {kind:'detail',workId:text(value.workId)};
@@ -10280,6 +10350,31 @@ window.FEATURED_ROUTE=Object.freeze({
     next.overlay={kind:'closed'};
     return next;
   };
+  let shellKey='';
+  let shellSyncPending=false;
+  const environmentShellKey=metrics=>[
+    metrics.layoutWidth,metrics.screenWidth,metrics.screenHeight,metrics.coarse,
+    typeof screen!=='undefined'&&screen.orientation?.type||''
+  ].join('|');
+  const syncEnvironmentShell=(force=false)=>{
+    const metrics=window.marvelReadShellMetrics();
+    const nextKey=environmentShellKey(metrics);
+    if(!force&&nextKey===shellKey)return window.document?.documentElement?.dataset?.shell||null;
+    shellKey=nextKey;
+    return window.marvelSyncShell({metrics});
+  };
+  window.marvelSyncEnvironmentShell=syncEnvironmentShell;
+  syncEnvironmentShell(true);
+  const scheduleEnvironmentShell=()=>{
+    if(shellSyncPending)return;
+    shellSyncPending=true;
+    const run=()=>{shellSyncPending=false;syncEnvironmentShell(false);};
+    if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(run);else window.setTimeout?.(run,0);
+  };
+  window.addEventListener?.('resize',scheduleEnvironmentShell);
+  window.addEventListener?.('orientationchange',()=>syncEnvironmentShell(true));
+  if(typeof visualViewport!=='undefined')visualViewport.addEventListener?.('resize',scheduleEnvironmentShell);
+  if(typeof screen!=='undefined')screen.orientation?.addEventListener?.('change',()=>syncEnvironmentShell(true));
 })();
 </script>
 

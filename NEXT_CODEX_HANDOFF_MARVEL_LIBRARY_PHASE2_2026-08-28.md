@@ -364,6 +364,21 @@ Fresh verification for the merged Phase 4 baseline:
 
 This remains viewer-only. Canonical CSVs, persistent review ledgers, relation/chronology/worldline semantics, and public plan-tier meaning are unchanged. The next bounded boundary is Phase 5 of the PC/mobile architecture spec: PC surface/breakpoint/orientation and shell-boundary audit. Phase 5 has not started in this record; Phase 6 old-layer removal remains later separately planned work.
 
+## 0.1.19 Phase 5 PC／境界／横向き shell audit candidate (2026-09-12, pending integration)
+
+The bounded Phase 5 implementation is prepared on `codex/marvel-ui-phase5-pc-boundary` and recorded in `docs/superpowers/plans/2026-09-12-marvel-ui-phase5-pc-boundary.md`. It makes `<html data-shell>` the presentation boundary for mobile, compact PC, and desktop without changing graph data, selection semantics, goals, camera state, or the three public plan tiers. Shell classification uses stable layout width, screen short/long sides, and coarse input; keyboard-sensitive `innerHeight` and `visualViewport.height` are excluded.
+
+Fresh local verification for this candidate:
+
+- bundled-Python full suite: `582` pass (`5` environment-gated skips);
+- deterministic build: audit issue count `0`, content-audit issue count `0`, story paths `83/83`, prewatch edges `199`, SQLite integrity `ok`, export `131` nodes / `355` edges / `562` reasons;
+- real Chrome/CDP selection audit: `131` works × `2` public tiers, exact-set mismatches `0`;
+- real Chrome/CDP interaction audit: `6/6` representative cases pass;
+- real Chrome/CDP chronology and publication-order audits: `0` failures (`131` publication cards, `0` synthetic edges);
+- real Chrome/CDP Phase 5 mobile-shell audit: portrait/landscape and `760/761/980/981` boundaries pass, coarse landscape touch mode passes, and height-only viewport changes preserve shell, surface, selection, camera, and goals.
+
+This is a viewer-only candidate and is not a production baseline until its normal PR is green and merged. Canonical CSVs, persistent review ledgers, work IDs, graph edges, chronology/worldline semantics, and public plan-tier meaning are unchanged. After integration, the next separately planned boundary remains Phase 6 old-layer removal.
+
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
 The static viewer now consumes the committed DB-derived artifact `data/derived/flowchart.json`; the browser does not open SQLite. The artifact contains 131 nodes, 361 directed edges, 569 traceable reasons, and 42 character groups, with all eligible edges visible by default and selection limited to presentation styling.

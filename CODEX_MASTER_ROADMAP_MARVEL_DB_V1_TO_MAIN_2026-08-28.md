@@ -762,3 +762,11 @@ Verification at this boundary:
 - Pages deployment run `34458701604` succeeded and GitHub Pages reports `status=built` for `https://kamochama.github.io/marvel-flowchart-jp/`.
 
 This remains viewer-only. Canonical CSVs, review ledgers, relation/chronology/worldline semantics, and public plan-tier meaning are unchanged. The next bounded work is Phase 5 of the PC/mobile architecture spec: audit PC surface/breakpoint/orientation shell boundaries. Phase 5 is not started by this record; Phase 6 old-layer removal remains a later separately planned boundary.
+
+## 33. Phase 5 PC／境界／横向き shell audit — candidate (2026-09-12)
+
+The Phase 5 implementation is prepared on `codex/marvel-ui-phase5-pc-boundary` under `docs/superpowers/plans/2026-09-12-marvel-ui-phase5-pc-boundary.md`. It centralizes presentation selection in `<html data-shell="mobile|compact|desktop">`: mobile is `layoutWidth <= 760 || (screenShortSide <= 760 && coarse && screenLongSide <= 1280)`, compact PC is `761–980px`, and desktop is `981px+`. The runtime reevaluates on initial load, layout-width changes, and orientation changes, while a keyboard-driven visual-viewport height change cannot rewrite the shell or viewer state.
+
+Local candidate verification is complete: `582` unit tests pass with `5` environment-gated skips; the deterministic build reports zero audit/content-audit issues, `83/83` story paths, SQLite integrity `ok`, and `131/355/562` nodes/edges/reasons. Real Chrome/CDP selection, interaction, chronology, publication-order, and mobile-shell audits pass, including exact `390×844`, `844×390`, `760`, `761`, `980`, and `981` boundary cases, coarse landscape touch mode, and height-only state preservation.
+
+This is viewer-only and pending normal PR/CI integration. Canonical CSVs, persistent review ledgers, graph and chronology/worldline semantics, work IDs, and the public plan-tier meaning are unchanged. Once merged, Phase 6 old-layer removal remains a separate planned boundary; no semantic DB phase is implied by this viewer work.

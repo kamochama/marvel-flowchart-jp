@@ -65,6 +65,19 @@ class MobileUxContractTests(unittest.TestCase):
         self.assertRegex(self.source, r'<div id="flowchartControls" class="controls"')
         self.assertRegex(self.source, r'id="mobileAreaButton"[^>]*aria-controls="sheetHostPanel"')
 
+    def test_phase5_data_shell_css_has_one_active_presentation_root(self) -> None:
+        match = re.search(
+            r'<style id="phase5-shell-contract">(?P<body>[\s\S]*?)</style>',
+            self.source,
+        )
+        self.assertIsNotNone(match)
+        body = match.group("body") if match else ""
+        self.assertIn('html[data-shell="mobile"] .mobile-app-shell', body)
+        self.assertIn('html[data-shell="compact"] .mobile-app-shell{display:none!important}', body)
+        self.assertIn('html[data-shell="desktop"] .mobile-app-shell{display:none!important}', body)
+        self.assertIn('html[data-shell="mobile"] #sheetHost', body)
+        self.assertNotIn('visualViewport.height', body)
+
     def test_mobile_primary_controls_have_44px_touch_targets(self) -> None:
         match = re.search(
             r'<style id="mobile-touch-target-contract">(?P<body>[\s\S]*?)</style>',

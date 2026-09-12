@@ -605,11 +605,26 @@ class MobileShellContractTests(unittest.TestCase):
         for name in ("mountMobileSearchView", "mountMobilePlanView"):
             self.assertIn("mobileHost.replaceChildren", function_body(self.source, name))
 
+    def test_phase5_shell_sync_is_the_single_data_shell_presentation_boundary(self) -> None:
+        self.assertIn("window.marvelReadShellMetrics", self.source)
+        self.assertIn("window.marvelSyncShell", self.source)
+        self.assertIn('data-shell="mobile|compact|desktop"', self.source)
+        sync_body = function_body(self.source, "marvelSyncShell")
+        self.assertIn("dataset.shell", sync_body)
+        self.assertIn("marvelClassifyShell", sync_body)
+        self.assertNotIn("innerHeight", sync_body)
+        self.assertNotIn("visualViewport.height", sync_body)
+
+    def test_phase5_mobile_shell_can_be_selected_by_canonical_data_shell(self) -> None:
+        self.assertIn('[data-shell="mobile"]', self.source)
+        self.assertIn('[data-shell="compact"]', self.source)
+        self.assertIn('[data-shell="desktop"]', self.source)
+
     def test_mobile_chart_browser_runner_has_json_scenario_contract(self) -> None:
         runner = ROOT / "tests" / "library_v5" / "browser_mobile_shell_audit.mjs"
         self.assertTrue(runner.is_file(), "M3 browser runner must exist")
         source = runner.read_text(encoding="utf-8")
-        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "plan", "mobilePlanSnapshot", "data-mobile-plan-summary", "data-mobile-plan-watched", "data-mobile-plan-detail", "data-mobile-plan-remove-goal", "sheetBodyText", "layout", "mobilePrepJump", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select", "firstCardInViewport", "legacyQuerySync", "scrollY", "historySnapshot"):
+        for token in ("--root", "--chrome", "390", "844", "Input.dispatchMouseEvent", "data-mobile-camera", "selection", "sheet", "rerenders", "failures", "panelHasWork", "nonChartDocumentPanel", "nonChartHidesLegacyPanel", "displayChooser", "charactersPanel", "responsiveSearchSync", "setDeviceMetricsOverride", "search", "history", "plan", "mobilePlanSnapshot", "data-mobile-plan-summary", "data-mobile-plan-watched", "data-mobile-plan-detail", "data-mobile-plan-remove-goal", "sheetBodyText", "layout", "mobilePrepJump", "Spider-Man 3", "data-mobile-search-query", "data-mobile-search-select", "firstCardInViewport", "legacyQuerySync", "scrollY", "historySnapshot", "data-shell", "marvelSyncShell", "shellBoundary", "coarseLandscape", "visualViewportHeightInvariant"):
             self.assertIn(token, source)
         self.assertIn("sheetHost", source)
         self.assertIn('data-mobile-target="release"', source)

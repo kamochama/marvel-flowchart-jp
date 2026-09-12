@@ -26,6 +26,7 @@ REQUIRED_REPORT_FIELDS = {
     "search",
     "plan",
     "phase4",
+    "phase5",
     "failures",
 }
 
@@ -95,6 +96,16 @@ def _validate_report(report: dict[str, object]) -> None:
         raise AssertionError(f"mobile shell phase4 search contract failed: {search!r}")
     if not plan["anchorPreserved"] or plan["chartRebuilds"] != 0 or plan["historyGrowth"] != 0:
         raise AssertionError(f"mobile shell phase4 plan contract failed: {plan!r}")
+    phase5 = report["phase5"]
+    if not isinstance(phase5, dict) or not isinstance(phase5.get("shellBoundary"), dict):
+        raise AssertionError("mobile shell report phase5 must contain shellBoundary")
+    expected_boundaries = {"portrait390", "landscape844", "width760", "width761", "width980", "width981"}
+    if set(phase5["shellBoundary"]) != expected_boundaries:
+        raise AssertionError(f"mobile shell phase5 boundaries mismatch: {phase5['shellBoundary']!r}")
+    if any(not isinstance(row, dict) or row.get("ok") is not True for row in phase5["shellBoundary"].values()):
+        raise AssertionError(f"mobile shell phase5 boundary contract failed: {phase5!r}")
+    if phase5.get("coarseLandscape") is not True or phase5.get("visualViewportHeightInvariant") is not True:
+        raise AssertionError(f"mobile shell phase5 coarse/height contract failed: {phase5!r}")
 
 
 def _format_timeout_diagnostic(error: subprocess.TimeoutExpired) -> str:
@@ -120,6 +131,14 @@ def _successful_report() -> dict[str, object]:
         "phase4": {
             "search": {"focusPreserved": True, "scrollPreserved": True, "chartRebuilds": 0, "historyGrowth": 0},
             "plan": {"anchorPreserved": True, "chartRebuilds": 0, "historyGrowth": 0},
+        },
+        "phase5": {
+            "shellBoundary": {
+                key: {"ok": True}
+                for key in ("portrait390", "landscape844", "width760", "width761", "width980", "width981")
+            },
+            "coarseLandscape": True,
+            "visualViewportHeightInvariant": True,
         },
         "failures": [],
     }
