@@ -79,8 +79,8 @@
 - [x] **Step 1: Run the bundled full unit suite and deterministic build.**
 - [x] **Step 2: Run selection, interaction, chronology, publication-order, and mobile-shell browser audits with the required environment flags.**
 - [x] **Step 3: Inspect `git diff --check`, canonical CSV diff, audit issue counts, SQLite integrity, and generated-output boundaries.**
-- [ ] **Step 4: Commit the feature branch, push, open the normal PR, and wait for all required checks.**
-- [ ] **Step 5: Merge only after CI is green, verify `main` and Pages/public HTTP behavior, and record the Phase 5 production baseline in the handoff and roadmap.**
+- [x] **Step 4: Commit the feature branch, push, open the normal PR, and wait for all required checks.**
+- [x] **Step 5: Merge only after CI is green, verify `main` and Pages/public HTTP behavior, and record the Phase 5 production baseline in the handoff and roadmap.**
 
 ## Execution record
 
@@ -88,3 +88,4 @@
 - Local verification: 582 unit tests passed (5 environment-gated skips); deterministic build reported zero audit issues, zero content-audit issues, SQLite integrity `ok`, 131 works, 355 edges, and 562 pair reasons.
 - Real Chrome/CDP verification: selection `0` mismatches, interaction `6/6`, chronology `0` failures, publication order `131` cards / `0` failures / `0` synthetic edges, and mobile shell boundary/orientation audit passed.
 - Scope: viewer shell classification and audit contracts only; canonical CSVs, persistent review ledgers, graph semantics, and work IDs were unchanged.
+- Integration: PR #89 merged to `main` as `c106bfd9f99998edd7bbd62d9d403935c8afee2e`; required GitHub Actions run `34694839654` passed all six jobs. Pages deployment run `34695230864` succeeded and the public URL returned HTTP `200`.

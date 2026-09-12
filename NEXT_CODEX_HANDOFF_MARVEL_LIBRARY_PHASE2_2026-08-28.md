@@ -364,9 +364,9 @@ Fresh verification for the merged Phase 4 baseline:
 
 This remains viewer-only. Canonical CSVs, persistent review ledgers, relation/chronology/worldline semantics, and public plan-tier meaning are unchanged. The next bounded boundary is Phase 5 of the PC/mobile architecture spec: PC surface/breakpoint/orientation and shell-boundary audit. Phase 5 has not started in this record; Phase 6 old-layer removal remains later separately planned work.
 
-## 0.1.19 Phase 5 PC／境界／横向き shell audit candidate (2026-09-12, pending integration)
+## 0.1.19 Production baseline after the 2026-09-12 Phase 5 shell-boundary stabilization
 
-The bounded Phase 5 implementation is prepared on `codex/marvel-ui-phase5-pc-boundary` and recorded in `docs/superpowers/plans/2026-09-12-marvel-ui-phase5-pc-boundary.md`. It makes `<html data-shell>` the presentation boundary for mobile, compact PC, and desktop without changing graph data, selection semantics, goals, camera state, or the three public plan tiers. Shell classification uses stable layout width, screen short/long sides, and coarse input; keyboard-sensitive `innerHeight` and `visualViewport.height` are excluded.
+PR #89 (`https://github.com/kamochama/marvel-flowchart-jp/pull/89`) is integrated into `main` at merge commit `c106bfd9f99998edd7bbd62d9d403935c8afee2e`. It makes `<html data-shell>` the presentation boundary for mobile, compact PC, and desktop without changing graph data, selection semantics, goals, camera state, or the three public plan tiers. Shell classification uses stable layout width, screen short/long sides, and coarse input; keyboard-sensitive `innerHeight` and `visualViewport.height` are excluded. The implementation plan is recorded in `docs/superpowers/plans/2026-09-12-marvel-ui-phase5-pc-boundary.md`.
 
 Fresh local verification for this candidate:
 
@@ -377,7 +377,9 @@ Fresh local verification for this candidate:
 - real Chrome/CDP chronology and publication-order audits: `0` failures (`131` publication cards, `0` synthetic edges);
 - real Chrome/CDP Phase 5 mobile-shell audit: portrait/landscape and `760/761/980/981` boundaries pass, coarse landscape touch mode passes, and height-only viewport changes preserve shell, surface, selection, camera, and goals.
 
-This is a viewer-only candidate and is not a production baseline until its normal PR is green and merged. Canonical CSVs, persistent review ledgers, work IDs, graph edges, chronology/worldline semantics, and public plan-tier meaning are unchanged. After integration, the next separately planned boundary remains Phase 6 old-layer removal.
+GitHub Actions run `34694839654` passed all six required jobs (`test`, selection, interaction, chronology, publication-order, and mobile-shell). Pages deployment run `34695230864` succeeded, and `https://kamochama.github.io/marvel-flowchart-jp/` returned HTTP `200` with the Phase 5 HTML payload.
+
+This is a viewer-only production baseline. Canonical CSVs, persistent review ledgers, work IDs, graph edges, chronology/worldline semantics, and public plan-tier meaning are unchanged. The next separately planned boundary remains Phase 6 old-layer removal.
 
 ## 0.2 Historical production baseline after the 2026-08-29 integration
 
