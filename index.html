@@ -869,6 +869,7 @@ body.public-watch-view main{display:grid!important}body.public-watch-view #watch
    mirror the mobile shell's essential visibility/ownership rules for
    landscape touch phones whose layout width is greater than 760px. */
 html[data-shell="mobile"] .mobile-app-shell{display:flex;position:relative;z-index:20;min-height:calc(100dvh - 56px);flex-direction:column;background:#070b16;color:#e5e7eb}
+html[data-shell="mobile"] #right{display:none!important;pointer-events:none!important}
 html[data-shell="mobile"] .mobile-view-host{flex:1 1 auto;min-height:0;padding:10px 9px calc(72px + env(safe-area-inset-bottom))}
 html[data-shell="mobile"] #mobilePrimaryNav{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px;padding:7px 9px 8px;border-top:1px solid #263550;background:rgba(7,11,22,.96)}
 html[data-shell="mobile"] header{position:sticky;top:0;z-index:30;padding:0}
