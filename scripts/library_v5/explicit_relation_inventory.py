@@ -29,6 +29,10 @@ def _split(value: str) -> list[str]:
     return sorted({part.strip() for part in (value or "").split("|") if part.strip()})
 
 
+def _split_preserve_duplicates(value: str) -> list[str]:
+    return [part.strip() for part in (value or "").split("|") if part.strip()]
+
+
 def _read_inputs(root: Path) -> tuple[
     list[dict[str, str]],
     dict[str, dict[str, str]],
@@ -166,7 +170,7 @@ def build_inventory(root: Path) -> dict[str, Any]:
                 )
                 if reason.get("reason_id") != expected_reason_id:
                     reason_failures["reason_id"].append(relation_id)
-                edge_reason_ids = _split(edge.get("reason_ids", "")) if edge else []
+                edge_reason_ids = _split_preserve_duplicates(edge.get("reason_ids", "")) if edge else []
                 if not edge or reason.get("reason_id") not in edge_reason_ids:
                     reason_failures["edge"].append(relation_id)
                 if edge and edge_reason_ids.count(reason.get("reason_id", "")) != 1:

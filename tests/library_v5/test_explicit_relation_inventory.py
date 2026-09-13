@@ -3,7 +3,11 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from scripts.library_v5.explicit_relation_inventory import _markdown, build_inventory
+from scripts.library_v5.explicit_relation_inventory import (
+    _markdown,
+    _split_preserve_duplicates,
+    build_inventory,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -97,6 +101,13 @@ class ExplicitRelationInventoryTests(unittest.TestCase):
         markdown = _markdown(report)
         self.assertIn("# Marvel explicit relation inventory", markdown)
         self.assertIn("work-relation-iron-man-2008-iron-man-2-2010-sequel", markdown)
+
+    def test_edge_reason_parser_preserves_duplicate_tokens_for_audit(self) -> None:
+        self.assertEqual(_split_preserve_duplicates("reason-a|reason-a|reason-b"), [
+            "reason-a",
+            "reason-a",
+            "reason-b",
+        ])
 
 
 if __name__ == "__main__":

@@ -112,9 +112,12 @@ class BrowserPhase6OwnershipAuditTests(unittest.TestCase):
 
     def test_runner_bounds_static_fixture_shutdown(self) -> None:
         source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("launchChromeWithRetries", source)
+        self.assertIn("attempts = 3", source)
         self.assertIn("closeAllConnections", source)
         self.assertIn("closeIdleConnections", source)
         self.assertIn("setTimeout(finish, 2_000)", source)
+        self.assertIn("clearTimeout(timer)", source)
         self.assertIn("await stopServer(server)", source)
 
     def test_wrapper_is_environment_gated_and_validates_summary(self) -> None:

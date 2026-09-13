@@ -137,6 +137,19 @@ async function launchChrome(chrome, timeoutMs) {
   }
 }
 
+async function launchChromeWithRetries(chrome, timeoutMs, attempts = 3) {
+  let lastError = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await launchChrome(chrome, timeoutMs);
+    } catch (error) {
+      lastError = error;
+      if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+  }
+  throw lastError || new Error("Chrome launch failed");
+}
+
 async function stopChrome(processInfo) {
   const child = processInfo?.child;
   if (child && child.exitCode === null && !child.killed) {
@@ -152,7 +165,14 @@ async function stopServer(serverInfo) {
   if (!server) return;
   await new Promise((resolve) => {
     let settled = false;
-    const finish = () => { if (!settled) { settled = true; resolve(); } };
+    let timer = null;
+    const finish = () => {
+      if (!settled) {
+        settled = true;
+        if (timer) clearTimeout(timer);
+        resolve();
+      }
+    };
     try {
       server.close(finish);
       // Chrome may leave an HTTP keep-alive socket open after CDP closes.  The
@@ -160,7 +180,7 @@ async function stopServer(serverInfo) {
       server.closeAllConnections?.();
       server.closeIdleConnections?.();
     } catch (_) { finish(); }
-    setTimeout(finish, 2_000);
+    timer = setTimeout(finish, 2_000);
   });
 }
 
@@ -243,7 +263,7 @@ async function run(args) {
   const failures = [];
   const checkpoints = [];
   try {
-    chrome = await launchChrome(locateChrome(args.chrome), timeoutMs);
+    chrome = await launchChromeWithRetries(locateChrome(args.chrome), timeoutMs);
     cdp = new CdpClient(chrome.url, timeoutMs);
     await cdp.connect(); await cdp.send("Page.enable"); await cdp.send("Runtime.enable");
     await cdp.send("Page.navigate", { url: server.url });
