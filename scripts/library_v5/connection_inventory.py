@@ -50,46 +50,100 @@ def _split_ids(value: Any) -> list[str]:
     return sorted({part.strip() for part in str(value or "").split("|") if part.strip()})
 
 
-def _source_tables(reason_kind: str) -> list[str]:
-    return {
-        "explicit_relation": ["work_relations.csv"],
-        "shared_entity": ["appearances.csv", "entity_relations.csv"],
-        "multiverse_transition": [
-            "multiverse_transitions.csv",
-            "events.csv",
-            "event_occurrences.csv",
-            "transition_participants.csv",
-        ],
-    }.get(reason_kind, [])
+def _read_provenance(
+    *, value_field: str, path: Path
+) -> dict[tuple[str, str], list[str]]:
+    """Read evidence/review links keyed by the canonical fact identity.
 
+    A fact is identified by ``(fact_table, fact_id)``.  Keying only by the ID
+    would allow an event and a transition with the same textual ID to borrow
+    one another's evidence.
+    """
 
-def _provenance_by_fact(report: Mapping[str, Any]) -> dict[str, dict[str, set[str]]]:
-    result: dict[str, dict[str, set[str]]] = {}
-    for record in report.get("records", []) or []:
-        for fact_id in _split_ids(record.get("support_fact_ids")):
-            entry = result.setdefault(fact_id, {"evidence_ids": set(), "review_ids": set()})
-            entry["evidence_ids"].update(_split_ids(record.get("evidence_ids")))
-            entry["review_ids"].update(_split_ids(record.get("review_ids")))
-    for fact_id, evidence_ids in (report.get("_evidence_by_fact") or {}).items():
-        entry = result.setdefault(fact_id, {"evidence_ids": set(), "review_ids": set()})
-        entry["evidence_ids"].update(_split_ids(evidence_ids))
-    for fact_id, review_ids in (report.get("_reviews_by_fact") or {}).items():
-        entry = result.setdefault(fact_id, {"evidence_ids": set(), "review_ids": set()})
-        entry["review_ids"].update(_split_ids(review_ids))
-    return result
-
-
-def _read_provenance(root: Path, *, field: str, value_field: str, path: Path) -> dict[str, list[str]]:
-    result: dict[str, list[str]] = {}
+    result: dict[tuple[str, str], list[str]] = {}
     if not path.exists():
         return result
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         for row in csv.DictReader(handle):
-            fact_id = (row.get(field) or "").strip()
+            fact_table = (row.get("fact_table") or "").strip()
+            fact_id = (row.get("fact_id") or "").strip()
             value = (row.get(value_field) or "").strip()
-            if fact_id and value:
-                result.setdefault(fact_id, []).append(value)
-    return {fact_id: sorted(set(values)) for fact_id, values in result.items()}
+            if fact_table and fact_id and value:
+                result.setdefault((fact_table, fact_id), []).append(value)
+    return {key: sorted(set(values)) for key, values in result.items()}
+
+
+def _read_fact_index(root: Path) -> dict[str, list[dict[str, str]]]:
+    """Index canonical facts by ID while retaining their source table.
+
+    The index intentionally excludes evidence/sources: those are provenance
+    registries, not support facts.  Multiple rows/tables may share an ID, so
+    the value is a list rather than a single record.
+    """
+
+    result: dict[str, list[dict[str, str]]] = {}
+    library = root / "data" / "library"
+    if not library.exists():
+        return result
+    for path in sorted(library.glob("*.csv")):
+        if path.name in {"evidence.csv", "sources.csv"}:
+            continue
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            reader = csv.DictReader(handle)
+            fieldnames = reader.fieldnames or []
+            id_fields = [field for field in fieldnames if field.endswith("_id")]
+            if not id_fields:
+                continue
+            id_field = id_fields[0]
+            for row in reader:
+                fact_id = (row.get(id_field) or "").strip()
+                if not fact_id:
+                    continue
+                result.setdefault(fact_id, []).append(
+                    {
+                        "fact_table": path.name,
+                        "fact_id": fact_id,
+                        "verification_status": (row.get("verification_status") or "").strip(),
+                        "certainty": (row.get("certainty") or row.get("direction_certainty") or "").strip(),
+                    }
+                )
+    return result
+
+
+def _source_facts(
+    fact_ids: list[str],
+    *,
+    fact_index: Mapping[str, list[dict[str, str]]],
+    evidence_by_fact: Mapping[tuple[str, str], list[str]],
+    reviews_by_fact: Mapping[tuple[str, str], list[str]],
+) -> list[dict[str, Any]]:
+    """Resolve each support fact and attach only its exact provenance."""
+
+    resolved: list[dict[str, Any]] = []
+    for fact_id in fact_ids:
+        matches = fact_index.get(fact_id, [])
+        if not matches:
+            resolved.append(
+                {
+                    "fact_table": "",
+                    "fact_id": fact_id,
+                    "verification_status": "",
+                    "certainty": "",
+                    "evidence_ids": [],
+                    "review_ids": [],
+                }
+            )
+            continue
+        for match in matches:
+            key = (match["fact_table"], fact_id)
+            resolved.append(
+                {
+                    **match,
+                    "evidence_ids": list(evidence_by_fact.get(key, [])),
+                    "review_ids": list(reviews_by_fact.get(key, [])),
+                }
+            )
+    return resolved
 
 
 def _reason_disposition(reason: Mapping[str, Any]) -> str:
@@ -141,7 +195,9 @@ def build_inventory(report: Mapping[str, Any]) -> dict[str, Any]:
     reasons: list[dict[str, Any]] = []
     normalized_edges: list[dict[str, Any]] = []
     reason_ids_seen: list[str] = []
-    provenance_by_fact = _provenance_by_fact(report)
+    fact_index = report.get("_fact_index") or {}
+    evidence_by_fact = report.get("_evidence_by_fact") or {}
+    reviews_by_fact = report.get("_reviews_by_fact") or {}
     for edge in edge_rows:
         source = str(edge.get("source_work_id") or "")
         target = str(edge.get("target_work_id") or "")
@@ -163,25 +219,31 @@ def build_inventory(report: Mapping[str, Any]) -> dict[str, Any]:
             normalized["source_fact_ids"] = _split_ids(
                 normalized.get("support_fact_ids")
             )
-            normalized["source_fact_table"] = _source_tables(
-                str(normalized.get("reason_kind") or "")
+            normalized["source_facts"] = _source_facts(
+                normalized["source_fact_ids"],
+                fact_index=fact_index,
+                evidence_by_fact=evidence_by_fact,
+                reviews_by_fact=reviews_by_fact,
+            )
+            normalized["source_fact_table"] = sorted(
+                {
+                    str(fact.get("fact_table") or "")
+                    for fact in normalized["source_facts"]
+                    if fact.get("fact_table")
+                }
             )
             normalized["evidence_ids"] = sorted(
                 {
                     evidence_id
-                    for fact_id in normalized["source_fact_ids"]
-                    for evidence_id in provenance_by_fact.get(
-                        fact_id, {"evidence_ids": set()}
-                    )["evidence_ids"]
+                    for fact in normalized["source_facts"]
+                    for evidence_id in fact.get("evidence_ids", [])
                 }
             )
             normalized["review_ids"] = sorted(
                 {
                     review_id
-                    for fact_id in normalized["source_fact_ids"]
-                    for review_id in provenance_by_fact.get(
-                        fact_id, {"review_ids": set()}
-                    )["review_ids"]
+                    for fact in normalized["source_facts"]
+                    for review_id in fact.get("review_ids", [])
                 }
             )
             normalized["disposition"] = _reason_disposition(normalized)
@@ -234,6 +296,28 @@ def build_inventory(report: Mapping[str, Any]) -> dict[str, Any]:
         if "source_verified" in _split_ids(reason.get("verification_statuses"))
         and not reason.get("review_ids")
     )
+    unresolved_source_fact_ids = sorted(
+        {
+            str(fact.get("fact_id") or "")
+            for reason in reasons
+            for fact in reason.get("source_facts", [])
+            if fact.get("fact_id") and not fact.get("fact_table")
+        }
+    )
+    verified_support_fact_missing_evidence = sorted(
+        f"{fact.get('fact_table')}:{fact.get('fact_id')}"
+        for reason in reasons
+        for fact in reason.get("source_facts", [])
+        if fact.get("verification_status") == "source_verified"
+        and not fact.get("evidence_ids")
+    )
+    verified_support_fact_missing_review = sorted(
+        f"{fact.get('fact_table')}:{fact.get('fact_id')}"
+        for reason in reasons
+        for fact in reason.get("source_facts", [])
+        if fact.get("verification_status") == "source_verified"
+        and not fact.get("review_ids")
+    )
 
     summary = report.get("summary") or {}
     projection = summary.get("projection") or {}
@@ -258,6 +342,9 @@ def build_inventory(report: Mapping[str, Any]) -> dict[str, Any]:
         ),
         "verified_reason_missing_evidence_ids": verified_reason_missing_evidence_ids,
         "verified_reason_missing_review_ids": verified_reason_missing_review_ids,
+        "unresolved_source_fact_ids": unresolved_source_fact_ids,
+        "verified_support_fact_missing_evidence": verified_support_fact_missing_evidence,
+        "verified_support_fact_missing_review": verified_support_fact_missing_review,
     }
     disposition_counts = {
         scope: dict(
@@ -317,17 +404,14 @@ def audit_inventory(root: Path, *, baseline_sha: str | None = None) -> dict[str,
         root / "data" / "derived" / "work_edges_all.csv"
     )
     report["_evidence_by_fact"] = _read_provenance(
-        root,
-        field="fact_id",
         value_field="evidence_id",
         path=root / "data" / "library" / "evidence.csv",
     )
     report["_reviews_by_fact"] = _read_provenance(
-        root,
-        field="fact_id",
         value_field="review_id",
         path=root / "data" / "content_audit" / "reviews.csv",
     )
+    report["_fact_index"] = _read_fact_index(root)
     inventory = build_inventory(report)
     inventory["coverage"]["missing_inputs"] = report["_missing_inputs"]
     flowchart_path = root / "data" / "derived" / "flowchart.json"
@@ -490,6 +574,40 @@ def render_markdown(inventory: Mapping[str, Any]) -> str:
                 disposition=edge.get("disposition", ""),
             )
         )
+    lines.extend(
+        [
+            "",
+            "## All reasons with exact fact provenance",
+            "",
+            "The edge table above is an aggregate summary. This table is one row per reason; `source_facts` preserves the exact `(fact_table, fact_id) -> evidence/review` mapping.",
+            "",
+            "| reason_id | source | target | kind | source_facts | statuses | disposition |",
+            "| --- | --- | --- | --- | --- | --- | --- |",
+        ]
+    )
+    for reason in inventory.get("reasons", []):
+        source_facts = [
+            {
+                "fact_table": fact.get("fact_table", ""),
+                "fact_id": fact.get("fact_id", ""),
+                "verification_status": fact.get("verification_status", ""),
+                "certainty": fact.get("certainty", ""),
+                "evidence_ids": fact.get("evidence_ids", []),
+                "review_ids": fact.get("review_ids", []),
+            }
+            for fact in reason.get("source_facts", [])
+        ]
+        lines.append(
+            "| `{reason_id}` | `{source}` | `{target}` | `{kind}` | `{facts}` | `{statuses}` | {disposition} |".format(
+                reason_id=reason.get("reason_id", ""),
+                source=reason.get("source_work_id", ""),
+                target=reason.get("target_work_id", ""),
+                kind=reason.get("reason_kind", ""),
+                facts=json.dumps(source_facts, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
+                statuses=", ".join(_split_ids(reason.get("verification_statuses"))),
+                disposition=reason.get("disposition", ""),
+            )
+        )
     return "\n".join(lines) + "\n"
 
 
@@ -518,6 +636,9 @@ def _has_failures(inventory: Mapping[str, Any]) -> bool:
             "payload_extra_edge_pairs",
             "payload_missing_reason_ids",
             "payload_extra_reason_ids",
+            "unresolved_source_fact_ids",
+            "verified_support_fact_missing_evidence",
+            "verified_support_fact_missing_review",
         )
     )
 

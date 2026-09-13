@@ -16,6 +16,9 @@ class ConnectionInventoryTests(unittest.TestCase):
     def test_current_main_has_complete_inventory_coverage(self) -> None:
         inventory = audit_inventory(ROOT)
 
+        self.assertEqual(inventory["counts"]["works"], 131)
+        self.assertEqual(inventory["counts"]["edges"], 355)
+        self.assertEqual(inventory["counts"]["reasons"], 562)
         self.assertEqual(inventory["counts"]["works"], len(inventory["works"]))
         self.assertEqual(inventory["counts"]["edges"], len(inventory["edges"]))
         self.assertEqual(inventory["counts"]["reasons"], len(inventory["reasons"]))
@@ -37,6 +40,9 @@ class ConnectionInventoryTests(unittest.TestCase):
         self.assertEqual(inventory["coverage"]["payload_extra_reason_ids"], [])
         self.assertEqual(inventory["coverage"]["verified_reason_missing_evidence_ids"], [])
         self.assertEqual(inventory["coverage"]["verified_reason_missing_review_ids"], [])
+        self.assertEqual(inventory["coverage"]["unresolved_source_fact_ids"], [])
+        self.assertEqual(inventory["coverage"]["verified_support_fact_missing_evidence"], [])
+        self.assertEqual(inventory["coverage"]["verified_support_fact_missing_review"], [])
         self.assertTrue(
             set(inventory["dispositions"]["edges"]) <= ALLOWED_DISPOSITIONS
         )
@@ -79,6 +85,38 @@ class ConnectionInventoryTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "unknown disposition"):
             build_inventory(mutated)
+
+    def test_shared_entity_provenance_does_not_fan_out_between_facts(self) -> None:
+        inventory = audit_inventory(ROOT)
+        reason = next(
+            row
+            for row in inventory["reasons"]
+            if row.get("reason_kind") == "shared_entity"
+            and row.get("source_work_id") == "avengers-age-of-ultron-2015"
+            and row.get("target_work_id") == "avengers-endgame-2019"
+            and "appearance-avengers-age-of-ultron-2015-entity-x-7250204b23"
+            in row.get("source_fact_ids", [])
+        )
+        age_fact = next(
+            fact
+            for fact in reason["source_facts"]
+            if fact["fact_id"] == "appearance-avengers-age-of-ultron-2015-entity-x-7250204b23"
+        )
+        self.assertEqual(age_fact["fact_table"], "appearances.csv")
+        self.assertEqual(age_fact["evidence_ids"], [])
+        self.assertNotIn(
+            "evidence-appearances-csv-appearance-avengers-doomsday-2026-12-18-entity-x-7250204b23-doomsday",
+            age_fact["evidence_ids"],
+        )
+        self.assertEqual(reason["source_fact_table"], ["appearances.csv"])
+
+    def test_markdown_contains_reason_level_provenance_table(self) -> None:
+        from scripts.library_v5.connection_inventory import render_markdown
+
+        markdown = render_markdown(audit_inventory(ROOT))
+        self.assertIn("## All reasons with exact fact provenance", markdown)
+        self.assertIn("| reason_id | source | target | kind | source_facts |", markdown)
+        self.assertGreaterEqual(markdown.count("| `reason-"), 562)
 
     def test_baseline_override_is_recorded_for_archive_checkouts(self) -> None:
         inventory = audit_inventory(ROOT, baseline_sha="example-baseline")

@@ -76,12 +76,13 @@ Implement `build_inventory` without importing production derivation code. It mus
 
 1. copy the baseline SHA, canonical hash, counts, and existing edge/work inventories;
 2. flatten every nested reason into one `reasons` list keyed by `reason_id`;
-3. attach `source_fact_table`, normalized source fact IDs, evidence IDs, review IDs, verification statuses, and certainty values to every reason;
-4. report exact `missing_reason_ids`, `duplicate_reason_ids`, `missing_work_ids`, `duplicate_work_ids`, and `duplicate_edge_pairs`;
-5. independently compare canonical work IDs and derived edge/reason IDs with `flowchart.json`, and fail on missing/extra payload nodes, pairs, or reasons;
-6. copy `edge_pair_mismatches`, `reason_orphans`, `unsupported_pair_edges`, and verified-reason provenance gaps into `coverage`;
-7. count dispositions by edge, work, and reason, while preserving `zero_degree_works` as an explicit list;
-8. reject an unknown disposition with a deterministic `ValueError` instead of silently mapping it to `defer`.
+3. resolve each support fact to its actual canonical `(fact_table, fact_id)` identity, then attach only that fact's evidence IDs, review IDs, verification status, and certainty; never fan out one record's provenance to sibling support facts;
+4. emit a reason-level provenance table in addition to the aggregate edge summary so mixed verified/legacy reasons remain distinguishable;
+5. report exact `missing_reason_ids`, `duplicate_reason_ids`, `missing_work_ids`, `duplicate_work_ids`, and `duplicate_edge_pairs`;
+6. independently compare canonical work IDs and derived edge/reason IDs with `flowchart.json`, and fail on missing/extra payload nodes, pairs, or reasons;
+7. copy `edge_pair_mismatches`, `reason_orphans`, `unsupported_pair_edges`, and verified-reason provenance gaps into `coverage`;
+8. count dispositions by edge, work, and reason, while preserving `zero_degree_works` as an explicit list;
+9. reject an unknown disposition with a deterministic `ValueError` instead of silently mapping it to `defer`.
 
 ```python
 def build_inventory(report: Mapping[str, Any]) -> dict[str, Any]:
@@ -126,7 +127,7 @@ $tmpMd=Join-Path $env:TEMP 'marvel-connection-inventory.md'
 
 - [ ] **Step 2: Review the artifact before copying it**
 
-The document must record the current observed counts (131 works, 355 edge pairs, 562 reasons), baseline SHA `e720da7270192b007115e27c60a0749c2046a816`, canonical input hash, zero-degree works, disposition counts, source fact table/evidence/review links, payload parity, and the zero structural coverage failures. It must explicitly say that `needs-source`, `explicit-conflict`, and `defer` are dispositions, not requests to mutate canonical data.
+The document must record the current observed counts (131 works, 355 edge pairs, 562 reasons), baseline SHA `e720da7270192b007115e27c60a0749c2046a816`, canonical input hash, zero-degree works, disposition counts, exact `(fact_table, fact_id)` to evidence/review links, reason-level provenance rows, payload parity, and the zero structural coverage failures. It must explicitly say that `needs-source`, `explicit-conflict`, and `defer` are dispositions, not requests to mutate canonical data.
 
 - [ ] **Step 3: Commit only the review artifact and inventory implementation**
 
@@ -159,7 +160,7 @@ Verify that the inventory reports zero missing/duplicate IDs, zero pair/reason o
 
 - [ ] **Step 3: Request independent read-only review**
 
-Send the branch SHA, base SHA, complete diff file list, inventory counts, and full verification results to ordinary ChatGPT. The review question must ask whether the artifact is inventory-only and whether any disposition incorrectly asserts semantic correctness.
+Send the branch SHA, base SHA, complete diff file list, inventory counts, exact fact-to-evidence/review provenance, and full verification results to ordinary ChatGPT. The review question must ask whether the artifact is inventory-only and whether any disposition incorrectly asserts semantic correctness.
 
 - [ ] **Step 4: Stop before semantic correction**
 
