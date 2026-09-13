@@ -48,7 +48,10 @@ RELATIONS = {
     ),
 }
 
-DEFERRED = "work-relation-spider-man-2-2004-spider-man-3-2007-sequel"
+DEFERRED = {
+    "work-relation-spider-man-2-2004-spider-man-3-2007-sequel",
+    "work-relation-x-men-days-of-future-past-2014-x-men-apocalypse-2016-sequel",
+}
 
 
 def rows(path: Path) -> list[dict[str, str]]:
@@ -107,7 +110,8 @@ class RelationEvidencePromotionWave011Tests(unittest.TestCase):
                  "verified_source", evidence_id),
             )
 
-        self.assertEqual(relations[DEFERRED]["verification_status"], "legacy_seed")
+        for relation_id in DEFERRED:
+            self.assertEqual(relations[relation_id]["verification_status"], "legacy_seed")
 
     def test_existing_pairs_and_reason_ids_are_preserved(self) -> None:
         edges = rows(DERIVED / "work_edges_all.csv")
