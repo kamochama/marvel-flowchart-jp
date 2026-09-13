@@ -116,6 +116,8 @@ class BrowserPhase6OwnershipAuditTests(unittest.TestCase):
         self.assertIn("attempts = 3", source)
         self.assertIn("closeAllConnections", source)
         self.assertIn("closeIdleConnections", source)
+        self.assertIn('server.on("connection"', source)
+        self.assertIn("socket.destroy()", source)
         self.assertIn("setTimeout(finish, 2_000)", source)
         self.assertIn("clearTimeout(timer)", source)
         self.assertIn("await stopServer(server)", source)

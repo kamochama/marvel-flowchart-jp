@@ -91,6 +91,7 @@ function contentType(file) {
 
 async function startServer(root) {
   const resolved = fs.realpathSync(root);
+  const sockets = new Set();
   const server = http.createServer((request, response) => {
     try {
       const pathname = decodeURIComponent(new URL(request.url || "/", "http://localhost").pathname);
@@ -104,8 +105,12 @@ async function startServer(root) {
       fs.createReadStream(file).pipe(response);
     } catch (error) { response.writeHead(400); response.end(String(error)); }
   });
+  server.on("connection", (socket) => {
+    sockets.add(socket);
+    socket.once("close", () => sockets.delete(socket));
+  });
   await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
-  return { server, url: `http://127.0.0.1:${server.address().port}/index.html` };
+  return { server, sockets, url: `http://127.0.0.1:${server.address().port}/index.html` };
 }
 
 async function poll(task, timeoutMs, label) {
@@ -163,6 +168,9 @@ async function stopChrome(processInfo) {
 async function stopServer(serverInfo) {
   const server = serverInfo?.server;
   if (!server) return;
+  const destroySockets = () => {
+    for (const socket of serverInfo.sockets || []) socket.destroy();
+  };
   await new Promise((resolve) => {
     let settled = false;
     let timer = null;
@@ -179,9 +187,12 @@ async function stopServer(serverInfo) {
       // audit must have a bounded shutdown even when that socket is not idle.
       server.closeAllConnections?.();
       server.closeIdleConnections?.();
+      destroySockets();
     } catch (_) { finish(); }
     timer = setTimeout(finish, 2_000);
+    timer.unref?.();
   });
+  destroySockets();
 }
 
 class CdpClient {
@@ -219,10 +230,12 @@ class CdpClient {
 
 const evaluate = (cdp, body) => cdp.evaluate(`(() => { ${body} })()`);
 
-async function setViewport(cdp, width, height, mobile = false, coarse = false) {
+async function setViewport(cdp, width, height, mobile = false, coarse = false, expectedShell = null) {
   await cdp.send("Emulation.setTouchEmulationEnabled", coarse ? { enabled: true, maxTouchPoints: 5 } : { enabled: false });
   await cdp.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile });
-  return poll(() => evaluate(cdp, `return innerWidth===${width}&&innerHeight===${height};`), 10_000, `viewport ${width}x${height}`);
+  await poll(() => evaluate(cdp, `return innerWidth===${width}&&innerHeight===${height};`), 10_000, `viewport ${width}x${height}`);
+  if (expectedShell) await poll(() => evaluate(cdp, `return document.documentElement.dataset.shell===${JSON.stringify(expectedShell)};`), 10_000, `shell ${expectedShell}`);
+  return true;
 }
 
 async function snapshot(cdp) {
@@ -270,7 +283,7 @@ async function run(args) {
     await poll(() => evaluate(cdp, "return document.readyState==='complete';"), timeoutMs, "page load");
     await poll(() => evaluate(cdp, "return document.querySelectorAll('svg g.node').length>=131;"), timeoutMs, "chart readiness");
     await instrument(cdp);
-    await setViewport(cdp, 981, 900, false, false);
+    await setViewport(cdp, 981, 900, false, false, "desktop");
     const emptyStart = await snapshot(cdp);
     checkpoints.push({ name: "desktop-mobile-desktop", state: emptyStart });
     await evaluate(cdp, "window.marvelFocusWork?.('iron-man-2008',{center:false}); return true;");
@@ -313,11 +326,11 @@ async function run(args) {
     for (const field of ["selectedIds","goalOrder","currentGoal","preparationTier","activePanel","camera"]) {
       if (JSON.stringify(backForward[field]) !== JSON.stringify(roundTripStart[field])) failures.push(`back-forward: ${field} did not round-trip`);
     }
-    await setViewport(cdp, 980, 900, false, false); checkpoints.push({ name: "980", state: await snapshot(cdp) });
-    await setViewport(cdp, 761, 900, false, false); checkpoints.push({ name: "761", state: await snapshot(cdp) });
-    await setViewport(cdp, 760, 900, true, true); checkpoints.push({ name: "760", state: await snapshot(cdp) });
-    await setViewport(cdp, 390, 844, true, true); checkpoints.push({ name: "390", state: await snapshot(cdp) });
-    await setViewport(cdp, 981, 900, false, false); checkpoints.push({ name: "981", state: await snapshot(cdp) });
+    await setViewport(cdp, 980, 900, false, false, "compact"); checkpoints.push({ name: "980", state: await snapshot(cdp) });
+    await setViewport(cdp, 761, 900, false, false, "compact"); checkpoints.push({ name: "761", state: await snapshot(cdp) });
+    await setViewport(cdp, 760, 900, true, true, "mobile"); checkpoints.push({ name: "760", state: await snapshot(cdp) });
+    await setViewport(cdp, 390, 844, true, true, "mobile"); checkpoints.push({ name: "390", state: await snapshot(cdp) });
+    await setViewport(cdp, 981, 900, false, false, "desktop"); checkpoints.push({ name: "981", state: await snapshot(cdp) });
     for(const row of checkpoints){
       const s=row.state;
       if(s.activeRoots.count!==1)failures.push(`${row.name}: active root count ${s.activeRoots.count}`);
