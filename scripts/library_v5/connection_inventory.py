@@ -104,7 +104,12 @@ def _read_fact_index(root: Path) -> dict[str, list[dict[str, str]]]:
                         "fact_table": path.name,
                         "fact_id": fact_id,
                         "verification_status": (row.get("verification_status") or "").strip(),
-                        "certainty": (row.get("certainty") or row.get("direction_certainty") or "").strip(),
+                        "certainty": (
+                            row.get("certainty")
+                            or row.get("direction_certainty")
+                            or row.get("identity_certainty")
+                            or ""
+                        ).strip(),
                     }
                 )
     return result

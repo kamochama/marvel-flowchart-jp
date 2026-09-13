@@ -118,6 +118,62 @@ class ConnectionInventoryTests(unittest.TestCase):
         self.assertIn("| reason_id | source | target | kind | source_facts |", markdown)
         self.assertGreaterEqual(markdown.count("| `reason-"), 562)
 
+    def test_same_fact_id_in_distinct_tables_keeps_distinct_provenance(self) -> None:
+        report = {
+            "baseline_sha": "fixture",
+            "canonical_sha256": "fixture",
+            "counts": {"works": 2, "edges": 1, "reasons": 1},
+            "edge_inventory": [
+                {
+                    "source_work_id": "work-a",
+                    "target_work_id": "work-b",
+                    "edge_ids": ["edge-work-a-work-b"],
+                    "reason_ids": ["reason-fixture"],
+                    "reasons": [
+                        {
+                            "reason_id": "reason-fixture",
+                            "reason_kind": "multiverse_transition",
+                            "support_fact_ids": ["event-X", "event-X"],
+                            "verification_statuses": ["legacy_seed"],
+                            "certainty_values": ["probable"],
+                        }
+                    ],
+                    "disposition": "needs-source",
+                }
+            ],
+            "work_inventory": [
+                {"work_id": "work-a", "disposition": "needs-source"},
+                {"work_id": "work-b", "disposition": "needs-source"},
+            ],
+            "summary": {},
+            "_expected_work_ids": ["work-a", "work-b"],
+            "_expected_reason_ids": ["reason-fixture"],
+            "_expected_edge_pairs": [("work-a", "work-b")],
+            "_fact_index": {
+                "event-X": [
+                    {"fact_table": "events.csv", "fact_id": "event-X", "verification_status": "legacy_seed", "certainty": "probable"},
+                    {"fact_table": "multiverse_transitions.csv", "fact_id": "event-X", "verification_status": "legacy_seed", "certainty": "probable"},
+                ]
+            },
+            "_evidence_by_fact": {
+                ("events.csv", "event-X"): ["evidence-event"],
+                ("multiverse_transitions.csv", "event-X"): ["evidence-transition"],
+            },
+            "_reviews_by_fact": {
+                ("events.csv", "event-X"): ["review-event"],
+                ("multiverse_transitions.csv", "event-X"): ["review-transition"],
+            },
+        }
+        inventory = build_inventory(report)
+        facts = inventory["reasons"][0]["source_facts"]
+        self.assertEqual(
+            {(fact["fact_table"], tuple(fact["evidence_ids"])) for fact in facts},
+            {
+                ("events.csv", ("evidence-event",)),
+                ("multiverse_transitions.csv", ("evidence-transition",)),
+            },
+        )
+
     def test_baseline_override_is_recorded_for_archive_checkouts(self) -> None:
         inventory = audit_inventory(ROOT, baseline_sha="example-baseline")
 
