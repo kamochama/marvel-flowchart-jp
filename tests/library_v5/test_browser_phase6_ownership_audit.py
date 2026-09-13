@@ -65,6 +65,7 @@ class BrowserPhase6OwnershipAuditTests(unittest.TestCase):
             "replaceState",
             "historyDelta",
             "activeRoots",
+            "presentationVisibility",
             "sheetHost",
             "overlay",
             "backdrop",
@@ -89,6 +90,25 @@ class BrowserPhase6OwnershipAuditTests(unittest.TestCase):
             "JSON.stringify(report)",
         ):
             self.assertIn(token, source)
+
+    def test_runner_declares_exact_phase6_checkpoint_set(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        for checkpoint in (
+            '"desktop-mobile-desktop"',
+            '"reason-settings"',
+            '"chart-search-plan"',
+            '"plan-chart"',
+            '"back-forward"',
+            '"980"',
+            '"761"',
+            '"760"',
+            '"390"',
+            '"981"',
+        ):
+            self.assertIn(checkpoint, source)
+        self.assertIn("inspectionBaseline", source)
+        self.assertIn("roundTripStart", source)
+        self.assertIn("independent presentation visibility", source)
 
     def test_wrapper_is_environment_gated_and_validates_summary(self) -> None:
         source = (ROOT / "tests" / "library_v5" / "test_browser_phase6_ownership_audit.py").read_text(
@@ -124,6 +144,21 @@ class BrowserPhase6OwnershipAuditTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = json.loads(result.stdout.strip().splitlines()[-1])
         self.assertEqual(report["summary"], {"cases": 1, "failures": 0})
+        self.assertEqual(
+            {checkpoint["name"] for checkpoint in report["cases"][0]["checkpoints"]},
+            {
+                "desktop-mobile-desktop",
+                "reason-settings",
+                "chart-search-plan",
+                "plan-chart",
+                "back-forward",
+                "980",
+                "761",
+                "760",
+                "390",
+                "981",
+            },
+        )
 
 
 if __name__ == "__main__":

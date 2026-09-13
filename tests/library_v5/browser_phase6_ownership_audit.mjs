@@ -122,12 +122,19 @@ async function poll(task, timeoutMs, label) {
 async function launchChrome(chrome, timeoutMs) {
   const port = await freePort();
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "marvel-phase6-cdp-"));
-  const child = spawn(chrome, ["--headless=new", "--disable-gpu", "--disable-dev-shm-usage", "--no-sandbox", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, "about:blank"], { stdio: ["ignore", "ignore", "ignore"] });
-  const target = await poll(async () => {
-    const entries = await fetchJsonWithTimeout(`http://127.0.0.1:${port}/json/list`, Math.min(timeoutMs, 1_000));
-    return entries?.find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
-  }, timeoutMs, "Chrome DevTools page target");
-  return { child, userDataDir, url: target.webSocketDebuggerUrl };
+  let child = null;
+  try {
+    child = spawn(chrome, ["--headless=new", "--disable-gpu", "--disable-dev-shm-usage", "--no-sandbox", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, "about:blank"], { stdio: ["ignore", "ignore", "ignore"] });
+    const target = await poll(async () => {
+      const entries = await fetchJsonWithTimeout(`http://127.0.0.1:${port}/json/list`, Math.min(timeoutMs, 1_000));
+      return entries?.find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
+    }, timeoutMs, "Chrome DevTools page target");
+    return { child, userDataDir, url: target.webSocketDebuggerUrl };
+  } catch (error) {
+    if (child && child.exitCode === null && !child.killed) child.kill();
+    fs.rmSync(userDataDir, { recursive: true, force: true, maxRetries: 100, retryDelay: 100 });
+    throw error;
+  }
 }
 
 async function stopChrome(processInfo) {
@@ -186,14 +193,16 @@ async function snapshot(cdp) {
     const store=window.marvelMobileUiStore?.getState?.()||{};
     const audit=window.marvelSelectionAudit?.()||{};
     const right=document.getElementById('right'), rs=right&&getComputedStyle(right), host=document.getElementById('sheetHost');
-    const visible=(node)=>{if(!node)return false;const s=getComputedStyle(node),r=node.getBoundingClientRect();return !node.hidden&&s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0;};
+    const visible=(node)=>{if(!node)return false;const s=getComputedStyle(node),r=node.getBoundingClientRect();return !node.hidden&&s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0&&r.bottom>0&&r.right>0&&r.top<innerHeight&&r.left<innerWidth;};
     const shell=document.documentElement.dataset.shell||null;
-    const roots={mobile:shell==='mobile'&&visible(document.getElementById('mobileAppShell')),compact:shell==='compact'&&visible(document.querySelector('main')),desktop:shell==='desktop'&&visible(document.querySelector('main'))};
+    const mobileVisible=visible(document.getElementById('mobileAppShell'));
+    const mainVisible=visible(document.querySelector('main'));
+    const roots={mobile:shell==='mobile'&&mobileVisible,compact:shell==='compact'&&mainVisible,desktop:shell==='desktop'&&mainVisible};
     roots.count=Object.values(roots).filter(Boolean).length;
     const hostVisible=visible(host);
     const detail=document.getElementById('detail');
     const visibleCount=(selector)=>[...document.querySelectorAll(selector)].filter(visible).length;
-    return {activeRoots:roots,shell,sheetHost:{count:document.querySelectorAll('#sheetHost').length,parent:host?.parentElement?.id||host?.parentElement?.tagName?.toLowerCase()||null,owner:host?.dataset?.owner||'none',presentation:host?.dataset?.presentation||null,hidden:!hostVisible,overlay:visibleCount('.mobile-sheet-backdrop,[data-mobile-overlay]'),backdrop:visibleCount('#sheetHostBackdrop,.mobile-sheet-backdrop'),focus:document.activeElement?.id||null,inert:document.body.inert===true,scrollLocked:document.documentElement.classList.contains('mobile-sheet-open')||document.body.classList.contains('mobile-sheet-open')},selectedIds:[...(audit.selected||[])],goalOrder:[...(store.goalIds||[])],currentGoal:store.selectedId||window.marvelDetailFocusId||null,preparationTier:window.connectionTier||store.connectionTier||null,activePanel:store.view||document.querySelector('.panel.active')?.id||null,camera:document.querySelector('.svg-wrap')?.getAttribute('data-mobile-camera')||null,rightMutations:window.__phase6Mutations?.right||0,detailMutations:window.__phase6Mutations?.detail||0,sheetHostMutations:window.__phase6Mutations?.sheetHost||0,historyDelta:{push:window.__phase6History?.push||0,replace:window.__phase6History?.replace||0,length:history.length},chartRebuilds:window.__mobileShellAuditCounters?.rebuild||0,fitView:window.__mobileShellAuditCounters?.fit||0};
+    return {activeRoots:roots,presentationVisibility:{mobile:mobileVisible,main:mainVisible},shell,sheetHost:{count:document.querySelectorAll('#sheetHost').length,parent:host?.parentElement?.id||host?.parentElement?.tagName?.toLowerCase()||null,owner:host?.dataset?.owner||'none',presentation:host?.dataset?.presentation||null,hidden:!hostVisible,overlay:visibleCount('.mobile-sheet-backdrop,[data-mobile-overlay]'),backdrop:visibleCount('#sheetHostBackdrop,.mobile-sheet-backdrop'),focus:document.activeElement?.id||null,inert:document.body.inert===true,scrollLocked:document.documentElement.classList.contains('mobile-sheet-open')||document.body.classList.contains('mobile-sheet-open')},selectedIds:[...(audit.selected||[])],goalOrder:[...(store.goalIds||[])],currentGoal:store.selectedId||window.marvelDetailFocusId||null,preparationTier:window.marvelGetConnectionTier?.()||null,activePanel:store.view||document.querySelector('.panel.active')?.id||null,camera:document.querySelector('.svg-wrap')?.getAttribute('data-mobile-camera')||null,rightMutations:window.__phase6Mutations?.right||0,detailMutations:window.__phase6Mutations?.detail||0,sheetHostMutations:window.__phase6Mutations?.sheetHost||0,historyDelta:{push:window.__phase6History?.push||0,replace:window.__phase6History?.replace||0,length:history.length},chartRebuilds:window.__mobileShellAuditCounters?.rebuild||0,fitView:window.__mobileShellAuditCounters?.fit||0};
   `);
 }
 
@@ -212,33 +221,61 @@ async function instrument(cdp) {
 async function run(args) {
   const timeoutMs = Number(args.timeout_ms || 8_000);
   const server = await startServer(path.resolve(args.root || "."));
-  const chrome = await launchChrome(locateChrome(args.chrome), timeoutMs);
-  const cdp = new CdpClient(chrome.url, timeoutMs);
+  let chrome = null;
+  let cdp = null;
   const failures = [];
   const checkpoints = [];
   try {
+    chrome = await launchChrome(locateChrome(args.chrome), timeoutMs);
+    cdp = new CdpClient(chrome.url, timeoutMs);
     await cdp.connect(); await cdp.send("Page.enable"); await cdp.send("Runtime.enable");
     await cdp.send("Page.navigate", { url: server.url });
     await poll(() => evaluate(cdp, "return document.readyState==='complete';"), timeoutMs, "page load");
     await poll(() => evaluate(cdp, "return document.querySelectorAll('svg g.node').length>=131;"), timeoutMs, "chart readiness");
     await instrument(cdp);
     await setViewport(cdp, 981, 900, false, false);
-    checkpoints.push({ name: "desktop-mobile-desktop", state: await snapshot(cdp) });
+    const emptyStart = await snapshot(cdp);
+    checkpoints.push({ name: "desktop-mobile-desktop", state: emptyStart });
     await evaluate(cdp, "window.marvelFocusWork?.('iron-man-2008',{center:false}); return true;");
     await poll(() => evaluate(cdp, "return document.getElementById('sheetHost')&&!document.getElementById('sheetHost').hidden;"), timeoutMs, "inspection sheet");
-    checkpoints.push({ name: "reason-settings", state: await snapshot(cdp) });
-    await evaluate(cdp, "window.openMobileSheet?.('settings','display'); return true;");
+    const inspectionBaseline = await snapshot(cdp);
+    await evaluate(cdp, "window.openMobileSheet?.('reason','relation-audit'); return true;");
+    await poll(() => evaluate(cdp, "return document.getElementById('sheetHost')?.dataset?.owner==='explicit'&&!document.getElementById('sheetHost')?.hidden;"), timeoutMs, "reason sheet");
     await evaluate(cdp, "window.closeMobileSheet?.(); return true;");
+    await poll(() => evaluate(cdp, "return !!document.getElementById('sheetHost')?.hidden;"), timeoutMs, "reason sheet close");
+    await evaluate(cdp, "window.openMobileSheet?.('settings','display'); return true;");
+    await poll(() => evaluate(cdp, "return document.getElementById('sheetHost')?.dataset?.owner==='explicit'&&!document.getElementById('sheetHost')?.hidden;"), timeoutMs, "settings sheet");
+    await evaluate(cdp, "window.closeMobileSheet?.(); return true;");
+    await poll(() => evaluate(cdp, "return !!document.getElementById('sheetHost')?.hidden;"), timeoutMs, "settings sheet close");
+    const inspectionAfter = await snapshot(cdp);
+    if (inspectionAfter.detailMutations !== inspectionBaseline.detailMutations) failures.push(`inspection: #detail mutated during reason/settings (${inspectionBaseline.detailMutations}->${inspectionAfter.detailMutations})`);
+    if (inspectionAfter.chartRebuilds !== inspectionBaseline.chartRebuilds || inspectionAfter.fitView !== inspectionBaseline.fitView) failures.push(`inspection: chart changed during reason/settings ${JSON.stringify({before:[inspectionBaseline.chartRebuilds,inspectionBaseline.fitView],after:[inspectionAfter.chartRebuilds,inspectionAfter.fitView]})}`);
+    if (JSON.stringify(inspectionAfter.selectedIds) !== JSON.stringify(inspectionBaseline.selectedIds) || JSON.stringify(inspectionAfter.goalOrder) !== JSON.stringify(inspectionBaseline.goalOrder)) failures.push("inspection: selection/goals changed during reason/settings");
+    checkpoints.push({ name: "reason-settings", state: inspectionAfter });
+
+    await evaluate(cdp, "window.marvelReturnToGoalView?.(); window.marvelToggleGoal?.('iron-man-2008'); window.marvelSetConnectionTier?.('complete'); return true;");
+    await poll(() => evaluate(cdp, "return (window.marvelSelectionAudit?.().selected||[]).includes('iron-man-2008') && window.marvelMobileUiStore?.getState?.().goalIds?.includes('iron-man-2008');"), timeoutMs, "seed goal");
+    const roundTripStart = await snapshot(cdp);
+    if (!roundTripStart.goalOrder.length || roundTripStart.preparationTier !== "complete") failures.push(`seed: goal/tier not established ${JSON.stringify({goals:roundTripStart.goalOrder,tier:roundTripStart.preparationTier})}`);
     await evaluate(cdp, "window.setMobileView?.('search',{pushHistory:true}); return true;");
     await evaluate(cdp, "window.setMobileView?.('plan',{pushHistory:true}); return true;");
-    checkpoints.push({ name: "chart-search-plan", state: await snapshot(cdp) });
+    const chartSearchPlan = await snapshot(cdp);
+    checkpoints.push({ name: "chart-search-plan", state: chartSearchPlan });
+    if (chartSearchPlan.historyDelta.push !== roundTripStart.historyDelta.push + 2) failures.push(`chart-search-plan: expected two surface history pushes ${JSON.stringify({before:roundTripStart.historyDelta,after:chartSearchPlan.historyDelta})}`);
     await evaluate(cdp, "window.setMobileView?.('chart',{pushHistory:true}); return true;");
-    checkpoints.push({ name: "plan-chart", state: await snapshot(cdp) });
+    const planChart = await snapshot(cdp);
+    checkpoints.push({ name: "plan-chart", state: planChart });
+    if (planChart.historyDelta.push !== chartSearchPlan.historyDelta.push + 1) failures.push(`plan-chart: expected one surface history push ${JSON.stringify({before:chartSearchPlan.historyDelta,after:planChart.historyDelta})}`);
     await evaluate(cdp, "history.back(); return true;");
     await poll(() => evaluate(cdp, "return window.marvelMobileUiStore?.getState?.().view==='plan';"), timeoutMs, "history back to plan");
     await evaluate(cdp, "history.forward(); return true;");
     await poll(() => evaluate(cdp, "return window.marvelMobileUiStore?.getState?.().view==='chart';"), timeoutMs, "history forward to chart");
-    checkpoints.push({ name: "back-forward", state: await snapshot(cdp) });
+    const backForward = await snapshot(cdp);
+    checkpoints.push({ name: "back-forward", state: backForward });
+    if (backForward.historyDelta.push !== planChart.historyDelta.push || backForward.historyDelta.replace !== planChart.historyDelta.replace || backForward.historyDelta.length !== planChart.historyDelta.length) failures.push(`back-forward: history writes changed during traversal ${JSON.stringify({before:planChart.historyDelta,after:backForward.historyDelta})}`);
+    for (const field of ["selectedIds","goalOrder","currentGoal","preparationTier","activePanel","camera"]) {
+      if (JSON.stringify(backForward[field]) !== JSON.stringify(roundTripStart[field])) failures.push(`back-forward: ${field} did not round-trip`);
+    }
     await setViewport(cdp, 980, 900, false, false); checkpoints.push({ name: "980", state: await snapshot(cdp) });
     await setViewport(cdp, 761, 900, false, false); checkpoints.push({ name: "761", state: await snapshot(cdp) });
     await setViewport(cdp, 760, 900, true, true); checkpoints.push({ name: "760", state: await snapshot(cdp) });
@@ -254,12 +291,15 @@ async function run(args) {
       const expectedShell=expectedMobile?"mobile":["980","761"].includes(row.name)?"compact":"desktop";
       const expectedParent=expectedMobile?"body":"right";
       if(s.shell!==expectedShell||s.sheetHost.parent!==expectedParent)failures.push(`${row.name}: ownership mismatch ${JSON.stringify({shell:s.shell,parent:s.sheetHost.parent})}`);
-      if(s.selectedIds.length!==0||s.goalOrder.length!==0)failures.push(`${row.name}: unexpected selection/goal mutation ${JSON.stringify({selectedIds:s.selectedIds,goalOrder:s.goalOrder})}`);
+      if(s.presentationVisibility.mobile!==expectedMobile || s.presentationVisibility.main===expectedMobile) failures.push(`${row.name}: independent presentation visibility mismatch ${JSON.stringify(s.presentationVisibility)}`);
+      if(!s.sheetHost.hidden || s.sheetHost.overlay!==0 || s.sheetHost.backdrop!==0 || s.inert || s.scrollLocked) failures.push(`${row.name}: closed sheet modal state leaked ${JSON.stringify({hidden:s.sheetHost.hidden,overlay:s.sheetHost.overlay,backdrop:s.sheetHost.backdrop,inert:s.inert,scrollLocked:s.scrollLocked})}`);
     }
     const finalState=checkpoints.at(-1).state;
-    if(finalState.selectedIds.length!==0) failures.push(`final selection not cleared: ${JSON.stringify(finalState.selectedIds)}`);
+    for (const field of ["selectedIds","goalOrder","currentGoal","preparationTier","activePanel","camera"]) {
+      if (JSON.stringify(finalState[field]) !== JSON.stringify(roundTripStart[field])) failures.push(`final desktop round-trip: ${field} changed`);
+    }
   } catch(error) { failures.push(String(error?.stack||error)); }
-  finally { cdp.close(); await stopChrome(chrome); await new Promise((resolve)=>server.server.close(resolve)); }
+  finally { cdp?.close(); if (chrome) await stopChrome(chrome); await new Promise((resolve)=>server.server.close(resolve)); }
   const report={summary:{cases:1,failures:failures.length},cases:[{name:"phase6-ownership",checkpoints,contract:CONTRACT}],failures};
   console.log(JSON.stringify(report));
   if(failures.length) process.exitCode=1;
