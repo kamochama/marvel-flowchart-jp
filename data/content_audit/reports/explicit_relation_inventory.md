@@ -1,6 +1,6 @@
 # Marvel explicit relation inventory
 
-Summary: `{"active": 161, "legacy_seed": 107, "source_verified": 54, "superseded": 3, "total": 164}`
+Summary: `{"active": 161, "legacy_seed": 99, "source_verified": 62, "superseded": 3, "total": 164}`
 Graph: `{"edges": 355, "reasons": 562, "works": 131}`
 
 Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [], "missing_relation_ids": [], "projection_mismatches": 0, "reason_orphans": 0, "relation_reason_certainty": [], "relation_reason_direction": [], "relation_reason_duplicate": [], "relation_reason_edge": [], "relation_reason_edge_duplicate": [], "relation_reason_id": [], "relation_reason_missing": [], "relation_reason_notes": [], "relation_reason_status": [], "relation_reason_support": [], "review_missing_evidence": [], "source_verified_missing_evidence": [], "source_verified_missing_qualifying_evidence": [], "source_verified_missing_review": [], "source_verified_missing_source": [], "superseded_reason_orphans": []}`
@@ -13,7 +13,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-all-hail-the-king-2014-shang-chi-and-the-legend-of-the-ten-rings-2021-story-link | all-hail-the-king-2014 | shang-chi-and-the-legend-of-the-ten-rings-2021 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-ant-man-2015-ant-man-and-the-wasp-2018-sequel | ant-man-2015 | ant-man-and-the-wasp-2018 | sequel | source_verified | retain | evidence-ant-man-ant-man-wasp-sequel-marvel-2017 | evidence-ant-man-ant-man-wasp-sequel-marvel-2017 | — | review-2026-09-04-ant-man-ant-man-wasp-sequel | marvel-ant-man-ant-man-wasp-sequel-2017 |
 | work-relation-ant-man-2015-captain-america-civil-war-2016-crossover | ant-man-2015 | captain-america-civil-war-2016 | crossover | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-ant-man-and-the-wasp-2018-ant-man-and-the-wasp-quantumania-2023-sequel | ant-man-and-the-wasp-2018 | ant-man-and-the-wasp-quantumania-2023 | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-ant-man-and-the-wasp-2018-ant-man-and-the-wasp-quantumania-2023-sequel | ant-man-and-the-wasp-2018 | ant-man-and-the-wasp-quantumania-2023 | sequel | source_verified | retain | evidence-antman-quantumania-third-film-marvel-2021 | evidence-antman-quantumania-third-film-marvel-2021 | — | review-2026-09-14-antman-quantumania-sequel | marvel-antman-quantumania-third-film-2021 |
 | work-relation-ant-man-and-the-wasp-2018-avengers-endgame-2019-lead-in | ant-man-and-the-wasp-2018 | avengers-endgame-2019 | lead_in | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-ant-man-and-the-wasp-2018-thunderbolts-new-avengers-2025-lead-in | ant-man-and-the-wasp-2018 | thunderbolts-new-avengers-2025 | lead_in | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-ant-man-and-the-wasp-quantumania-2023-avengers-doomsday-2026-12-18-promotion | ant-man-and-the-wasp-quantumania-2023 | avengers-doomsday-2026-12-18 | promotion | legacy_seed | needs-source | — | — | — | — | — |
@@ -53,7 +53,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-captain-america-the-first-avenger-2011-the-avengers-2012-crossover | captain-america-the-first-avenger-2011 | the-avengers-2012 | crossover | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-captain-america-the-winter-soldier-2014-agents-of-s-h-i-e-l-d-20132020-world-lore | captain-america-the-winter-soldier-2014 | agents-of-s-h-i-e-l-d-20132020 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-captain-america-the-winter-soldier-2014-avengers-age-of-ultron-2015-crossover | captain-america-the-winter-soldier-2014 | avengers-age-of-ultron-2015 | crossover | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-captain-america-the-winter-soldier-2014-captain-america-civil-war-2016-sequel | captain-america-the-winter-soldier-2014 | captain-america-civil-war-2016 | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-captain-america-the-winter-soldier-2014-captain-america-civil-war-2016-sequel | captain-america-the-winter-soldier-2014 | captain-america-civil-war-2016 | sequel | source_verified | retain | evidence-captain-america-winter-soldier-civil-war-third-installment-disney-2016 | evidence-captain-america-winter-soldier-civil-war-third-installment-disney-2016 | — | review-2026-09-14-winter-soldier-civil-war-sequel | disney-captain-america-civil-war-third-installment-2016 |
 | work-relation-captain-marvel-2019-avengers-endgame-2019-crossover | captain-marvel-2019 | avengers-endgame-2019 | crossover | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-captain-marvel-2019-secret-invasion-2023-world-lore | captain-marvel-2019 | secret-invasion-2023 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-captain-marvel-2019-the-marvels-2023-sequel | captain-marvel-2019 | the-marvels-2023 | sequel | source_verified | retain | evidence-captain-marvel-the-marvels-sequel-disney-2023 | evidence-captain-marvel-the-marvels-sequel-disney-2023 | — | review-2026-09-03-captain-marvel-the-marvels-sequel | disney-the-marvels-captain-marvel-sequel-2023 |
@@ -100,14 +100,14 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-logan-2017-deadpool-wolverine-2024-story-link | logan-2017 | deadpool-wolverine-2024 | story_link | source_verified | retain | evidence-logan-dw-screenplay-2024 | evidence-logan-dw-screenplay-2024 | — | review-2026-08-27-logan-dw-story-premise | deadpool-wolverine-screenplay-2024 |
 | work-relation-loki-s1-2021-loki-s2-2023-sequel | loki-s1-2021 | loki-s2-2023 | sequel | source_verified | retain | evidence-loki-s1-s2-sequel-marvel-2023 | evidence-loki-s1-s2-sequel-marvel-2023 | — | review-2026-09-03-loki-s1-s2-sequel | marvel-loki-s1-s2-continuation-2023 |
 | work-relation-loki-s2-2023-deadpool-wolverine-2024-crossover | loki-s2-2023 | deadpool-wolverine-2024 | crossover | source_verified | retain | evidence-loki-dw-d23-2024, evidence-loki-dw-screenplay-2024 | evidence-loki-dw-d23-2024, evidence-loki-dw-screenplay-2024 | — | review-2026-08-27-loki-dw-tva | d23-deadpool-wolverine-tva-2024, deadpool-wolverine-screenplay-2024 |
-| work-relation-luke-cage-s1-2016-luke-cage-s2-2018-sequel | luke-cage-s1-2016 | luke-cage-s2-2018 | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-luke-cage-s1-2016-luke-cage-s2-2018-sequel | luke-cage-s1-2016 | luke-cage-s2-2018 | sequel | source_verified | retain | evidence-luke-cage-s1-s2-continuation-marvel-2018 | evidence-luke-cage-s1-s2-continuation-marvel-2018 | — | review-2026-09-14-luke-cage-s1-s2-sequel | marvel-luke-cage-s1-s2-continuation-2018 |
 | work-relation-luke-cage-s1-2016-the-defenders-2017-crossover | luke-cage-s1-2016 | the-defenders-2017 | crossover | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-ms-marvel-2022-the-marvels-2023-story-link | ms-marvel-2022 | the-marvels-2023 | story_link | source_verified | retain | evidence-ms-marvel-the-marvels-story-link-disney-2023 | evidence-ms-marvel-the-marvels-story-link-disney-2023 | — | review-2026-09-04-ms-marvel-the-marvels-story-link | disney-marvels-ms-marvel-kamala-2023 |
 | work-relation-secret-invasion-2023-the-marvels-2023-world-lore | secret-invasion-2023 | the-marvels-2023 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-avengers-doomsday-2026-12-18-promotion | shang-chi-and-the-legend-of-the-ten-rings-2021 | avengers-doomsday-2026-12-18 | promotion | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-she-hulk-attorney-at-law-2022-daredevil-born-again-s1-2025-story-link | she-hulk-attorney-at-law-2022 | daredevil-born-again-s1-2025 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-spider-man-2-2004-spider-man-3-2007-sequel | spider-man-2-2004 | spider-man-3-2007 | sequel | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-spider-man-2002-spider-man-2-2004-sequel | spider-man-2002 | spider-man-2-2004 | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-spider-man-2002-spider-man-2-2004-sequel | spider-man-2002 | spider-man-2-2004 | sequel | source_verified | retain | evidence-spider-man-2-latest-installment-sony-2004 | evidence-spider-man-2-latest-installment-sony-2004 | — | review-2026-09-14-spider-man-2-sequel | sony-spider-man-2-latest-installment-2004 |
 | work-relation-spider-man-3-2007-spider-man-no-way-home-2021-crossover | spider-man-3-2007 | spider-man-no-way-home-2021 | crossover | superseded | superseded | evidence-spider-man-3-nwh-marvel-2023 | evidence-spider-man-3-nwh-marvel-2023 | evidence-nwh-raimi-transition-marvel-2023, evidence-nwh-raimi-transition-sony-spell-2021 | review-2026-08-27-spider-man-3-nwh-multiverse, review-2026-08-28-nwh-raimi-proxy-relation-retired | — |
 | work-relation-spider-man-across-the-spider-verse-2023-spider-man-beyond-the-spider-verse-tba-sequel | spider-man-across-the-spider-verse-2023 | spider-man-beyond-the-spider-verse-tba | sequel | source_verified | retain | evidence-spider-man-across-beyond-trilogy-sony-2026 | evidence-spider-man-across-beyond-trilogy-sony-2026 | — | review-2026-09-03-spider-man-across-beyond-trilogy | sony-spider-verse-trilogy-beyond-2026 |
 | work-relation-spider-man-far-from-home-2019-secret-invasion-2023-world-lore | spider-man-far-from-home-2019 | secret-invasion-2023 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
@@ -144,14 +144,14 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-thor-2011-the-avengers-2012-crossover | thor-2011 | the-avengers-2012 | crossover | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-thor-2011-thor-the-dark-world-2013-sequel | thor-2011 | thor-the-dark-world-2013 | sequel | source_verified | retain | evidence-thor-dark-world-sequel-disney-2013 | evidence-thor-dark-world-sequel-disney-2013 | — | review-2026-09-03-thor-dark-world-sequel | disney-thor-dark-world-sequel-2013 |
 | work-relation-thor-ragnarok-2017-avengers-infinity-war-2018-crossover | thor-ragnarok-2017 | avengers-infinity-war-2018 | crossover | source_verified | retain | evidence-thor-ragnarok-infinity-war-crossover-marvel-2021 | evidence-thor-ragnarok-infinity-war-crossover-marvel-2021 | — | review-2026-09-04-thor-ragnarok-infinity-war-crossover | marvel-thor-ragnarok-infinity-war-loki-2021 |
-| work-relation-thor-ragnarok-2017-thor-love-and-thunder-2022-sequel | thor-ragnarok-2017 | thor-love-and-thunder-2022 | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-thor-ragnarok-2017-thor-love-and-thunder-2022-sequel | thor-ragnarok-2017 | thor-love-and-thunder-2022 | sequel | source_verified | retain | evidence-thor-ragnarok-love-and-thunder-fourth-installment-marvel-2022 | evidence-thor-ragnarok-love-and-thunder-fourth-installment-marvel-2022 | — | review-2026-09-14-thor-ragnarok-love-and-thunder-sequel | marvel-thor-love-and-thunder-fourth-installment-2022 |
 | work-relation-thor-the-dark-world-2013-agents-of-s-h-i-e-l-d-20132020-story-link | thor-the-dark-world-2013 | agents-of-s-h-i-e-l-d-20132020 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-thor-the-dark-world-2013-avengers-age-of-ultron-2015-crossover | thor-the-dark-world-2013 | avengers-age-of-ultron-2015 | crossover | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-thor-the-dark-world-2013-guardians-of-the-galaxy-2014-story-link | thor-the-dark-world-2013 | guardians-of-the-galaxy-2014 | story_link | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-thor-the-dark-world-2013-thor-ragnarok-2017-sequel | thor-the-dark-world-2013 | thor-ragnarok-2017 | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-thor-the-dark-world-2013-thor-ragnarok-2017-sequel | thor-the-dark-world-2013 | thor-ragnarok-2017 | sequel | source_verified | retain | evidence-thor-dark-world-ragnarok-third-installment-disney-2017 | evidence-thor-dark-world-ragnarok-third-installment-disney-2017 | — | review-2026-09-14-thor-dark-world-ragnarok-sequel | disney-thor-ragnarok-third-installment-2017 |
 | work-relation-thunderbolts-new-avengers-2025-avengers-doomsday-2026-12-18-lead-in | thunderbolts-new-avengers-2025 | avengers-doomsday-2026-12-18 | lead_in | source_verified | retain | evidence-thunderbolts-doomsday-key-turning-point-marvel-jp-2025-04-30, evidence-thunderbolts-doomsday-lead-in-marvel-jp-2025-05-14 | evidence-thunderbolts-doomsday-key-turning-point-marvel-jp-2025-04-30, evidence-thunderbolts-doomsday-lead-in-marvel-jp-2025-05-14 | — | review-2026-09-03-thunderbolts-doomsday-lead-in | thunderbolts-doomsday, thunderbolts-doomsday-turningpoint |
 | work-relation-thunderbolts-new-avengers-2025-the-fantastic-four-first-steps-2025-crossover | thunderbolts-new-avengers-2025 | the-fantastic-four-first-steps-2025 | crossover | source_verified | retain | evidence-thunderbolts-f4-arrival-film-2025, evidence-thunderbolts-f4-arrival-lat-2025 | evidence-thunderbolts-f4-arrival-film-2025, evidence-thunderbolts-f4-arrival-lat-2025 | — | review-2026-08-27-thunderbolts-f4-arrival | lat-thunderbolts-postcredits-2025, thunderbolts-postcredits-film-2025 |
-| work-relation-venom-2018-venom-let-there-be-carnage-2021-sequel | venom-2018 | venom-let-there-be-carnage-2021 | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-venom-2018-venom-let-there-be-carnage-2021-sequel | venom-2018 | venom-let-there-be-carnage-2021 | sequel | source_verified | retain | evidence-venom-ltbc-sequel-sony-2021 | evidence-venom-ltbc-sequel-sony-2021 | — | review-2026-09-14-venom-ltbc-sequel | sony-venom-ltbc-sequel-2021 |
 | work-relation-venom-let-there-be-carnage-2021-spider-man-no-way-home-2021-crossover | venom-let-there-be-carnage-2021 | spider-man-no-way-home-2021 | crossover | superseded | superseded | evidence-venom-ltbc-nwh-film-2021, evidence-venom-ltbc-nwh-lat-2021 | evidence-venom-ltbc-nwh-film-2021, evidence-venom-ltbc-nwh-lat-2021 | evidence-venom-arrival-transition-film-2021, evidence-venom-return-transition-film-2021 | review-2026-08-27-venom-nwh-multiverse, review-2026-08-28-venom-nwh-proxy-relation-retired | — |
 | work-relation-venom-let-there-be-carnage-2021-venom-the-last-dance-2024-story-link | venom-let-there-be-carnage-2021 | venom-the-last-dance-2024 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-wandavision-2021-agatha-all-along-2024-spinoff | wandavision-2021 | agatha-all-along-2024 | spinoff | source_verified | retain | evidence-wandavision-agatha-spinoff-disney-2024 | evidence-wandavision-agatha-spinoff-disney-2024 | — | review-2026-09-03-wandavision-agatha-spinoff | disney-agatha-all-along-2024 |
@@ -170,7 +170,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-x-men-the-last-stand-2006-the-wolverine-2013-aftermath | x-men-the-last-stand-2006 | the-wolverine-2013 | aftermath | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-x-men-the-last-stand-2006-x-men-days-of-future-past-2014-story-link | x-men-the-last-stand-2006 | x-men-days-of-future-past-2014 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-x2-x-men-united-2003-x-men-the-last-stand-2006-sequel | x2-x-men-united-2003 | x-men-the-last-stand-2006 | sequel | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-your-friendly-neighborhood-spider-man-s1-2025-your-friendly-neighborhood-spider-man-s2-2026-sequel | your-friendly-neighborhood-spider-man-s1-2025 | your-friendly-neighborhood-spider-man-s2-2026 | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-your-friendly-neighborhood-spider-man-s1-2025-your-friendly-neighborhood-spider-man-s2-2026-sequel | your-friendly-neighborhood-spider-man-s1-2025 | your-friendly-neighborhood-spider-man-s2-2026 | sequel | source_verified | retain | evidence-yfnsm-s1-s2-continuation-disney-2025 | evidence-yfnsm-s1-s2-continuation-disney-2025 | — | review-2026-09-14-yfnsm-s1-s2-sequel | disney-yfnsm-s1-s2-continuation-2025 |
 
 ## Needs-source relations
 
@@ -178,7 +178,6 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-agent-carter-one-shot-2013-marvel-s-agent-carter-series-20152016-story-link`
 - `work-relation-all-hail-the-king-2014-shang-chi-and-the-legend-of-the-ten-rings-2021-story-link`
 - `work-relation-ant-man-2015-captain-america-civil-war-2016-crossover`
-- `work-relation-ant-man-and-the-wasp-2018-ant-man-and-the-wasp-quantumania-2023-sequel`
 - `work-relation-ant-man-and-the-wasp-2018-avengers-endgame-2019-lead-in`
 - `work-relation-ant-man-and-the-wasp-2018-thunderbolts-new-avengers-2025-lead-in`
 - `work-relation-ant-man-and-the-wasp-quantumania-2023-avengers-doomsday-2026-12-18-promotion`
@@ -211,7 +210,6 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-captain-america-the-first-avenger-2011-the-avengers-2012-crossover`
 - `work-relation-captain-america-the-winter-soldier-2014-agents-of-s-h-i-e-l-d-20132020-world-lore`
 - `work-relation-captain-america-the-winter-soldier-2014-avengers-age-of-ultron-2015-crossover`
-- `work-relation-captain-america-the-winter-soldier-2014-captain-america-civil-war-2016-sequel`
 - `work-relation-captain-marvel-2019-avengers-endgame-2019-crossover`
 - `work-relation-captain-marvel-2019-secret-invasion-2023-world-lore`
 - `work-relation-daredevil-2003-elektra-2005-spinoff`
@@ -239,13 +237,11 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-iron-man-2-2010-thor-2011-world-lore`
 - `work-relation-iron-man-3-2013-avengers-age-of-ultron-2015-story-link`
 - `work-relation-jessica-jones-s1-2015-the-defenders-2017-crossover`
-- `work-relation-luke-cage-s1-2016-luke-cage-s2-2018-sequel`
 - `work-relation-luke-cage-s1-2016-the-defenders-2017-crossover`
 - `work-relation-secret-invasion-2023-the-marvels-2023-world-lore`
 - `work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-avengers-doomsday-2026-12-18-promotion`
 - `work-relation-she-hulk-attorney-at-law-2022-daredevil-born-again-s1-2025-story-link`
 - `work-relation-spider-man-2-2004-spider-man-3-2007-sequel`
-- `work-relation-spider-man-2002-spider-man-2-2004-sequel`
 - `work-relation-spider-man-far-from-home-2019-secret-invasion-2023-world-lore`
 - `work-relation-spider-man-homecoming-2017-avengers-infinity-war-2018-crossover`
 - `work-relation-the-avengers-2012-agents-of-s-h-i-e-l-d-20132020-world-lore`
@@ -266,12 +262,9 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-the-wolverine-2013-logan-2017-sequel`
 - `work-relation-the-wolverine-2013-x-men-days-of-future-past-2014-lead-in`
 - `work-relation-thor-2011-the-avengers-2012-crossover`
-- `work-relation-thor-ragnarok-2017-thor-love-and-thunder-2022-sequel`
 - `work-relation-thor-the-dark-world-2013-agents-of-s-h-i-e-l-d-20132020-story-link`
 - `work-relation-thor-the-dark-world-2013-avengers-age-of-ultron-2015-crossover`
 - `work-relation-thor-the-dark-world-2013-guardians-of-the-galaxy-2014-story-link`
-- `work-relation-thor-the-dark-world-2013-thor-ragnarok-2017-sequel`
-- `work-relation-venom-2018-venom-let-there-be-carnage-2021-sequel`
 - `work-relation-venom-let-there-be-carnage-2021-venom-the-last-dance-2024-story-link`
 - `work-relation-x-men-2000-x2-x-men-united-2003-sequel`
 - `work-relation-x-men-apocalypse-2016-dark-phoenix-2019-sequel`
@@ -280,4 +273,3 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-x-men-the-last-stand-2006-the-wolverine-2013-aftermath`
 - `work-relation-x-men-the-last-stand-2006-x-men-days-of-future-past-2014-story-link`
 - `work-relation-x2-x-men-united-2003-x-men-the-last-stand-2006-sequel`
-- `work-relation-your-friendly-neighborhood-spider-man-s1-2025-your-friendly-neighborhood-spider-man-s2-2026-sequel`
