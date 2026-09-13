@@ -73,6 +73,18 @@ function freePort() {
   });
 }
 
+async function fetchJsonWithTimeout(url, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), Math.max(250, timeoutMs));
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) return null;
+    return await response.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function contentType(file) {
   return { ".html": "text/html; charset=utf-8", ".json": "application/json", ".js": "text/javascript" }[path.extname(file)] || "application/octet-stream";
 }
@@ -112,9 +124,8 @@ async function launchChrome(chrome, timeoutMs) {
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "marvel-phase6-cdp-"));
   const child = spawn(chrome, ["--headless=new", "--disable-gpu", "--disable-dev-shm-usage", "--no-sandbox", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, "about:blank"], { stdio: ["ignore", "ignore", "ignore"] });
   const target = await poll(async () => {
-    const response = await fetch(`http://127.0.0.1:${port}/json/list`);
-    if (!response.ok) return null;
-    return (await response.json()).find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl);
+    const entries = await fetchJsonWithTimeout(`http://127.0.0.1:${port}/json/list`, Math.min(timeoutMs, 1_000));
+    return entries?.find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
   }, timeoutMs, "Chrome DevTools page target");
   return { child, userDataDir, url: target.webSocketDebuggerUrl };
 }
