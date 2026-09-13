@@ -5,6 +5,7 @@ from pathlib import Path
 
 from scripts.library_v5.explicit_relation_inventory import (
     _markdown,
+    _disposition,
     _split_preserve_duplicates,
     build_inventory,
 )
@@ -108,6 +109,16 @@ class ExplicitRelationInventoryTests(unittest.TestCase):
             "reason-a",
             "reason-b",
         ])
+
+    def test_blank_source_id_is_reported_as_missing_provenance(self) -> None:
+        disposition, source_ids = _disposition(
+            {"verification_status": "source_verified"},
+            [{"source_id": "", "evidence_role": "primary"}],
+            [{"review_id": "review-1"}],
+            {},
+        )
+        self.assertEqual(disposition, "defer")
+        self.assertEqual(source_ids, [""])
 
 
 if __name__ == "__main__":

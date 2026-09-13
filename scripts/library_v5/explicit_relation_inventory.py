@@ -72,8 +72,8 @@ def _disposition(row: dict[str, str], evidence: list[dict[str, str]], reviews: l
         return "superseded", []
     if status == "conflicted" or "explicit-conflict" in notes or "conflicted" in notes:
         return "explicit-conflict", []
-    source_ids = sorted({(item.get("source_id") or "").strip() for item in evidence if item.get("source_id")})
-    missing_source = [source_id for source_id in source_ids if source_id not in sources]
+    source_ids = sorted({(item.get("source_id") or "").strip() for item in evidence})
+    missing_source = [source_id for source_id in source_ids if not source_id or source_id not in sources]
     if status == "source_verified" and evidence and reviews and not missing_source:
         return "retain", source_ids
     if status == "legacy_seed":
