@@ -87,6 +87,22 @@ class Phase6LegacyLayerContractTests(unittest.TestCase):
         self.assertIn("g.node.detail-focus", self.source)
         self.assertIn("function sheetWorkDetailHtml", self.source)
 
+    def test_phase6_retired_right_header_fragment_is_absent(self) -> None:
+        """The former #right mobile header has no owner; SheetHost owns the header."""
+        for token in (
+            'id="mobileDetailsTitle"',
+            'id="mobileDetailsClose"',
+            "mobile-sheet-sub",
+        ):
+            self.assertNotIn(token, self.source)
+
+        self.assertNotIn("querySelector('.mobile-sheet-sub')", self.source)
+        self.assertNotIn('main[data-side-collapsed="true"] #right>.mobile-sheet-head', self.source)
+        self.assertNotIn('#right .mobile-sheet-head button', self.source)
+        self.assertIn('#sheetHost[data-presentation="docked"] .mobile-sheet-head', self.source)
+        self.assertIn('id="sheetHostTitle"', self.source)
+        self.assertIn('id="sheetHostClose"', self.source)
+
     def test_phase6_search_projection_remains_active_adapter(self) -> None:
         """Mobile search still delegates filtering to the shared DOM-backed predicate."""
         start = self.source.find("function renderMobileSearchResults")
