@@ -110,6 +110,13 @@ class BrowserPhase6OwnershipAuditTests(unittest.TestCase):
         self.assertIn("roundTripStart", source)
         self.assertIn("independent presentation visibility", source)
 
+    def test_runner_bounds_static_fixture_shutdown(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("closeAllConnections", source)
+        self.assertIn("closeIdleConnections", source)
+        self.assertIn("setTimeout(finish, 2_000)", source)
+        self.assertIn("await stopServer(server)", source)
+
     def test_wrapper_is_environment_gated_and_validates_summary(self) -> None:
         source = (ROOT / "tests" / "library_v5" / "test_browser_phase6_ownership_audit.py").read_text(
             encoding="utf-8"

@@ -147,6 +147,23 @@ async function stopChrome(processInfo) {
   fs.rmSync(processInfo.userDataDir, { recursive: true, force: true, maxRetries: 100, retryDelay: 100 });
 }
 
+async function stopServer(serverInfo) {
+  const server = serverInfo?.server;
+  if (!server) return;
+  await new Promise((resolve) => {
+    let settled = false;
+    const finish = () => { if (!settled) { settled = true; resolve(); } };
+    try {
+      server.close(finish);
+      // Chrome may leave an HTTP keep-alive socket open after CDP closes.  The
+      // audit must have a bounded shutdown even when that socket is not idle.
+      server.closeAllConnections?.();
+      server.closeIdleConnections?.();
+    } catch (_) { finish(); }
+    setTimeout(finish, 2_000);
+  });
+}
+
 class CdpClient {
   constructor(url, timeoutMs) { this.url = url; this.timeoutMs = timeoutMs; this.nextId = 1; this.pending = new Map(); }
   async connect() {
@@ -299,7 +316,7 @@ async function run(args) {
       if (JSON.stringify(finalState[field]) !== JSON.stringify(roundTripStart[field])) failures.push(`final desktop round-trip: ${field} changed`);
     }
   } catch(error) { failures.push(String(error?.stack||error)); }
-  finally { cdp?.close(); if (chrome) await stopChrome(chrome); await new Promise((resolve)=>server.server.close(resolve)); }
+  finally { cdp?.close(); if (chrome) await stopChrome(chrome); await stopServer(server); }
   const report={summary:{cases:1,failures:failures.length},cases:[{name:"phase6-ownership",checkpoints,contract:CONTRACT}],failures};
   console.log(JSON.stringify(report));
   if(failures.length) process.exitCode=1;
