@@ -15,6 +15,7 @@ The promotion preserves the existing `aftermath / story / strong / same_or_inten
 ## Local confirmation
 
 - focused Wave015 and explicit-inventory tests: GREEN;
+- tracked explicit-relation reports regenerated from the current canonical CSVs (`source_verified=65`, `legacy_seed=96`, target disposition `retain`);
 - full bundled `library_v5` suite and deterministic build required before merge;
 - graph shape remains 131 works / 355 edges / 562 reasons;
 - no `releases.csv`, `production_status_assertions.csv`, events, occurrences, transitions, or transition-participant canonical files are changed.
