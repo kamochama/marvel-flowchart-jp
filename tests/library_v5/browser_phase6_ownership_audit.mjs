@@ -129,15 +129,15 @@ async function launchChrome(chrome, timeoutMs) {
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "marvel-phase6-cdp-"));
   let child = null;
   try {
-    child = spawn(chrome, ["--headless=new", "--disable-gpu", "--disable-dev-shm-usage", "--no-sandbox", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, "about:blank"], { stdio: ["ignore", "ignore", "ignore"] });
+    child = spawn(chrome, ["--headless=new", "--disable-gpu", "--disable-dev-shm-usage", "--no-sandbox", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, "about:blank"], { stdio: ["ignore", "ignore", "ignore"], detached: process.platform !== "win32" });
     const target = await poll(async () => {
       const entries = await fetchJsonWithTimeout(`http://127.0.0.1:${port}/json/list`, Math.min(timeoutMs, 1_000));
       return entries?.find((entry) => entry.type === "page" && entry.webSocketDebuggerUrl) || null;
     }, timeoutMs, "Chrome DevTools page target");
     return { child, userDataDir, url: target.webSocketDebuggerUrl };
   } catch (error) {
-    if (child && child.exitCode === null && !child.killed) child.kill();
-    fs.rmSync(userDataDir, { recursive: true, force: true, maxRetries: 100, retryDelay: 100 });
+    killProcessTree(child);
+    try { fs.rmSync(userDataDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 }); } catch (_) { /* temporary profile cleanup is best effort */ }
     throw error;
   }
 }
@@ -155,14 +155,24 @@ async function launchChromeWithRetries(chrome, timeoutMs, attempts = 3) {
   throw lastError || new Error("Chrome launch failed");
 }
 
+function killProcessTree(child) {
+  if (!child || child.exitCode !== null || child.killed) return;
+  if (process.platform === "win32") {
+    try { execFileSync("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore" }); } catch (_) { /* best effort */ }
+    return;
+  }
+  try { process.kill(-child.pid, "SIGKILL"); }
+  catch (_) { try { child.kill("SIGKILL"); } catch (_) { /* best effort */ } }
+}
+
 async function stopChrome(processInfo) {
   const child = processInfo?.child;
   if (child && child.exitCode === null && !child.killed) {
     const exited = new Promise((resolve) => child.once("exit", resolve));
-    child.kill();
+    killProcessTree(child);
     await Promise.race([exited, new Promise((resolve) => setTimeout(resolve, 5_000))]);
   }
-  fs.rmSync(processInfo.userDataDir, { recursive: true, force: true, maxRetries: 100, retryDelay: 100 });
+  try { fs.rmSync(processInfo.userDataDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 }); } catch (_) { /* temporary profile cleanup is best effort */ }
 }
 
 async function stopServer(serverInfo) {
@@ -351,10 +361,13 @@ async function run(args) {
   } catch(error) { failures.push(String(error?.stack||error)); }
   finally { cdp?.close(); if (chrome) await stopChrome(chrome); await stopServer(server); }
   const report={summary:{cases:1,failures:failures.length},cases:[{name:"phase6-ownership",checkpoints,contract:CONTRACT}],failures};
-  console.log(JSON.stringify(report));
-  if(failures.length) process.exitCode=1;
+  const exitCode = failures.length ? 1 : 0;
+  process.stdout.write(`${JSON.stringify(report)}\n`, () => process.exit(exitCode));
 }
 
 const args=parseArgs(process.argv.slice(2));
 if(args.help){console.log(usage());process.exit(0);}
-run(args).catch((error)=>{console.log(JSON.stringify({summary:{cases:1,failures:1},cases:[],failures:[String(error?.stack||error)]}));process.exitCode=1;});
+run(args).catch((error)=>{
+  const report={summary:{cases:1,failures:1},cases:[],failures:[String(error?.stack||error)]};
+  process.stdout.write(`${JSON.stringify(report)}\n`, () => process.exit(1));
+});
