@@ -2149,34 +2149,55 @@
       "certainty": "confirmed",
       "continuity_scope": "same_or_intended",
       "directness": "direct",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-daredevil-born-again-s2-2026-daredevil-born-again-s3-tba"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-daredevil-born-again-s2-s3-sequel-disney-2025"
+      ],
       "external_evidence_details": [],
       "notes": "Marvel lists Season 3.",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-daredevil-born-again-s2-s3-sequel-disney-2025"
+      ],
       "reason_ids": [
         "reason-daredevil-born-again-s2-2026-daredevil-born-again-s3-tba-explicit-relation-work-relation-daredevil-born-again-s2-2026-daredevil-born-again-s3-tba-sequel"
       ],
       "relation_kind": "sequel",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-09-14-daredevil-born-again-s2-s3-sequel"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-daredevil-born-again-s2-s3-sequel-disney-2025",
+          "evidence_role": "primary",
           "fact_id": "work-relation-daredevil-born-again-s2-2026-daredevil-born-again-s3-tba-sequel",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "disney-daredevil-born-again-s3-in-works-2025",
+          "url": "https://press.disney.co.uk/news/marvel-television-and-marvel-animation-new-york-comic-con-panel-gives-a-first-look-at-upcoming-disney%2B-slate-with-exclusive-footage-and-surprise-guests"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-daredevil-born-again-s2-s3-sequel-disney-2025"
+          ],
+          "fact_id": "work-relation-daredevil-born-again-s2-2026-daredevil-born-again-s3-tba-sequel",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-09-14-daredevil-born-again-s2-s3-sequel"
+          ]
+        }
+      ],
+      "source_ids": [
+        "disney-daredevil-born-again-s3-in-works-2025"
+      ],
       "source_work_id": "daredevil-born-again-s2-2026",
       "target_work_id": "daredevil-born-again-s3-tba",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-daredevil-born-again-s2-2026-daredevil-born-again-s3-tba-sequel"
     },
     {
@@ -2327,34 +2348,55 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "strong",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-daredevil-s2-2016-the-punisher-s1-2017"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-punisher-s1-daredevil-s2-spinoff-netflix-2016"
+      ],
       "external_evidence_details": [],
       "notes": "Frank Castle introduced in Daredevil S2.",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-punisher-s1-daredevil-s2-spinoff-netflix-2016"
+      ],
       "reason_ids": [
         "reason-daredevil-s2-2016-the-punisher-s1-2017-explicit-relation-work-relation-daredevil-s2-2016-the-punisher-s1-2017-spinoff"
       ],
       "relation_kind": "spinoff",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-09-14-daredevil-s2-punisher-s1-spinoff"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-punisher-s1-daredevil-s2-spinoff-netflix-2016",
+          "evidence_role": "primary",
           "fact_id": "work-relation-daredevil-s2-2016-the-punisher-s1-2017-spinoff",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "netflix-punisher-s1-daredevil-s2-spinoff-2016",
+          "url": "https://about.netflix.com/en/news/netflix-orders-marvels-the-punisher-to-series"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-punisher-s1-daredevil-s2-spinoff-netflix-2016"
+          ],
+          "fact_id": "work-relation-daredevil-s2-2016-the-punisher-s1-2017-spinoff",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-09-14-daredevil-s2-punisher-s1-spinoff"
+          ]
+        }
+      ],
+      "source_ids": [
+        "netflix-punisher-s1-daredevil-s2-spinoff-2016"
+      ],
       "source_work_id": "daredevil-s2-2016",
       "target_work_id": "the-punisher-s1-2017",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-daredevil-s2-2016-the-punisher-s1-2017-spinoff"
     },
     {
@@ -5163,34 +5205,55 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "strong",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-the-defenders-2017-daredevil-s3-2018"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-defenders-daredevil-s3-aftermath-marvel-2018"
+      ],
       "external_evidence_details": [],
       "notes": "Daredevil's post-Defenders story.",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-defenders-daredevil-s3-aftermath-marvel-2018"
+      ],
       "reason_ids": [
         "reason-the-defenders-2017-daredevil-s3-2018-explicit-relation-work-relation-the-defenders-2017-daredevil-s3-2018-aftermath"
       ],
       "relation_kind": "aftermath",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-09-14-defenders-daredevil-s3-aftermath"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-defenders-daredevil-s3-aftermath-marvel-2018",
+          "evidence_role": "primary",
           "fact_id": "work-relation-the-defenders-2017-daredevil-s3-2018-aftermath",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "marvel-daredevil-s3-defenders-aftermath-2018",
+          "url": "https://www.marvel.com/amp/articles/tv-shows/marvel-daredevil-season-3-creating-the-look"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-defenders-daredevil-s3-aftermath-marvel-2018"
+          ],
+          "fact_id": "work-relation-the-defenders-2017-daredevil-s3-2018-aftermath",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-09-14-defenders-daredevil-s3-aftermath"
+          ]
+        }
+      ],
+      "source_ids": [
+        "marvel-daredevil-s3-defenders-aftermath-2018"
+      ],
       "source_work_id": "the-defenders-2017",
       "target_work_id": "daredevil-s3-2018",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-the-defenders-2017-daredevil-s3-2018-aftermath"
     },
     {
@@ -7196,8 +7259,8 @@
   ],
   "summary": {
     "active": 161,
-    "legacy_seed": 99,
-    "source_verified": 62,
+    "legacy_seed": 96,
+    "source_verified": 65,
     "superseded": 3,
     "total": 164
   }

@@ -1,6 +1,6 @@
 # Marvel explicit relation inventory
 
-Summary: `{"active": 161, "legacy_seed": 99, "source_verified": 62, "superseded": 3, "total": 164}`
+Summary: `{"active": 161, "legacy_seed": 96, "source_verified": 65, "superseded": 3, "total": 164}`
 Graph: `{"edges": 355, "reasons": 562, "works": 131}`
 
 Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [], "missing_relation_ids": [], "projection_mismatches": 0, "reason_orphans": 0, "relation_reason_certainty": [], "relation_reason_direction": [], "relation_reason_duplicate": [], "relation_reason_edge": [], "relation_reason_edge_duplicate": [], "relation_reason_id": [], "relation_reason_missing": [], "relation_reason_notes": [], "relation_reason_status": [], "relation_reason_support": [], "review_missing_evidence": [], "source_verified_missing_evidence": [], "source_verified_missing_qualifying_evidence": [], "source_verified_missing_review": [], "source_verified_missing_source": [], "superseded_reason_orphans": []}`
@@ -60,11 +60,11 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-cloak-dagger-20182019-runaways-20172019-crossover | cloak-dagger-20182019 | runaways-20172019 | crossover | source_verified | retain | evidence-cloak-dagger-runaways-crossover-marvel-2019 | evidence-cloak-dagger-runaways-crossover-marvel-2019 | — | review-2026-09-04-cloak-dagger-runaways-crossover | marvel-cloak-dagger-runaways-crossover-2019 |
 | work-relation-daredevil-2003-elektra-2005-spinoff | daredevil-2003 | elektra-2005 | spinoff | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-daredevil-born-again-s1-2025-daredevil-born-again-s2-2026-sequel | daredevil-born-again-s1-2025 | daredevil-born-again-s2-2026 | sequel | source_verified | retain | evidence-daredevil-born-again-s1-s2-sequel-disney-2025 | evidence-daredevil-born-again-s1-s2-sequel-disney-2025 | — | review-2026-09-03-daredevil-born-again-s1-s2-sequel | disney-daredevil-born-again-s2-continuation-2025 |
-| work-relation-daredevil-born-again-s2-2026-daredevil-born-again-s3-tba-sequel | daredevil-born-again-s2-2026 | daredevil-born-again-s3-tba | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-daredevil-born-again-s2-2026-daredevil-born-again-s3-tba-sequel | daredevil-born-again-s2-2026 | daredevil-born-again-s3-tba | sequel | source_verified | retain | evidence-daredevil-born-again-s2-s3-sequel-disney-2025 | evidence-daredevil-born-again-s2-s3-sequel-disney-2025 | — | review-2026-09-14-daredevil-born-again-s2-s3-sequel | disney-daredevil-born-again-s3-in-works-2025 |
 | work-relation-daredevil-born-again-s2-2026-the-punisher-one-last-kill-2026-05-12-crossover | daredevil-born-again-s2-2026 | the-punisher-one-last-kill-2026-05-12 | crossover | source_verified | retain | evidence-daredevil-s2-punisher-one-last-kill-crossover-disneyplus-2026 | evidence-daredevil-s2-punisher-one-last-kill-crossover-disneyplus-2026 | — | review-2026-09-03-daredevil-s2-punisher-one-last-kill-crossover | disneyplus-daredevil-born-again-s2-punisher-crossover-2026 |
 | work-relation-daredevil-s1-2015-daredevil-s2-2016-sequel | daredevil-s1-2015 | daredevil-s2-2016 | sequel | source_verified | retain | evidence-daredevil-s1-s2-sequel-disney-2015 | evidence-daredevil-s1-s2-sequel-disney-2015 | — | review-2026-09-03-daredevil-s1-s2-sequel | disney-daredevil-s1-s2-renewal-2015 |
 | work-relation-daredevil-s2-2016-the-defenders-2017-crossover | daredevil-s2-2016 | the-defenders-2017 | crossover | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-daredevil-s2-2016-the-punisher-s1-2017-spinoff | daredevil-s2-2016 | the-punisher-s1-2017 | spinoff | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-daredevil-s2-2016-the-punisher-s1-2017-spinoff | daredevil-s2-2016 | the-punisher-s1-2017 | spinoff | source_verified | retain | evidence-punisher-s1-daredevil-s2-spinoff-netflix-2016 | evidence-punisher-s1-daredevil-s2-spinoff-netflix-2016 | — | review-2026-09-14-daredevil-s2-punisher-s1-spinoff | netflix-punisher-s1-daredevil-s2-spinoff-2016 |
 | work-relation-daredevil-s3-2018-daredevil-born-again-s1-2025-sequel | daredevil-s3-2018 | daredevil-born-again-s1-2025 | sequel | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-deadpool-2-2018-deadpool-wolverine-2024-story-link | deadpool-2-2018 | deadpool-wolverine-2024 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-deadpool-2016-deadpool-2-2018-sequel | deadpool-2016 | deadpool-2-2018 | sequel | source_verified | retain | evidence-deadpool-deadpool2-sequel-twentieth-2018 | evidence-deadpool-deadpool2-sequel-twentieth-2018 | — | review-2026-09-03-deadpool-deadpool2-sequel | twentieth-deadpool2-sequel-2018 |
@@ -126,7 +126,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-the-avengers-2012-iron-man-3-2013-aftermath | the-avengers-2012 | iron-man-3-2013 | aftermath | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-the-avengers-2012-item-47-2012-sequel | the-avengers-2012 | item-47-2012 | sequel | source_verified | retain | evidence-avengers-item-47-aftermath-disney-2012 | evidence-avengers-item-47-aftermath-disney-2012 | — | review-2026-09-04-avengers-item-47-sequel | disney-avengers-item-47-aftermath-2012 |
 | work-relation-the-consultant-2011-the-avengers-2012-story-link | the-consultant-2011 | the-avengers-2012 | story_link | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-the-defenders-2017-daredevil-s3-2018-aftermath | the-defenders-2017 | daredevil-s3-2018 | aftermath | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-the-defenders-2017-daredevil-s3-2018-aftermath | the-defenders-2017 | daredevil-s3-2018 | aftermath | source_verified | retain | evidence-defenders-daredevil-s3-aftermath-marvel-2018 | evidence-defenders-daredevil-s3-aftermath-marvel-2018 | — | review-2026-09-14-defenders-daredevil-s3-aftermath | marvel-daredevil-s3-defenders-aftermath-2018 |
 | work-relation-the-defenders-2017-iron-fist-s2-2018-story-link | the-defenders-2017 | iron-fist-s2-2018 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-the-defenders-2017-jessica-jones-s2-2018-story-link | the-defenders-2017 | jessica-jones-s2-2018 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-the-defenders-2017-luke-cage-s2-2018-story-link | the-defenders-2017 | luke-cage-s2-2018 | story_link | legacy_seed | needs-source | — | — | — | — | — |
@@ -213,9 +213,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-captain-marvel-2019-avengers-endgame-2019-crossover`
 - `work-relation-captain-marvel-2019-secret-invasion-2023-world-lore`
 - `work-relation-daredevil-2003-elektra-2005-spinoff`
-- `work-relation-daredevil-born-again-s2-2026-daredevil-born-again-s3-tba-sequel`
 - `work-relation-daredevil-s2-2016-the-defenders-2017-crossover`
-- `work-relation-daredevil-s2-2016-the-punisher-s1-2017-spinoff`
 - `work-relation-daredevil-s3-2018-daredevil-born-again-s1-2025-sequel`
 - `work-relation-deadpool-2-2018-deadpool-wolverine-2024-story-link`
 - `work-relation-deadpool-wolverine-2024-avengers-doomsday-2026-12-18-crossover`
@@ -248,7 +246,6 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-the-avengers-2012-captain-america-the-winter-soldier-2014-world-lore`
 - `work-relation-the-avengers-2012-iron-man-3-2013-aftermath`
 - `work-relation-the-consultant-2011-the-avengers-2012-story-link`
-- `work-relation-the-defenders-2017-daredevil-s3-2018-aftermath`
 - `work-relation-the-defenders-2017-iron-fist-s2-2018-story-link`
 - `work-relation-the-defenders-2017-jessica-jones-s2-2018-story-link`
 - `work-relation-the-defenders-2017-luke-cage-s2-2018-story-link`
