@@ -1,5 +1,7 @@
 # Codex master roadmap — Marvel Library DB v1 to production main (2026-08-28)
 
+> **Current boundary (2026-10-04):** PR #102 `main=bb982ad495caf16c789c6935c4ba8586caf1a68e` already contains Phase 6 ownership completion and relation waves through Wave015. Continue the all-work connection audit, not the obsolete viewer task pointers below. Wave016 candidate PR #103 promotes only Defenders -> Luke Cage S2 with exact official source/evidence/review provenance, leaving Iron Fist S2 and Jessica Jones S2 deferred. Graph topology remains 131/355/562; the existing export policy changes the one promoted edge to recommended/strong. Candidate relation counts: 66 verified, 95 seeds, 3 superseded. The bounded plan/review are dated 2026-10-04. Use live PR merge/check/Pages evidence to resolve production integration; do not assume publication from this candidate record. Later identity/continuity/chronology/release audits remain separate plans.
+
 This file is the long-range execution roadmap for Codex and other coding agents. It complements, rather than replaces:
 
 - `AGENTS.md` — persistent safety and development rules;

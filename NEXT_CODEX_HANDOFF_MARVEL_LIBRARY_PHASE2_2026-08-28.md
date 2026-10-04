@@ -1,5 +1,7 @@
 # Codex handoff — Marvel Library DB v1 Phase 2 (2026-08-28)
 
+> **Resume checkpoint (2026-10-04):** Fresh fetch found local and remote `main` at `bb982ad495caf16c789c6935c4ba8586caf1a68e` (PR #102). Phase 6 ownership work is integrated; do not restart the historical Phase 6 tasks below. The active bounded continuation is relation evidence Wave016, PR #103, with plan/review `docs/superpowers/{plans,reviews}/2026-10-04-marvel-relation-evidence-promotion-wave016.md`. It promotes only Defenders -> Luke Cage S2; Iron Fist S2 and Jessica Jones S2 remain deferred seeds. Candidate counts are verified 66 / seeds 95 / superseded 3, total 164; graph remains 131/355/562. Existing export policy upgrades only the promoted edge's presentation from reference/weak to recommended/strong. Check PR #103's actual merge SHA, all seven required jobs, and Pages status live before treating this candidate as production. Historical SHAs and counts below are not checkout targets.
+
 This is the current execution handoff for Codex. Read `AGENTS.md` first; its rules are persistent and mandatory.
 
 ## 0. Start here
