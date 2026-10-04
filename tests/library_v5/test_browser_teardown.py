@@ -24,8 +24,12 @@ class BrowserTeardownTests(unittest.TestCase):
     def test_stop_chrome_terminates_real_descendant_before_removing_profile(self):
         for runner in RUNNERS:
             with self.subTest(runner=runner):
-                report, _ = self.fixture(runner, 'parent-live')
+                report, stderr = self.fixture(runner, 'parent-live')
                 self.assertTrue(report['stopped'], 'descendant heartbeat continued after stopChrome')
+                self.assertFalse(report['parentAlive'])
+                self.assertFalse(report['descendantAlive'])
+                stages = [json.loads(line)['stage'] for line in stderr.splitlines() if line.startswith('{')]
+                self.assertLess(stages.index('chrome-stop-done'), stages.index('profile-rm-start'))
                 self.assertTrue(report['profileRemoved'])
                 self.assertLess(report['elapsed'], 7000)
 
@@ -35,6 +39,8 @@ class BrowserTeardownTests(unittest.TestCase):
             with self.subTest(runner=runner):
                 report, _ = self.fixture(runner, 'parent-exited')
                 self.assertTrue(report['stopped'], 'exited parent must not hide live descendants')
+                self.assertFalse(report['parentAlive'])
+                self.assertFalse(report['descendantAlive'])
 
     def test_profile_cleanup_error_returns_with_diagnostic(self):
         for runner in RUNNERS:
@@ -56,6 +62,15 @@ class BrowserTeardownTests(unittest.TestCase):
                 report = json.loads(result.stdout)
                 self.assertTrue(report['failures'])
                 self.assertIn('report-write', result.stderr)
+
+    def test_failed_teardown_does_not_start_another_audit_attempt(self):
+        for runner in RUNNERS:
+            with self.subTest(runner=runner):
+                report, _ = self.fixture(runner, 'retry-error')
+                self.assertEqual(report['calls'], 1, 'unknown Chrome isolation must prevent retry')
+                self.assertEqual(report['launchCalls'], 1)
+                self.assertTrue(report['auditFailed'])
+                self.assertTrue(report['launchFailed'])
 
     def test_tree_kill_failure_is_reported_not_silently_accepted(self):
         for runner in RUNNERS:

@@ -10,7 +10,21 @@ const [runner, mode] = process.argv.slice(2);
 const source = fs.readFileSync(runner, 'utf8');
 const entry = source.lastIndexOf('\nmain(');
 if (entry < 0) throw new Error('CLI entry point not found');
-const moduleSource = source.slice(0, entry) + '\nexport { stopChrome, reportInfrastructureError };\n';
+const moduleSource = source.slice(0, entry) + `
+export { stopChrome, reportInfrastructureError };
+export async function probeRetry(error) {
+  let calls = 0;
+  let launchCalls = 0;
+  let auditFailed = false;
+  let launchFailed = false;
+  // A hypothetical second attempt succeeds: accepting it would hide the leak.
+  runAudit = async () => { if (++calls === 1) throw error; return {}; };
+  launchChrome = async () => { if (++launchCalls === 1) throw error; return {}; };
+  try { await runAuditWithRetries({}); } catch (_) { auditFailed = true; }
+  try { await launchChromeWithRetries('fixture', 100); } catch (_) { launchFailed = true; }
+  return {calls, launchCalls, auditFailed, launchFailed};
+}
+`;
 const audit = await import('data:text/javascript;base64,' + Buffer.from(moduleSource).toString('base64'));
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'marvel-teardown-fixture-'));
 const profile = path.join(root, 'profile');
@@ -27,6 +41,20 @@ let grandchildPid;
 const originalRm = fs.rmSync;
 const originalKill = process.kill;
 const originalExec = childProcess.execFileSync;
+function running(pid) {
+  try {
+    process.kill(pid, 0);
+    // Linux zombies retain a PID but no executable process or heartbeat.
+    if (process.platform === 'linux') {
+      const stat = fs.readFileSync(`/proc/${pid}/stat`, 'utf8');
+      if (stat.slice(stat.lastIndexOf(')') + 2).startsWith('Z')) return false;
+    }
+    return true;
+  } catch (error) {
+    if (error.code === 'ESRCH' || error.code === 'ENOENT') return false;
+    throw error;
+  }
+}
 const kill = pid => {
   if (!Number.isInteger(pid) || pid <= 1 || pid === process.pid) throw new Error('unsafe fixture PID');
   try {
@@ -57,7 +85,7 @@ try {
     await sleep(100);
     if (liveHeartbeat === fs.readFileSync(heartbeat, 'utf8')) throw new Error('descendant was not live before teardown');
     const started = Date.now();
-    if (mode === 'kill-error') {
+    if (mode === 'kill-error' || mode === 'retry-error') {
       // Inject an OS termination failure, not a substitute implementation.
       if (process.platform === 'win32') {
         childProcess.execFileSync = () => { throw new Error('fixture tree kill denied'); };
@@ -70,7 +98,9 @@ try {
     await sleep(200);
     const before = fs.readFileSync(heartbeat, 'utf8');
     await sleep(250);
-    result = {stopped:before === fs.readFileSync(heartbeat, 'utf8'), profileRemoved:!fs.existsSync(profile), elapsed:Date.now()-started};
+    result = {stopped:before === fs.readFileSync(heartbeat, 'utf8'),
+      parentAlive:running(child.pid), descendantAlive:running(grandchildPid),
+      profileRemoved:!fs.existsSync(profile), elapsed:Date.now()-started};
   }
 } catch (error) {
   failure = error;
@@ -88,7 +118,10 @@ try {
   originalRm(root, {recursive:true, force:true, maxRetries:3, retryDelay:50});
 }
 if (failure) {
-  if (mode === 'kill-error') audit.reportInfrastructureError(failure);
+  if (mode === 'retry-error') {
+    const probe = await audit.probeRetry(failure);
+    process.stdout.write(JSON.stringify(probe)+'\n', () => process.exit(0));
+  } else if (mode === 'kill-error') audit.reportInfrastructureError(failure);
   else process.stderr.write(`${failure.message}\n`, () => process.exit(1));
 } else {
 process.stdout.write(JSON.stringify(result)+'\n', () => process.exit(0));

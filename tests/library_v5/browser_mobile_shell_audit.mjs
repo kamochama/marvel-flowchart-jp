@@ -170,6 +170,7 @@ async function launchChromeWithRetries(chromePath, timeoutMs, attempts = 3) {
     try {
       return await launchChrome(chromePath, timeoutMs);
     } catch (error) {
+      if (error.auditTeardownFailure) throw error;
       lastError = error;
       if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
     }
@@ -182,6 +183,16 @@ function lifecycle(stage) {
 }
 
 async function stopChrome(processInfo) {
+  try {
+    await stopChromeResources(processInfo);
+  } catch (error) {
+    Object.assign(error, {auditTeardownFailure:true, chromePid:processInfo?.child?.pid, profile:processInfo?.userDataDir});
+    process.stderr.write(`${JSON.stringify({stage:"chrome-stop-failed", pid:error.chromePid, profile:error.profile, error:error.message})}\n`);
+    throw error;
+  }
+}
+
+async function stopChromeResources(processInfo) {
   lifecycle("chrome-stop-start");
   const child = processInfo?.child;
   if (child?.pid) {
@@ -232,7 +243,8 @@ function writeReport(report, exitCode) {
 function reportInfrastructureError(error) {
   process.stderr.write(`${error.stack || error}\n`);
   writeReport({summary:{cards:0,cases:0,failures:1,syntheticEdges:0}, cases:[],
-    failures:[String(error.message || error)], infrastructure_error:true}, 1);
+    failures:[String(error.message || error)], infrastructure_error:true,
+    cleanup:error.auditTeardownFailure ? {pid:error.chromePid, profile:error.profile, stopped:false} : undefined}, 1);
 }
 
 async function closeStaticServer(server) {
@@ -1148,6 +1160,7 @@ async function runAuditWithRetries(args, attempts = 2) {
       const report = await runAudit(args);
       return report;
     } catch (error) {
+      if (error.auditTeardownFailure) throw error;
       lastError = error;
     }
     if (attempt + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 250));
