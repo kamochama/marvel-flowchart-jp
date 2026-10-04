@@ -1,6 +1,6 @@
 # Marvel explicit relation inventory
 
-Summary: `{"active": 161, "legacy_seed": 95, "source_verified": 66, "superseded": 3, "total": 164}`
+Summary: `{"active": 161, "legacy_seed": 94, "source_verified": 67, "superseded": 3, "total": 164}`
 Graph: `{"edges": 355, "reasons": 562, "works": 131}`
 
 Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [], "missing_relation_ids": [], "projection_mismatches": 0, "reason_orphans": 0, "relation_reason_certainty": [], "relation_reason_direction": [], "relation_reason_duplicate": [], "relation_reason_edge": [], "relation_reason_edge_duplicate": [], "relation_reason_id": [], "relation_reason_missing": [], "relation_reason_notes": [], "relation_reason_status": [], "relation_reason_support": [], "review_missing_evidence": [], "source_verified_missing_evidence": [], "source_verified_missing_qualifying_evidence": [], "source_verified_missing_review": [], "source_verified_missing_source": [], "superseded_reason_orphans": []}`
@@ -106,7 +106,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-secret-invasion-2023-the-marvels-2023-world-lore | secret-invasion-2023 | the-marvels-2023 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-avengers-doomsday-2026-12-18-promotion | shang-chi-and-the-legend-of-the-ten-rings-2021 | avengers-doomsday-2026-12-18 | promotion | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-she-hulk-attorney-at-law-2022-daredevil-born-again-s1-2025-story-link | she-hulk-attorney-at-law-2022 | daredevil-born-again-s1-2025 | story_link | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-spider-man-2-2004-spider-man-3-2007-sequel | spider-man-2-2004 | spider-man-3-2007 | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-spider-man-2-2004-spider-man-3-2007-sequel | spider-man-2-2004 | spider-man-3-2007 | sequel | source_verified | retain | evidence-spider-man-2-to-3-sequel-sony-current | evidence-spider-man-2-to-3-sequel-sony-current | — | review-2026-10-04-spider-man-2-to-3-sequel | sony-spider-man-3-raimi-continuation-current |
 | work-relation-spider-man-2002-spider-man-2-2004-sequel | spider-man-2002 | spider-man-2-2004 | sequel | source_verified | retain | evidence-spider-man-2-latest-installment-sony-2004 | evidence-spider-man-2-latest-installment-sony-2004 | — | review-2026-09-14-spider-man-2-sequel | sony-spider-man-2-latest-installment-2004 |
 | work-relation-spider-man-3-2007-spider-man-no-way-home-2021-crossover | spider-man-3-2007 | spider-man-no-way-home-2021 | crossover | superseded | superseded | evidence-spider-man-3-nwh-marvel-2023 | evidence-spider-man-3-nwh-marvel-2023 | evidence-nwh-raimi-transition-marvel-2023, evidence-nwh-raimi-transition-sony-spell-2021 | review-2026-08-27-spider-man-3-nwh-multiverse, review-2026-08-28-nwh-raimi-proxy-relation-retired | — |
 | work-relation-spider-man-across-the-spider-verse-2023-spider-man-beyond-the-spider-verse-tba-sequel | spider-man-across-the-spider-verse-2023 | spider-man-beyond-the-spider-verse-tba | sequel | source_verified | retain | evidence-spider-man-across-beyond-trilogy-sony-2026 | evidence-spider-man-across-beyond-trilogy-sony-2026 | — | review-2026-09-03-spider-man-across-beyond-trilogy | sony-spider-verse-trilogy-beyond-2026 |
@@ -239,7 +239,6 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-secret-invasion-2023-the-marvels-2023-world-lore`
 - `work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-avengers-doomsday-2026-12-18-promotion`
 - `work-relation-she-hulk-attorney-at-law-2022-daredevil-born-again-s1-2025-story-link`
-- `work-relation-spider-man-2-2004-spider-man-3-2007-sequel`
 - `work-relation-spider-man-far-from-home-2019-secret-invasion-2023-world-lore`
 - `work-relation-spider-man-homecoming-2017-avengers-infinity-war-2018-crossover`
 - `work-relation-the-avengers-2012-agents-of-s-h-i-e-l-d-20132020-world-lore`

@@ -42,7 +42,6 @@ URLS = {
 
 DEFERRED = {
     "work-relation-iron-man-2-2010-iron-man-3-2013-sequel",
-    "work-relation-spider-man-2-2004-spider-man-3-2007-sequel",
 }
 
 
@@ -90,6 +89,8 @@ class RelationEvidencePromotionWave012Tests(unittest.TestCase):
 
         for relation_id in DEFERRED:
             self.assertEqual(relations[relation_id]["verification_status"], "legacy_seed")
+        # Wave017 supplied new exact evidence; historical Wave012 docs stay unchanged.
+        self.assertEqual(relations["work-relation-spider-man-2-2004-spider-man-3-2007-sequel"]["verification_status"], "source_verified")
 
     def test_existing_pairs_and_reason_ids_are_preserved(self) -> None:
         edges = rows(DERIVED / "work_edges_all.csv")

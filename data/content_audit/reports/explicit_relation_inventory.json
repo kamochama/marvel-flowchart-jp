@@ -4220,34 +4220,55 @@
       "certainty": "confirmed",
       "continuity_scope": "same_or_intended",
       "directness": "direct",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-spider-man-2-2004-spider-man-3-2007"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-spider-man-2-to-3-sequel-sony-current"
+      ],
       "external_evidence_details": [],
       "notes": "Raimi trilogy.",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-spider-man-2-to-3-sequel-sony-current"
+      ],
       "reason_ids": [
         "reason-spider-man-2-2004-spider-man-3-2007-explicit-relation-work-relation-spider-man-2-2004-spider-man-3-2007-sequel"
       ],
       "relation_kind": "sequel",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-04-spider-man-2-to-3-sequel"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-spider-man-2-to-3-sequel-sony-current",
+          "evidence_role": "primary",
           "fact_id": "work-relation-spider-man-2-2004-spider-man-3-2007-sequel",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "sony-spider-man-3-raimi-continuation-current",
+          "url": "https://www.sonypictures.com/movies/spiderman3"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-spider-man-2-to-3-sequel-sony-current"
+          ],
+          "fact_id": "work-relation-spider-man-2-2004-spider-man-3-2007-sequel",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-04-spider-man-2-to-3-sequel"
+          ]
+        }
+      ],
+      "source_ids": [
+        "sony-spider-man-3-raimi-continuation-current"
+      ],
       "source_work_id": "spider-man-2-2004",
       "target_work_id": "spider-man-3-2007",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-spider-man-2-2004-spider-man-3-2007-sequel"
     },
     {
@@ -7280,8 +7301,8 @@
   ],
   "summary": {
     "active": 161,
-    "legacy_seed": 95,
-    "source_verified": 66,
+    "legacy_seed": 94,
+    "source_verified": 67,
     "superseded": 3,
     "total": 164
   }

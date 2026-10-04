@@ -1,4 +1,5 @@
 source_id,purpose,official_source,checked_point,url
+sony-spider-man-3-raimi-continuation-current,Spider-Man 2 to Spider-Man 3 sequel,Sony Pictures,Sony's Spider-Man 3 FAQ identifies the trilogy conclusion and continuation of the story from Spider-Man 2; supports only the existing Raimi sequel tuple,https://www.sonypictures.com/movies/spiderman3
 marvel-luke-cage-s2-defenders-return-2016,Defenders to Luke Cage Season 2 story link,Marvel,Marvel's Season 2 announcement places Luke's return after his appearance in The Defenders; used only for the existing story-link tuple,https://www.marvel.com/articles/tv-shows/marvel-s-luke-cage-moves-always-forward-with-season-2
 movies,映画一覧,Marvel Movies,Bladeは現行一覧に残るが日付なし／Doomsday・Brand New Day・Secret Wars等,https://www.marvel.com/movies/
 tv,TV一覧,Marvel TV Shows,VisionQuest、Daredevil BA S3、Wonder Man S2、YFNSM S2、X-Men '97 S2等,https://www.marvel.com/tv-shows/

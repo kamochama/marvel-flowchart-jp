@@ -80,8 +80,9 @@ class RelationEvidencePromotionWave013Tests(unittest.TestCase):
     def test_wave013_preserves_graph_shape_and_other_deferred_relations(self) -> None:
         relations = {row["work_relation_id"]: row for row in rows(LIB / "work_relations.csv")}
         self.assertEqual(relations[RELATION_ID]["verification_status"], "source_verified")
+        # Reopened with independent Sony evidence in Wave017, not promoted by Wave013.
+        self.assertEqual(relations["work-relation-spider-man-2-2004-spider-man-3-2007-sequel"]["verification_status"], "source_verified")
         for relation_id in (
-            "work-relation-spider-man-2-2004-spider-man-3-2007-sequel",
             "work-relation-iron-man-2-2010-iron-man-3-2013-sequel",
             "work-relation-x-men-2000-x2-x-men-united-2003-sequel",
             "work-relation-blade-1998-1998-blade-ii-2002-sequel",
