@@ -20,9 +20,9 @@ class ExplicitRelationInventoryTests(unittest.TestCase):
         self.assertEqual(
             report["summary"],
             {
-                "total": 164,
-                "active": 161,
-                "source_verified": 75,
+                "total": 165,
+                "active": 162,
+                "source_verified": 76,
                 "legacy_seed": 86,
                 "superseded": 3,
             },
@@ -53,9 +53,9 @@ class ExplicitRelationInventoryTests(unittest.TestCase):
             all(item["fact_table"] == "work_relations.csv" for item in row["source_facts"])
         )
 
-    def test_graph_topology_is_unchanged(self) -> None:
+    def test_graph_topology_matches_audited_baseline(self) -> None:
         report = build_inventory(ROOT)
-        self.assertEqual(report["graph"], {"works": 131, "edges": 355, "reasons": 562})
+        self.assertEqual(report["graph"], {"works": 131, "edges": 356, "reasons": 563})
         self.assertEqual(report["coverage"]["projection_mismatches"], 0)
         self.assertEqual(report["coverage"]["reason_orphans"], 0)
 

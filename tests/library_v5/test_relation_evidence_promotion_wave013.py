@@ -93,7 +93,7 @@ class RelationEvidencePromotionWave013Tests(unittest.TestCase):
 
         edges = rows(DERIVED / "work_edges_all.csv")
         reasons = rows(DERIVED / "work_pair_reasons.csv")
-        self.assertEqual((len(edges), len(reasons)), (355, 562))
+        self.assertEqual((len(edges), len(reasons)), (356, 563))
 
 
 if __name__ == "__main__":

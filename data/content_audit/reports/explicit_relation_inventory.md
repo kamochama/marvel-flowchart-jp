@@ -1,7 +1,7 @@
 # Marvel explicit relation inventory
 
-Summary: `{"active": 161, "legacy_seed": 86, "source_verified": 75, "superseded": 3, "total": 164}`
-Graph: `{"edges": 355, "reasons": 562, "works": 131}`
+Summary: `{"active": 162, "legacy_seed": 86, "source_verified": 76, "superseded": 3, "total": 165}`
+Graph: `{"edges": 356, "reasons": 563, "works": 131}`
 
 Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [], "missing_relation_ids": [], "projection_mismatches": 0, "reason_orphans": 0, "relation_reason_certainty": [], "relation_reason_direction": [], "relation_reason_duplicate": [], "relation_reason_edge": [], "relation_reason_edge_duplicate": [], "relation_reason_id": [], "relation_reason_missing": [], "relation_reason_notes": [], "relation_reason_status": [], "relation_reason_support": [], "review_missing_evidence": [], "source_verified_missing_evidence": [], "source_verified_missing_qualifying_evidence": [], "source_verified_missing_review": [], "source_verified_missing_source": [], "superseded_reason_orphans": []}`
 
@@ -105,6 +105,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-ms-marvel-2022-the-marvels-2023-story-link | ms-marvel-2022 | the-marvels-2023 | story_link | source_verified | retain | evidence-ms-marvel-the-marvels-story-link-disney-2023 | evidence-ms-marvel-the-marvels-story-link-disney-2023 | — | review-2026-09-04-ms-marvel-the-marvels-story-link | disney-marvels-ms-marvel-kamala-2023 |
 | work-relation-secret-invasion-2023-the-marvels-2023-world-lore | secret-invasion-2023 | the-marvels-2023 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-avengers-doomsday-2026-12-18-promotion | shang-chi-and-the-legend-of-the-ten-rings-2021 | avengers-doomsday-2026-12-18 | promotion | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-wonder-man-s1-2026-story-link | shang-chi-and-the-legend-of-the-ten-rings-2021 | wonder-man-s1-2026 | story_link | source_verified | retain | evidence-shang-chi-wonder-man-trevor-continuation-2026 | evidence-shang-chi-wonder-man-trevor-continuation-2026 | — | review-2026-10-05-shang-chi-wonder-man-created | disneyplus-wonder-man-trevor-continuation-2026 |
 | work-relation-she-hulk-attorney-at-law-2022-daredevil-born-again-s1-2025-story-link | she-hulk-attorney-at-law-2022 | daredevil-born-again-s1-2025 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-spider-man-2-2004-spider-man-3-2007-sequel | spider-man-2-2004 | spider-man-3-2007 | sequel | source_verified | retain | evidence-spider-man-2-to-3-sequel-sony-current | evidence-spider-man-2-to-3-sequel-sony-current | — | review-2026-10-04-spider-man-2-to-3-sequel | sony-spider-man-3-raimi-continuation-current |
 | work-relation-spider-man-2002-spider-man-2-2004-sequel | spider-man-2002 | spider-man-2-2004 | sequel | source_verified | retain | evidence-spider-man-2-latest-installment-sony-2004 | evidence-spider-man-2-latest-installment-sony-2004 | — | review-2026-09-14-spider-man-2-sequel | sony-spider-man-2-latest-installment-2004 |

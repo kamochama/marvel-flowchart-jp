@@ -1,4 +1,5 @@
 work_relation_id,source_work_id,target_work_id,relation_kind,relation_scope,directness,continuity_scope,certainty,verification_status,notes
+work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-wonder-man-s1-2026-story-link,shang-chi-and-the-legend-of-the-ten-rings-2021,wonder-man-s1-2026,story_link,story,indirect,same_or_intended,probable,source_verified,公式Disney+がトレヴァーのターローでの冒険を経てワンダーマンでハリウッドへ戻る流れを説明。直接続編とは断定しない。
 work-relation-iron-man-2008-iron-man-2-2010-sequel,iron-man-2008,iron-man-2-2010,sequel,story,direct,same_or_intended,confirmed,source_verified,Same lead/team continuity or explicit sequel/crossover progression.
 work-relation-iron-man-2-2010-the-avengers-2012-crossover,iron-man-2-2010,the-avengers-2012,crossover,crossover,indirect,same_or_intended,probable,legacy_seed,Same lead/team continuity or explicit sequel/crossover progression.
 work-relation-the-avengers-2012-avengers-age-of-ultron-2015-sequel,the-avengers-2012,avengers-age-of-ultron-2015,sequel,story,direct,same_or_intended,probable,source_verified,Same lead/team continuity or explicit sequel/crossover progression.

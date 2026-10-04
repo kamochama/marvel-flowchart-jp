@@ -23,8 +23,8 @@
     "superseded_reason_orphans": []
   },
   "graph": {
-    "edges": 355,
-    "reasons": 562,
+    "edges": 356,
+    "reasons": 563,
     "works": 131
   },
   "relations": [
@@ -4312,6 +4312,61 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "indirect",
+      "disposition": "retain",
+      "edge_ids": [
+        "edge-shang-chi-and-the-legend-of-the-ten-rings-2021-wonder-man-s1-2026"
+      ],
+      "evidence_ids": [
+        "evidence-shang-chi-wonder-man-trevor-continuation-2026"
+      ],
+      "external_evidence_details": [],
+      "notes": "公式Disney+がトレヴァーのターローでの冒険を経てワンダーマンでハリウッドへ戻る流れを説明。直接続編とは断定しない。",
+      "qualifying_evidence_ids": [
+        "evidence-shang-chi-wonder-man-trevor-continuation-2026"
+      ],
+      "reason_ids": [
+        "reason-shang-chi-and-the-legend-of-the-ten-rings-2021-wonder-man-s1-2026-explicit-relation-work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-wonder-man-s1-2026-story-link"
+      ],
+      "relation_kind": "story_link",
+      "relation_scope": "story",
+      "review_external_evidence_ids": [],
+      "review_ids": [
+        "review-2026-10-05-shang-chi-wonder-man-created"
+      ],
+      "source_details": [
+        {
+          "evidence_id": "evidence-shang-chi-wonder-man-trevor-continuation-2026",
+          "evidence_role": "primary",
+          "fact_id": "work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-wonder-man-s1-2026-story-link",
+          "fact_table": "work_relations.csv",
+          "source_id": "disneyplus-wonder-man-trevor-continuation-2026",
+          "url": "https://www.disneyplus.com/en-sg/explore/articles/marvels-wonder-man"
+        }
+      ],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-shang-chi-wonder-man-trevor-continuation-2026"
+          ],
+          "fact_id": "work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-wonder-man-s1-2026-story-link",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-05-shang-chi-wonder-man-created"
+          ]
+        }
+      ],
+      "source_ids": [
+        "disneyplus-wonder-man-trevor-continuation-2026"
+      ],
+      "source_work_id": "shang-chi-and-the-legend-of-the-ten-rings-2021",
+      "target_work_id": "wonder-man-s1-2026",
+      "verification_status": "source_verified",
+      "work_relation_id": "work-relation-shang-chi-and-the-legend-of-the-ten-rings-2021-wonder-man-s1-2026-story-link"
+    },
+    {
+      "certainty": "probable",
+      "continuity_scope": "same_or_intended",
+      "directness": "indirect",
       "disposition": "needs-source",
       "edge_ids": [
         "edge-she-hulk-attorney-at-law-2022-daredevil-born-again-s1-2025"
@@ -7480,10 +7535,10 @@
     }
   ],
   "summary": {
-    "active": 161,
+    "active": 162,
     "legacy_seed": 86,
-    "source_verified": 75,
+    "source_verified": 76,
     "superseded": 3,
-    "total": 164
+    "total": 165
   }
 }
