@@ -885,34 +885,55 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "direct",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-avengers-endgame-2019-the-falcon-and-the-winter-soldier-2021"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-endgame-fatws-production-brief-wave021"
+      ],
       "external_evidence_details": [],
       "notes": "サムが盾を託された『エンドゲーム』を直接受けるシリーズ。",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-endgame-fatws-production-brief-wave021"
+      ],
       "reason_ids": [
         "reason-avengers-endgame-2019-the-falcon-and-the-winter-soldier-2021-explicit-relation-work-relation-avengers-endgame-2019-the-falcon-and-the-winter-soldier-2021-story-link"
       ],
       "relation_kind": "story_link",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-04-endgame-fatws-wave021"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-endgame-fatws-production-brief-wave021",
+          "evidence_role": "primary",
           "fact_id": "work-relation-avengers-endgame-2019-the-falcon-and-the-winter-soldier-2021-story-link",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "disney-fatws-production-brief-2021",
+          "url": "https://lumiere-a.akamaihd.net/v1/documents/the_falcon_and_the_winter_soldier_production_brief_fina_875edcc9.pdf"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-endgame-fatws-production-brief-wave021"
+          ],
+          "fact_id": "work-relation-avengers-endgame-2019-the-falcon-and-the-winter-soldier-2021-story-link",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-04-endgame-fatws-wave021"
+          ]
+        }
+      ],
+      "source_ids": [
+        "disney-fatws-production-brief-2021"
+      ],
       "source_work_id": "avengers-endgame-2019",
       "target_work_id": "the-falcon-and-the-winter-soldier-2021",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-avengers-endgame-2019-the-falcon-and-the-winter-soldier-2021-story-link"
     },
     {
@@ -1568,34 +1589,55 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "direct",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-captain-america-civil-war-2016-spider-man-homecoming-2017"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-civil-war-homecoming-synopsis-wave021"
+      ],
       "external_evidence_details": [],
       "notes": "ピーターのアベンジャーズ参加経験を受けて『ホームカミング』が始まる。",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-civil-war-homecoming-synopsis-wave021"
+      ],
       "reason_ids": [
         "reason-captain-america-civil-war-2016-spider-man-homecoming-2017-explicit-relation-work-relation-captain-america-civil-war-2016-spider-man-homecoming-2017-story-link"
       ],
       "relation_kind": "story_link",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-04-civil-war-homecoming-wave021"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-civil-war-homecoming-synopsis-wave021",
+          "evidence_role": "primary",
           "fact_id": "work-relation-captain-america-civil-war-2016-spider-man-homecoming-2017-story-link",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "sony-homecoming-civil-war-story-2017",
+          "url": "https://www.sonypictures.com/movies/spidermanhomecoming"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-civil-war-homecoming-synopsis-wave021"
+          ],
+          "fact_id": "work-relation-captain-america-civil-war-2016-spider-man-homecoming-2017-story-link",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-04-civil-war-homecoming-wave021"
+          ]
+        }
+      ],
+      "source_ids": [
+        "sony-homecoming-civil-war-story-2017"
+      ],
       "source_work_id": "captain-america-civil-war-2016",
       "target_work_id": "spider-man-homecoming-2017",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-captain-america-civil-war-2016-spider-man-homecoming-2017-story-link"
     },
     {
@@ -5425,34 +5467,67 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "strong",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-the-falcon-and-the-winter-soldier-2021-captain-america-brave-new-world-2025"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-fatws-brave-new-world-producer-wave021",
+        "evidence-fatws-brave-new-world-teaser-wave021"
+      ],
       "external_evidence_details": [],
       "notes": "Sam Wilson's Captain America arc.",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-fatws-brave-new-world-producer-wave021",
+        "evidence-fatws-brave-new-world-teaser-wave021"
+      ],
       "reason_ids": [
         "reason-the-falcon-and-the-winter-soldier-2021-captain-america-brave-new-world-2025-explicit-relation-work-relation-the-falcon-and-the-winter-soldier-2021-captain-america-brave-new-world-2025-story-link"
       ],
       "relation_kind": "story_link",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-04-fatws-brave-new-world-wave021"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-fatws-brave-new-world-producer-wave021",
+          "evidence_role": "primary",
           "fact_id": "work-relation-the-falcon-and-the-winter-soldier-2021-captain-america-brave-new-world-2025-story-link",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "disney-brave-new-world-story-continuation-2025",
+          "url": "https://thewaltdisneycompany.com/news/captain-america-brave-new-world-producer-interview/"
+        },
+        {
+          "evidence_id": "evidence-fatws-brave-new-world-teaser-wave021",
+          "evidence_role": "primary",
+          "fact_id": "work-relation-the-falcon-and-the-winter-soldier-2021-captain-america-brave-new-world-2025-story-link",
+          "fact_table": "work_relations.csv",
+          "source_id": "disney-brave-new-world-sam-mantle-2024",
+          "url": "https://thewaltdisneycompany.com/news/captain-america-brave-new-world-teaser-trailer/"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-fatws-brave-new-world-producer-wave021",
+            "evidence-fatws-brave-new-world-teaser-wave021"
+          ],
+          "fact_id": "work-relation-the-falcon-and-the-winter-soldier-2021-captain-america-brave-new-world-2025-story-link",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-04-fatws-brave-new-world-wave021"
+          ]
+        }
+      ],
+      "source_ids": [
+        "disney-brave-new-world-sam-mantle-2024",
+        "disney-brave-new-world-story-continuation-2025"
+      ],
       "source_work_id": "the-falcon-and-the-winter-soldier-2021",
       "target_work_id": "captain-america-brave-new-world-2025",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-the-falcon-and-the-winter-soldier-2021-captain-america-brave-new-world-2025-story-link"
     },
     {
@@ -7343,8 +7418,8 @@
   ],
   "summary": {
     "active": 161,
-    "legacy_seed": 92,
-    "source_verified": 69,
+    "legacy_seed": 89,
+    "source_verified": 72,
     "superseded": 3,
     "total": 164
   }
