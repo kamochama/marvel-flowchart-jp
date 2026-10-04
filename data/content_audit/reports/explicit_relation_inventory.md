@@ -1,6 +1,6 @@
 # Marvel explicit relation inventory
 
-Summary: `{"active": 161, "legacy_seed": 89, "source_verified": 72, "superseded": 3, "total": 164}`
+Summary: `{"active": 161, "legacy_seed": 86, "source_verified": 75, "superseded": 3, "total": 164}`
 Graph: `{"edges": 355, "reasons": 562, "works": 131}`
 
 Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [], "missing_relation_ids": [], "projection_mismatches": 0, "reason_orphans": 0, "relation_reason_certainty": [], "relation_reason_direction": [], "relation_reason_duplicate": [], "relation_reason_edge": [], "relation_reason_edge_duplicate": [], "relation_reason_id": [], "relation_reason_missing": [], "relation_reason_notes": [], "relation_reason_status": [], "relation_reason_support": [], "review_missing_evidence": [], "source_verified_missing_evidence": [], "source_verified_missing_qualifying_evidence": [], "source_verified_missing_review": [], "source_verified_missing_source": [], "superseded_reason_orphans": []}`
@@ -26,7 +26,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-avengers-endgame-2019-ant-man-and-the-wasp-quantumania-2023-world-lore | avengers-endgame-2019 | ant-man-and-the-wasp-quantumania-2023 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-avengers-endgame-2019-avengers-doomsday-2026-12-18-story-link | avengers-endgame-2019 | avengers-doomsday-2026-12-18 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-avengers-endgame-2019-eternals-2021-story-link | avengers-endgame-2019 | eternals-2021 | story_link | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-avengers-endgame-2019-hawkeye-2021-aftermath | avengers-endgame-2019 | hawkeye-2021 | aftermath | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-avengers-endgame-2019-hawkeye-2021-aftermath | avengers-endgame-2019 | hawkeye-2021 | aftermath | source_verified | retain | evidence-endgame-hawkeye-primary-wave022 | evidence-endgame-hawkeye-primary-wave022 | — | review-2026-10-04-endgame-hawkeye-wave022 | disney-hawkeye-endgame-aftermath-2021 |
 | work-relation-avengers-endgame-2019-loki-s1-2021-story-link | avengers-endgame-2019 | loki-s1-2021 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-avengers-endgame-2019-spider-man-far-from-home-2019-aftermath | avengers-endgame-2019 | spider-man-far-from-home-2019 | aftermath | source_verified | retain | evidence-endgame-far-from-home-aftermath-marvel-2019 | evidence-endgame-far-from-home-aftermath-marvel-2019 | — | review-2026-09-04-endgame-far-from-home-aftermath | marvel-spider-man-far-from-home-endgame-aftermath-2019 |
 | work-relation-avengers-endgame-2019-the-falcon-and-the-winter-soldier-2021-story-link | avengers-endgame-2019 | the-falcon-and-the-winter-soldier-2021 | story_link | source_verified | retain | evidence-endgame-fatws-production-brief-wave021 | evidence-endgame-fatws-production-brief-wave021 | — | review-2026-10-04-endgame-fatws-wave021 | disney-fatws-production-brief-2021 |
@@ -45,10 +45,10 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-captain-america-civil-war-2016-ant-man-and-the-wasp-2018-aftermath | captain-america-civil-war-2016 | ant-man-and-the-wasp-2018 | aftermath | source_verified | retain | evidence-civil-war-ant-man-wasp-aftermath-marvel-2018 | evidence-civil-war-ant-man-wasp-aftermath-marvel-2018 | — | review-2026-09-04-civil-war-ant-man-wasp-aftermath | marvel-ant-man-wasp-civil-war-aftermath-2018 |
 | work-relation-captain-america-civil-war-2016-avengers-infinity-war-2018-crossover | captain-america-civil-war-2016 | avengers-infinity-war-2018 | crossover | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-captain-america-civil-war-2016-black-panther-2018-story-link | captain-america-civil-war-2016 | black-panther-2018 | story_link | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-captain-america-civil-war-2016-black-widow-2021-aftermath | captain-america-civil-war-2016 | black-widow-2021 | aftermath | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-captain-america-civil-war-2016-black-widow-2021-aftermath | captain-america-civil-war-2016 | black-widow-2021 | aftermath | source_verified | retain | evidence-civil-war-black-widow-primary-wave022 | evidence-civil-war-black-widow-primary-wave022 | — | review-2026-10-04-civil-war-black-widow-wave022 | disney-black-widow-after-civil-war-2021 |
 | work-relation-captain-america-civil-war-2016-spider-man-homecoming-2017-story-link | captain-america-civil-war-2016 | spider-man-homecoming-2017 | story_link | source_verified | retain | evidence-civil-war-homecoming-synopsis-wave021 | evidence-civil-war-homecoming-synopsis-wave021 | — | review-2026-10-04-civil-war-homecoming-wave021 | sony-homecoming-civil-war-story-2017 |
 | work-relation-captain-america-civil-war-2016-wandavision-2021-world-lore | captain-america-civil-war-2016 | wandavision-2021 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-captain-america-the-first-avenger-2011-agent-carter-one-shot-2013-story-link | captain-america-the-first-avenger-2011 | agent-carter-one-shot-2013 | story_link | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-captain-america-the-first-avenger-2011-agent-carter-one-shot-2013-story-link | captain-america-the-first-avenger-2011 | agent-carter-one-shot-2013 | story_link | source_verified | retain | evidence-first-avenger-agent-carter-primary-wave022 | evidence-first-avenger-agent-carter-primary-wave022 | — | review-2026-10-04-first-avenger-agent-carter-wave022 | disneyplus-agent-carter-after-first-avenger |
 | work-relation-captain-america-the-first-avenger-2011-captain-america-the-winter-soldier-2014-sequel | captain-america-the-first-avenger-2011 | captain-america-the-winter-soldier-2014 | sequel | source_verified | retain | evidence-captain-america-winter-soldier-sequel-disney-2013 | evidence-captain-america-winter-soldier-sequel-disney-2013 | — | review-2026-09-03-captain-america-winter-soldier-sequel | disney-captain-america-winter-soldier-sequel-2013 |
 | work-relation-captain-america-the-first-avenger-2011-the-avengers-2012-crossover | captain-america-the-first-avenger-2011 | the-avengers-2012 | crossover | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-captain-america-the-winter-soldier-2014-agents-of-s-h-i-e-l-d-20132020-world-lore | captain-america-the-winter-soldier-2014 | agents-of-s-h-i-e-l-d-20132020 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
@@ -189,7 +189,6 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-avengers-endgame-2019-ant-man-and-the-wasp-quantumania-2023-world-lore`
 - `work-relation-avengers-endgame-2019-avengers-doomsday-2026-12-18-story-link`
 - `work-relation-avengers-endgame-2019-eternals-2021-story-link`
-- `work-relation-avengers-endgame-2019-hawkeye-2021-aftermath`
 - `work-relation-avengers-endgame-2019-loki-s1-2021-story-link`
 - `work-relation-avengers-endgame-2019-wandavision-2021-story-link`
 - `work-relation-avengers-infinity-war-2018-wandavision-2021-story-link`
@@ -202,9 +201,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-captain-america-civil-war-2016-agents-of-s-h-i-e-l-d-20132020-world-lore`
 - `work-relation-captain-america-civil-war-2016-avengers-infinity-war-2018-crossover`
 - `work-relation-captain-america-civil-war-2016-black-panther-2018-story-link`
-- `work-relation-captain-america-civil-war-2016-black-widow-2021-aftermath`
 - `work-relation-captain-america-civil-war-2016-wandavision-2021-world-lore`
-- `work-relation-captain-america-the-first-avenger-2011-agent-carter-one-shot-2013-story-link`
 - `work-relation-captain-america-the-first-avenger-2011-the-avengers-2012-crossover`
 - `work-relation-captain-america-the-winter-soldier-2014-agents-of-s-h-i-e-l-d-20132020-world-lore`
 - `work-relation-captain-america-the-winter-soldier-2014-avengers-age-of-ultron-2015-crossover`
