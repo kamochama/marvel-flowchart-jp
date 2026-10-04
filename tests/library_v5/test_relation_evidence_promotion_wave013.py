@@ -82,8 +82,9 @@ class RelationEvidencePromotionWave013Tests(unittest.TestCase):
         self.assertEqual(relations[RELATION_ID]["verification_status"], "source_verified")
         # Reopened with independent Sony evidence in Wave017, not promoted by Wave013.
         self.assertEqual(relations["work-relation-spider-man-2-2004-spider-man-3-2007-sequel"]["verification_status"], "source_verified")
+        # Reopened from Marvel's specific production-note story explanation in Wave019.
+        self.assertEqual(relations["work-relation-iron-man-2-2010-iron-man-3-2013-sequel"]["verification_status"], "source_verified")
         for relation_id in (
-            "work-relation-iron-man-2-2010-iron-man-3-2013-sequel",
             "work-relation-x-men-2000-x2-x-men-united-2003-sequel",
             "work-relation-blade-1998-1998-blade-ii-2002-sequel",
             "work-relation-fantastic-four-2005-fantastic-four-rise-of-the-silver-surfer-2007-sequel",

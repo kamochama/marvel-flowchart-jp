@@ -1,6 +1,6 @@
 # Marvel explicit relation inventory
 
-Summary: `{"active": 161, "legacy_seed": 93, "source_verified": 68, "superseded": 3, "total": 164}`
+Summary: `{"active": 161, "legacy_seed": 92, "source_verified": 69, "superseded": 3, "total": 164}`
 Graph: `{"edges": 355, "reasons": 562, "works": 131}`
 
 Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [], "missing_relation_ids": [], "projection_mismatches": 0, "reason_orphans": 0, "relation_reason_certainty": [], "relation_reason_direction": [], "relation_reason_duplicate": [], "relation_reason_edge": [], "relation_reason_edge_duplicate": [], "relation_reason_id": [], "relation_reason_missing": [], "relation_reason_notes": [], "relation_reason_status": [], "relation_reason_support": [], "review_missing_evidence": [], "source_verified_missing_evidence": [], "source_verified_missing_qualifying_evidence": [], "source_verified_missing_review": [], "source_verified_missing_source": [], "superseded_reason_orphans": []}`
@@ -88,7 +88,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-iron-fist-s1-2017-iron-fist-s2-2018-sequel | iron-fist-s1-2017 | iron-fist-s2-2018 | sequel | source_verified | retain | evidence-iron-fist-s1-s2-sequel-marvel-2018 | evidence-iron-fist-s1-s2-sequel-marvel-2018 | — | review-2026-09-04-iron-fist-s1-s2-sequel | marvel-iron-fist-s1-s2-continuation-2018 |
 | work-relation-iron-fist-s1-2017-the-defenders-2017-crossover | iron-fist-s1-2017 | the-defenders-2017 | crossover | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-iron-man-2-2010-a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011-story-link | iron-man-2-2010 | a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011 | story_link | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-iron-man-2-2010-iron-man-3-2013-sequel | iron-man-2-2010 | iron-man-3-2013 | sequel | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-iron-man-2-2010-iron-man-3-2013-sequel | iron-man-2-2010 | iron-man-3-2013 | sequel | source_verified | retain | evidence-iron-man-2-iron-man-3-sequel-marvel-2013 | evidence-iron-man-2-iron-man-3-sequel-marvel-2013 | — | review-2026-10-04-iron-man-2-iron-man-3-sequel | marvel-iron-man-3-first-two-films-sequel-2013 |
 | work-relation-iron-man-2-2010-the-avengers-2012-crossover | iron-man-2-2010 | the-avengers-2012 | crossover | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-iron-man-2-2010-thor-2011-world-lore | iron-man-2-2010 | thor-2011 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-iron-man-2008-iron-man-2-2010-sequel | iron-man-2008 | iron-man-2-2010 | sequel | source_verified | retain | evidence-iron-man-iron-man-2-sequel-paramount-2010 | evidence-iron-man-iron-man-2-sequel-paramount-2010 | — | review-2026-09-03-iron-man-iron-man-2-sequel | paramount-iron-man-2-sequel-2010 |
@@ -230,7 +230,6 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-hawkeye-2021-daredevil-born-again-s1-2025-lead-in`
 - `work-relation-iron-fist-s1-2017-the-defenders-2017-crossover`
 - `work-relation-iron-man-2-2010-a-funny-thing-happened-on-the-way-to-thor-s-hammer-2011-story-link`
-- `work-relation-iron-man-2-2010-iron-man-3-2013-sequel`
 - `work-relation-iron-man-2-2010-the-avengers-2012-crossover`
 - `work-relation-iron-man-2-2010-thor-2011-world-lore`
 - `work-relation-iron-man-3-2013-avengers-age-of-ultron-2015-story-link`
