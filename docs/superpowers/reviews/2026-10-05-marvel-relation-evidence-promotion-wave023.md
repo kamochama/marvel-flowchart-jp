@@ -42,9 +42,10 @@ Official URLs and paraphrase locators are recorded in sources/evidence CSVs.
 - Connection and explicit-relation inventories: all structural/provenance
   failures 0. The tracked explicit inventory is regenerated and included;
   the connection inventory remains scratch. Neither adds new source facts.
-- `git diff --check`: clean after generated explicit-inventory CRLF output was
-  normalized to its established LF format. The initial post-regeneration check
-  reported carriage-return whitespace; it was not a canonical-data defect.
+- Whitespace check: clean with `git -c core.whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol diff --check`.
+  Tracked explicit-inventory files preserve their established CRLF format;
+  the plain default check flags new CRLF lines, not actual trailing spaces.
+  A temporary LF normalization was corrected to avoid whole-file format churn.
 
 ## Complete graph comparison
 
