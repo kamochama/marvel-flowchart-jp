@@ -1,6 +1,6 @@
 # Marvel explicit relation inventory
 
-Summary: `{"active": 162, "legacy_seed": 86, "source_verified": 76, "superseded": 3, "total": 165}`
+Summary: `{"active": 162, "legacy_seed": 83, "source_verified": 79, "superseded": 3, "total": 165}`
 Graph: `{"edges": 356, "reasons": 563, "works": 131}`
 
 Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [], "missing_relation_ids": [], "projection_mismatches": 0, "reason_orphans": 0, "relation_reason_certainty": [], "relation_reason_direction": [], "relation_reason_duplicate": [], "relation_reason_edge": [], "relation_reason_edge_duplicate": [], "relation_reason_id": [], "relation_reason_missing": [], "relation_reason_notes": [], "relation_reason_status": [], "relation_reason_support": [], "review_missing_evidence": [], "source_verified_missing_evidence": [], "source_verified_missing_qualifying_evidence": [], "source_verified_missing_review": [], "source_verified_missing_source": [], "superseded_reason_orphans": []}`
@@ -27,7 +27,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-avengers-endgame-2019-avengers-doomsday-2026-12-18-story-link | avengers-endgame-2019 | avengers-doomsday-2026-12-18 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-avengers-endgame-2019-eternals-2021-story-link | avengers-endgame-2019 | eternals-2021 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-avengers-endgame-2019-hawkeye-2021-aftermath | avengers-endgame-2019 | hawkeye-2021 | aftermath | source_verified | retain | evidence-endgame-hawkeye-primary-wave022 | evidence-endgame-hawkeye-primary-wave022 | — | review-2026-10-04-endgame-hawkeye-wave022 | disney-hawkeye-endgame-aftermath-2021 |
-| work-relation-avengers-endgame-2019-loki-s1-2021-story-link | avengers-endgame-2019 | loki-s1-2021 | story_link | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-avengers-endgame-2019-loki-s1-2021-story-link | avengers-endgame-2019 | loki-s1-2021 | story_link | source_verified | retain | evidence-endgame-loki-2012-tesseract-wave023 | evidence-endgame-loki-2012-tesseract-wave023 | — | review-2026-10-05-endgame-loki-wave023 | disney-loki-production-brief-2021 |
 | work-relation-avengers-endgame-2019-spider-man-far-from-home-2019-aftermath | avengers-endgame-2019 | spider-man-far-from-home-2019 | aftermath | source_verified | retain | evidence-endgame-far-from-home-aftermath-marvel-2019 | evidence-endgame-far-from-home-aftermath-marvel-2019 | — | review-2026-09-04-endgame-far-from-home-aftermath | marvel-spider-man-far-from-home-endgame-aftermath-2019 |
 | work-relation-avengers-endgame-2019-the-falcon-and-the-winter-soldier-2021-story-link | avengers-endgame-2019 | the-falcon-and-the-winter-soldier-2021 | story_link | source_verified | retain | evidence-endgame-fatws-production-brief-wave021 | evidence-endgame-fatws-production-brief-wave021 | — | review-2026-10-04-endgame-fatws-wave021 | disney-fatws-production-brief-2021 |
 | work-relation-avengers-endgame-2019-wandavision-2021-story-link | avengers-endgame-2019 | wandavision-2021 | story_link | legacy_seed | needs-source | — | — | — | — | — |
@@ -54,8 +54,8 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-captain-america-the-winter-soldier-2014-agents-of-s-h-i-e-l-d-20132020-world-lore | captain-america-the-winter-soldier-2014 | agents-of-s-h-i-e-l-d-20132020 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-captain-america-the-winter-soldier-2014-avengers-age-of-ultron-2015-crossover | captain-america-the-winter-soldier-2014 | avengers-age-of-ultron-2015 | crossover | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-captain-america-the-winter-soldier-2014-captain-america-civil-war-2016-sequel | captain-america-the-winter-soldier-2014 | captain-america-civil-war-2016 | sequel | source_verified | retain | evidence-captain-america-winter-soldier-civil-war-third-installment-disney-2016 | evidence-captain-america-winter-soldier-civil-war-third-installment-disney-2016 | — | review-2026-09-14-winter-soldier-civil-war-sequel | disney-captain-america-civil-war-third-installment-2016 |
-| work-relation-captain-marvel-2019-avengers-endgame-2019-crossover | captain-marvel-2019 | avengers-endgame-2019 | crossover | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-captain-marvel-2019-secret-invasion-2023-world-lore | captain-marvel-2019 | secret-invasion-2023 | world_lore | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-captain-marvel-2019-avengers-endgame-2019-crossover | captain-marvel-2019 | avengers-endgame-2019 | crossover | source_verified | retain | evidence-captain-marvel-endgame-appearance-wave023, evidence-captain-marvel-endgame-avengers-thanos-wave023 | evidence-captain-marvel-endgame-appearance-wave023, evidence-captain-marvel-endgame-avengers-thanos-wave023 | — | review-2026-10-05-captain-marvel-endgame-wave023 | disney-captain-marvel-endgame-appearance-2019, disneyplus-carol-danvers-avengers-thanos-2023 |
+| work-relation-captain-marvel-2019-secret-invasion-2023-world-lore | captain-marvel-2019 | secret-invasion-2023 | world_lore | source_verified | retain | evidence-captain-marvel-secret-invasion-production-brief-wave023 | evidence-captain-marvel-secret-invasion-production-brief-wave023 | — | review-2026-10-05-captain-marvel-secret-invasion-wave023 | disney-secret-invasion-production-brief-2023 |
 | work-relation-captain-marvel-2019-the-marvels-2023-sequel | captain-marvel-2019 | the-marvels-2023 | sequel | source_verified | retain | evidence-captain-marvel-the-marvels-sequel-disney-2023 | evidence-captain-marvel-the-marvels-sequel-disney-2023 | — | review-2026-09-03-captain-marvel-the-marvels-sequel | disney-the-marvels-captain-marvel-sequel-2023 |
 | work-relation-cloak-dagger-20182019-runaways-20172019-crossover | cloak-dagger-20182019 | runaways-20172019 | crossover | source_verified | retain | evidence-cloak-dagger-runaways-crossover-marvel-2019 | evidence-cloak-dagger-runaways-crossover-marvel-2019 | — | review-2026-09-04-cloak-dagger-runaways-crossover | marvel-cloak-dagger-runaways-crossover-2019 |
 | work-relation-daredevil-2003-elektra-2005-spinoff | daredevil-2003 | elektra-2005 | spinoff | legacy_seed | needs-source | — | — | — | — | — |
@@ -190,7 +190,6 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-avengers-endgame-2019-ant-man-and-the-wasp-quantumania-2023-world-lore`
 - `work-relation-avengers-endgame-2019-avengers-doomsday-2026-12-18-story-link`
 - `work-relation-avengers-endgame-2019-eternals-2021-story-link`
-- `work-relation-avengers-endgame-2019-loki-s1-2021-story-link`
 - `work-relation-avengers-endgame-2019-wandavision-2021-story-link`
 - `work-relation-avengers-infinity-war-2018-wandavision-2021-story-link`
 - `work-relation-black-panther-2018-avengers-infinity-war-2018-crossover`
@@ -206,8 +205,6 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-captain-america-the-first-avenger-2011-the-avengers-2012-crossover`
 - `work-relation-captain-america-the-winter-soldier-2014-agents-of-s-h-i-e-l-d-20132020-world-lore`
 - `work-relation-captain-america-the-winter-soldier-2014-avengers-age-of-ultron-2015-crossover`
-- `work-relation-captain-marvel-2019-avengers-endgame-2019-crossover`
-- `work-relation-captain-marvel-2019-secret-invasion-2023-world-lore`
 - `work-relation-daredevil-2003-elektra-2005-spinoff`
 - `work-relation-daredevil-s2-2016-the-defenders-2017-crossover`
 - `work-relation-daredevil-s3-2018-daredevil-born-again-s1-2025-sequel`

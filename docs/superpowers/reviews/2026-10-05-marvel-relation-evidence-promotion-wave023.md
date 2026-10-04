@@ -40,8 +40,11 @@ Official URLs and paraphrase locators are recorded in sources/evidence CSVs.
   status fields and the additive four sources/four evidence/three reviews.
 - Build audit/content issues 0; SQLite FK0 and integrity `ok`.
 - Connection and explicit-relation inventories: all structural/provenance
-  failures 0. Inventories are regenerated scratch outputs, not new source facts.
-- `git diff --check`: clean.
+  failures 0. The tracked explicit inventory is regenerated and included;
+  the connection inventory remains scratch. Neither adds new source facts.
+- `git diff --check`: clean after generated explicit-inventory CRLF output was
+  normalized to its established LF format. The initial post-regeneration check
+  reported carriage-return whitespace; it was not a canonical-data defect.
 
 ## Complete graph comparison
 

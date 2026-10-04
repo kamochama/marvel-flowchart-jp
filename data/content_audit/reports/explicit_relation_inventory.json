@@ -817,34 +817,55 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "direct",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-avengers-endgame-2019-loki-s1-2021"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-endgame-loki-2012-tesseract-wave023"
+      ],
       "external_evidence_details": [],
       "notes": "『エンドゲーム』の2012年タイム強奪でロキがテッセラクトを奪った分岐から始まる。",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-endgame-loki-2012-tesseract-wave023"
+      ],
       "reason_ids": [
         "reason-avengers-endgame-2019-loki-s1-2021-explicit-relation-work-relation-avengers-endgame-2019-loki-s1-2021-story-link"
       ],
       "relation_kind": "story_link",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-05-endgame-loki-wave023"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-endgame-loki-2012-tesseract-wave023",
+          "evidence_role": "primary",
           "fact_id": "work-relation-avengers-endgame-2019-loki-s1-2021-story-link",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "disney-loki-production-brief-2021",
+          "url": "https://lumiere-a.akamaihd.net/v1/documents/loki_production_brief_6-1-21_e2911727.pdf"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-endgame-loki-2012-tesseract-wave023"
+          ],
+          "fact_id": "work-relation-avengers-endgame-2019-loki-s1-2021-story-link",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-05-endgame-loki-wave023"
+          ]
+        }
+      ],
+      "source_ids": [
+        "disney-loki-production-brief-2021"
+      ],
       "source_work_id": "avengers-endgame-2019",
       "target_work_id": "loki-s1-2021",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-avengers-endgame-2019-loki-s1-2021-story-link"
     },
     {
@@ -1987,68 +2008,122 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "direct",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-captain-marvel-2019-avengers-endgame-2019"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-captain-marvel-endgame-appearance-wave023",
+        "evidence-captain-marvel-endgame-avengers-thanos-wave023"
+      ],
       "external_evidence_details": [],
       "notes": "キャロルが『エンドゲーム』でアベンジャーズ側へ合流。",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-captain-marvel-endgame-appearance-wave023",
+        "evidence-captain-marvel-endgame-avengers-thanos-wave023"
+      ],
       "reason_ids": [
         "reason-captain-marvel-2019-avengers-endgame-2019-explicit-relation-work-relation-captain-marvel-2019-avengers-endgame-2019-crossover"
       ],
       "relation_kind": "crossover",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-05-captain-marvel-endgame-wave023"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-captain-marvel-endgame-appearance-wave023",
+          "evidence_role": "primary",
           "fact_id": "work-relation-captain-marvel-2019-avengers-endgame-2019-crossover",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "disney-captain-marvel-endgame-appearance-2019",
+          "url": "https://thewaltdisneycompany.com/news/captain-marvel-crosses-1-billion-worldwide/"
+        },
+        {
+          "evidence_id": "evidence-captain-marvel-endgame-avengers-thanos-wave023",
+          "evidence_role": "primary",
+          "fact_id": "work-relation-captain-marvel-2019-avengers-endgame-2019-crossover",
+          "fact_table": "work_relations.csv",
+          "source_id": "disneyplus-carol-danvers-avengers-thanos-2023",
+          "url": "https://press.disneyplus.com/news/next-on-disney-plus-november-2023"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-captain-marvel-endgame-appearance-wave023",
+            "evidence-captain-marvel-endgame-avengers-thanos-wave023"
+          ],
+          "fact_id": "work-relation-captain-marvel-2019-avengers-endgame-2019-crossover",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-05-captain-marvel-endgame-wave023"
+          ]
+        }
+      ],
+      "source_ids": [
+        "disney-captain-marvel-endgame-appearance-2019",
+        "disneyplus-carol-danvers-avengers-thanos-2023"
+      ],
       "source_work_id": "captain-marvel-2019",
       "target_work_id": "avengers-endgame-2019",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-captain-marvel-2019-avengers-endgame-2019-crossover"
     },
     {
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "indirect",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-captain-marvel-2019-secret-invasion-2023"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-captain-marvel-secret-invasion-production-brief-wave023"
+      ],
       "external_evidence_details": [],
       "notes": "フューリー、タロス、スクラル問題を『キャプテン・マーベル』から引き継ぐ。",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-captain-marvel-secret-invasion-production-brief-wave023"
+      ],
       "reason_ids": [
         "reason-captain-marvel-2019-secret-invasion-2023-explicit-relation-work-relation-captain-marvel-2019-secret-invasion-2023-world-lore"
       ],
       "relation_kind": "world_lore",
       "relation_scope": "world_lore",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-05-captain-marvel-secret-invasion-wave023"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-captain-marvel-secret-invasion-production-brief-wave023",
+          "evidence_role": "primary",
           "fact_id": "work-relation-captain-marvel-2019-secret-invasion-2023-world-lore",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "disney-secret-invasion-production-brief-2023",
+          "url": "https://lumiere-a.akamaihd.net/v1/documents/secret_invasion_production_brief_final_6-08-23_66_367af151.pdf"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-captain-marvel-secret-invasion-production-brief-wave023"
+          ],
+          "fact_id": "work-relation-captain-marvel-2019-secret-invasion-2023-world-lore",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-05-captain-marvel-secret-invasion-wave023"
+          ]
+        }
+      ],
+      "source_ids": [
+        "disney-secret-invasion-production-brief-2023"
+      ],
       "source_work_id": "captain-marvel-2019",
       "target_work_id": "secret-invasion-2023",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-captain-marvel-2019-secret-invasion-2023-world-lore"
     },
     {
@@ -7536,8 +7611,8 @@
   ],
   "summary": {
     "active": 162,
-    "legacy_seed": 86,
-    "source_verified": 76,
+    "legacy_seed": 83,
+    "source_verified": 79,
     "superseded": 3,
     "total": 165
   }
