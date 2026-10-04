@@ -83,5 +83,11 @@ class BrowserTeardownTests(unittest.TestCase):
                 self.assertTrue(result.stdout.strip(), 'tree kill failure omitted JSON')
                 report = json.loads(result.stdout)
                 self.assertIn('fixture tree kill denied', report['failures'][0])
+                diagnostic = next(json.loads(line) for line in result.stderr.splitlines()
+                                  if line.startswith('{') and json.loads(line).get('stage') == 'chrome-stop-failed')
+                self.assertEqual(report['cleanup'], {'pid': diagnostic['pid'],
+                                                    'profile': diagnostic['profile'], 'stopped': False})
+                self.assertGreater(report['cleanup']['pid'], 1)
+                self.assertEqual(Path(report['cleanup']['profile']).name, 'profile')
                 self.assertIn('chrome-stop-start', result.stderr)
                 self.assertIn('report-write', result.stderr)
