@@ -762,34 +762,55 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "indirect",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-avengers-endgame-2019-hawkeye-2021"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-endgame-hawkeye-primary-wave022"
+      ],
       "external_evidence_details": [],
       "notes": "ローニン期とナターシャ喪失を抱えるクリントの後日談。",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-endgame-hawkeye-primary-wave022"
+      ],
       "reason_ids": [
         "reason-avengers-endgame-2019-hawkeye-2021-explicit-relation-work-relation-avengers-endgame-2019-hawkeye-2021-aftermath"
       ],
       "relation_kind": "aftermath",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-04-endgame-hawkeye-wave022"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-endgame-hawkeye-primary-wave022",
+          "evidence_role": "primary",
           "fact_id": "work-relation-avengers-endgame-2019-hawkeye-2021-aftermath",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "disney-hawkeye-endgame-aftermath-2021",
+          "url": "https://lumiere-a.akamaihd.net/v1/documents/hawkeye_production_brief_final_11-04-21_b8718e9c.pdf"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-endgame-hawkeye-primary-wave022"
+          ],
+          "fact_id": "work-relation-avengers-endgame-2019-hawkeye-2021-aftermath",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-04-endgame-hawkeye-wave022"
+          ]
+        }
+      ],
+      "source_ids": [
+        "disney-hawkeye-endgame-aftermath-2021"
+      ],
       "source_work_id": "avengers-endgame-2019",
       "target_work_id": "hawkeye-2021",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-avengers-endgame-2019-hawkeye-2021-aftermath"
     },
     {
@@ -1555,34 +1576,55 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "direct",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-captain-america-civil-war-2016-black-widow-2021"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-civil-war-black-widow-primary-wave022"
+      ],
       "external_evidence_details": [],
       "notes": "『ブラック・ウィドウ』本編は『シビル・ウォー』直後のナターシャを描く。",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-civil-war-black-widow-primary-wave022"
+      ],
       "reason_ids": [
         "reason-captain-america-civil-war-2016-black-widow-2021-explicit-relation-work-relation-captain-america-civil-war-2016-black-widow-2021-aftermath"
       ],
       "relation_kind": "aftermath",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-04-civil-war-black-widow-wave022"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-civil-war-black-widow-primary-wave022",
+          "evidence_role": "primary",
           "fact_id": "work-relation-captain-america-civil-war-2016-black-widow-2021-aftermath",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "disney-black-widow-after-civil-war-2021",
+          "url": "https://lumiere-a.akamaihd.net/v1/documents/black_widow_advance_updated_final_04-29-21_e1222ad3.pdf"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-civil-war-black-widow-primary-wave022"
+          ],
+          "fact_id": "work-relation-captain-america-civil-war-2016-black-widow-2021-aftermath",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-04-civil-war-black-widow-wave022"
+          ]
+        }
+      ],
+      "source_ids": [
+        "disney-black-widow-after-civil-war-2021"
+      ],
       "source_work_id": "captain-america-civil-war-2016",
       "target_work_id": "black-widow-2021",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-captain-america-civil-war-2016-black-widow-2021-aftermath"
     },
     {
@@ -1678,34 +1720,55 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "indirect",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-captain-america-the-first-avenger-2011-agent-carter-one-shot-2013"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-first-avenger-agent-carter-primary-wave022"
+      ],
       "external_evidence_details": [],
       "notes": "Peggy Carter continuation.",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-first-avenger-agent-carter-primary-wave022"
+      ],
       "reason_ids": [
         "reason-captain-america-the-first-avenger-2011-agent-carter-one-shot-2013-explicit-relation-work-relation-captain-america-the-first-avenger-2011-agent-carter-one-shot-2013-story-link"
       ],
       "relation_kind": "story_link",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-04-first-avenger-agent-carter-wave022"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-first-avenger-agent-carter-primary-wave022",
+          "evidence_role": "primary",
           "fact_id": "work-relation-captain-america-the-first-avenger-2011-agent-carter-one-shot-2013-story-link",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "disneyplus-agent-carter-after-first-avenger",
+          "url": "https://www.disneyplus.com/ja-jp/browse/entity-5e7f5aa1-b3ea-4cd3-983f-c5cda970fb0a"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-first-avenger-agent-carter-primary-wave022"
+          ],
+          "fact_id": "work-relation-captain-america-the-first-avenger-2011-agent-carter-one-shot-2013-story-link",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-04-first-avenger-agent-carter-wave022"
+          ]
+        }
+      ],
+      "source_ids": [
+        "disneyplus-agent-carter-after-first-avenger"
+      ],
       "source_work_id": "captain-america-the-first-avenger-2011",
       "target_work_id": "agent-carter-one-shot-2013",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-captain-america-the-first-avenger-2011-agent-carter-one-shot-2013-story-link"
     },
     {
@@ -7418,8 +7481,8 @@
   ],
   "summary": {
     "active": 161,
-    "legacy_seed": 89,
-    "source_verified": 72,
+    "legacy_seed": 86,
+    "source_verified": 75,
     "superseded": 3,
     "total": 164
   }

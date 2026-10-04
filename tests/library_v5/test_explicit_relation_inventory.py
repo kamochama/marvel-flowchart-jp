@@ -22,8 +22,8 @@ class ExplicitRelationInventoryTests(unittest.TestCase):
             {
                 "total": 164,
                 "active": 161,
-                "source_verified": 72,
-                "legacy_seed": 89,
+                "source_verified": 75,
+                "legacy_seed": 86,
                 "superseded": 3,
             },
         )
