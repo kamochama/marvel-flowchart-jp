@@ -5,12 +5,11 @@ import http from "node:http";
 import net from "node:net";
 import os from "node:os";
 import path from "node:path";
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 
 const WORK_COUNT = 131;
 const WAIT_TIMEOUT_MS = 20_000;
 const CDP_COMMAND_TIMEOUT_MS = 15_000;
-const CHROME_PROFILE_CLEANUP_RETRIES = 100;
 const PC_CASES = [
   { name: "exact-day", precision: "day", id: "iron-man-2008" },
   { name: "month-only", precision: "month", id: null },
@@ -172,7 +171,7 @@ async function launchChrome(chromePath, timeoutMs) {
     "--headless=new", "--disable-gpu", "--disable-dev-shm-usage", "--no-sandbox",
     "--no-first-run", "--no-default-browser-check", "--window-size=1600,1200",
     `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, "about:blank",
-  ], { stdio: ["ignore", "ignore", "pipe"] });
+  ], { stdio: "ignore", detached: process.platform !== "win32", windowsHide: true });
   let launchError = null;
   child.once("error", (error) => { launchError = error; });
   try {
@@ -202,21 +201,62 @@ async function launchChromeWithRetries(chromePath, timeoutMs, attempts = 3) {
   throw lastError || new Error("Chrome launch failed");
 }
 
+function lifecycle(stage) {
+  process.stderr.write(`${JSON.stringify({stage, time:new Date().toISOString()})}\n`);
+}
+
 async function stopChrome(processInfo) {
+  lifecycle("chrome-stop-start");
   const child = processInfo?.child;
-  if (child && child.exitCode === null && !child.killed) {
-    const exited = new Promise((resolve) => child.once("exit", resolve));
-    child.kill();
-    await Promise.race([exited, new Promise((resolve) => setTimeout(resolve, 5_000))]);
+  if (child?.pid) {
+    if (!Number.isInteger(child.pid) || child.pid <= 1 || child.pid === process.pid) throw new Error("unsafe Chrome PID");
+    // POSIX descendants can outlive their parent; terminate the original group
+    // even when the immediate child's exit event has already been delivered.
+    if (process.platform !== "win32") {
+      try { process.kill(-child.pid, "SIGKILL"); }
+      catch (error) { if (error.code !== "ESRCH") throw error; }
+    } else if (child.exitCode === null && child.signalCode === null) {
+      try {
+        execFileSync("taskkill", ["/PID", String(child.pid), "/T", "/F"],
+          {stdio:"ignore", windowsHide:true, timeout:5_000});
+      } catch (error) {
+        // Never silently accept an uncertain/failed tree termination.
+        throw new Error(`Chrome tree termination failed: ${error.message}`);
+      }
+    }
+    if (child.exitCode === null && child.signalCode === null) {
+      await new Promise((resolve, reject) => {
+        const onExit = () => { clearTimeout(timer); resolve(); };
+        const timer = setTimeout(() => {
+          child.removeListener("exit", onExit);
+          reject(new Error("Chrome parent did not exit within 5 seconds"));
+        }, 5_000);
+        child.once("exit", onExit);
+      });
+    }
   }
+  lifecycle("chrome-stop-done");
   if (processInfo?.userDataDir) {
-    fs.rmSync(processInfo.userDataDir, {
-      recursive: true,
-      force: true,
-      maxRetries: CHROME_PROFILE_CLEANUP_RETRIES,
-      retryDelay: 100,
-    });
+    lifecycle("profile-rm-start");
+    try {
+      fs.rmSync(processInfo.userDataDir, {recursive:true, force:true, maxRetries:3, retryDelay:50});
+    } catch (error) {
+      process.stderr.write(`Chrome profile retained at ${processInfo.userDataDir}: ${error.message}\n`);
+    }
+    lifecycle("profile-rm-done");
   }
+}
+
+function writeReport(report, exitCode) {
+  lifecycle("report-write");
+  // Flush diagnostics and the final JSON before exiting despite stray handles.
+  process.stderr.write("", () => process.stdout.write(`${JSON.stringify(report)}\n`, () => process.exit(exitCode)));
+}
+
+function reportInfrastructureError(error) {
+  process.stderr.write(`${error.stack || error}\n`);
+  writeReport({summary:{cards:0,cases:0,failures:1,syntheticEdges:0}, cases:[],
+    failures:[String(error.message || error)], infrastructure_error:true}, 1);
 }
 
 async function closeStaticServer(server) {
@@ -817,12 +857,18 @@ async function runAudit(args) {
     desktop = await runDesktopAudit(cdp, staticServer.url, expected, timeoutMs);
     mobile = await runMobileAudit(cdp, staticServer.url, expected, timeoutMs);
   } finally {
+    lifecycle("audit-body-done");
     cdp?.close();
-    if (chromeProcess) await stopChrome(chromeProcess);
     // Close the browser before the fixture server. Chrome may retain an idle
     // keep-alive request, which otherwise prevents server.close's callback
     // from firing and leaves the wrapper waiting after a successful audit.
-    await closeStaticServer(staticServer.server);
+    try {
+      if (chromeProcess) await stopChrome(chromeProcess);
+    } finally {
+      lifecycle("server-stop-start");
+      await closeStaticServer(staticServer.server);
+      lifecycle("server-stop-done");
+    }
   }
   const cases = [...(desktop?.cases || []), ...(mobile?.cases || [])];
   const failures = [...(desktop?.failures || []), ...(mobile?.failures || [])];
@@ -877,14 +923,8 @@ async function main() {
     process.stdout.write(`${usage()}\n`);
     return;
   }
-  try {
-    const report = await runAuditWithRetries(args);
-    process.stdout.write(`${JSON.stringify(report)}\n`);
-    if (report.summary.failures || report.summary.syntheticEdges) process.exitCode = 1;
-  } catch (error) {
-    process.stderr.write(`${error.stack || error}\n`);
-    process.exitCode = 1;
-  }
+  const report = await runAuditWithRetries(args);
+  writeReport(report, report.summary.failures || report.summary.syntheticEdges ? 1 : 0);
 }
 
-main();
+main().catch(reportInfrastructureError);
