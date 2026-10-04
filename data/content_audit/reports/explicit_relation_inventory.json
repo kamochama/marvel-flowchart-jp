@@ -3407,34 +3407,55 @@
       "certainty": "confirmed",
       "continuity_scope": "same_or_intended",
       "directness": "direct",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-iron-man-2-2010-iron-man-3-2013"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-iron-man-2-iron-man-3-sequel-marvel-2013"
+      ],
       "external_evidence_details": [],
       "notes": "Iron Man trilogy direct franchise line.",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-iron-man-2-iron-man-3-sequel-marvel-2013"
+      ],
       "reason_ids": [
         "reason-iron-man-2-2010-iron-man-3-2013-explicit-relation-work-relation-iron-man-2-2010-iron-man-3-2013-sequel"
       ],
       "relation_kind": "sequel",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-04-iron-man-2-iron-man-3-sequel"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-iron-man-2-iron-man-3-sequel-marvel-2013",
+          "evidence_role": "primary",
           "fact_id": "work-relation-iron-man-2-2010-iron-man-3-2013-sequel",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "marvel-iron-man-3-first-two-films-sequel-2013",
+          "url": "https://i.annihil.us/u/prod/avengersmovie/ironman3/fullsite1/pdf/Iron_Man_3_Notes.pdf"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-iron-man-2-iron-man-3-sequel-marvel-2013"
+          ],
+          "fact_id": "work-relation-iron-man-2-2010-iron-man-3-2013-sequel",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-04-iron-man-2-iron-man-3-sequel"
+          ]
+        }
+      ],
+      "source_ids": [
+        "marvel-iron-man-3-first-two-films-sequel-2013"
+      ],
       "source_work_id": "iron-man-2-2010",
       "target_work_id": "iron-man-3-2013",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-iron-man-2-2010-iron-man-3-2013-sequel"
     },
     {
@@ -7322,8 +7343,8 @@
   ],
   "summary": {
     "active": 161,
-    "legacy_seed": 93,
-    "source_verified": 68,
+    "legacy_seed": 92,
+    "source_verified": 69,
     "superseded": 3,
     "total": 164
   }

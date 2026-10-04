@@ -40,11 +40,6 @@ URLS = {
         "https://www.marvel.com/watch/trailers-and-extras/kevin-feige-says-thor-love-and-thunder-is-more-than-just-ragnarok-2",
 }
 
-DEFERRED = {
-    "work-relation-iron-man-2-2010-iron-man-3-2013-sequel",
-}
-
-
 def rows(path: Path) -> list[dict[str, str]]:
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
@@ -87,8 +82,8 @@ class RelationEvidencePromotionWave012Tests(unittest.TestCase):
                  "verified_source", evidence_id),
             )
 
-        for relation_id in DEFERRED:
-            self.assertEqual(relations[relation_id]["verification_status"], "legacy_seed")
+        # Wave019 re-audited exact story wording; historical Wave012 docs are unchanged.
+        self.assertEqual(relations["work-relation-iron-man-2-2010-iron-man-3-2013-sequel"]["verification_status"], "source_verified")
         # Wave017 supplied new exact evidence; historical Wave012 docs stay unchanged.
         self.assertEqual(relations["work-relation-spider-man-2-2004-spider-man-3-2007-sequel"]["verification_status"], "source_verified")
 
