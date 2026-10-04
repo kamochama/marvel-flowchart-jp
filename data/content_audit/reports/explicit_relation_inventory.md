@@ -1,6 +1,6 @@
 # Marvel explicit relation inventory
 
-Summary: `{"active": 161, "legacy_seed": 94, "source_verified": 67, "superseded": 3, "total": 164}`
+Summary: `{"active": 161, "legacy_seed": 93, "source_verified": 68, "superseded": 3, "total": 164}`
 Graph: `{"edges": 355, "reasons": 562, "works": 131}`
 
 Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [], "missing_relation_ids": [], "projection_mismatches": 0, "reason_orphans": 0, "relation_reason_certainty": [], "relation_reason_direction": [], "relation_reason_duplicate": [], "relation_reason_edge": [], "relation_reason_edge_duplicate": [], "relation_reason_id": [], "relation_reason_missing": [], "relation_reason_notes": [], "relation_reason_status": [], "relation_reason_support": [], "review_missing_evidence": [], "source_verified_missing_evidence": [], "source_verified_missing_qualifying_evidence": [], "source_verified_missing_review": [], "source_verified_missing_source": [], "superseded_reason_orphans": []}`
@@ -153,7 +153,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-thunderbolts-new-avengers-2025-the-fantastic-four-first-steps-2025-crossover | thunderbolts-new-avengers-2025 | the-fantastic-four-first-steps-2025 | crossover | source_verified | retain | evidence-thunderbolts-f4-arrival-film-2025, evidence-thunderbolts-f4-arrival-lat-2025 | evidence-thunderbolts-f4-arrival-film-2025, evidence-thunderbolts-f4-arrival-lat-2025 | — | review-2026-08-27-thunderbolts-f4-arrival | lat-thunderbolts-postcredits-2025, thunderbolts-postcredits-film-2025 |
 | work-relation-venom-2018-venom-let-there-be-carnage-2021-sequel | venom-2018 | venom-let-there-be-carnage-2021 | sequel | source_verified | retain | evidence-venom-ltbc-sequel-sony-2021 | evidence-venom-ltbc-sequel-sony-2021 | — | review-2026-09-14-venom-ltbc-sequel | sony-venom-ltbc-sequel-2021 |
 | work-relation-venom-let-there-be-carnage-2021-spider-man-no-way-home-2021-crossover | venom-let-there-be-carnage-2021 | spider-man-no-way-home-2021 | crossover | superseded | superseded | evidence-venom-ltbc-nwh-film-2021, evidence-venom-ltbc-nwh-lat-2021 | evidence-venom-ltbc-nwh-film-2021, evidence-venom-ltbc-nwh-lat-2021 | evidence-venom-arrival-transition-film-2021, evidence-venom-return-transition-film-2021 | review-2026-08-27-venom-nwh-multiverse, review-2026-08-28-venom-nwh-proxy-relation-retired | — |
-| work-relation-venom-let-there-be-carnage-2021-venom-the-last-dance-2024-story-link | venom-let-there-be-carnage-2021 | venom-the-last-dance-2024 | story_link | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-venom-let-there-be-carnage-2021-venom-the-last-dance-2024-story-link | venom-let-there-be-carnage-2021 | venom-the-last-dance-2024 | story_link | source_verified | retain | evidence-venom-ltbc-last-dance-story-link-sony-current | evidence-venom-ltbc-last-dance-story-link-sony-current | — | review-2026-10-04-venom-ltbc-last-dance-story-link | sony-venom-trilogy-story-continuation-current |
 | work-relation-wandavision-2021-agatha-all-along-2024-spinoff | wandavision-2021 | agatha-all-along-2024 | spinoff | source_verified | retain | evidence-wandavision-agatha-spinoff-disney-2024 | evidence-wandavision-agatha-spinoff-disney-2024 | — | review-2026-09-03-wandavision-agatha-spinoff | disney-agatha-all-along-2024 |
 | work-relation-wandavision-2021-doctor-strange-in-the-multiverse-of-madness-2022-story-link | wandavision-2021 | doctor-strange-in-the-multiverse-of-madness-2022 | story_link | source_verified | retain | evidence-wandavision-mom-direct-connection-marvel-2019 | evidence-wandavision-mom-direct-connection-marvel-2019 | — | review-2026-09-04-wandavision-mom-story-link | marvel-wandavision-mom-direct-connection-2019 |
 | work-relation-wandavision-2021-visionquest-2026-10-14-sequel | wandavision-2021 | visionquest-2026-10-14 | sequel | source_verified | retain | evidence-wandavision-visionquest-trilogy-marvel-2026 | evidence-wandavision-visionquest-trilogy-marvel-2026 | — | review-2026-09-03-wandavision-visionquest-trilogy | visionquest |
@@ -260,7 +260,6 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-thor-the-dark-world-2013-agents-of-s-h-i-e-l-d-20132020-story-link`
 - `work-relation-thor-the-dark-world-2013-avengers-age-of-ultron-2015-crossover`
 - `work-relation-thor-the-dark-world-2013-guardians-of-the-galaxy-2014-story-link`
-- `work-relation-venom-let-there-be-carnage-2021-venom-the-last-dance-2024-story-link`
 - `work-relation-x-men-2000-x2-x-men-united-2003-sequel`
 - `work-relation-x-men-apocalypse-2016-dark-phoenix-2019-sequel`
 - `work-relation-x-men-days-of-future-past-2014-x-men-apocalypse-2016-sequel`

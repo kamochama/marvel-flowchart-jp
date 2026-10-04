@@ -6480,34 +6480,55 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "direct",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-venom-let-there-be-carnage-2021-venom-the-last-dance-2024"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-venom-ltbc-last-dance-story-link-sony-current"
+      ],
       "external_evidence_details": [],
       "notes": "ヴェノム映画シリーズ第3作・三部作の完結編。",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-venom-ltbc-last-dance-story-link-sony-current"
+      ],
       "reason_ids": [
         "reason-venom-let-there-be-carnage-2021-venom-the-last-dance-2024-explicit-relation-work-relation-venom-let-there-be-carnage-2021-venom-the-last-dance-2024-story-link"
       ],
       "relation_kind": "story_link",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-04-venom-ltbc-last-dance-story-link"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-venom-ltbc-last-dance-story-link-sony-current",
+          "evidence_role": "primary",
           "fact_id": "work-relation-venom-let-there-be-carnage-2021-venom-the-last-dance-2024-story-link",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "sony-venom-trilogy-story-continuation-current",
+          "url": "https://www.sonypictures.com/movies/venom3moviecollection"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-venom-ltbc-last-dance-story-link-sony-current"
+          ],
+          "fact_id": "work-relation-venom-let-there-be-carnage-2021-venom-the-last-dance-2024-story-link",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-04-venom-ltbc-last-dance-story-link"
+          ]
+        }
+      ],
+      "source_ids": [
+        "sony-venom-trilogy-story-continuation-current"
+      ],
       "source_work_id": "venom-let-there-be-carnage-2021",
       "target_work_id": "venom-the-last-dance-2024",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-venom-let-there-be-carnage-2021-venom-the-last-dance-2024-story-link"
     },
     {
@@ -7301,8 +7322,8 @@
   ],
   "summary": {
     "active": 161,
-    "legacy_seed": 94,
-    "source_verified": 67,
+    "legacy_seed": 93,
+    "source_verified": 68,
     "superseded": 3,
     "total": 164
   }
