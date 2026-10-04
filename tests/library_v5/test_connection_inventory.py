@@ -17,8 +17,8 @@ class ConnectionInventoryTests(unittest.TestCase):
         inventory = audit_inventory(ROOT)
 
         self.assertEqual(inventory["counts"]["works"], 131)
-        self.assertEqual(inventory["counts"]["edges"], 355)
-        self.assertEqual(inventory["counts"]["reasons"], 562)
+        self.assertEqual(inventory["counts"]["edges"], 356)
+        self.assertEqual(inventory["counts"]["reasons"], 563)
         self.assertEqual(inventory["counts"]["works"], len(inventory["works"]))
         self.assertEqual(inventory["counts"]["edges"], len(inventory["edges"]))
         self.assertEqual(inventory["counts"]["reasons"], len(inventory["reasons"]))
@@ -52,7 +52,7 @@ class ConnectionInventoryTests(unittest.TestCase):
         self.assertTrue(
             set(inventory["dispositions"]["reasons"]) <= ALLOWED_DISPOSITIONS
         )
-        self.assertEqual(len(inventory["zero_degree_works"]), 8)
+        self.assertEqual(len(inventory["zero_degree_works"]), 7)
 
     def test_missing_reason_id_is_reported_exactly(self) -> None:
         report = audit_repository(ROOT)
@@ -116,7 +116,7 @@ class ConnectionInventoryTests(unittest.TestCase):
         markdown = render_markdown(audit_inventory(ROOT))
         self.assertIn("## All reasons with exact fact provenance", markdown)
         self.assertIn("| reason_id | source | target | kind | source_facts |", markdown)
-        self.assertGreaterEqual(markdown.count("| `reason-"), 562)
+        self.assertGreaterEqual(markdown.count("| `reason-"), 563)
 
     def test_same_fact_id_in_distinct_tables_keeps_distinct_provenance(self) -> None:
         report = {

@@ -100,8 +100,8 @@ class RelationEvidencePromotionWave001Tests(unittest.TestCase):
     def test_existing_directed_pairs_and_reason_ids_are_preserved(self) -> None:
         edge_rows = rows(DERIVED / "work_edges_all.csv")
         reason_rows = rows(DERIVED / "work_pair_reasons.csv")
-        self.assertEqual(len(edge_rows), 355)
-        self.assertEqual(len(reason_rows), 562)
+        self.assertEqual(len(edge_rows), 356)
+        self.assertEqual(len(reason_rows), 563)
 
         expected_edges = {
             (

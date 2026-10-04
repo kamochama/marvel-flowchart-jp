@@ -61,7 +61,7 @@ class RelationEvidencePromotionWave005Tests(unittest.TestCase):
 
     def test_existing_pairs_and_reason_ids_are_preserved(self) -> None:
         edges = rows(DERIVED / "work_edges_all.csv"); reasons = rows(DERIVED / "work_pair_reasons.csv")
-        self.assertEqual((len(edges), len(reasons)), (355, 562))
+        self.assertEqual((len(edges), len(reasons)), (356, 563))
         for rid, (src, dst, *_rest) in RELATIONS.items():
             edge = next(r for r in edges if r["source_work_id"] == src and r["target_work_id"] == dst)
             expected = f"reason-{src}-{dst}-explicit-relation-{rid}"

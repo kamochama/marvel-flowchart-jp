@@ -16,17 +16,17 @@ class ConnectivityAuditOracleTests(unittest.TestCase):
         self.assertEqual(report["counts"]["works"], 131)
         # The D&W Wolverine variant boundary removes six unsupported pair
         # projections while retaining the explicit Logan story-link pair.
-        self.assertEqual(report["counts"]["edges"], 355)
-        self.assertEqual(report["counts"]["reasons"], 562)
+        self.assertEqual(report["counts"]["edges"], 356)
+        self.assertEqual(report["counts"]["reasons"], 563)
         self.assertEqual(report["summary"]["verdicts"].get("fail", 0), 0)
         self.assertEqual(report["summary"]["projection"]["edge_pair_mismatches"], 0)
         self.assertEqual(report["summary"]["projection"]["reason_orphans"], 0)
         self.assertEqual(len(report["work_inventory"]), 131)
         self.assertEqual(len({row["work_id"] for row in report["work_inventory"]}), 131)
-        self.assertEqual(len(report["edge_inventory"]), 355)
+        self.assertEqual(len(report["edge_inventory"]), 356)
         self.assertEqual(
             len({(row["source_work_id"], row["target_work_id"]) for row in report["edge_inventory"]}),
-            355,
+            356,
         )
 
         zero_degree = {
@@ -34,7 +34,7 @@ class ConnectivityAuditOracleTests(unittest.TestCase):
             for row in report["records"]
             if row["domain"] == "P" and row["case_id"].startswith("work-degree-0:")
         }
-        self.assertEqual(len(zero_degree), 8)
+        self.assertEqual(len(zero_degree), 7)
 
     def test_missing_explicit_relation_projection_is_a_failure(self) -> None:
         tables = {
