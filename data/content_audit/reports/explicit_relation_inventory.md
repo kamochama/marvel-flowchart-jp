@@ -1,6 +1,6 @@
 # Marvel explicit relation inventory
 
-Summary: `{"active": 161, "legacy_seed": 96, "source_verified": 65, "superseded": 3, "total": 164}`
+Summary: `{"active": 161, "legacy_seed": 95, "source_verified": 66, "superseded": 3, "total": 164}`
 Graph: `{"edges": 355, "reasons": 562, "works": 131}`
 
 Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [], "missing_relation_ids": [], "projection_mismatches": 0, "reason_orphans": 0, "relation_reason_certainty": [], "relation_reason_direction": [], "relation_reason_duplicate": [], "relation_reason_edge": [], "relation_reason_edge_duplicate": [], "relation_reason_id": [], "relation_reason_missing": [], "relation_reason_notes": [], "relation_reason_status": [], "relation_reason_support": [], "review_missing_evidence": [], "source_verified_missing_evidence": [], "source_verified_missing_qualifying_evidence": [], "source_verified_missing_review": [], "source_verified_missing_source": [], "superseded_reason_orphans": []}`
@@ -129,7 +129,7 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 | work-relation-the-defenders-2017-daredevil-s3-2018-aftermath | the-defenders-2017 | daredevil-s3-2018 | aftermath | source_verified | retain | evidence-defenders-daredevil-s3-aftermath-marvel-2018 | evidence-defenders-daredevil-s3-aftermath-marvel-2018 | — | review-2026-09-14-defenders-daredevil-s3-aftermath | marvel-daredevil-s3-defenders-aftermath-2018 |
 | work-relation-the-defenders-2017-iron-fist-s2-2018-story-link | the-defenders-2017 | iron-fist-s2-2018 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-the-defenders-2017-jessica-jones-s2-2018-story-link | the-defenders-2017 | jessica-jones-s2-2018 | story_link | legacy_seed | needs-source | — | — | — | — | — |
-| work-relation-the-defenders-2017-luke-cage-s2-2018-story-link | the-defenders-2017 | luke-cage-s2-2018 | story_link | legacy_seed | needs-source | — | — | — | — | — |
+| work-relation-the-defenders-2017-luke-cage-s2-2018-story-link | the-defenders-2017 | luke-cage-s2-2018 | story_link | source_verified | retain | evidence-defenders-luke-cage-s2-story-link-marvel-2016 | evidence-defenders-luke-cage-s2-story-link-marvel-2016 | — | review-2026-10-04-defenders-luke-cage-s2-story-link | marvel-luke-cage-s2-defenders-return-2016 |
 | work-relation-the-falcon-and-the-winter-soldier-2021-captain-america-brave-new-world-2025-story-link | the-falcon-and-the-winter-soldier-2021 | captain-america-brave-new-world-2025 | story_link | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-the-falcon-and-the-winter-soldier-2021-thunderbolts-new-avengers-2025-lead-in | the-falcon-and-the-winter-soldier-2021 | thunderbolts-new-avengers-2025 | lead_in | legacy_seed | needs-source | — | — | — | — | — |
 | work-relation-the-fantastic-four-first-steps-2025-avengers-doomsday-2026-12-18-lead-in | the-fantastic-four-first-steps-2025 | avengers-doomsday-2026-12-18 | lead_in | source_verified | retain | evidence-first-steps-doomsday-lead-in-marvel-2025 | evidence-first-steps-doomsday-lead-in-marvel-2025 | evidence-first-steps-earth-828-membership-marvel-2025 | review-2026-08-27-first-steps-doomsday-continuity-scope-recheck, review-2026-08-27-first-steps-doomsday-lead-in | ff-doomsday |
@@ -248,7 +248,6 @@ Coverage: `{"duplicate_relation_ids": [], "extra_explicit_relation_reasons": [],
 - `work-relation-the-consultant-2011-the-avengers-2012-story-link`
 - `work-relation-the-defenders-2017-iron-fist-s2-2018-story-link`
 - `work-relation-the-defenders-2017-jessica-jones-s2-2018-story-link`
-- `work-relation-the-defenders-2017-luke-cage-s2-2018-story-link`
 - `work-relation-the-falcon-and-the-winter-soldier-2021-captain-america-brave-new-world-2025-story-link`
 - `work-relation-the-falcon-and-the-winter-soldier-2021-thunderbolts-new-avengers-2025-lead-in`
 - `work-relation-the-guardians-of-the-galaxy-holiday-special-2022-guardians-of-the-galaxy-vol-3-2023-lead-in`

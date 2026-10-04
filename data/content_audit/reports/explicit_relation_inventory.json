@@ -5328,34 +5328,55 @@
       "certainty": "probable",
       "continuity_scope": "same_or_intended",
       "directness": "strong",
-      "disposition": "needs-source",
+      "disposition": "retain",
       "edge_ids": [
         "edge-the-defenders-2017-luke-cage-s2-2018"
       ],
-      "evidence_ids": [],
+      "evidence_ids": [
+        "evidence-defenders-luke-cage-s2-story-link-marvel-2016"
+      ],
       "external_evidence_details": [],
       "notes": "合流イベント後、ルークの個別シリーズへ戻る。",
-      "qualifying_evidence_ids": [],
+      "qualifying_evidence_ids": [
+        "evidence-defenders-luke-cage-s2-story-link-marvel-2016"
+      ],
       "reason_ids": [
         "reason-the-defenders-2017-luke-cage-s2-2018-explicit-relation-work-relation-the-defenders-2017-luke-cage-s2-2018-story-link"
       ],
       "relation_kind": "story_link",
       "relation_scope": "story",
       "review_external_evidence_ids": [],
-      "review_ids": [],
-      "source_details": [],
-      "source_facts": [
+      "review_ids": [
+        "review-2026-10-04-defenders-luke-cage-s2-story-link"
+      ],
+      "source_details": [
         {
-          "evidence_ids": [],
+          "evidence_id": "evidence-defenders-luke-cage-s2-story-link-marvel-2016",
+          "evidence_role": "primary",
           "fact_id": "work-relation-the-defenders-2017-luke-cage-s2-2018-story-link",
           "fact_table": "work_relations.csv",
-          "review_ids": []
+          "source_id": "marvel-luke-cage-s2-defenders-return-2016",
+          "url": "https://www.marvel.com/articles/tv-shows/marvel-s-luke-cage-moves-always-forward-with-season-2"
         }
       ],
-      "source_ids": [],
+      "source_facts": [
+        {
+          "evidence_ids": [
+            "evidence-defenders-luke-cage-s2-story-link-marvel-2016"
+          ],
+          "fact_id": "work-relation-the-defenders-2017-luke-cage-s2-2018-story-link",
+          "fact_table": "work_relations.csv",
+          "review_ids": [
+            "review-2026-10-04-defenders-luke-cage-s2-story-link"
+          ]
+        }
+      ],
+      "source_ids": [
+        "marvel-luke-cage-s2-defenders-return-2016"
+      ],
       "source_work_id": "the-defenders-2017",
       "target_work_id": "luke-cage-s2-2018",
-      "verification_status": "legacy_seed",
+      "verification_status": "source_verified",
       "work_relation_id": "work-relation-the-defenders-2017-luke-cage-s2-2018-story-link"
     },
     {
@@ -7259,8 +7280,8 @@
   ],
   "summary": {
     "active": 161,
-    "legacy_seed": 96,
-    "source_verified": 65,
+    "legacy_seed": 95,
+    "source_verified": 66,
     "superseded": 3,
     "total": 164
   }
